@@ -1,0 +1,23 @@
+prim-name,input-type,input-name,output-type
+hide-map, , ,
+show-map, , ,
+set-data,(string),(data),
+import-file,(string),(filename),
+get-data, , ,(string)
+export-file,,,
+set-zoom, (number),(zoom),
+get-zoom, , ,(number)
+set-center-latlng,(list),(coords),
+get-center-latlng, , ,(list)
+create-marker,(string; list), (name; coords),
+create-markers,(list),(data),
+set-lat,(string; number), (name; lat),
+set-lng,(string; number), (name; lng),
+set-latlng,(string; list), (name; latlng),
+get-lat,(string),(name),(number)
+get-lng,(string),(name),(number)
+get-latlng,(string),(name),(list)
+delete-marker,(string),(name),
+delete-markers,,,
+latlng-to-patch,(list),(coords),(list)
+patch-to-latlng,(list),(coords),(list)

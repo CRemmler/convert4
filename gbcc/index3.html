@@ -1,0 +1,113 @@
+</script>
+
+<script>
+  Ractive.DEBUG = true;
+
+  var loadingOverlay  = document.getElementById("loading-overlay");
+  var activeContainer = loadingOverlay;
+  var modelContainer  = document.querySelector("#netlogo-model-container");
+  var nlogoScript     = document.querySelector("#nlogo-code");
+  var standaloneURL   = "//localhost:9000/standalone";
+  var pageTitle       = function(modelTitle) {
+    if (modelTitle != null && modelTitle != "") {
+      return "NetLogo Web: " + modelTitle;
+    } else {
+      return "NetLogo Web";
+    }
+  };
+  var session;
+  var openSession = function(s) {
+    session = s;
+    document.title = pageTitle(session.modelTitle());
+    activeContainer = modelContainer;
+    session.startLoop();
+  };
+
+  var isStandaloneHTML = false;
+  if (nlogoScript.textContent.length > 0) {
+    isStandaloneHTML = true;
+  }
+
+  window.nlwAlerter = new NLWAlerter(document.getElementById("alert-overlay"), isStandaloneHTML);
+
+  var displayError = function(error) {
+    // in the case where we're still loading the model, we have to
+    // post an error that cannot be dismissed, as well as ensuring that
+    // the frame we're in matches the size of the error on display.
+    if (activeContainer === loadingOverlay) {
+      window.nlwAlerter.displayError(error, false);
+      activeContainer = window.nlwAlerter.alertContainer;
+    } else {
+      window.nlwAlerter.displayError(error);
+    }
+  };
+
+  var loadModel = function(nlogo, path) {
+    if (session) {
+      session.teardown();
+    }
+    window.nlwAlerter.hide();
+    activeContainer = loadingOverlay;
+    Tortoise.fromNlogo(nlogo, modelContainer, path, openSession, displayError);
+  };
+  if (nlogoScript.textContent.length > 0) {
+    Tortoise.fromNlogo(nlogoScript.textContent,
+                       modelContainer,
+                       nlogoScript.dataset.filename,
+                       openSession,
+                       displayError);
+  } else if (window.location.search.length > 0) {
+
+    var query    = window.location.search.slice(1);
+    var pairs    = query.split(/&(?=\w+=)/).map(function(x) { return x.split('='); });
+    var paramObj = pairs.reduce(function(acc, pair) { acc[pair[0]] = pair[1]; return acc; }, {})
+
+    var url       = (paramObj.url  !== undefined) ?           paramObj.url   : query;
+    var modelName = (paramObj.name !== undefined) ? decodeURI(paramObj.name) : undefined;
+
+    Tortoise.fromURL(url, modelName, modelContainer, openSession, displayError);
+
+  } else {
+    loadModel(exports.newModel, "NewModel");
+  }
+
+  window.addEventListener("message", function (e) {
+    if (e.data.type === "nlw-load-model") {
+      loadModel(e.data.nlogo, e.data.path);
+    } else if (e.data.type === "nlw-open-new") {
+      loadModel(exports.newModel, "NewModel");
+    } else if (e.data.type === "nlw-update-model-state") {
+      session.widgetController.setCode(e.data.codeTabContents);
+    } else if (e.data.type === "run-baby-behaviorspace") {
+      var reaction =
+        function(results) {
+          e.source.postMessage({ type: "baby-behaviorspace-results", id: e.data.id, data: results }, "*");
+        };
+      session.asyncRunBabyBehaviorSpace(e.data.config, reaction);
+   }
+  });
+
+  if (parent !== window) {
+    var width = "", height = "";
+    window.setInterval(function() {
+      if (activeContainer.offsetWidth  !== width ||
+          activeContainer.offsetHeight !== height ||
+          (session !== undefined && document.title != pageTitle(session.modelTitle()))) {
+        if (session !== undefined) {
+          document.title = pageTitle(session.modelTitle());
+        }
+        width = activeContainer.offsetWidth;
+        height = activeContainer.offsetHeight;
+        parent.postMessage({
+          width:  activeContainer.offsetWidth,
+          height: activeContainer.offsetHeight,
+          title:  document.title,
+          type:   "nlw-resize"
+        }, "*");
+      }
+    }, 200);
+  }
+</script>
+
+
+</body></html>

@@ -1,0 +1,222 @@
+<html>
+  <head>
+    <title>Converter 3.0</title>
+    <link rel="stylesheet" href="css/netlogo.css" type="text/css">
+    <script type="text/javascript" src="gbcc/app/gbcc/jquery.min.js"></script>
+    <script type="text/javascript" src="convert.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+  </head>
+  <body>
+    <h1>NetLogo GbCC 3.0 Converter</h1>
+    <form action="fileupload" method="post" enctype="multipart/form-data">
+      <h2>Create a NetLogo Model</h2>
+      <table>
+        <tr>
+          <td><img class="createIcon" id="nlogo"src="./images/icon-netlogo2.png">
+            <br><span class="notice"> &nbsp;&nbsp;( click &#8679;)</span>
+          </td>
+          <td> <b>Step 1:</b> Create a model using <a href="https://ccl.northwestern.edu/netlogo/">NetLogo</a>.
+            Save your model as a .nlogo file.
+          </td>
+        </tr>  
+        <tr id="nlogoContainer" class="initHidden">
+          <td>
+          </td>
+          <td>
+            Check out the following resources:
+            <br>- <a href="https://ccl.northwestern.edu/netlogo/docs/dictionary.html">NetLogo Dictionary</a>
+            <br>- <a href="https://ccl.northwestern.edu/netlogo/docs/programming.html">NetLogo Programming Guide</a>
+            <br>- <a href="https://remmler.org/gbcc/v3/docs.html">NetLogo GbCC Dictionary</a>
+            <br>- <a href="https://remmler.org/gbcc/v3/programming.html">NetLogo GbCC Programming Guide</a>
+            <br>- <a href="https://remmler.org/gbcc/v3/extensions.html">GeoGebra, Maps and Physics Extensions</a>
+            </ul>
+            <br><img class="instructions" src="./images/nlogo-1.png">
+          </td>
+        </tr>  
+      </table>
+      <h2>Convert NetLogo model to GbCC Model</h2>
+      <table>
+        <tr>
+          <td><img class="createIcon" id="setting" src="./images/icon-settings2.png">
+          </td>
+          <td><b>Step 2:</b> Choose settings for your GbCC Model.</b>
+          </td>
+        </tr>
+        <tr id="settingContainer" class="initHidden">
+          <td>
+          </td>
+          <td>
+            <div>
+              <table>
+                <tr>
+                  <td>
+                    <b>Type of Model</b>
+                    <br><input type="radio" choice='9' id='gbccFlat' value='gbccFlat' class='modelType' name='modelType'> GbCC Flat
+                    <br><input type="radio" choice='8' id='gbccHierarchical' value='gbccHierarchical' class='modelType' name='modelType'> GbCC Hierarchical
+                    <br><input type="radio" choice='7' id='legacyHubnet' value='legacyHubnet' class='modelType' name='modelType'>
+                      <a href="https://ccl.northwestern.edu/netlogo/hubnet.html">Legacy HubNet</a>
+                  </td>
+                  <td>
+                    <img src="./images/gbcc-flat.png" class="modelTypeImage" id="gbccFlatImage">
+                    <img src="./images/gbcc-hier.png" class="modelTypeImage" id="gbccHierarchicalImage">
+                    <img src="./images/legacy-hubnet.png" class="modelTypeImage" id="legacyHubnetImage">
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <br>
+            <div id="gbccFeatures">  
+              <b>Features</b>
+              <br><input type='checkbox' name='allowTeacherControls' choice='0' class='choice'> Allow teachers to control students' access to their View and Tabs.
+              <br><input type='checkbox' name='allowMultipleLayers' choice='2' class='choice'> Allow canvases to have multiple layers.
+              <br><input type='checkbox' name='allowMultipleSelections' choice='3' class='choice'> Allow users to select multiple canvases. 
+              <br><input type='checkbox' name='allowCanvasForeverButtons' choice='4' class='choice'> Allow canvases to act as forever buttons.
+              <br><input type='checkbox' name='allowGalleryControls' choice='5' class='choice'> Allow users additional control over gallery.
+              <p>
+              <div class="demo-container-wrapper">
+                <div class='demo-container' id='container0'>
+                  <img class="basicModel" src="images/basicModel.png">
+                  <img class='demo demo1' src="images/demo1.png">
+                  <img class='demo demo5 demo5a' src="images/demo1-green.png">
+                  <img class='demo demo2' src="images/demo2.png">  
+                  <img class='demo demo3a' src="images/demo3a.png">  
+                  <img class='demo demo3' src="images/demo3.png">      
+                  <img class='demo demo4' src="images/demo4.png">        
+                  <img class='demo demo5' src="images/demo5.png"> 
+                  <img class='demo demo4 notes' src="images/teal.png"> 
+                  <img class='demo basicModel notes' src="images/brown.png"> 
+                  <img class='demo demo3 notes' src="images/orange2.png"> 
+                  <img class='demo demo2 notes' src="images/yellow.png"> 
+                  <img class='demo demo5 notes' src="images/green.png"> 
+                  <img class='demo demo0' id="demo0a" src="images/gray.png">         
+                  <img class='demo demo0' id = "demo0b" src="images/viewControls.png">
+                  <img class='demo basicTabs galleryTab notes' src="images/blue.png"> 
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><img class="createIcon" id="create" src="./images/icon-upload2.png">
+          <!--<td><img class="createIcon" id="uploadIcon" src="./images/icon-upload2.png">-->
+          </td>
+          <td>
+            <b>Step 3:</b> Choose files to upload.
+          </td>
+        </tr>
+        <tr id="createContainer" class="initHidden">
+          <td></td>
+          <td>
+            <span class="gbccFlatFile selectFileSpan">
+              NetLogo file: <input type="file" accept=".nlogo" class="selectFileButton" name="userfiletoupload"><span class="notice">*.nlogo file required</span>
+            </span>
+            <span class="gbccHierFile selectFileSpan">
+              NetLogo File (Teacher UI): <input type="file" accept=".nlogo" class="selectFileButton" name="teacherfiletoupload"><span class="notice">*.nlogo file required</span>
+            </span>
+            <span class="gbccHierFile selectFileSpan">
+              <br>
+              NetLogo File (Student UI): <input type="file" accept=".nlogo" class="selectFileButton" name="studentfiletoupload"><span class="notice">*.nlogo file required</span>
+            </span>
+            <span class="legacyHubnetFile selectFileSpan">
+              HubNet File: <input type="file" accept=".nlogo" class="selectFileButton" name="hubnetfiletoupload"><span class="notice">*.nlogo file required</span>
+            </span>
+            <div id="uploadFileContainer" class="initHidden smallText">
+              <b>Filename: </b>
+              <span id="filename1"></span>
+              <span id="incorrectFilename1" style="color:red">x Please use a .nlogo file.</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><img class="createIcon initHidden" id="downloadEnabled" src="./images/icon-download2.png">
+            <img class="createIcon" id="downloadDisabled" src="./images/icon-download2-bw.png">
+          </td>
+          <td><b>Step 4:</b> Download the .zip file.</b> 
+            <span id="correctFilename" class="initHidden"><button id="uploadFileButton" type="submit">Download</button></span>
+          </td>
+        </tr>
+      </table>
+      <h2>Create a Website for your GbCC Model.</h2>
+      <table>
+        <tr>
+          <td><img class="createIcon" id="dropbox" src="./images/icon-dropbox2.png">
+          </td>
+          <td><b>Step 6:</b> Create a <a href="https://www.dropbox.com/">Dropbox</a> account and save your .zip file.</b>
+          </td>
+        </tr>
+        <tr id="dropboxContainer" class="initHidden">
+          <td>
+          </td>
+          <td> 
+            Save your .zip file, in your local Dropbox folder.
+            <br><img class="instructions" src="./images/dropbox-1.png">
+            <br><br>Find your .zip file, in the Dropbox website.
+            <br><img class="instructions" src="./images/dropbox-2.png">
+          </td>
+        </tr>  
+        <tr>
+          <td><img class="createIcon" id="heroku" src="./images/icon-heroku2.png">
+          </td>
+          <td><b>Step 7:</b> Get a <a href="https://dashboard.heroku.com/">Heroku</a> account. Follow instructions to create and deploy a NodeJS app.</b>
+          </td>
+        </tr>
+        <tr id="herokuContainer" class="initHidden">
+          <td>
+          </td>
+          <td> 
+              Select "Node.js" and press the Create New App button.
+              <br><img class="instructions" src="./images/heroku-1.png">
+              <br><br>Choose a unique name and press the Create App button.
+              <br><img class="instructions" src="./images/heroku-2.png">
+              <br><br>Select Dropbox as the deployment method and press the Connect to Dropbox button.
+              <br><img class="instructions" src="./images/heroku-3.png">
+              <br><br>Sign in to Dropbox.
+              <br><img class="instructions" src="./images/heroku-4.png">
+              <br><br>Allow Heroku access to Dropbox.
+              <br><img class="instructions" src="./images/heroku-5.png">
+              <br><br>Unzip your myGbccModel.zip file to create a myGbccModel folder. Copy the contents of the myGbccModel folder to the Apps > Heroku > my-gbcc-model folder.
+              <br><img class="instructions" src="./images/heroku-6.png">
+              <br><br>Deploy your app by pressing the Deploy button. Open the app by pressing the Open App button.
+              <br><img class="instructions" src="./images/heroku-7.png">
+          </td>
+        </tr>  
+        <tr>
+          <td><img class="createIcon" id="arrow" src="./images/icon-arrow2.png">
+          </td>
+          <td><b>Step 8:</b> Go to the url for your model.</b>
+            <div id="viewUrlContainer" class="initHidden smallText">
+              <!--<span id="modelUrl"></span>-->
+              <b>Email address:</b>
+              <input type="text">
+              <button>Email the url and passcode</button>
+            </div>
+          </td>
+        </tr>
+        <tr id="arrowContainer" class="initHidden">
+          <td>
+          </td>
+          <td>
+            <img class="instructions" src="./images/arrow-1.png">
+          </td>
+        </tr>  
+      </table>
+    </form>
+    <div id='troubleshoot' class='initHidden'>
+    <h2>Troubleshoot</h2>
+      If there is an error like <span class='code'>There is already a global variable called STEP-SIZE</span>, 
+      this means that a
+      hubnet client variable is also identified as a global variable. Fix this problem by 
+      renaming the hubnet client variable to something like 'stepsz'. If listening
+      for "hubnet-message-tag = 'step-size'", then assign 'stepsz = hubnet-message';
+    </div>
+    <p>
+      <h2>Other</h2>
+      <a href="https://gbccstem.com">NetLogo GbCC Project Website</a>
+      <br><br><a href="https://www.remmler.org/gbcc/v3/">GbCC 3.0 Website</a>
+      <span style="font-size: 12px">
+      <br><br><a href="https://www.remmler.org/gbcc/v2/">GbCC 2.0 Website</a>,
+      <a href="https://www.remmler.org/gbcc/">GbCC 1.0 Website</a>
+    </span>
+      <br><br>c_remmler@yahoo.com
+  </body>
+</html>

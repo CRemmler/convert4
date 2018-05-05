@@ -1,0 +1,31 @@
+prim-name,input-type,input-name,output-type
+hide-graph, , ,
+show-graph, , ,
+set-data,(string),(data),
+import-file,(string),(filename),
+get-data, , ,(string)
+export-file,,,create-point,(string; list),(name; center),
+create-points,(list),(data),
+get-points,,,(list)
+delete-points,,,
+set-x,(string; number), (name; xcor),
+set-y,(string; number), (name; ycor),
+set-xy,(string; list), (name; center),
+get-x,(string),(name),(number)
+get-y,(string),(name),(number)
+get-xy,(string),(name),(list)
+get-objects,,,(list)
+create-objects,(list),(objects),
+get-object,(string),(name),(list)
+create-object,(list),(object),
+get-value,(string),(name),(number)
+get-object-type,(string),(name),(string)
+exists,(string),(name),(boolean)
+rename-object,(string; string),(old, new),
+delete-object,(string),(name),
+hide-object,(string),(name),
+show-object,(string),(name),
+graph-to-patch,(list),(coords),(list)
+patch-to-graph,(list),(coords),(list)
+eval-command,(string),(command),
+eval-reporter,(string),(command),(any)???

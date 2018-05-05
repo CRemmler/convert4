@@ -1,0 +1,209 @@
+<html>
+  <head>
+    <title>
+      GbCC 3.0 Programming Guide
+    </title>
+    <link rel="stylesheet" href="css/netlogo.css" type="text/css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style3.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+      jQuery(document).ready(function() {
+        //$(".room").css("display","none");
+        $("input").on("click",function() {
+          var id = $(this).attr("id");
+          console.log(id+" "+$(this).is(":checked"));
+          ($(this).is(":checked")) ? 
+            $("#"+id+"Container").css("display","block") : 
+            $("#"+id+"Container").css("display","none");  
+        });
+        $(".initHidden").css("display","none");
+      });
+    </script>
+    <style type="text/css">
+    .room { width: 500px; }
+    .wide { width: 700px; }
+    .normal { width: 350px; }		
+    img { margin-left: 1.5em; border-radius:0px;}	
+    .code {border: 6px solid yellow; padding-left: 5px; font-size: 14px; display:inline-block; margin-left: 1.5em}
+    
+    </style>
+  </head>
+  <body>
+    <h1>
+      NetLogo GbCC 3.0 Programming Guide
+    </h1>
+    <p><b>GbCC (Group-based Cloud Computing)</b> applications allow users to enter a room where everyone accesses 
+      their own instance of a particular NetLogo model, or participate in a group NetLogo model. 
+      Everyone can share data, in a gallery space.</p>
+      <p>The first user who enters the room has the role of <b>teacher</b>. 
+        Any user who enter a room after a teacher has the role of <b>student</b>.</p>
+    </p>
+    <h2>User Event Listeners</h2>
+      <p>When certain <b>events</b> occur, then <b>Reserved Procedures</b> are called.
+        Models do not require Reserved Procedures. </p>
+      <p><b>Teacher Reserved Procedures</b> are only called if the user is a teacher.
+      <b>User Reserved Procedures</b> are called on any user, (unless
+        that user is a teacher and there is an existing Teacher Reserved Procedure for that event).</p>
+        
+
+    
+    <h3><input id="teacherEntersRoom" type="checkbox"> Teacher Enters Room</h3>
+    <div id="teacherEntersRoomContainer" class="initHidden">
+      <div><img src="./images3/on-teacher-enter.png"></div>
+      <div class="code"> to gbcc-on-teacher-enter [ teacher-id ] <br> ;; show (word "teacher" teacher-id "entered")<br>end</div>
+    </div>
+  
+    <h3><input id="userEntersRoom" type="checkbox"> User Enters Room</h3>
+      <div id="userEntersRoomContainer" class="initHidden">
+      <div><img src="./images3/on-enter.png"></div>
+      <div class="code"> to gbcc-on-enter [ user-id ] <br> ;; show (word "user" user-id "entered")<br>end</div>
+    </div>
+    
+    <h3><input id="userExitsRoom" type="checkbox"> User Exits Room</h3>
+    <div id="userExitsRoomContainer" class="initHidden">
+      <div><img src="./images3/on-exit.png"></div>
+      <div class="code"> to gbcc-on-exit [ user-id ] <br> ;; show (word "user" user-id "exited")<br>end</div>
+    </div>
+    
+    
+    <h2>Share to Gallery</h2>
+    <h3><input id="broadcastView" type="checkbox"> Broadcast View to Gallery</h3>
+    <div id="broadcastViewContainer" class="initHidden">
+      <div><img src="./images3/share-view.png"></div>
+      <div class="code">gbcc:broadcast-view "My View"</div>
+    </div>
+    
+    <h3><input id="broadcastPlot" type="checkbox"> Broadcast Plot to Gallery</h3>
+    <div id="broadcastPlotContainer" class="initHidden">
+      <div><img src="./images3/share-plot.png"></div>
+      <div class="code">gbcc:broadcast-plot "Plot Number of Turtles"</div>
+    </div>
+    
+    <h3><input id="broadcastText" type="checkbox"> Broadcast Text to Gallery</h3>
+    <div id="broadcastTextContainer" class="initHidden">
+      <div><img src="./images3/share-text.png"></div>
+      <div class="code">gbcc:broadcast-text ":)"</div>
+    </div>
+            
+    <h3><input id="broadcastAvatar" type="checkbox"> Broadcast Avatar to Gallery</h3>
+    <div id="broadcastAvatarContainer" class="initHidden">
+      <div><img src="./images3/share-avatar.png"></div>
+      <div class="code">gbcc:broadcast-avatar "star" 45 "my-name""</div>
+    </div>
+
+    <h3><input id="clearBroadcast" type="checkbox"> Clear Broadcasts in Gallery</h3>
+    <div id="clearBroadcastContainer" class="initHidden">
+      <div><img src="./images3/share-clear.png"></div>
+      <div class="code">gbcc:clear-broadcast</div>
+    </div>
+    
+    <h2>Gallery Event Listeners</h2>
+    <h3><input id="onSelect" type="checkbox"> Select Canvas</h3>
+    <div id="onSelectContainer" class="initHidden">
+      <div><img src="./images3/on-select.png"></div>
+      <div class="code"> to gbcc-on-select [ user-id ] <br> ;; show (word "select canvas from " user-id)<br>end</div>
+      <br><br><div class="code"> to gbcc-on-teacher-select [ teacher-id ] <br> ;; show (word "select canvas from " teacher-id)<br>end</div>
+    </div>
+    <h3><input id="onDeselect" type="checkbox"> Deselect Canvas</h3>
+    <div id="onDeselectContainer" class="initHidden">
+      <div><img src="./images3/on-deselect.png"></div>
+      <div class="code"> to gbcc-on-deselect [ user-id ] <br> ;; show (word "deselect canvas from " user-id)<br>end</div>
+      <br><br><div class="code"> to gbcc-on-teacher-deselect [ teacher-id ] <br> ;; show (word "deselect canvas from " teacher-id)<br>end</div>
+    </div>
+    <h3><input id="onGo" type="checkbox"> Forever Select Canvas</h3>
+    <div id="onGoContainer" class="initHidden">
+      <div><img src="./images3/on-go.png"></div>
+      <div class="code"> to gbcc-on-go[ teacher-id ] <br> ;; show (word "forever select canvas from" user-id") <br>end</div>
+      <br><br><div class="code"> to gbcc-on-teacher-go[ teacher-id ] <br> ;; show (word "forever select canvas from" teacher-id") <br>end</div>0
+    </div>
+
+    <h2>Gallery Features</h2>
+    <h3><input id="scroll" type="checkbox"> Scroll through Layers on a Canvas</h3>
+    <div id="scrollContainer" class="initHidden">
+      <div><img src="./images3/scroll.png"></div>
+    </div>
+    
+    <h3><input id="listen" type="checkbox"> Listen or Ignore Broadcasts to Gallery</h3>
+    <div id="listenContainer" class="initHidden">
+      <p>Users can listen for updates to the gallery, or they can ignore updates. 
+      <br>Note: It is not possible to "ignore" when any canvas forever buttons are on.
+      <div><img src="./images3/listen-ignore.png"></div>
+    </div>
+    
+
+    <h2>Saving and Retrieving Data</h2>
+    
+    <h3><input id="set" type="checkbox"> Set</h3>
+    <div id="setContainer" class="initHidden">
+      <div><img src="./images3/set.png"></div>
+      <div class="code"> 
+      gbcc:set "code" "fd 2"
+      </div>
+    </div>
+    
+    <h3><input id="get" type="checkbox"> Get</h3>
+    <div id="getContainer" class="initHidden">
+      <div><img src="./images3/get.png"></div>
+      <div class="code"> 
+     show gbcc:get "code"
+      </div>
+    </div>
+    
+    <h3><input id="getFromUser" type="checkbox"> Get From User</h3>
+    <div id="getFromUserContainer" class="initHidden">
+      <div><img src="./images3/get-from-user.png"></div>
+      <div class="code"> to gbcc-on-select [ user-id ] <br>  show gbcc:get-from-user "code"<br>end</div>
+    </div>
+    
+    <h3><input id="store" type="checkbox"> Store</h3>
+    <div id="storeContainer" class="initHidden">
+      <div><img src="./images3/store.png"></div>
+      <div class="code"> 
+      gbcc:store
+      </div>
+    </div>
+    
+    <h3><input id="restore" type="checkbox"> Restore</h3>
+    <div id="restoreContainer" class="initHidden">
+      <div><img src="./images3/restore.png"></div>
+      <div class="code"> 
+     gbcc:restore
+      </div>
+    </div>
+    
+    <h3><input id="restoreFromUser" type="checkbox"> Restore From User</h3>
+    <div id="restoreFromUserContainer" class="initHidden">
+      <div><img src="./images3/restore-from-user.png"></div>
+      <div class="code"> to gbcc-on-select [ user-id ] <br> gbcc:restore-from-user "code"<br>end</div>
+    </div>
+    
+    <h2>Authoring</h2>
+    <h3><input id="desktop" type="checkbox"> Desktop NetLogo Environment with GbCC Extension</h3>
+    <div id="desktopContainer" class="initHidden">
+    <p>1. Install Desktop NetLogo. <a href="https://ccl.northwestern.edu/netlogo/">https://ccl.northwestern.edu/netlogo/</a></p>
+      <p>2. Download GbCC Extension. gbcc.jar</p>
+      <p>3. Create a gbcc folder in the netlogo 6.x / extensions folder.</p>
+      <p>4. Add the gbcc.jar file into the netlogo 6.x / extensions / gbcc folder</p>
+      <div><img src="./images3/desktop.png"></div>
+    </div>
+
+    <h3><input id="create" type="checkbox"> Create a NetLogo Model</h3>
+    <div id="createContainer" class="initHidden">
+      <p>1. Design Interface.</p>
+      <div><img src="./images3/create-1.png"></div>
+      <p>2. Write NetLogo code. Include gbcc extension.</p>
+      <div><img src="./images3/create-2.png"></div>
+      <p>3. Save as .nlogo file.</p>
+      <div><img src="./images3/create-3.png"></div>
+    </div>
+      
+    <h3><input id="test" type="checkbox"> Convert to a GbCC NetLogo Model. </h3>
+    <div id="testContainer" class="initHidden">
+      <p>1. Upload .nlogo file into the <a href="https://gbcc-convert-3.herokuapp.com/">Conversion Tool 3.0</a></p>
+      <p>2. Download Netlogo GbCC Model and deploy it.</p>
+    </div>
+
+    <p>
+  </body>
+</html>

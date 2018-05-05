@@ -1,0 +1,31 @@
+/* Contains HTML element overrides */
+
+table {
+  margin-bottom: 0;
+}
+
+table th, table td {
+  padding: 0;
+}
+
+table td {
+  border-top: none;
+}
+
+li {
+  color: inherit;
+  line-height: inherit;
+}
+
+/*
+ GENERAL ELEMENT OVERRIDES
+ */
+
+body, html {
+  background-color: #343434
+}
+
+body {
+  padding-top: 30px; /* 30px to make the container go all the way to the bottom of the topbar */
+}
+

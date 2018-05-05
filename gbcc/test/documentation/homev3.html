@@ -1,0 +1,64 @@
+<html>
+	<head>
+		<title>GbCC 3.0</title>
+		<link rel="stylesheet" href="css/netlogo.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="css/style3.css" />
+		<script type="text/javascript" src="gbcc/js/jquery.min.js"></script>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="js/convert.js"></script>
+		<style>
+
+		</style>
+		<script>
+			jQuery(document).ready(function() {
+				$("#addModel").on("click",function() {
+					alert("Email your model to c_remmler@yahoo.com, and I can post it. Thanks! - C");
+				});
+				$("#settings-container").hide();
+				$("#settings-icon").on("click", function() {
+					$("#settings-container").toggle();
+				});
+				$(".demo1").css("display","block");
+			});
+		</script>
+	</head>
+	<body>
+		<h1>NetLogo GbCC 3.0</h1>
+    <h2>Documentation</h2>
+    <a href="docs.html">NetLogo GbCC Dictionary</a>
+    <br><br><a href="programming.html">NetLogo GbCC Programming Guide</a>
+    <br><br><a href="extensions.html">NetLogo GbCC Extensions Guide</a>
+    <h2>GbCC Models Library</h2>
+		<div class="container">
+			<ul class="item">	
+					<li><a href="#" id="addModel"><img src="./images3/plus.png"><br>Add a Model</a></li>
+			</ul>
+		</div>
+		<h2>Create a GbCC Model</h2>
+		
+			<table>
+				<tr>
+					<td><img class="create-icon" src="./images3/icon-netlogo2.png"></a>
+					</td>
+					<td> <b>Step 1:</b> Create a model using <a href="https://ccl.northwestern.edu/netlogo/">NetLogo</a>. Save your model as a .nlogo file.
+					</td>
+				</tr>
+				<tr>
+					<td><img class="create-icon" src="./images3/icon-upload2.png"></a>
+					</td>
+					<td><b>Step 2:</b> Upload your .nlogo file and follow directions, using <a href="https://gbcc-convert-3.herokuapp.com/">Converter Tool 3.0</a>.
+					</td>
+				</tr>
+				<tr>
+					<td><img class="create-icon" id="url-icon" src="./images3/icon-arrow2.png">
+					</td>
+					<td><b>Step 3:</b> Go to the url for your model.</b>
+					</td>
+				</tr>
+			</table>
+
+    <h2>Other</h2>
+    <a href="./dev.html">In Development</a>
+    <br><br>c_remmler@yahoo.com
+	</body>
+</html>

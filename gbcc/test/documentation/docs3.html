@@ -1,0 +1,358 @@
+<body>
+  <title>
+      GbCC 3.0 Dictionary
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/netlogo.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="css/style3.css" />
+  <body>    
+    <h1>
+      NetLogo GbCC 3.0 Dictionary
+    </h1>
+    <h2>
+      Overview
+    </h2>
+    <p>
+      GbCC (Group-based Cloud Computing) applications allow users to enter
+      a room where everyone accesses their own instance
+      of a particular NetLogo model. Everyone can share
+      data about their model, in a gallery space.
+    <h3>
+      GbCC Primitives and Commands
+    </h3>
+    <p id="turtlegroup">
+      <a href="#gbcc-set">gbcc:set</a> 
+      <a href="#gbcc-get">gbcc:get</a> 
+      <a href="#gbcc-get-from-user">gbcc:get-from-user</a> 
+      <a href="#gbcc-store-globals">gbcc:store-globals</a> 
+      <a href="#gbcc-restore-globals">gbcc:restore-globals</a> 
+      <a href="#gbcc-restore-globals-from-user">gbcc:restore-globals-from-user</a>       
+      <a href="#gbcc-broadcast-view">gbcc:broadcast-view</a>    
+      <a href="#gbcc-broadcast-text">gbcc:broadcast-text</a>    
+      <a href="#gbcc-broadcast-plot">gbcc:broadcast-plot</a>    
+      <a href="#gbcc-broadcast-text">gbcc:broadcast-avatar</a>    
+      <a href="#gbcc-broadcast-plot">gbcc:clear-broadcast</a>    
+      <a href="#gbcc-observer-code">gbcc:compile-observer-code</a>
+      <a href="#gbcc-observer-code">gbcc:run-observer-code</a>
+      <a href="#gbcc-turtle-code">gbcc:compile-turtle-code</a>
+      <a href="#gbcc-turtle-code">gbcc:run-turtle-code</a>
+      <a href="#gbcc-patch-code">gbcc:compile-patch-code</a>
+      <a href="#gbcc-patch-code">gbcc:run-patch-code</a>
+    <h3>
+      GbCC Reserved Procedures
+    </h3>
+    <p id="patchgroup">
+      <a href="#gbcc-on-enter">gbcc-on-enter</a>
+      <a href="#gbcc-on-enter">gbcc-on-teacher-enter</a>
+      <a href="#gbcc-on-exit">gbcc-on-exit</a>
+      <a href="#gbcc-on-exit">gbcc-on-teacher-exit</a>
+      <a href="#gbcc-on-select">gbcc-on-select</a>  
+      <a href="#gbcc-on-select">gbcc-on-teacher-select</a>        
+      <a href="#gbcc-on-deselect">gbcc-on-deselect</a>
+      <a href="#gbcc-on-deselect">gbcc-on-teacher-deselect</a>    
+      <a href="#gbcc-on-go">gbcc-on-go</a>
+      <a href="#gbcc-on-go">gbcc-on-teacher-go</a>    
+    </div>
+    
+    <h2>
+      <a>GbCC Primitives and Commands</a>
+    </h2><!-- ======================================== -->
+    
+    <div class="dict_entry" id="gbcc-set">
+      <h3><a>gbcc:set</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:set <i>key value</i></span></h4>
+      <p>Stores a value, which is accessible by it's key.
+      <pre>
+gbcc:set "code" "fd 3"
+      </pre>
+    </div>
+        
+    <div class="dict_entry" id="gbcc-get">
+      <h3> <a>gbcc:get</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get <i>key</i></span></h4>
+      <p>Returns a value, based on it's key.
+      <pre>
+show gbcc:get "code"
+      </pre>
+    </div>
+        
+    <div class="dict_entry" id="gbcc-get-from-user">
+      <h3><a>gbcc:get-from-user</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get-from-user <i>user-id key</i></span></h4>
+      <p>Returns a value, based on it's user-id and key.
+      <pre>
+to gbcc-on-select [user-id]
+  show gbcc:get-from-user user-id "code"
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-store-globals">
+      <h3><a>gbcc:store-globals</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:store-globals</span></h4>
+      <p>Stores all global values.
+      <pre>
+gbcc:store-globals
+      </pre>
+    </div>
+      
+    <div class="dict_entry" id="gbcc-restore-globals">
+      <h3><a>gbcc:restore-globals</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:restore-globals</span></h4>
+      <p>Gets stored values and assigns them to their corresponding global variables.
+      <pre>
+gbcc:restore-globals
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-restore-globals-from-user">
+      <h3><a>gbcc:restore-globals-from-user</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:restore-globals-from-user <i>user-id</i></span></h4>
+      <p>Gets stored values, based on user-id, and assigns them to their corresponding global variables.
+      <pre>
+to gbcc-on-select [user-id]
+  gbcc:restore-globals-from-user user-id
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-broadcast-view">
+      <h3><a>gbcc:broadcast-view</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:broadcast-view <i>name</i></span></h4>
+      <p>Sends data to the user's canvas, in the gallery. This data is displayed
+        in everyone's gallery.
+        User can send a screenshot of the view. 
+      <pre>
+  gbcc:broadcast-view "my-view"
+      </pre>
+    </div>
+    <div class="dict_entry" id="gbcc-broadcast-text">
+      <h3><a>gbcc:broadcast-text</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:broadcast-text <i>name</i></span></h4>
+      <p>Sends data to the user's canvas, in the gallery. This data is displayed
+        in everyone's gallery.
+        User can send text. 
+      <pre>
+  gbcc:broadcast-text "my-text"
+      </pre>
+    </div>
+
+    <div class="dict_entry" id="gbcc-broadcast-plot">
+      <h3><a>gbcc:broadcast-to-plot</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:broadcast-plot <i>name</i></span></h4>
+      <p>Sends data to the user's canvas, in the gallery. This data is displayed
+        in everyone's gallery.
+        User can send a screenshot a plot. 
+      <pre>
+  gbcc:broadcast-plot "my-plot-name"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-broadcast-avatar">
+      <h3><a>gbcc:broadcast-avatar</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:broadcast-avatar <i>shape color text</i></span></h4>
+      <p>Sends data to the user's canvas, in the gallery. This data is displayed
+        in everyone's gallery.
+        User can send a turtle shape, an integer representing a color and text that can appear below the shape. 
+      <pre>
+  gbcc:broadcast-avatar "star" 15 "my-name"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="clear-broadcast">
+      <h3><a>gbcc:clear-broadcast</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:clear-broadcast</span></h4>
+      <p>Remove data the user's canvas, in the gallery. Data is cleared
+        in everyone's gallery.
+      <pre>
+  gbcc:clear-broadcast
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-observer-code">
+      <h3><a>gbcc:compile-observer-code<br>gbcc:run-observer-code</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <h4><span class="prim_example">gbcc:compile-observer-code <i>key value</i></span></h4>
+      <h4><span class="prim_example">gbcc:run-observer-code <i>key</i></span></h4>
+      <p>Compile observer code, one time. Run compiled code, repeatedly.
+      <pre>
+gbcc:compile-observer-code "code" "show 3"
+<br>gbcc:run-observer-code "code"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-turtle-code">
+      <h3><a>gbcc:compile-turtle-code<br>gbcc:run-turtle-code</a></h3>
+      <img alt="Turtle Command" src="images/turtle.png">
+      <h4><span class="prim_example">gbcc:compile-turtle-code <i>who key value</i></span></h4>
+      <h4><span class="prim_example">gbcc:run-turtle-code <i>who key</i></span></h4>
+      <p>Compile turtle code, one time. Run compiled code, repeatedly.
+      <pre>
+gbcc:compile-turtle-code who "code" "fd 5"
+<br>gbcc:run-turtle-code who "code"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-patch-code">
+      <h3><a>gbcc:compile-patch-code<br>gbcc:run-patch-code</a></h3>
+      <img alt="Patch Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:compile-patch-code <i>pxcor pycor key value</i></span></h4>
+      <h4><span class="prim_example">gbcc:run-patch-code <i>pxcor pycor key</i></span></h4>
+      <p>Compile patch code, one time. Run compiled code, repeatedly.
+      <pre>
+gbcc:compile-patch-code pxcor pycor "code" "set pcolor orange"
+<br>gbcc:run-patch-code pxcor pycor "code"
+      </pre>
+    </div>
+    
+    <h2>
+      <a>GbCC Reserved Procedures</a>
+    </h2>
+    
+    <div class="dict_entry" id="gbcc-on-enter">
+      <h3><a>gbcc-on-enter<br>gbcc-on-teacher-enter</a></h3>
+      <h4><span class="prim_example">gbcc-on-enter [ user-id ]</span>
+        <span class="prim_example">gbcc-on-teacher-enter [ user-id ]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when any
+        user first enters the room.
+      <pre>
+to gbcc-on-enter [user-id]
+  show "This is called when a student enters."
+  show "This is called when a teacher enters..."
+  show"...as long as there is not a defined gbcc-on-teacher-enter procedure."
+end
+
+to gbcc-on-teacher-enter [user-id]
+  show "This is called when a teacher enters."
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-on-exit">
+      <h3><a>gbcc-on-exit<br>gbcc-on-teacher-exit</a></h3>
+      <h4><span class="prim_example">gbcc-on-exit [ user-id ]</span>
+        <span class="prim_example">gbcc-on-teacher-exit [ user-id ]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when any
+        user exits the room.
+      <pre>
+to gbcc-on-exit [user-id]
+  show "This is called when a student exits."
+  show "This is called when a teacher exits..."
+  show"...as long as there is not a defined gbcc-on-teacher-exit procedure."
+end
+
+to gbcc-on-teacher-exit [user-id]
+  show "This is called when a teacher exit."
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-on-select">
+      <h3><a>gbcc-on-select<br>gbcc-on-teacher-select</a></h3>
+      <h4><span class="prim_example">gbcc-on-select [ user-id ]</span>
+        <span class="prim_example">gbcc-on-teacher-select [ user-id ]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when a
+        user selects a canvas in the gallery.
+      <pre>
+to gbcc-on-select [user-id]
+  show "This is called when a student selects a canvas."
+  show "This is called when a teacher selects a canvas..."
+  show"...as long as there is not a defined gbcc-on-teacher-select procedure."
+end
+
+to gbcc-on-teacher-select [user-id]
+  show "This is called when a teacher selects a canvas."
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-on-deselect">
+      <h3><a>gbcc-on-deselect<br>gbcc-on-teacher-deselect</a></h3>
+      <h4><span class="prim_example">gbcc-on-deselect [ user-id ]</span>
+        <span class="prim_example">gbcc-on-teacher-deselect [ user-id ]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when a
+        user deselects a canvas in the gallery.
+      <pre>
+to gbcc-on-deselect [user-id]
+  show "This is called when a student deselects a canvas."
+  show "This is called when a teacher deselects a canvas..."
+  show "...as long as there is not a defined gbcc-on-teacher-deselect procedure."
+end
+
+to gbcc-on-teacher-deselect [user-id]
+  show "This is called when a teacher deselects a canvas."
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-on-go">
+      <h3><a>gbcc-on-go<br>gbcc-on-teacher-go</a></h3>
+      <h4><span class="prim_example">gbcc-on-go [ user-id ]</span>
+        <span class="prim_example">gbcc-on-teacher-go [ user-id ]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when a
+        user selects a canvas in the gallery, by clicking on it's forever icon.
+        This procedure will be called, continuously, until the canvas is deselected.
+      <pre>
+;; runs continuously
+to gbcc-on-go [user-id]
+  show "This is called when a student's canvas is selected."
+  show "This is called when a teacher's canvas is selected..."
+  show "...as long as there is not a defined gbcc-on-teacher-deselect procedure."
+end
+  
+;; runs continuously
+to gbcc-on-teacher-go [user-id]
+  show "This is called when a teacher's canvas is selected."
+end
+      </pre>
+    </div>
+  </body>
+</html>

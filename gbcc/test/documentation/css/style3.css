@@ -1,0 +1,183 @@
+body { 
+  font-family: Gill Sans Extrabold, sans-serif;  padding: 20px;
+}
+.item {
+  overflow:hidden;
+  list-style-type: none;
+}
+img { 	
+  border-radius: 15px; 
+  margin:5px 0px 5px 0px;
+}
+.smallIcon {
+  position: relative;
+  top: 18px;
+}
+a {
+  text-decoration: none;
+}
+.instructions {
+  border-radius: 0px;
+  border:2px solid #ddd;
+}
+.createIcon {
+  border:5px solid #5171ba;
+  width:60px;
+  height:60px;
+  margin:5px;
+  cursor: pointer;
+}
+.createIcon:hover {
+  border: 5px solid yellow;
+}
+.notice { font-size: 14px; color:red; }
+#downloadDisabled {
+  cursor: default; 
+  border: 5px solid #5171ba;
+}
+.smallText { font-size: 14px;}
+.greenText { color: green; }
+.redText { color: green; }
+
+h1 {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 24px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 26.4px;
+  background-color: #5171ba;
+  border: 2px solid black;
+}
+h2 {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 20px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 20.4px;
+  border: 2px solid black;
+  color: white;
+}
+h3 {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 15.4px;
+  background-color: #eee;
+  padding: 5px;
+  
+  border: 2px solid gray;
+}
+p {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 20px;
+}
+blockquote {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 21px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 30px;
+}
+pre {
+	font-family: monospace;
+	font-size: 13px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 18.5714px;
+  background-color: #eee;
+}
+.container {
+  //border-radius: 10px;
+}
+.item {
+  overflow:hidden;
+  list-style-type: none;
+}
+img { 	
+  border-radius: 15px; 
+  margin:5px 0px 5px 0px;
+}
+.smallIcon {
+  position: relative;
+  top: 18px;
+}
+li { 
+  //border: 2px dashed gray;
+  border-radius: 15px;
+  padding: 15px; 
+  width: 200px;
+  height: 200px;
+  text-align: left;
+  float:left;
+  margin: 10px;
+}
+li:hover {
+  //border: 2px solid gray;
+}
+a {
+  text-decoration: none;
+}
+.create-icon {
+  border:2px solid black;
+  width:60px;
+  height:60px;
+  margin:5px;
+}
+:link {
+  color: ##006400
+}
+:visited {
+  color: #41924B;
+}
+
+/*
+.red { border: 2px solid red; height:1000px; }
+.orange{ border: 2px solid orange; }
+.yellow { border: 2px solid yellow; }
+.green{ border: 2px solid #00cc00; }
+.blue { border: 2px solid blue; }
+.indigo { border: 2px solid #9933ff; }
+.violet{ border: 2px solid #cc3399; }*/
+.demo-container-wrapper {padding:0px;}
+.demo-container { position: relative; border: 1px solid black; width:500px; border-radius: 10px; padding:10px;}
+#container0 {float:left;}
+#container1 {float:right;}
+#settings {padding:0px 0px 0px 20px;}
+.demo {position: absolute}
+#demo0a { top:150px; left:260px;}
+#demo0b { top:260px; left: 202px; }
+.demo1 { top:280px; left:12px; width:498; }
+.demo2 { top:364px; left:48px; }
+.demo3a { top:364px; left:156px; }
+.demo3 { top:364px; left:265px; }
+.demo4 { top:364px; left:265px; }
+.demo5 { top:328px; left:480px; }
+.demo5a { top:348px; left:17px; width:488px; border-radius: 0px; }
+.demo7 { top:-20px; left:-20px; }
+
+.basicModel { width:475px; }
+.basicModelEmpty { width:475px; }
+.basicTabs { position: absolute; top:277px; left:13px; }
+.tabCover { position: absolute; top:280px; left: 5px; }
+.user {position: absolute; top:50px; left:10px; width:190px;}
+.demo1.notes { top:0px; left:0px; }
+.demo2.notes { top:180px; left:6px; }
+.demo3.notes { top:360px; left:148px; }
+.demo4.notes { top:368px; left:360px; }
+.demo5.notes { top:166px; left:416px; }
+.notes {position: absolute;}
+.basicModel.notes { top:30px; left:375px; width:136px;}
+.galleryTab.notes { top:290px; left:285px; }
+.allTabs.notes { top:207px; left:131px;}
+.viewControls.notes { position: absolute; top:132px; left:272px; }
+.code {font-family: "Courier New", Courier; }

@@ -1,0 +1,493 @@
+/*
+ * General-purpose widget styles, applied regardless of what the widget "theme" is
+ */
+
+.netlogo-model {
+    display: flex;
+    padding: 20px;
+    flex-flow: column;
+    font-size: 12px;
+    font-family: "Lucida Grande", sans-serif;
+    outline: none;
+}
+
+.netlogo-header {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.netlogo-widget {
+    box-sizing: border-box;
+    background-color: #CCC;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.netlogo-command,.netlogo-input {
+    user-select: none;
+}
+
+.netlogo-command:hover,.netlogo-input:hover {
+  box-shadow: 0 0 6px 3px rgba(15, 15, 15, .40);
+  cursor:     pointer;
+  z-index:    3;
+}
+
+.netlogo-command.netlogo-disabled:hover {
+  box-shadow: none;
+  cursor:     default;
+}
+
+.netlogo-tab-area {
+  margin-top: 25px;
+}
+
+.netlogo-tab {
+  display: block;
+  background-color: #BCBCE5;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyIDEiPjxwb2x5Z29uIHBvaW50cz0iMCwwIDIsMCAxLDEiIGZpbGw9InJnYig4Myw4Myw4MykiLz4gPC9zdmc+");
+  background-position: 97% 50%;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  border-width: 2px;
+  border-bottom-width: 0;
+  border-style: solid;
+  padding: 7px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.netlogo-tab.netlogo-active {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyIDEiPjxwb2x5Z29uIHBvaW50cz0iMCwxIDIsMSAxLDAiIGZpbGw9InJnYig4Myw4Myw4MykiLz4gPC9zdmc+");
+}
+
+.netlogo-tab:first-child {
+  border-radius: 10px 10px 0px 0px;
+}
+
+.netlogo-tab:last-child, .netlogo-tab-content:last-child {
+  border-radius: 0px 0px 10px 10px;
+  border-bottom-width: 2px;
+}
+
+.netlogo-tab:hover  {
+  background-color: #D3D3EE;
+}
+
+.netlogo-tab.netlogo-active:hover  {
+  background-color: #9E99FD;
+}
+
+.netlogo-tab input[type=checkbox] {
+  display: none;
+}
+
+.netlogo-tab-text {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  user-select: none;
+}
+
+.netlogo-tab-content {
+  margin-top: 0;
+  border: 0 solid #242479;
+  border-left-width: 2px;
+  border-right-width: 2px;
+}
+
+.unselectable {
+  user-select: none;
+}
+
+.growing {
+  animation-name: grow;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+}
+
+.shrinking {
+  animation-name: grow;
+  animation-direction: reverse;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-in;
+}
+
+@keyframes grow {
+  0% {
+    max-height: 0;
+  }
+  100% {
+    max-height: 100%;
+  }
+}
+
+.netlogo-model-text {
+    background-color: white;
+}
+
+.netlogo-model-masthead {
+  flex-grow: 1;
+  margin: 0 10px 0 0;
+  width: 350px;
+}
+
+.netlogo-model-masthead > form {
+  margin: 0 auto;
+}
+
+.netlogo-model-title {
+  background-color: initial;
+  margin: 0 70px;
+  overflow: hidden;
+  padding: 0 8px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.netlogo-title-input {
+  font-size: 1.5em;
+  font-weight: bold;
+  letter-spacing: normal;
+  margin: 0 5%;
+  text-align: center;
+  width: 350px;
+}
+
+.netlogo-code-container {
+    display: flex;
+    flex-flow: column;
+    background-color: white;
+    margin-top: 0;
+}
+
+.netlogo-ugly-button {
+  text-align: center;
+  background-color: rgb(240, 240, 240);
+  border-color: rgb(238, 238, 238);
+}
+
+.netlogo-recompilation-button {
+  width: 30%;
+  margin: 12px auto;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.netlogo-info-editor {
+  border: 1px solid black;
+  height: 500px;
+}
+
+.netlogo-info {
+  flex: 1;
+  margin-top: 0;
+  padding-top: 10px;
+  padding: 15px;
+}
+
+.netlogo-command-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 175px;
+  padding: 6px 8px;
+}
+
+/* I don't actually understand why setting `width` here does what it does.  Without it, if you fill up the Command
+ * Center with text, instead of becoming horizontally scrollable, the input grows in width, even if it means becoming
+ * larger than the input's container.  So the input (rather than the text) just flows off the side of the screen.
+ * If I go down a level in the CSS and set the width on the CodeMirror instance directly, that kind of fixes the
+ * problem, but only if I know the expect width that I want (which I don't).  However, if I come here and set the
+ * width to *any* numeric value, the input always fits exactly the amount of space it's supposed to use.  Fricken weird.
+ * --JAB (10/12/17)
+ */
+.netlogo-command-center-editor {
+  height: 1.25em;
+  flex-grow: 1;
+  width: 42px; /* Arbitrary as hell; see comment above. --JAB (10/12/17) */
+}
+
+.netlogo-command-center-editor .CodeMirror {
+  border: 1px solid #878782;
+  height: auto;
+}
+
+.netlogo-output-widget {
+  display: flex;
+  padding: 5px;
+}
+
+.netlogo-output-area {
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: white;
+  margin: 0px;
+  overflow: auto;
+}
+
+.netlogo-command-center-input {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.netlogo-speed-slider {
+  background-color: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  margin: 15px auto 0 auto;
+  width: 75%;
+}
+
+.netlogo-widget input[type=range]::-ms-tooltip {
+  display: none;
+}
+
+.netlogo-speed-slider input {
+  border: none;
+  width: 100%;
+}
+
+.netlogo-model input[type=range] {
+    cursor: pointer;
+    cursor: grab;
+}
+
+.netlogo-model input[type=range]:active {
+    cursor: pointer;
+    cursor: grabbing;
+}
+
+.netlogo-tick-counter {
+    background-color: #F4F4F4;
+    font-size: 13px;
+    margin: 3px;
+    border: none;
+    height: 15px;
+}
+
+.netlogo-button {
+    border: inherit;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0px;
+}
+
+.netlogo-disabled, .interface-unlocked {
+  color: #707070;
+}
+
+.netlogo-button.clear-button {
+    padding: 5px;
+}
+
+.netlogo-button .netlogo-label {
+    /* For some reason, Safari doesn't like justify-content in buttons,
+       we have to resort to putting a span in the button that can then be
+       centered.
+       BCH 11/14/2014 */
+    margin: auto;
+}
+
+.netlogo-action-key {
+  color:    grey;
+  position: absolute;
+  right:    6px;
+  top:      5px;
+}
+
+.netlogo-action-key.netlogo-focus {
+  color: black;
+}
+
+.netlogo-button:active, .netlogo-forever-button.netlogo-active {
+    background-color: gray;
+    color: white;
+}
+
+.netlogo-forever-button .netlogo-forever-icon {
+  background-image:  url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQzOC41NDIgNDM4LjU0MiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDM4LjU0MiA0MzguNTQyOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTQyNy40MDgsMTkuNjk3Yy03LjgwMy0zLjIzLTE0LjQ2My0xLjkwMi0xOS45ODYsMy45OTlsLTM3LjExNiwzNi44MzRDMzQ5Ljk0LDQxLjMwNSwzMjYuNjcyLDI2LjQxMiwzMDAuNSwxNS44NDggICBDMjc0LjMyOCw1LjI4NSwyNDcuMjUxLDAuMDAzLDIxOS4yNzEsMC4wMDNjLTI5LjY5MiwwLTU4LjA1Miw1LjgwOC04NS4wOCwxNy40MTdjLTI3LjAzLDExLjYxLTUwLjM0NywyNy4yMTUtNjkuOTUxLDQ2LjgyICAgYy0xOS42MDUsMTkuNjA3LTM1LjIxNCw0Mi45MjEtNDYuODI0LDY5Ljk0OUM1LjgwNywxNjEuMjE5LDAsMTg5LjU3NSwwLDIxOS4yNzFjMCwyOS42ODcsNS44MDcsNTguMDUsMTcuNDE3LDg1LjA3OSAgIGMxMS42MTMsMjcuMDMxLDI3LjIxOCw1MC4zNDcsNDYuODI0LDY5Ljk1MmMxOS42MDQsMTkuNTk5LDQyLjkyMSwzNS4yMDcsNjkuOTUxLDQ2LjgxOGMyNy4wMjgsMTEuNjExLDU1LjM4OCwxNy40MTksODUuMDgsMTcuNDE5ICAgYzMyLjczNiwwLDYzLjg2NS02Ljg5OSw5My4zNjMtMjAuN2MyOS41LTEzLjc5NSw1NC42MjUtMzMuMjYsNzUuMzc3LTU4LjM4NmMxLjUyLTEuOTAzLDIuMjM0LTQuMDQ1LDIuMTM2LTYuNDI0ICAgYy0wLjA4OS0yLjM3OC0wLjk5OS00LjMyOS0yLjcxMS01Ljg1MmwtMzkuMTA4LTM5LjM5OWMtMi4xMDEtMS43MTEtNC40NzMtMi41NjYtNy4xMzktMi41NjZjLTMuMDQ1LDAuMzgtNS4yMzIsMS41MjYtNi41NjYsMy40MjkgICBjLTEzLjg5NSwxOC4wODYtMzAuOTMsMzIuMDcyLTUxLjEwNyw0MS45NzdjLTIwLjE3Myw5Ljg5NC00MS41ODYsMTQuODM5LTY0LjIzNywxNC44MzljLTE5Ljc5MiwwLTM4LjY4NC0zLjg1NC01Ni42NzEtMTEuNTY0ICAgYy0xNy45ODktNy43MDYtMzMuNTUxLTE4LjEyNy00Ni42ODItMzEuMjYxYy0xMy4xMy0xMy4xMzUtMjMuNTUxLTI4LjY5MS0zMS4yNjEtNDYuNjgyYy03LjcwOC0xNy45ODctMTEuNTYzLTM2Ljg3NC0xMS41NjMtNTYuNjcxICAgYzAtMTkuNzk1LDMuODU4LTM4LjY5MSwxMS41NjMtNTYuNjc0YzcuNzA3LTE3Ljk4NSwxOC4xMjctMzMuNTQ3LDMxLjI2MS00Ni42NzhjMTMuMTM1LTEzLjEzNCwyOC42OTMtMjMuNTU1LDQ2LjY4Mi0zMS4yNjUgICBjMTcuOTgzLTcuNzA3LDM2Ljg3OS0xMS41NjMsNTYuNjcxLTExLjU2M2MzOC4yNTksMCw3MS40NzUsMTMuMDM5LDk5LjY0NiwzOS4xMTZsLTM5LjQwOSwzOS4zOTQgICBjLTUuOTAzLDUuNzExLTcuMjMxLDEyLjI3OS00LjAwMSwxOS43MDFjMy4yNDEsNy42MTQsOC44NTYsMTEuNDIsMTYuODU0LDExLjQyaDEyNy45MDZjNC45NDksMCw5LjIzLTEuODA3LDEyLjg0OC01LjQyNCAgIGMzLjYxMy0zLjYxNiw1LjQyLTcuODk4LDUuNDItMTIuODQ3VjM2LjU1QzQzOC41NDIsMjguNTU4LDQzNC44NCwyMi45NDMsNDI3LjQwOCwxOS42OTd6IiBmaWxsPSIjMDAwMDAwIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
+  background-repeat: no-repeat;
+  background-size:   10px 10px;
+  bottom:            5px;
+  height:            10px;
+  position:          absolute;
+  right:             5px;
+  width:             10px;
+}
+
+.netlogo-disabled .netlogo-forever-icon {
+  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQzOC41NDIgNDM4LjU0MiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDM4LjU0MiA0MzguNTQyOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTQyNy40MDgsMTkuNjk3Yy03LjgwMy0zLjIzLTE0LjQ2My0xLjkwMi0xOS45ODYsMy45OTlsLTM3LjExNiwzNi44MzRDMzQ5Ljk0LDQxLjMwNSwzMjYuNjcyLDI2LjQxMiwzMDAuNSwxNS44NDggICBDMjc0LjMyOCw1LjI4NSwyNDcuMjUxLDAuMDAzLDIxOS4yNzEsMC4wMDNjLTI5LjY5MiwwLTU4LjA1Miw1LjgwOC04NS4wOCwxNy40MTdjLTI3LjAzLDExLjYxLTUwLjM0NywyNy4yMTUtNjkuOTUxLDQ2LjgyICAgYy0xOS42MDUsMTkuNjA3LTM1LjIxNCw0Mi45MjEtNDYuODI0LDY5Ljk0OUM1LjgwNywxNjEuMjE5LDAsMTg5LjU3NSwwLDIxOS4yNzFjMCwyOS42ODcsNS44MDcsNTguMDUsMTcuNDE3LDg1LjA3OSAgIGMxMS42MTMsMjcuMDMxLDI3LjIxOCw1MC4zNDcsNDYuODI0LDY5Ljk1MmMxOS42MDQsMTkuNTk5LDQyLjkyMSwzNS4yMDcsNjkuOTUxLDQ2LjgxOGMyNy4wMjgsMTEuNjExLDU1LjM4OCwxNy40MTksODUuMDgsMTcuNDE5ICAgYzMyLjczNiwwLDYzLjg2NS02Ljg5OSw5My4zNjMtMjAuN2MyOS41LTEzLjc5NSw1NC42MjUtMzMuMjYsNzUuMzc3LTU4LjM4NmMxLjUyLTEuOTAzLDIuMjM0LTQuMDQ1LDIuMTM2LTYuNDI0ICAgYy0wLjA4OS0yLjM3OC0wLjk5OS00LjMyOS0yLjcxMS01Ljg1MmwtMzkuMTA4LTM5LjM5OWMtMi4xMDEtMS43MTEtNC40NzMtMi41NjYtNy4xMzktMi41NjZjLTMuMDQ1LDAuMzgtNS4yMzIsMS41MjYtNi41NjYsMy40MjkgICBjLTEzLjg5NSwxOC4wODYtMzAuOTMsMzIuMDcyLTUxLjEwNyw0MS45NzdjLTIwLjE3Myw5Ljg5NC00MS41ODYsMTQuODM5LTY0LjIzNywxNC44MzljLTE5Ljc5MiwwLTM4LjY4NC0zLjg1NC01Ni42NzEtMTEuNTY0ICAgYy0xNy45ODktNy43MDYtMzMuNTUxLTE4LjEyNy00Ni42ODItMzEuMjYxYy0xMy4xMy0xMy4xMzUtMjMuNTUxLTI4LjY5MS0zMS4yNjEtNDYuNjgyYy03LjcwOC0xNy45ODctMTEuNTYzLTM2Ljg3NC0xMS41NjMtNTYuNjcxICAgYzAtMTkuNzk1LDMuODU4LTM4LjY5MSwxMS41NjMtNTYuNjc0YzcuNzA3LTE3Ljk4NSwxOC4xMjctMzMuNTQ3LDMxLjI2MS00Ni42NzhjMTMuMTM1LTEzLjEzNCwyOC42OTMtMjMuNTU1LDQ2LjY4Mi0zMS4yNjUgICBjMTcuOTgzLTcuNzA3LDM2Ljg3OS0xMS41NjMsNTYuNjcxLTExLjU2M2MzOC4yNTksMCw3MS40NzUsMTMuMDM5LDk5LjY0NiwzOS4xMTZsLTM5LjQwOSwzOS4zOTQgICBjLTUuOTAzLDUuNzExLTcuMjMxLDEyLjI3OS00LjAwMSwxOS43MDFjMy4yNDEsNy42MTQsOC44NTYsMTEuNDIsMTYuODU0LDExLjQyaDEyNy45MDZjNC45NDksMCw5LjIzLTEuODA3LDEyLjg0OC01LjQyNCAgIGMzLjYxMy0zLjYxNiw1LjQyLTcuODk4LDUuNDItMTIuODQ3VjM2LjU1QzQzOC41NDIsMjguNTU4LDQzNC44NCwyMi45NDMsNDI3LjQwOCwxOS42OTd6IiBmaWxsPSIjODA4MDgwIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
+}
+
+.netlogo-button-agent-context {
+  font-size: 11px;
+  left:      8px;
+  position:  absolute;
+  top:       5px;
+}
+
+.netlogo-disabled .netlogo-button-agent-content {
+  color: #808080;
+}
+
+.netlogo-text-box {
+    background-color: white;
+    border: none;
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: "Lucida Grande", sans-serif;
+}
+
+.netlogo-switcher {
+    display: flex;
+    align-items: center;
+}
+
+.netlogo-slider {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.netlogo-slider:hover {
+    cursor: default;
+}
+
+.netlogo-slider input[type=range] {
+  background-color: transparent;
+  height: 22px;
+  margin: 0px;
+  margin-bottom: -3px;
+  margin-top: -1px;
+  padding: 0px;
+  width: 100%;
+}
+
+.netlogo-label {
+  margin: 0 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.netlogo-slider-label {
+  display: flex;
+  justify-content: space-between;
+}
+
+.netlogo-slider-label .netlogo-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.netlogo-slider-label .netlogo-slider-value {
+  flex: 0 0 auto;
+}
+
+.netlogo-slider-label input[type=number] {
+    margin: 0px;
+    border: 1px;
+    padding: 0px;
+}
+
+.netlogo-monitor {
+    padding: 2px 4px;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+}
+
+.netlogo-monitor > .netlogo-value {
+  background-color: white;
+  min-height: 11px;
+  padding: 2px 2px;
+}
+
+.netlogo-value {
+    overflow: hidden;
+}
+
+.netlogo-code {
+  border: 1px solid black;
+}
+
+.netlogo-code-tab {
+  height: 500px;
+}
+
+.netlogo-input-box {
+    padding: 2px 4px;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+}
+
+.netlogo-multiline-input {
+  flex-grow: 1;
+  height:    0; /* This is a hack to get Input widget labels the right heights in Firefox --JAB (11/23/17) */
+  width:     auto; /* This is a hack to get input type="number" widgets sized correctly in Firefox -JMB Jan 2018 */
+  margin:    4px;
+  resize:    none;
+}
+
+.netlogo-chooser {
+    padding: 2px 4px;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+}
+
+.netlogo-plot {
+    box-sizing: content-box; /* otherwise border gets cut off -- BCH 11/9/2014 */
+    border: 1px solid black;
+    overflow: visible; /* must come after the .netlogo-widget declaration - JMB November 2017 */
+}
+
+.highcharts-container {
+  overflow: visible !important; /* Let our context-menus be free - JMB November 2017 */
+}
+
+.netlogo-forever-button > input {
+    display: none;
+}
+
+.netlogo-subheader {
+  align-items: center;
+  display: flex;
+  flex-flow: column;
+  flex-grow: 0;
+  white-space: nowrap;
+}
+
+.netlogo-export-wrapper {
+  align-items: center;
+  display: flex;
+  flex-grow: 0;
+  white-space: nowrap;
+}
+
+.netlogo-widget-error {
+  color: red;
+}
+
+.netlogo-widget-error:hover {
+  cursor: pointer;
+}
+
+.CodeMirror {
+  height: auto;
+}
+
+.CodeMirror-scroll.cm-disabled {
+  background-color: #ebebe4;
+}

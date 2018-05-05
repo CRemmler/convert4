@@ -1,0 +1,185 @@
+/*
+ * This file should contain generally useful css classes - "round the corners", "add the font", etc.
+ * Where possible, css for certain elements should be moved out, although there are clearly some exceptions.
+ */
+
+.hidden {
+  display: none;
+}
+
+.rounded {
+  border-radius: 10px;
+}
+
+.contained {
+  height: 92%;
+  min-height: 92%;
+}
+
+.normal_font {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.monospace_font {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.invisible {
+  opacity:0;
+  width: 0;
+  z-index: -1;
+}
+
+.text_input_margin {
+  margin-top: 10px;
+  margin-right: 15px;
+}
+
+.center {
+  display: block;
+  margin: auto;
+}
+
+.spacious-entry {
+  padding: 8px 8px;
+}
+
+.index-button {
+  margin: 2%;
+  border: 2px solid #347999;
+  border-radius: 6px;
+  background-color: #DDF4FB;
+  transition: background-color 0.25s;
+  text-align: center;
+}
+
+.index-button:hover {
+  background-color: #E8FFFF;
+}
+
+.index-button > h2 {
+  margin-top: 3%;
+  margin-bottom: 0;
+}
+
+.icon-button {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 256px;
+  max-height: 256px;
+  margin: auto;
+}
+
+.index-link {
+  max-width: 300px;
+  min-width: 200px;
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.index-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.properties-list {
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none;
+  margin-bottom: 0;
+}
+
+.properties-list > li {
+  margin: auto;
+  padding-left: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-top: 1px solid #5499B9;
+}
+
+.server-error {
+  margin-top: 20px;
+  font-size: 20px;
+  line-height: 25px;
+  text-align: center;
+}
+
+div.link-header {
+  margin-left: -27px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.anchor-header {
+  visibility: hidden;
+  display: block;
+  margin-top: -20px;
+  padding-bottom: 20px;
+}
+
+.anchor-header:target {
+  margin-top: -40px;
+  padding-bottom: 40px;
+}
+
+div.link-header:hover > a > img.link-img {
+  visibility: visible;
+}
+
+div.link-header > h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+img.link-img {
+  top: 50%;
+  max-width: 20px;
+  visibility: hidden;
+}
+
+/*
+
+ Flexbox stuff
+
+ Much of this could be inlined in styles, but we do this to allow the autoprefixer access to it --JAB 3/30/15
+
+ */
+
+.dynamic-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.dynamic-column-holder {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.flex2 {
+  flex: 2;
+}
+
+.flex3 {
+  flex: 3;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}

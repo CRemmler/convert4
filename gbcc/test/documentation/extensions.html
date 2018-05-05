@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      GbCC 3.0 Extensions
+    </title>
+    <link rel="stylesheet" href="css/netlogo.css" type="text/css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style3.css">
+    <script>
+      jQuery(document).ready(function() {
+        $(".room").css("display","none");
+        $("input").on("click",function() {
+          var value = $(this).attr("value");
+          var name = $(this).attr("name");
+          $("."+name).css("display","none");
+          $("#"+value).css("display","block");
+        });
+        $(".init").click();
+
+        
+        //<span class="more" onclick="function() { $('#physicsWorldSettingsWrapper .more').hide(); 
+        //$('#physicsWorldSettingsWrapper .less').show(); $('#physicsWorldSettings').show(); }">More</span>
+        //<span class="less" onclick="function() { $('#physicsWorldSettingsWrapper .less').hide(); $('#physicsWorldSettingsWrapper .more').show(); $('#physicsWorldSettings').show(); }">Less</span>
+
+        $(".more").click(function() {
+          var parent = $(this).parent().attr("id");
+          $("#"+parent+" .more").hide();
+          $("#"+parent+" .less").show();
+          $("#"+parent+"Info").show();
+        });
+        $(".less").click(function() {
+          var parent = $(this).parent().attr("id");
+          $("#"+parent+" .less").hide();
+          $("#"+parent+" .more").show();
+          $("#"+parent+"Info").hide();
+        });
+        $(".less").click();
+        function hideObjects() {
+          var objects = ["body","line","circle","polygon","target"];
+          for (var i=0; i<objects.length; i++) {
+            $("."+objects[i]+"-obj-info").hide();
+            $("#"+objects[i]+"-obj").css("border", "2px solid #eee");
+            $("#"+objects[i]+"ObjectSettings"+" .less").click();
+          }
+        }
+        hideObjects();
+        $(".obj").click(function() {
+          hideObjects();
+          var id = $(this).attr("id");
+          if ($(this).hasClass("bodySelected")) { 
+            $("."+id+"-info").hide();
+            $(this).css("border", "2px solid #eee");
+            $(this).removeClass("bodySelected");
+          } else {
+            $(".bodySelected").removeClass("bodySelected");
+            $("."+id+"-info").show();
+            $(this).css("border", "2px solid red");
+            $(this).addClass("bodySelected");
+          }
+        });
+      });
+    </script>
+    <style>
+      th, td {padding: 5px; text-align:left; border-bottom:1px solid gray}
+      td { vertical-align: top;}
+      td:first-child {font-weight: bold;}
+      table {font-size: 14px;}
+      p {font-size:14px;}
+      .green {color: limegreen; border:0px;}
+      .red {color: red; border:0px;}
+      .blue { color: blue; border:0px; }
+      .gray { color: gray; border:0px; }
+      .black { color: black; border:0px; }
+      .purple { color: purple; border: 0px;}
+      img {border-radius: 0px;}
+      .more, .less {cursor: default};
+      .mediumImage {width: 200px;}
+    </style>
+  </head>
+  <body>
+    <h1>
+      NetLogo GbCC 3.0 View Extensions
+    </h1>
+
+    <h2>Layers in a NetLogo View</h2>
+      <h3>Patches + Drawing + Turtles</h3>
+        <p><img src="images/layers-7.png">
+      
+      <h3>Patches + Javascript Extension + Image Extension + Drawing + Turtles</h3>
+        <p><img src="images/layers-6.png"> 
+      
+    <h2>View Extensions</h2>
+<table>
+  <tr>
+    <td><h3>Graph</h3></td>
+    <td><h3>Map</h3></td>
+    <td><h3>Physics</h3></td>
+    <td><h3>Image</h3></td>
+  </tr>
+  <tr>
+    <td><img src="images/ext-2.png"></td>
+    <td><img src="images/ext-3.png"></td>
+    <td><img src="images/ext-4.png"></td>
+    <td><img src="images/ext-1.png"></td>
+  </tr>
+</table>
+
+<h2>Graph Extension</h2>
+<br>Geogebra API <a href="https://wiki.geogebra.org/en/Reference:JavaScript">https://wiki.geogebra.org/en/Reference:JavaScript</a>
+
+<br><img alt="Patch Command" src="images/graph-ext.png">
+<h3>Graph Commands</h3>
+<table>
+  <tr>
+    <td></td>
+    <td>
+<pre>
+  <span class='green'>extensions</span> [ graph ]
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="./images3/graph-en.png"></td>
+    <td>
+<pre>
+;; GRAPH
+<span class='blue'>graph:show-graph</span> <span class="red">[ top left width height ]</span>
+<span class='blue'>graph:hide-graph</span>
+<span class='blue'>graph:import-file</span> <span class="red">filename</span>
+<span class='blue'>graph:export-file</span>
+<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
+<span class='blue'>show graph:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="./images3/graph-pt.png"></td>
+    <td>
+<pre>
+;; POINTS
+<span class='blue'>graph:create-point</span> <span class='red'>"point-1" </span>[ <span class="red">0 0</span> ]
+<span class='blue'>graph:create-points </span> [ [ <span class='red'>"point-1" </span>[ <span class="red">0 2</span> ] ] [ <span class='red'>"point-2"</span> [ <span class="red">0 0</span> ] ] ]
+<span class='blue'>show graph:get-points </span> <span class="gray">;; [ [ "point-1" [ 0 2 ] ] [ "point-2" [ 0 0 ] ] ]</span>
+</pre>
+<!--<span class='blue'>graph:delete-point</span> <span class='red'>"point-1"</span> 
+<span class='blue'>graph:delete-points</span>
+-->
+<pre>
+<span class='blue'>graph:set-x</span><span class='red'> "point-1" 0 </span> 
+<span class='blue'>graph:set-y</span><span class='red'> "point-1" 2 </span> 
+<span class='blue'>graph:set-xy</span><span class='red'> "point-1" </span>[ <span class='red'>0 2</span> ] 
+
+<span class='blue'>show graph:get-x</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 0</span> 
+<span class='blue'>show graph:get-y</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 2</span>
+<span class='blue'>show graph:get-xy</span> <span class='red'>"point-1"</span> <span class="gray">;; returns [ 0 2 ] </span>
+</pre>
+    </td>
+  </tr>
+  
+  
+  <tr>
+    <td><img src="./images3/graph-cons.png"></td>
+    <td>
+<pre>
+;; OBJECTS (Including Points)
+<span class='blue'>show graph:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
+<span class='blue'>graph:create-objects</span> <span class='red'> [ [ "my-point" "(0, 0)"] [ "my-triangle" "Polygon(F, G, H)")"] ] </span>
+<span class='blue'>show graph:get-object</span> <span class='red'> "triangle-1" </span><span class="gray">;; returns getCommandString (non-points) or getValueString (points)</span> 
+<span class='blue'>graph:create-object</span> <span class='red'> [ "my-point" "(0, 0)"]</span>
+<span class='blue'>show graph:get-value</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns getValue</span> 
+<span class='blue'>show graph:get-object-type</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns type</span> 
+<span class='blue'>show graph:exists</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns boolean</span> 
+<span class='blue'>graph:rename-object</span> <span class='red'> "triangle-1" "triangle-2" </span>
+<span class='blue'>graph:delete-object</span> <span class='red'> "triangle-1" </span>
+<span class='blue'>graph:hide-object</span> <span class='red'> "triangle-1" </span>
+<span class='blue'>graph:show-object</span> <span class='red'> "triangle-1" </span> </pre>
+    </td>
+  </tr>
+<!--  
+  <tr>
+    <td><img src="./images3/graph-world.png"></td>
+    <td>
+<pre>
+;; xml
+<span class='blue'>graph:get-xml</span> <span class="gray">;; returns &lt;a string of xml&gt;</span> 
+<span class='blue'>graph:set-xml</span> <span class="red">&lt;a string of xml&gt;</span>
+ </pre>
+    </td>
+  </tr>
+-->  
+</table>
+
+<h3>Translate between Patch Coordinates and GeoGebra Coordinates</h3>
+<pre>
+<span class='blue'>show graph:graph-to-patch </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns graph coordinates</span>
+<span class='blue'>show graph:patch-to-graph </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
+</pre>
+
+<h3>GeoGebra Eval Commands</h3>
+<pre>
+<span class="blue">graph:eval-command</span> <span class="red">geogebra-command </span>
+<span class="blue">show graph:eval-reporter</span> <span class="red">geogebra-command</span> <span class="gray">;; returns a value</span>
+</pre>
+
+<h3>Ideas</h3>
+
+<table>
+  <tr>
+    <td>
+      1. Linear Regression
+      <br>
+      <img width="200" src="./images3/graph-3.png">
+      <br>
+    </td>
+    <td>
+<pre>
+<span class='green'>extensions</span> [ graph ]
+<span class='blue'>graph:create-graph</span>
+<span class="gray">;; Save current state of points.</span>
+<span class='blue'>set </span><span class="black">saved-graph </span><span class='blue'>graph:get-points</span> <span class="gray">;; returns points </span>
+<span class="gray">;; Grab points from someone else.</span>
+<span class='blue'>set </span><span class="black">new-points</span><span class='blue'> gbcc:get-from-user</span> <span class="red">"my-points"</span> <span class="gray">;; returns points </span>
+<span class="gray">;; Add points in to your environment.</span>
+<span class='blue'>graph:create-points </span><span class='black'>new-points </span>
+<span class="gray">;; Something about including new points to linear regression.</span>
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      2. Same Area
+      <br>
+      <img width="200" src="./images3/graph-1.png">
+      <br>
+    </td>
+    <td>
+<pre>
+<span class='green'>extensions</span> [ graph ]
+<span class='blue'>graph:create-graph</span>
+<span class="gray">;; Save current state of points.</span>
+<span class='blue'>set </span><span class="black">saved-graph </span><span class='blue'>graph:get-points</span> <span class="gray">;; returns points </span>
+<span class="gray">;; Grab points from someone else.</span>
+<span class='blue'>set </span><span class="black">new-points</span><span class='blue'> gbcc:get-from-user</span> <span class="red">"my-points"</span> <span class="gray">;; returns points </span>
+<span class="gray">;; Add points in to your environment.</span>
+<span class='blue'>graph:create-points </span><span class='black'>new-points </span>
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      3. Same Perimeter
+      <br>
+      <img width="200" src="./images3/same-perim1.png">
+      <br>
+    </td>
+    <td>
+<pre>
+  <span class='green'>extensions</span> [ graph ]
+  <span class='blue'>graph:create-graph</span>
+  <span class="gray">;; Save current state of environment, locally.</span>
+  <span class='blue'>set </span><span class="black">saved-xml </span><span class='blue'>graph:export </span> 
+  <span class="gray">;; Grab xml from someone else, by clicking on gallery.</span>
+  <span class='blue'>set </span><span class="black">new-xml</span><span class='blue'> gbcc:get-from-user</span> <span class="red">"my-xml"</span> 
+  <span class="gray">;; Replace old environment with new environment.</span>
+  <span class='blue'>graph:import </span><span class='black'>new-xml </span>
+  <span class="gray">;; Change environment with Gui</span>
+  <span class="gray">;; Save new environment, where other users can access it.</span>
+  <span class='blue'>gbcc:set </span><span class='black'>"my-xml"</span> <span class="blue">graph:export</span>
+  <span class="gray">;; Share screenshot.</span>
+  <span class='blue'>gbcc:broadcast-view</span><span class='black'>""</span>
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      4. Operations on Functions
+      <br>
+      <img width="200" src="./images3/graph-4.png">
+      <br>
+    </td>
+    <td>
+<pre>
+  <span class='green'>extensions</span> [ graph ]
+  <span class='blue'>graph:create-graph</span>
+  <span class="gray">;; Save objects, locally.</span>
+  <span class='blue'>set </span><span class="black">saved-objects </span><span class='blue'>graph:get-objects</span> 
+  <span class="gray">;; Grab objects from someone else, by clicking on gallery.</span>
+  <span class='blue'>set </span><span class="black">new-objects</span><span class='blue'> gbcc:get-from-user</span> <span class="red">user-id "my-objects"</span> 
+  <span class="gray">;; Add new objects.</span>
+  <span class='blue'>graph:create-objects </span><span class='black'>new-objects </span>
+  <span class="gray">;; Change environment with Gui</span>
+  <span class="gray">;; Save new environment, where other users can access it.</span>
+  <span class='blue'>gbcc:set </span><span class='black'>"my-objects"</span> <span class="blue">graph:get-objects</span>
+  <span class="gray">;; Share screenshot.</span>
+  <span class='blue'>gbcc:broadcast-view</span><span class='black'>""</span>
+</pre>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      5. Triangle Animation Ants
+      <br>
+      <img width="200" src="./images3/graph-5.png">
+      <br>
+    </td>
+    <td>
+<pre>
+  <span class='green'>extensions</span> [ graph ]
+  <span class='blue'>graph:create-graph</span>
+  <span class="gray">;; Create a turtle that controls a point.</span>
+  <span class='blue'>create-turtles</span><span class='red'> 1</span> [ 
+    <span class='blue'>set</span> user-name (<span class='blue'>word</span><span class='red'> "carolyn"</span><span class='purple'> who</span>)
+    <span class='blue'>graph:create-point</span> user-name [ <span class='blue'>graph:patch-to-graph</span> [<span class='purple'> xcor ycor</span> ] ] 
+    <span class='blue'>set my-turtle-id</span> <span class='purple'>who</span>
+  ]  
+  <span class="gray">;; Connect your point to the two other endpoints, to form a triangle.</span>
+  <span class='blue'>graph:eval-command</span>...
+  <span class="gray">;; Move the turtle around, and watch the triangle change, too.</span>
+  <span class='blue'>ask</span><span class='purple'> turtle</span> my-turtle-id [
+    <span class='blue'>graph:set-xy</span> user-name [ <span class='blue'>graph:patch-to-graph</span> []<span class='purple'> xcor ycor</span> ] ] 
+  ]
+</pre>
+<pre>
+  <span class="gray">;; Get data from others.</span>
+  <span class="gray">;; to gbcc-on-select [ user-id ] [ ;;create turtle and point and programatically make triangle...]</span>
+  <span class="gray">;; to gbcc-on-deselect [ user-id ] [ ;;remove turtle and point...]</span>
+  <span class="gray">;; to gbcc-on-forever-go [ user-id ] [ ;;move turtle and point ]</span>
+</pre>
+<pre>
+  <span class="gray">;; Version 1: Share each step, with others.</span>
+  <span class="gray">;; Version 2: Share each stamp, with others.</span>
+  <span class="gray">;; Version 3: Teacher saves stamps, replays action.</span>  
+</pre>
+    </td>
+  </tr>
+  
+</table>
+
+<h2>Maps Extension</h2>
+<br>LeafletJS <a href='http://leafletjs.com/'>http://leafletjs.com/</a>
+<br><img alt="Patch Command" src="images/maps-ext.png">
+
+<h3>Maps Extension</h3>
+
+<table>
+  <tr>
+    <td></td>
+    <td>
+<pre>
+  <span class='green'>extensions</span> [ graph ]
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="./images3/map-en.png"></td>
+    <td>
+<pre>
+;; MAP
+<span class='blue'>maps:show-map</span> <span class="red">[ top left width height ]</span>
+<span class='blue'>maps:hide-map</span>
+<span class='blue'>maps:import-file</span> <span class="red">filename</span>
+<span class='blue'>maps:export-file</span> 
+<span class='blue'>maps:set-data</span> <span class="red">&lt;a string of json&gt;</span>
+<span class='blue'>show maps:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="./images3/map-se.png"></td>
+    <td>
+<pre>
+;; MAP SETTINGS
+<span class='blue'>maps:set-zoom</span><span class='red'> 3</span> 
+<span class='blue'>show maps:get-zoom</span>  <span class="gray">;; returns 3</span>
+<span class='blue'>maps:set-center-latlng</span> [<span class='red'> 30 97 </span>]
+<span class='blue'>show maps:get-center-latlng</span> <span class="gray">;; returns [ 30 97 ]</span>
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="./images3/map-ma.png"></td>
+    <td>
+<pre>
+;; MARKERS
+<span class='blue'>maps:create-marker</span> <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ]
+<span class='blue'>maps:create-markers </span> [ [ <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ] ] [ <span class='red'>"marker-2"</span>[ <span class="red">0 0</span> ] ] ]
+<span class='blue'>show maps:get-markers </span> <span class="gray">;; [ [ "marker-1" [ 0 0 ] ] [ "marker-2" [ 0 0 ] ] ]
+<span class='blue'>maps:delete-marker</span> <span class='red'>"marker-1"</span> 
+</pre>
+<pre>
+<span class='blue'>maps:set-lat</span><span class='red'> "marker-1" 30 </span> 
+<span class='blue'>maps:set-lng</span><span class='red'> "marker-1" 97 </span> 
+<span class='blue'>maps:set-latlng</span><span class='red'> "marker-1" </span>[  <span class='red'>30 97</span> ] 
+<span class='blue'>maps:set-label</span><span class='red'> "point-1" "cat's marker-1"</span>
+
+<span class='blue'>show maps:get-lat</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 30</span> 
+<span class='blue'>show maps:get-lng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 97</span>
+<span class='blue'>show maps:get-latlng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns [ 30 97 ] </span>
+<span class='blue'>show maps:get-label</span><span class='red'> "marker-1"</span> <span class="gray">;; returns "cat's point-1"</span>
+</pre>
+    </td>
+  </tr>
+</table>
+
+<h3>Translate between Patch Coordinates and Latitude / Latitude</h3>
+<pre>
+<span class='blue'>show maps:latlng-to-patch </span><span class='red'>[ 30 -97 ]</span> <span class="gray">;; returns latitude and longitude</span>
+<span class='blue'>show maps:patch-to-latlng </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
+</pre>
+
+
+
+
+
+
+
+<h2>Physics Extension</h2>
+
+Box2DWeb Library. <a href="https://github.com/hecht-software/box2dweb">https://github.com/hecht-software/box2dweb</a>
+<br>Documentation. <a href="http://www.iforce2d.net/b2dtut/">https://github.com/hecht-software/box2dweb</a>
+<br>Physics UI <a href="https://remmler.org/gbcc/v3/video.html">https://remmler.org/gbcc/v3/video.html</a>
+<br><br><b>NetLogo/Physics Example:</b> Import a world with friction, gravity, wrapping, linear
+impulses and angular impulses.
+The world can contain moving shapes, static shapes, joints and targets, 
+any of which can be represented by turtles.
+<br><img alt="Patch Command" src="images/physics-ext1.png">
+
+
+
+<h3>Objects in a Box2D Physics World</h3>
+<table>
+  <tr>
+    <td>
+      <img src="images3/physics-lin.png">
+    </td>
+    <td>
+      <br>A <b>line</b> has two endpoints and is a member of a body.
+      <br>A <b>line</b> has friction, density and restitution.
+      <br>A <b>line</b> can be defined with an absolute position, or with a position relative to a body.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="images3/physics-cir.png">
+    </td>
+    <td>
+      <br>A <b>circle</b> has a center and a radius and is a member of a body.
+      <br>A <b>circle</b> has friction, density and restitution.
+      
+      <br>A <b>circle</b> can be defined with an absolute position, or with a position relative to a body.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="images3/physics-tri.png">
+    </td>
+    <td>
+      <br>A <b>polygon</b> has vertices and is a member of a body.
+      <br>A <b>polygon</b> has friction, density and restitution.
+      <br>A <b>polygon</b> can be defined with an absolute position, or with a position relative to a body.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="images3/physics-bod.png">
+    </td>
+    <td>
+      <br>A <b>body</b> can be comprised of shapes such as lines, circles and polygons.
+      <br>A <b>body</b> can be rotated around it's center.
+      <br>A <b>body</b> has linear and angular velocity.
+      <br>A <b>body</b> is defined with an absolute position.
+      <br><b>Bodies</b> can be dynamic (move and collide) or be static (only collide) or be a ghosts (only move).
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="images3/physics-tar.png">
+    </td>
+    <td>
+      <br>A <b>target</b> is a location on a body, to which forces can be applied.
+    </td>
+  </tr>
+</table>
+<h3>Physics Extension</h3>
+<table>
+  <tr>
+    <td></td>
+    <td>
+<pre>
+  <span class='green'>extensions</span> [ physics ]
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="./images3/physics-en.png"></td>
+    <td>
+<pre>
+;; WORLD
+<span class='blue'>physics:show-world</span> <span class="red">[ top left width height ]</span>
+<span class='blue'>physics:hide-world</span>
+<span class='blue'>physics:import-file</span> <span class="red">filename</span>
+<span class='blue'>physics:export-file</span> 
+<span class='blue'>physics:set-data</span> <span class="red">&lt;a string of json&gt;</span>
+<span class='blue'>show physics:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+</pre>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="./images3/physics-se.png"></td>
+    <td>
+<pre>
+;; WORLD SETTINGS
+<span class='blue'>physics:set-gravityxy</span><span class='red'> [ false true ]</span>
+<span class='blue'>show physics:get-gravityxy</span>  <span class="gray">;; returns [ false true ]</span>
+<span class='blue'>physics:set-wrapxy</span><span class='red'> [ true true ]</span> <span class="gray">;; </span> 
+<span class='blue'>show physics:get-wrapxy</span>  <span class="gray">;; returns [ true true ]</span>
+<span id="physicsWorldSettings"><span class="more"><button>More</button></span><span id="physicsWorldSettingsInfo">
+<span class='blue'>physics:set-time-step</span><span class='red'> 1 / 20</span> <span class="gray">;; length of time passed to simulate (seconds) </span> 
+<span class='blue'>show physics:get-time-step</span>  <span class="gray">;; returns 1 / 20</span>
+<span class='blue'>physics:set-velocity-iterations</span><span class='red'> 8 / 20</span> <span class="gray">;; how strongly to correct velocity </span> 
+<span class='blue'>show physics:get-velocity-iterations</span>  <span class="gray">;; returns 8</span>
+<span class='blue'>physics:set-position-iterations</span><span class='red'> 31 / 20</span> <span class="gray">;; how strongly to correct position </span> 
+<span class='blue'>show physics:get-position-iterations</span>  <span class="gray">;; returns 3</span></span>
+<span class="less"><button>Less</button></span></span>
+</pre>
+    </td>
+  </tr>
+
+  <tr>
+    <td><img src="./images3/physics-sh.png"></td>
+    <td>
+<pre>
+;; OBJECTS
+;; Note: Each line, circle, polygon and target must belong to a body
+<span class='blue'>physics:create-line</span> <span class='red'>"line-1" "body-1"</span> 
+<span class='blue'>physics:create-circle</span> <span class='red'>"circle-1" "body-1"</span> 
+<span class='blue'>physics:create-polygon</span> <span class='red'>"polygon-1" "body-1"</span> 
+<span class='blue'>physics:create-target</span> <span class='red'>"target-1" "body-1"</span> 
+
+<span class='blue'>physics:delete-line</span> <span class='red'>"line-1"</span> 
+<span class='blue'>physics:delete-circle</span> <span class='red'>"circle-1"</span> 
+<span class='blue'>physics:delete-polygon</span> <span class='red'>"polygon-1"</span> 
+<span class='blue'>physics:delete-target</span> <span class='red'>"target-1"</span> 
+</pre>
+</td>
+</tr>
+<tr>
+  <td></td>
+  <td>
+<pre>
+;; CLICK OBJECT BELOW
+<img class="obj" id="line-obj" src="./images3/physics-line-obj.png"> <img class="obj" id="circle-obj" src="./images3/physics-circle-obj.png"> <img class="obj" id="polygon-obj" src="./images3/physics-polygon-obj.png"> <img class="obj" id="target-obj" src="./images3/physics-target-obj.png"> <img class="obj" id="body-obj" src="./images3/physics-body-obj.png">
+</pre>
+
+<div class="line-obj-info">
+<pre>
+;; SET LINE DATA
+<span class='blue'>physics:set-line-body-id</span> <span class='red'>"line-1" "body-2"</span> <span class="gray">;; name of line, one body it is attached to</span> 
+<span class='blue'>physics:set-line-relative-endpoints</span> <span class='red'>"line-1" [ 0 0 ] [ 2 2 ]</span> <span class="gray">;; name of line, coords of endpoints relative to center of mass of body</span> 
+<span id="lineObjectSettings"><span class="more"><button>More</button></span><span id="lineObjectSettingsInfo">
+<span class='blue'>physics:set-line-endpoints</span> <span class='red'>"line-1" [ 10 10 ] [ 5 5 ]</span> <span class="gray">;; name of line, absolute coords of endpoints</span> 
+<span class='blue'>physics:set-line-friction</span> <span class='red'>"line-1" 0.5</span> <span class="gray">;; name of line, number between 0 and 1 (from no friction to a lot of friction)</span> 
+<span class='blue'>physics:set-line-density</span> <span class='red'>"line-1" 0.5</span> <span class="gray">;; name of line, number between 0 and 1 (from not dense to very dense</span> 
+<span class='blue'>physics:set-line-restitution</span> <span class='red'>"line-1" 0.5</span> <span class="gray">;; name of line, number between 0 and 1 (from not bouncy to very bouncy)</span> 
+</span>
+<span class="less"><button>Less</button></span></span>
+</pre>
+</div>
+
+<div class="circle-obj-info">
+<pre>
+;; SET CIRCLE DATA
+<span class='blue'>physics:set-circle-body-id</span> <span class='red'>"circle-1" "body-2"</span> <span class="gray">;; name of cirle, one body it is attached to</span> 
+<span class='blue'>physics:set-circle-radius</span> <span class='red'>"circle-1" 4</span> <span class="gray">;; name of circle, radius</span> 
+<span class='blue'>physics:set-circle-relative-center</span> <span class='red'>"circle-1" [ 0 0 ]</span> <span class="gray">;; name of circle, coords of center of circle, relative to center of mass of body</span> 
+<span id="circleObjectSettings"><span class="more"><button>More</button></span><span id="circleObjectSettingsInfo">
+<span class='blue'>physics:set-circle-center</span> <span class='red'>"circle-1" [ 10 10 ]</span> <span class="gray">;; name of circle, absolute coords of center of circle</span> 
+<span class='blue'>physics:set-circle-friction</span> <span class='red'>"circle-1" 0.5</span> <span class="gray">;; name of circlee, number between 0 and 1 (from no friction to a lot of friction)</span> 
+<span class='blue'>physics:set-circle-density</span> <span class='red'>"circle-1" 0.5</span> <span class="gray">;; name of circle, number between 0 and 1 (from not dense to very dense</span> 
+<span class='blue'>physics:set-circle-restitution</span> <span class='red'>"circle-1" 0.5</span> <span class="gray">;; name of circle, number between 0 and 1 (from not bouncy to very bouncy)</span> 
+</span>
+<span class="less"><button>Less</button></span></span>
+</pre>
+</div>
+
+<div class="polygon-obj-info">
+<pre>
+;; SET POLYGON DATA
+<span class='blue'>physics:set-polygon-body-id</span> <span class='red'>"polygon-1" "body-2"</span> <span class="gray">;; name of polygon, one body it is attached to</span> 
+<span class='blue'>physics:set-polygon-relative-vertices</span> <span class='red'>"polygon-1" [ 0 0 ] [ 2 2 ]</span> <span class="gray">;; name of line, coords of vertices for concave polygon, in clockwise order, relative to center of mass of body</span> 
+<span id="polygonObjectSettings"><span class="more"><button>More</button></span><span id="polygonObjectSettingsInfo">
+<span class='blue'>physics:set-polygon-vertices</span> <span class='red'>"polygon-1" [ 10 10 ] [ 5 5 ] [ 5 10]</span> <span class="gray">;; name of line, absolute coords of vertices for concave polygon, in clockwise order</span> 
+<span class='blue'>physics:set-polygon-friction</span> <span class='red'>"polygon-1" 0.5</span> <span class="gray">;; name of polygon, number between 0 and 1 (from no friction to a lot of friction)</span> 
+<span class='blue'>physics:set-polygon-density</span> <span class='red'>"polygon-1" 0.5</span> <span class="gray">;; name of polygon, number between 0 and 1 (from not dense to very dense</span> 
+<span class='blue'>physics:set-polygon-restitution</span> <span class='red'>"polygon-1" 0.5</span> <span class="gray">;; name of polygon, number between 0 and 1 (from not bouncy to very bouncy)</span> 
+</span>
+<span class="less"><button>Less</button></span></span>
+</pre>
+</div>
+
+
+<div class="body-obj-info">
+<pre>
+;; SET BODY DATA
+<span class='blue'>physics:set-body-behavior</span> <span class='red'>"body-1" "dynamic"</span> <span class="gray">;; static (doesn't move, does collide), dynamic (does move and collide), ghost (does move, doesn't collide)</span> 
+<span class='blue'>physics:set-body-coords</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray"></span> 
+<span class='blue'>physics:set-body-angle</span> <span class='red'>"body-1" 180</span> <span class="gray">;; degrees</span> 
+<span id="bodyObjectSettings"><span class="more"><button>More</button></span><span id="bodyObjectSettingsInfo">
+<span class='blue'>physics:set-body-linear-velocity</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray">;; vector </span> 
+<span class='blue'>physics:set-body-angular-velocity</span> <span class='red'>"body-1" 180</span> <span class="gray">;; angle in degrees </span> 
+</span>
+<span class="less"><button>Less</button></span></span>
+</pre>
+</div>
+
+<div class="target-obj-info">
+<pre>
+;; SET TARGET DATA
+<span class='blue'>physics:set-target-body-id</span> <span class='red'>"target-1" "body-2"</span> <span class="gray">;; name of target, one body it is attached to</span> 
+<span class='blue'>physics:set-target-relative-coords</span> <span class='red'>"target-1" [ 0 0 ]</span> <span class="gray">;; name of target, coords relative to center of mass of body</span> 
+<span id="targetObjectSettings"><span class="more"><button>More</button></span><span id="targetObjectSettingsInfo">
+<span class='blue'>physics:set-target-coords</span> <span class='red'>"target-1" [ 10 10 ]</span> <span class="gray">;; name of target, absolute coords</span> 
+</span>
+<span class="less"><button>Less</button></span></span>
+</pre>
+</div>
+
+    </td>
+  </tr>
+
+    <tr>
+      <td><img src="./images3/physics-ta.png"></td>
+      <td>
+  <pre>
+;; APPLY FORCE AT TARGET
+<span class='blue'>physics:apply-force</span> <span class='red'>"target-1" 10 180</span> <span class="gray">;; applies with force of 10 and angle of 180 degrees</span> 
+<span class='blue'>physics:apply-force-relative-angle</span> <span class='red'>"target-1" 10 20</span> <span class="gray">;; applies with force of 10 and relative angle of 20 degrees</span> 
+<span class='blue'>physics:apply-linear-impulse</span> <span class='red'>"target-1" 10 180</span> <span class="gray">;; applies with force of 10 and angle of 180 degrees </span> 
+<span class='blue'>physics:apply-linear-impulse-relative-angle</span> <span class='red'>"target-1" 10 20</span> <span class="gray">;; applies with force of 10 and relative angle of 20 degrees </span> 
+<span class='blue'>physics:apply-torque</span> <span class='red'>"target-1" 10 </span> <span class="gray">;; applies with force of 10 </span>
+<span class='blue'>physics:apply-angular-impulse</span> <span class='red'>"target-1" 10</span> <span class="gray">;; applies with force of 10</span>
+  </pre>
+      </td>
+    </tr>
+</table>
+
+<h3>Connections between Turtles and Objects</h3>
+<pre>
+<span class='blue'>physics:connect-who-to-object</span><span class='red'> who object-id</span> 
+<span class='blue'>physics:disconnect-who</span><span class='red'> who </span>
+</pre>
+
+<h3>Ideas</h3>
+<table>
+<tr>
+  <td>
+    1. Apply a force to each bristlebot
+    <br>
+    <img width="200" src="./images3/physics-1.png">
+    <br>
+  </td>
+  <td>
+<pre>
+<span class='green'>extensions</span> [ physics ]
+<span class='blue'>create-turtles</span><span class="red"> 6</span> [
+  <span class='blue'>set</span><span class='purple'> shape</span><span class='red'> "turtle"</span>
+  <span class='gray'>;; create a circle, and make it belong to a body
+  <span class='blue'>physics:create-circle</span> (</span><span class='purple'>word</span> <span class='red'>"circle-</span><span class='purple'> who</span>) (<span class='purple'>word<span class='red'> "body-"</span> <span class='purple'>who</span> )
+  <span class='blue'>physics:set-circle-xy</span> (</span><span class='purple'>word</span> <span class='red'>"circle-"</span><span class='purple'> who</span>) [ <span class='purple'>xcor ycor</span> ]
+  <span class='blue'>physics:set-radius</span> (</span><span class='purple'>word</span> <span class='red'>"circle-"</span><span class='purple'> who</span>) <span class='red'>2</span>
+  <span class='gray'>;; place the body, somewhere, otherwise it defaults at [ 0 0 ]</span>
+  <span class='blue'>physics:set-body-xy</span> (</span><span class='red'>"body-1"</span> [ <span class="red">4 4 </span> ]
+  <span class='gray'>;; create a target at the center of a body
+  <span class='blue'>physics:create-target</span> (</span><span class='purple'>word</span> <span class='red'>"target-"</span><span class='purple'> who</span>) (<span class='purple'>word "body-"</span><span class='purple'> who</span>) 
+  <span class='blue'>physics:set-target-relative-xy</span> (</span><span class='purple'>word</span> <span class='red'>"target-"</span><span class='purple'> who</span>) [ <span class='red'>0 0</span> ]
+  <span class='gray'>;; connect the turtle to the body to which the circle and target belong
+  <span class='blue'>physics:connect-who-to-object</span><span class='red'> who </span> (<span class='purple'>word<span class='red'> "body-"</span> <span class='purple'>who</span> )
+]
+<span class='blue'>ask turtles</span> [
+  <span class='gray'>;; apply a force of 10, to a target on a body, at a relative angle of 90 degrees </span>
+  <span class='blue'>physics:apply-force-relative-angle</span> (<span class='purple'>word</span><span class='red'> "target-"</span><span class='purple'> who)</span> <span class='red'>10 90</span>
+]
+</pre>
+  </td>
+</tr>
+<tr>
+  <td>
+    2. Apply a linear force (white arrow)
+    <br>to a Pokemon card
+    <br>
+    <img width="200" src="./images3/physics-3.png">
+  </td>
+  <td>
+<pre>
+<span class='green'>extensions</span> [ physics ]
+<span class='gray'>;; create a polygon, and make it belong to a body</span>
+<span class='blue'>physics:create-polygon</span> <span class="red">"rectangle-1" "body-1"</span>
+<span class="blue">physics:set-polygon-vertices</span> [ [ <span class="red">0 0 </span>] [ <span class="red">-4 0</span> ] [ <span class="red">-4 4</span> ] [ <span class="red">0 4</span> ] ]
+<span class='gray'>;; create a rectanglular turtle and connect it to the body</span>
+<span class='blue'>create-turtles</span><span class="red"> 1</span> [
+  <span class='blue'>set</span><span class='purple'> shape</span><span class='red'> "rectangle"</span>
+  <span class='blue'>physics:connect-who-to-object</span><span class='red'> who </span> <span class="red">body-1</span>
+]
+<span class='gray'>;; create a target, offset from the center of a body</span>
+<span class='blue'>physics:create-target</span> <span class="red">"target-white" "body-1"</span>
+<span class="blue">physics:set-target-relative-xy</span> <span class="red">"target-white"</span> [<span class="red"> 2 2</span> ]
+<span class='gray'>;; create an arrow shaped turtle and connect it to the target</span>
+<span class='blue'>create-turtles</span><span class="red"> 1</span> [
+  <span class='blue'>set</span><span class='purple'> shape</span><span class='red'> "arrow"</span>
+  <span class='blue'>physics:connect-who-to-object</span><span class='red'> who </span><span class="red">"target-white"</span>
+]
+<span class='gray'>;; apply a force of 10, to a target on a body, at a relative angle of 35 degrees </span>
+<span class='blue'>physics:apply-force-relative-angle</span> <span class="red">"target-white" 10 35</span>
+</pre>
+  </td>
+</tr>
+<tr>
+  <td>
+    3. Apply a linear force (yellow arrow)
+    <br>and an angular force (red arrow)
+    <br>
+    <img width="200" src="./images3/physics-2.png">
+  </td>
+  <td>
+<pre>
+<span class='gray'>;; apply a linear impulse of 12, at a relative angle of -30 degrees </span>
+<span class='blue'>physics:apply-linear-impulse-relative-angle</span> <span class="red">"target-yellow" 12 -30</span>
+<span class='gray'>;; apply an angular impulse of 20 </span>
+<span class='blue'>physics:apply-angular-impulse</span> <span class="red">"target-red" 10</span>
+</pre>
+  </td>
+</tr>
+<tr>
+  <td>
+    4. In ideas 2 and 3, above,
+    <br>something else needs to be happening to make
+    <br>two touch become one touch.
+  </td>
+  <td>
+  </td>
+</tr>
+</table>
+
+<h2>Image Extension</h2>  
+ <br><img alt="Patch Command" src="images/image-ext-3.png">
+ 
+ <h3>Image Extension</h3>
+<pre>
+extensions [ image ]
+</pre>
+
+<h3>Commands</h3>
+<pre>
+<span class="blue">image:import</span> <span class="red">"cats.png"</span>
+<!--
+<b>image:import-pcolors</b> <i>"cats.png"</i> <span class='blue'>;; unimplemented</span>
+-->
+<span class="blue">image:clear</span>
+
+<span class="blue">image:zoom</span> <span class="red">3</span> <span class='gray'>;; zooms so that there are 3 patches from an edge to the center patch</span>
+
+<span class="blue">image:reset-zoom</span>
+</pre>
+
+
+
+<p>
+<a href="./extensions-mar-18.html">Previous documentation using key/value pairs</a>
+</html>

@@ -1,0 +1,89 @@
+.netlogo-gallery-tab-area {
+  margin-top: 25px;
+}
+
+.netlogo-gallery-tab {
+  display: block;
+  background-color: #BCBCE5;
+  border-width: 2px;
+  border-bottom-width: 0;
+  border-style: solid;
+  padding: 7px;
+  text-align: center;
+}
+
+.login-tips {
+  position: absolute; 
+  //background-color:#eee;
+  background-color:white;
+  //border:1px solid black; 
+  top:460px; 
+  left:40px;
+  //padding: 10px;
+}
+
+.login-welcome-student {
+  position: absolute; 
+  left: 40px; 
+  top: 82px; 
+  width: 238px; 
+  height: 45px; 
+  font-size: 14px;
+}
+
+.login-welcome-teacher {
+  position: absolute; 
+  left: 40px; 
+  top: 341px; 
+  width: 238px; 
+  height: 45px; 
+  font-size: 14px;
+}
+
+.login-room-name {
+  position: absolute; 
+  left: 40px; 
+  top: 395px; 
+  width: 142px; 
+  height: 60px;
+}
+
+.login-create-room {
+  position: absolute; 
+  left: 186px; 
+  top: 421px; 
+  width: 96px; 
+  height: 33px;
+}
+
+.netlogo-widget.login-room-button-container {
+  background-color: white; 
+  overflow: scroll;
+  border:1px solid black; 
+  position: absolute; 
+  left: 40px; 
+  top: 137px; 
+  width: 238px; 
+  height: 193px;
+  padding:5px;
+}
+
+.login-room-button {
+  width: 103px; 
+  height: 33px; 
+  border:0px;
+  margin: 5px;
+}
+
+#tipHeading {
+  text-decoration: underline;
+  cursor:pointer;
+}
+
+#netlogo-title {
+  overflow:visible;
+}
+
+#netlogo-title p {
+  margin-top: 0px;
+}
