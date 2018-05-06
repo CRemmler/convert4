@@ -4,7 +4,8 @@ show-world, , ,
 set-data,(string),(data),
 import-file,(string),(filename),
 get-data, , ,(string)
-export-file,,,set-gravity-xy,(list),(data),
+export-file,,,
+set-gravity-xy,(list),(data),
 get-gravity-xy, , ,(list)
 set-wrap-xy,(list),(data),
 get-wrap-xy, , ,(list)
@@ -86,4 +87,3 @@ apply-torque,(string; number),(name; force),
 apply-angular-impulse,(string; number),(name; force),
 connect-who-to-object,(number; string),(who; name),
 disconnect-who,(number),(who),
-

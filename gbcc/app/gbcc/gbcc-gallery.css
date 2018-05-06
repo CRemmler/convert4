@@ -1,0 +1,190 @@
+
+.gbcc-gallery {
+  -ms-flex: 1;
+      flex: 1;
+  margin-top: 0;
+  border:2px solid black;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  border-top: 0px;
+  border-bottom: 0px;
+}
+
+.gbcc-gallery ul {
+  overflow:hidden;
+  list-style-type: none;
+}
+
+.gbcc-gallery img {
+  width:100%;
+  height:100%;
+}
+
+.gbcc-gallery li { 
+  text-align: left;
+  float:left;
+  border:5px solid white;
+  position: relative;
+  margin: 5px;
+  overflow: hidden;
+}
+
+.gbcc-gallery.small li {
+  width: 80px;
+  height: 80px;
+}
+
+.gbcc-gallery.medium li {
+  width: 120px;
+  height: 120px;
+}
+
+.gbcc-gallery.large li {
+  width: 160px;
+  height: 159px;
+}
+
+.gbcc-gallery span {
+  position: absolute;
+  background-color: white;
+}
+
+.gbcc-gallery li:hover {
+  cursor:pointer;
+  border:5px solid yellow;
+}
+
+.gbcc-gallery li.selected {
+  border:5px solid orange;
+}
+    
+.gbcc-gallery .card-image {
+  height: 99%;
+  width: 99%;
+  border: 1px solid black;
+}
+
+.gbcc-gallery .card-text {
+  height: 99%;
+  width: 92.5%;
+  padding:0px 5px 0px 5px;
+  font-size: 18px;
+  border:1px solid black;
+}
+
+.gbcc-gallery .arrow {
+  position: absolute;
+  top:45%;
+  text-align: center;
+  display:none;
+  opacity: 0.6;
+  width: 25px;
+  height: 25px;
+}
+
+.gbcc-gallery .forever-icon:hover {
+  opacity: 1;
+  background-color: yellow;
+}
+
+.gbcc-gallery .forever-icon.selected {
+  background: orange;
+  opacity: 1;
+  display: block;
+}
+
+.gbcc-gallery .arrow i {
+  color: black;
+}
+
+.gbcc-gallery .arrow-right {
+  left:85%;
+}
+
+.gbcc-gallery .arrow-left {
+}
+
+.gbcc-gallery .arrow:hover {
+  opacity:1;
+  background-color: yellow;
+}
+
+.gbcc-gallery .forever-icon {
+  left:84%;
+  top:84%;
+  background: white;
+  display: none;
+  opacity: 0.6;
+  width: 25px;
+  height: 25px;
+}
+
+.small .forever-icon {
+  font-size: 14px;
+}
+
+.medium .forever-icon {
+  font-size: 20px;
+}
+
+.large .forever-icon {
+  font-size: 24px;
+}
+
+.netlogo-gallery-tab {
+  position: relative;
+}
+
+.gallery-right {
+  position: absolute;
+  right: 5px;
+  font-size: 12px;
+  top: 2px;
+  color: #444;
+}
+
+.gallery-left {
+  position: absolute;
+  left: 5px;
+  font-size: 12px;
+  top: 2px;
+  color: #444;
+}
+
+.gallery-controls {
+  background-color: #F4F4F4;
+  position: relative;
+  border: 2px solid black;
+  border-bottom: 1px solid #CCC;
+  height: 20px;
+}
+
+.netlogo-gallery-tab-content.selected {
+  background-color: #ddd;
+}
+
+.netlogo-gallery-tab.selected {
+  background-color: #ccc;
+}
+
+.netlogo-gallery-tab:selected .gallery-forever-icon {
+  color: lime;
+}
+
+.gbcc-gallery .label {
+  padding: 0px 5px 0px 5px;
+  border: 1px solid black;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.gbcc-gallery .label.selected {
+  color: white;
+  background-color: black;
+}
+
+.gbcc-gallery .z20 {z-index:20}
+
+.gbcc-gallery .gray-border {
+  border: 5px solid #ddd;
+}

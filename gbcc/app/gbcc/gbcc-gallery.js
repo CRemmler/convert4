@@ -408,6 +408,7 @@ Gallery = (function() {
     }
   }
 
+  /*
   function broadcastToGallery(key, value) {
     if (key === "view") {
       drawView(value.replace(" ","-"));
@@ -421,10 +422,10 @@ Gallery = (function() {
       drawAvatar(value);
     }
   }
+  */
   
   
-  
-  function drawClear(text) {
+  function clearBroadcast() {
     var message = "gallery-clear";
     socket.emit("send reporter", {
       hubnetMessageSource: "all-users", 
@@ -433,7 +434,7 @@ Gallery = (function() {
     }); 
   }
   
-  function drawText(text) {
+  function broadcastText(text) {
     var message = "gallery-text"+text;
     socket.emit("send reporter", {
       hubnetMessageSource: "all-users", 
@@ -457,7 +458,7 @@ Gallery = (function() {
     return dataObj;
   }
   
-  function drawView(key) {
+  function broadcastView(key) {
     var mapVisible = ($("#mapContainer").css("display") === "none") ? false : true;
     var graphVisible = ($("#appletContainer").css("display") === "none") ? false : true;
     var mapControlsVisible = ($(".map-controls").css("display") === "none") ? false : true;
@@ -519,9 +520,11 @@ Gallery = (function() {
     }
   }
   
-  function drawAvatar(key) {
-    var shape = key.substring(0, key.indexOf("-"));
-    var color = parseFloat(key.substring( key.indexOf("-") + 1, key.length));
+  function broadcastAvatar(data) {
+    //var shape = key.substring(0, key.indexOf("-"));
+    //var color = parseFloat(key.substring( key.indexOf("-") + 1, key.length));
+    var shape = data[0];
+    var color = data[1];
     var avatarCanvasId = "avatarCanvasView";
     var width = 200;
     var height = 200;
@@ -548,7 +551,7 @@ Gallery = (function() {
     Graph.broadcastGraph();
   }
   
-  function drawPlot(originalPlotName) {
+  function broadcastPlot(originalPlotName) {
     var miniCanvasId;
     var plotName = originalPlotName.replace(" ","-");
     if (is_safari) {
@@ -601,7 +604,11 @@ Gallery = (function() {
   
   return {
     displayCanvas: displayCanvas,
-    broadcastToGallery: broadcastToGallery,
+    broadcastView: broadcastView,
+    broadcastPlot: broadcastPlot,
+    broadcastText: broadcastText,
+    broadcastAvatar: broadcastAvatar,
+    clearBroadcast: clearBroadcast,
     setupGallery: setupGallery
   };
 

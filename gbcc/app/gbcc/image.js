@@ -14,20 +14,23 @@ Images = (function() {
     
   }
   function clearImage() {
-    //console.log("clear image");
     $("#imageLayer").prop("src","");
-    //Physics.clearWorld();
-    //Maps.clearMap();
-    //Graph.clearGraph();
     world.triggerUpdate();
   }
   function importFromUser(userId) {
-    //tag = tag.replace(" ","-");
-    //var id = "canvas-"+tag+"-"+userId;
-    console.log(userId);
-    var $img = $("#gallery-item-"+userId).find(".card img");
-
-    $("#imageLayer").prop("src",$img.prop("src"));
+    var $img;
+    var $images = $("#gallery-item-"+userId).find(".card img");
+    var maxZIndex = -1;
+    for (var i=0; i<$images.length; i++) {
+      var zIndex = parseInt($($images[i]).parent().css("z-index"));
+      if (zIndex > maxZIndex) {
+        maxZIndex = zIndex;
+        $img = $($images[i]); 
+      }
+    }
+    if ($img) {
+      $("#imageLayer").prop("src",$img.attr("src"));
+    }
     world.triggerUpdate();
   }
 

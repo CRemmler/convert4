@@ -5,10 +5,6 @@ module.exports = {
   dumper: undefined
   init: (workspace) ->
     # () => ()
-    createWorld = () ->
-        Physics.createWorld()
-
-    # () => ()
     hideWorld = () ->
         Physics.hideWorld()
 
@@ -16,25 +12,21 @@ module.exports = {
     showWorld = () ->
         Physics.showWorld()
 
-    # () => ()
-    deleteWorld = () ->
-        Physics.deleteWorld()
-
     # (string) => ()
-    importWorld = (data) ->
-        Physics.importWorld(data)
+    setData = (data) ->
+        Physics.setData(data)
 
     # (string) => ()
     importFile = (filename) ->
         Physics.importFile(filename)
 
     # () => (string)
-    exportWorld = () ->
-        return Physics.exportWorld()
+    getData = () ->
+        return Physics.getData()
 
-    # (string) => ()
-    exportFile = (filename) ->
-        Physics.exportFile(filename)
+    # () => ()
+    exportFile = () ->
+        Physics.exportFile()
 
     # (list) => ()
     setGravityXy = (data) ->
@@ -367,13 +359,11 @@ module.exports = {
     {
       name: "physics"
     , prims: {
-      "CREATE-WORLD": createWorld,
       "HIDE-WORLD": hideWorld,
       "SHOW-WORLD": showWorld,
-      "DELETE-WORLD": deleteWorld,
-      "IMPORT-WORLD": importWorld,
+      "SET-DATA": setData,
       "IMPORT-FILE": importFile,
-      "EXPORT-WORLD": exportWorld,
+      "GET-DATA": getData,
       "EXPORT-FILE": exportFile,
       "SET-GRAVITY-XY": setGravityXy,
       "GET-GRAVITY-XY": getGravityXy,

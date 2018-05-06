@@ -35,7 +35,7 @@ Graph = (function() {
     // FOR SAME-PERIMTER
     //applet1 = new GGBApplet({filename: "js/extensions/graph/geogebra-export8.ggb","showToolbar":true}, true);
     // FOR SAME-AREA
-    applet1 = new GGBApplet({filename: "js/extensions/graph/geogebra-export10.ggb","showToolbar":true}, true);
+    applet1 = new GGBApplet({filename: "../../other/geogebra-default.ggb","showToolbar":true}, true);
     
     applet1.inject('appletContainer');
     $("#appletContainer").css("display", "none");

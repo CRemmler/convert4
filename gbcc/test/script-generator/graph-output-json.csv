@@ -1,13 +1,4 @@
-{
 	{
-		"name": "create-graph",
-		"actionName": "create-graph",
-		"argTypes": []
-	}, {
-		"name": "delete-graph",
-		"actionName": "delete-graph",
-		"argTypes": []
-	}, {
 		"name": "hide-graph",
 		"actionName": "hide-graph",
 		"argTypes": []
@@ -16,22 +7,22 @@
 		"actionName": "show-graph",
 		"argTypes": []
 	}, {
-		"name": "import-graph",
-		"actionName": "import-graph",
+		"name": "set-data",
+		"actionName": "set-data",
 		"argTypes": ["string"]
 	}, {
 		"name": "import-file",
 		"actionName": "import-file",
 		"argTypes": ["string"]
 	}, {
-		"name": "export-graph",
-		"actionName": "export-graph",
+		"name": "get-data",
+		"actionName": "get-data",
 		"argTypes": [],
 		"returnType": "string"
 	}, {
 		"name": "export-file",
 		"actionName": "export-file",
-		"argTypes": ["string"]
+		"argTypes": []
 	}, {
 		"name": "create-point",
 		"actionName": "create-point",
@@ -50,19 +41,6 @@
 		"actionName": "delete-points",
 		"argTypes": []
 	}, {
-		"name": "get-constructions",
-		"actionName": "get-constructions",
-		"argTypes": [],
-		"returnType": "string"
-	}, {
-		"name": "set-constructions",
-		"actionName": "set-constructions",
-		"argTypes": ["string"]
-	}, {
-		"name": "append-constructions",
-		"actionName": "append-constructions",
-		"argTypes": ["string"]
-	}, {
 		"name": "set-x",
 		"actionName": "set-x",
 		"argTypes": ["string", "number"]
@@ -74,14 +52,6 @@
 		"name": "set-xy",
 		"actionName": "set-xy",
 		"argTypes": ["string", "list"]
-	}, {
-		"name": "set-label",
-		"actionName": "set-label",
-		"argTypes": ["string", "string"]
-	}, {
-		"name": "set-elements",
-		"actionName": "set-elements",
-		"argTypes": ["string"]
 	}, {
 		"name": "get-x",
 		"actionName": "get-x",
@@ -98,13 +68,53 @@
 		"argTypes": ["string"],
 		"returnType": "list"
 	}, {
-		"name": "get-label",
-		"actionName": "get-label",
+		"name": "get-objects",
+		"actionName": "get-objects",
+		"argTypes": [],
+		"returnType": "list"
+	}, {
+		"name": "create-objects",
+		"actionName": "create-objects",
+		"argTypes": ["list"]
+	}, {
+		"name": "get-object",
+		"actionName": "get-object",
+		"argTypes": ["string"],
+		"returnType": "list"
+	}, {
+		"name": "create-object",
+		"actionName": "create-object",
+		"argTypes": ["list"]
+	}, {
+		"name": "get-value",
+		"actionName": "get-value",
+		"argTypes": ["string"],
+		"returnType": "number"
+	}, {
+		"name": "get-object-type",
+		"actionName": "get-object-type",
 		"argTypes": ["string"],
 		"returnType": "string"
 	}, {
-		"name": "delete-point",
-		"actionName": "delete-point",
+		"name": "exists",
+		"actionName": "exists",
+		"argTypes": ["string"],
+		"returnType": "boolean"
+	}, {
+		"name": "rename-object",
+		"actionName": "rename-object",
+		"argTypes": ["string", "string"]
+	}, {
+		"name": "delete-object",
+		"actionName": "delete-object",
+		"argTypes": ["string"]
+	}, {
+		"name": "hide-object",
+		"actionName": "hide-object",
+		"argTypes": ["string"]
+	}, {
+		"name": "show-object",
+		"actionName": "show-object",
 		"argTypes": ["string"]
 	}, {
 		"name": "graph-to-patch",
@@ -121,14 +131,8 @@
 		"actionName": "eval-command",
 		"argTypes": ["string"]
 	}, {
-		"name": "eval-command-cas",
-		"actionName": "eval-command-cas",
+		"name": "eval-reporter",
+		"actionName": "eval-reporter",
 		"argTypes": ["string"],
-		"returnType": "string"
-	}, {
-		"name": "eval-command-get-labels",
-		"actionName": "eval-command-get-labels",
-		"argTypes": ["string"],
-		"returnType": "string"
+		"returnType": "any"
 	}
-}

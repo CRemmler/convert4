@@ -254,6 +254,30 @@ Maps = (function() {
     removeMap: removeMap,
     getMarker: getMarker,
     getMarkerList: getMarkerList
+    /*
+    maps:show-map [ top left width height ]
+    maps:hide-map
+    maps:set-zoom 3 
+    show maps:get-zoom  ;; returns 3
+    maps:set-center-latlng [ 30 97 ]
+    show maps:get-center-latlng ;; returns [ 30 97 ]
+    maps:create-marker "marker-1" [ 0 0 ]
+    maps:create-markers  [ [ "marker-1" [ 0 0 ] ] [ "marker-2"[ 0 0 ] ] ]
+    show maps:get-markers  ;; [ [ "marker-1" [ 0 0 ] ] [ "marker-2" [ 0 0 ] ] ]
+    maps:delete-marker "marker-1" 
+    maps:set-lat "marker-1" 30  
+    maps:set-lng "marker-1" 97  
+    maps:set-latlng "marker-1" [  30 97 ] 
+    maps:set-label "point-1" "cat's marker-1"
+    show maps:get-lat "marker-1" ;; returns 30 
+    show maps:get-lng "marker-1" ;; returns 97
+    show maps:get-latlng "marker-1" ;; returns [ 30 97 ] 
+    show maps:get-label "marker-1" ;; returns "cat's point-1"
+    DOES NOT WORK:
+    maps:import-file filename
+    maps:export-file 
+    maps:set-data <a string of json>
+    show maps:get-data ;; <a string of json> */
   };
  
 })();

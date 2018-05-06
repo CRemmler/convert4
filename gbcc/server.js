@@ -3,11 +3,11 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http, {path:'/socket.io'});
 var express = require('express');
 var config = require('./config.json');
-var exportworld = require('./export/exportworld.js');
+var exportworld = require('./app/gbcc/exportworld.js');
 var formidable = require('formidable');
 var fs = require("node-fs");
 var markdown = require("markdown").markdown;
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3000;
 var myTimer;
 var schools = {};
  

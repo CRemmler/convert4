@@ -246,8 +246,16 @@ app.post('/fileupload',function(req,res){
         zip.file("config.json", configFile);
         zip.file("index.html", indexFile);
         
-
         
+        fs.readFileAsync("gbcc/app/gbcc/font-awesome.min.css", "utf8").then(function(data) {
+          zip.file("app/gbcc/font-awesome.min.css", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/gbcc-gallery.css", "utf8").then(function(data) {
+          zip.file("app/gbcc/gbcc-gallery.css", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/exportworld.js", "utf8").then(function(data) {
+        	zip.file("app/gbcc/exportworld.js", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
         	zip.file("app/gbcc/fontawesome-webfont.eot", data);
         }).then(function() {
@@ -284,8 +292,8 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/html2canvas.min.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/html2canvas.min.js", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/image-extension.js", "utf8").then(function(data) {
-        	zip.file("app/gbcc/image-extension.js", data);
+        fs.readFileAsync("gbcc/app/gbcc/image.js", "utf8").then(function(data) {
+        	zip.file("app/gbcc/image.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/jquery.min.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/jquery.min.js", data);
@@ -599,11 +607,11 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/netlogoweb/widgets.css", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/widgets.css", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/other/geogebra-default.ggb").then(function(data) {
-        	zip.file("other/geogebra-default.ggb", data);
+        fs.readFileAsync("gbcc/geogebra-default.ggb").then(function(data) {
+        	zip.file("geogebra-default.ggb", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/other/ocean.png").then(function(data) {
-        	zip.file("other/ocean.png", data);
+        fs.readFileAsync("gbcc/ocean.png").then(function(data) {
+        	zip.file("ocean.png", data);
         }).then(function() {
         fs.readFileAsync("gbcc/package.json", "utf8").then(function(data) {
         	zip.file("package.json", data);
@@ -631,7 +639,7 @@ app.post('/fileupload',function(req,res){
           console.error(e.stack);
           
           
-  }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });   
+  }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
      
      });
    });

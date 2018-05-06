@@ -27,28 +27,28 @@ Physics = (function() {
     spanText +=         "<div style='display:inline-block'><div><input type='checkbox' id='showAABB'></div><div><input type='checkbox' id='showCenter'></div></div>";
     
     
-    spanText +=         " <img src='js/extensions/physics/images/a1.png' class='physics-drag purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a2.png' class='physics-drag white'>"
-    spanText +=         " <img src='js/extensions/physics/images/a3.png' class='physics-line purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a4.png' class='physics-line white'>"
-    spanText +=         " <img src='js/extensions/physics/images/a5.png' class='physics-circle purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a6.png' class='physics-circle white'>"
-    spanText +=         " <img src='js/extensions/physics/images/a7.png' class='physics-triangle purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a8.png' class='physics-triangle white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a1.png' class='physics-drag purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a2.png' class='physics-drag white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a3.png' class='physics-line purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a4.png' class='physics-line white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a5.png' class='physics-circle purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a6.png' class='physics-circle white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a7.png' class='physics-triangle purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a8.png' class='physics-triangle white'>"
     
     
-    spanText +=         " <img src='js/extensions/physics/images/a14.png' class='physics-target purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a13.png' class='physics-target white'>"
-    spanText +=         " <img src='js/extensions/physics/images/a16.png' class='physics-group purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a15.png' class='physics-group white'>"
-    spanText +=         " <img src='js/extensions/physics/images/a18.png' class='physics-force purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a17.png' class='physics-force white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a14.png' class='physics-target purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a13.png' class='physics-target white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a16.png' class='physics-group purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a15.png' class='physics-group white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a18.png' class='physics-force purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a17.png' class='physics-force white'>"
     
     /*
-    spanText +=         " <img src='js/extensions/physics/images/a9.png' class='physics-group purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a10.png' class='physics-group white'>"
-    spanText +=         " <img src='js/extensions/physics/images/a11.png' class='physics-target purple hidden'>"
-    spanText +=         " <img src='js/extensions/physics/images/a12.png' class='physics-target white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a9.png' class='physics-group purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a10.png' class='physics-group white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a11.png' class='physics-target purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a12.png' class='physics-target white'>"
     */
     
     spanText +=       "</div>";

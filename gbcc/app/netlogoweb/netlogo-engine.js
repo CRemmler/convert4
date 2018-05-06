@@ -18322,7 +18322,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var broadcastToGallery, compileObserverCode, compilePatchCode, compileTurtleCode, get, getFromUser, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, set, storeGlobals;
+      var broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, get, getFromUser, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, set, storeGlobals;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
@@ -18380,8 +18380,20 @@ function hasOwnProperty(obj, prop) {
         }
         return results;
       };
-      broadcastToGallery = function(key, value) {
-        return Gallery.broadcastToGallery(key, value);
+      broadcastView = function(name) {
+        return Gallery.broadcastView(name);
+      };
+      broadcastPlot = function(name) {
+        return Gallery.broadcastPlot(name);
+      };
+      broadcastText = function(text) {
+        return Gallery.broadcastText(text);
+      };
+      broadcastAvatar = function(shape, color, text) {
+        return Gallery.broadcastAvatar(shape, color, text);
+      };
+      clearBroadcast = function() {
+        return Gallery.clearBroadcast();
       };
       compileObserverCode = function(key, value) {
         return session.compileObserverCode(key, value);
@@ -18410,7 +18422,11 @@ function hasOwnProperty(obj, prop) {
           "STORE-GLOBALS": storeGlobals,
           "RESTORE-GLOBALS": restoreGlobals,
           "RESTORE-GLOBALS-FROM-USER": restoreGlobalsFromUser,
-          "BROADCAST-TO-GALLERY": broadcastToGallery,
+          "BROADCAST-VIEW": broadcastView,
+          "BROADCAST-PLOT": broadcastPlot,
+          "BROADCAST-AVATAR": broadcastAvatar,
+          "BROADCAST-TEXT": broadcastText,
+          "CLEAR-BROADCAST": clearBroadcast,
           "COMPILE-OBSERVER-CODE": compileObserverCode,
           "COMPILE-TURTLE-CODE": compileTurtleCode,
           "COMPILE-PATCH-CODE": compilePatchCode,
@@ -18429,30 +18445,24 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var appendConstructions, createGraph, createPoint, createPoints, deleteGraph, deletePoint, deletePoints, evalCommand, evalCommandCas, evalCommandGetLabels, exportFile, exportGraph, getConstructions, getLabel, getPoints, getX, getXy, getY, graphToPatch, hideGraph, importFile, importGraph, patchToGraph, setConstructions, setElements, setLabel, setX, setXy, setY, showGraph;
-      createGraph = function() {
-        return Graph.createGraph();
-      };
-      deleteGraph = function() {
-        return Graph.deleteGraph();
-      };
+      var createObject, createObjects, createPoint, createPoints, deleteObject, deletePoints, evalCommand, evalReporter, exists, exportFile, getData, getObject, getObjectType, getObjects, getPoints, getValue, getX, getXy, getY, graphToPatch, hideGraph, hideObject, importFile, patchToGraph, renameObject, setData, setX, setXy, setY, showGraph, showObject;
       hideGraph = function() {
         return Graph.hideGraph();
       };
       showGraph = function() {
         return Graph.showGraph();
       };
-      importGraph = function(xmlString) {
-        return Graph.importGraph(xmlString);
+      setData = function(data) {
+        return Graph.setData(data);
       };
       importFile = function(filename) {
         return Graph.importFile(filename);
       };
-      exportGraph = function() {
-        return Graph.exportGraph();
+      getData = function() {
+        return Graph.getData();
       };
-      exportFile = function(filename) {
-        return Graph.exportFile(filename);
+      exportFile = function() {
+        return Graph.exportFile();
       };
       createPoint = function(name, center) {
         return Graph.createPoint(name, center);
@@ -18466,15 +18476,6 @@ function hasOwnProperty(obj, prop) {
       deletePoints = function() {
         return Graph.deletePoints();
       };
-      getConstructions = function() {
-        return Graph.getConstructions();
-      };
-      setConstructions = function(data) {
-        return Graph.setConstructions(data);
-      };
-      appendConstructions = function(data) {
-        return Graph.appendConstructions(data);
-      };
       setX = function(name, xcor) {
         return Graph.setX(name, xcor);
       };
@@ -18483,12 +18484,6 @@ function hasOwnProperty(obj, prop) {
       };
       setXy = function(name, center) {
         return Graph.setXy(name, center);
-      };
-      setLabel = function(name, label) {
-        return Graph.setLabel(name, label);
-      };
-      setElements = function(xml) {
-        return Graph.setElements(xml);
       };
       getX = function(name) {
         return Graph.getX(name);
@@ -18499,11 +18494,38 @@ function hasOwnProperty(obj, prop) {
       getXy = function(name) {
         return Graph.getXy(name);
       };
-      getLabel = function(name) {
-        return Graph.getLabel(name);
+      getObjects = function() {
+        return Graph.getObjects();
       };
-      deletePoint = function(name) {
-        return Graph.deletePoint(name);
+      createObjects = function(objects) {
+        return Graph.createObjects(objects);
+      };
+      getObject = function(name) {
+        return Graph.getObject(name);
+      };
+      createObject = function(object) {
+        return Graph.createObject(object);
+      };
+      getValue = function(name) {
+        return Graph.getValue(name);
+      };
+      getObjectType = function(name) {
+        return Graph.getObjectType(name);
+      };
+      exists = function(name) {
+        return Graph.exists(name);
+      };
+      renameObject = function(old, next) {
+        return Graph.renameObject(old, next);
+      };
+      deleteObject = function(name) {
+        return Graph.deleteObject(name);
+      };
+      hideObject = function(name) {
+        return Graph.hideObject(name);
+      };
+      showObject = function(name) {
+        return Graph.showObject(name);
       };
       graphToPatch = function(coords) {
         return Graph.graphToPatch(coords);
@@ -18514,45 +18536,43 @@ function hasOwnProperty(obj, prop) {
       evalCommand = function(command) {
         return Graph.evalCommand(command);
       };
-      evalCommandCas = function(command) {
-        return Graph.evalCommandCas(command);
-      };
-      evalCommandGetLabels = function(command) {
-        return Graph.evalCommandGetLabels(command);
+      evalReporter = function(command) {
+        return Graph.evalReporter(command);
       };
       return {
         name: "graph",
         prims: {
-          "CREATE-GRAPH": createGraph,
-          "DELETE-GRAPH": deleteGraph,
           "HIDE-GRAPH": hideGraph,
           "SHOW-GRAPH": showGraph,
-          "IMPORT-GRAPH": importGraph,
+          "SET-DATA": setData,
           "IMPORT-FILE": importFile,
-          "EXPORT-GRAPH": exportGraph,
+          "GET-DATA": getData,
           "EXPORT-FILE": exportFile,
           "CREATE-POINT": createPoint,
           "CREATE-POINTS": createPoints,
           "GET-POINTS": getPoints,
           "DELETE-POINTS": deletePoints,
-          "GET-CONSTRUCTIONS": getConstructions,
-          "SET-CONSTRUCTIONS": setConstructions,
-          "APPEND-CONSTRUCTIONS": appendConstructions,
           "SET-X": setX,
           "SET-Y": setY,
           "SET-XY": setXy,
-          "SET-LABEL": setLabel,
-          "SET-ELEMENTS": setElements,
           "GET-X": getX,
           "GET-Y": getY,
           "GET-XY": getXy,
-          "GET-LABEL": getLabel,
-          "DELETE-POINT": deletePoint,
+          "GET-OBJECTS": getObjects,
+          "CREATE-OBJECTS": createObjects,
+          "GET-OBJECT": getObject,
+          "CREATE-OBJECT": createObject,
+          "GET-VALUE": getValue,
+          "GET-OBJECT-TYPE": getObjectType,
+          "EXISTS": exists,
+          "RENAME-OBJECT": renameObject,
+          "DELETE-OBJECT": deleteObject,
+          "HIDE-OBJECT": hideObject,
+          "SHOW-OBJECT": showObject,
           "GRAPH-TO-PATCH": graphToPatch,
           "PATCH-TO-GRAPH": patchToGraph,
           "EVAL-COMMAND": evalCommand,
-          "EVAL-COMMAND-CAS": evalCommandCas,
-          "EVAL-COMMAND-GET-LABELS": evalCommandGetLabels
+          "EVAL-REPORTER": evalReporter
         }
       };
     }
@@ -18710,30 +18730,24 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var createMap, createMarker, createMarkers, deleteMap, deleteMarker, deleteMarkers, exportFile, exportMap, getCenterLatlng, getLabel, getLat, getLatlng, getLng, getZoom, hideMap, importFile, importMap, latlngToPatch, patchToLatlng, setCenterLatlng, setLabel, setLat, setLatlng, setLng, setZoom, showMap;
-      createMap = function() {
-        return Maps.createMap();
-      };
-      deleteMap = function() {
-        return Maps.deleteMap();
-      };
+      var createMarker, createMarkers, deleteMarker, deleteMarkers, exportFile, getCenterLatlng, getData, getLat, getLatlng, getLng, getZoom, hideMap, importFile, latlngToPatch, patchToLatlng, setCenterLatlng, setData, setLat, setLatlng, setLng, setZoom, showMap;
       hideMap = function() {
         return Maps.hideMap();
       };
       showMap = function() {
         return Maps.showMap();
       };
-      importMap = function(data) {
-        return Maps.importMap(data);
+      setData = function(data) {
+        return Maps.setData(data);
       };
       importFile = function(filename) {
         return Maps.importFile(filename);
       };
-      exportMap = function() {
-        return Maps.exportMap();
+      getData = function() {
+        return Maps.getData();
       };
-      exportFile = function(filename) {
-        return Maps.exportFile(filename);
+      exportFile = function() {
+        return Maps.exportFile();
       };
       setZoom = function(zoom) {
         return Maps.setZoom(zoom);
@@ -18762,9 +18776,6 @@ function hasOwnProperty(obj, prop) {
       setLatlng = function(name, latlng) {
         return Maps.setLatlng(name, latlng);
       };
-      setLabel = function(name, label) {
-        return Maps.setLabel(name, label);
-      };
       getLat = function(name) {
         return Maps.getLat(name);
       };
@@ -18773,9 +18784,6 @@ function hasOwnProperty(obj, prop) {
       };
       getLatlng = function(name) {
         return Maps.getLatlng(name);
-      };
-      getLabel = function(name) {
-        return Maps.getLabel(name);
       };
       deleteMarker = function(name) {
         return Maps.deleteMarker(name);
@@ -18792,13 +18800,11 @@ function hasOwnProperty(obj, prop) {
       return {
         name: "maps",
         prims: {
-          "CREATE-MAP": createMap,
-          "DELETE-MAP": deleteMap,
           "HIDE-MAP": hideMap,
           "SHOW-MAP": showMap,
-          "IMPORT-MAP": importMap,
+          "SET-DATA": setData,
           "IMPORT-FILE": importFile,
-          "EXPORT-MAP": exportMap,
+          "GET-DATA": getData,
           "EXPORT-FILE": exportFile,
           "SET-ZOOM": setZoom,
           "GET-ZOOM": getZoom,
@@ -18809,11 +18815,9 @@ function hasOwnProperty(obj, prop) {
           "SET-LAT": setLat,
           "SET-LNG": setLng,
           "SET-LATLNG": setLatlng,
-          "SET-LABEL": setLabel,
           "GET-LAT": getLat,
           "GET-LNG": getLng,
           "GET-LATLNG": getLatlng,
-          "GET-LABEL": getLabel,
           "DELETE-MARKER": deleteMarker,
           "DELETE-MARKERS": deleteMarkers,
           "LATLNG-TO-PATCH": latlngToPatch,
@@ -18957,36 +18961,30 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createPolygon, createTarget, createWorld, deleteBody, deleteCircle, deleteLine, deletePolygon, deleteTarget, deleteWorld, disconnectWho, exportFile, exportWorld, getBodyAngle, getBodyAngularVelocity, getBodyBehavior, getBodyCoords, getBodyLinearVelocity, getCircleBodyId, getCircleCenter, getCircleDensity, getCircleFriction, getCircleRadius, getCircleRelativeCenter, getCircleRestitution, getGravityXy, getLineBodyId, getLineDensity, getLineEndpoints, getLineFriction, getLineRelativeEndpoints, getLineRestitution, getPolygonDensity, getPolygonFriction, getPolygonId, getPolygonRelativeVertices, getPolygonRestitution, getPolygonVertices, getTargetBodyId, getTargetCenter, getTargetRelativeCenter, getTimeStep, getVelocityIterations, getWrapXy, hideWorld, importFile, importWorld, setBodyAngle, setBodyAngularVelocity, setBodyBehavior, setBodyCoords, setBodyLinearVelocity, setCircleBodyId, setCircleCenter, setCircleDensity, setCircleFriction, setCircleRadius, setCircleRelativeCenter, setCircleRestitution, setGravityXy, setLineBodyId, setLineDensity, setLineEndpoints, setLineFriction, setLineRelativeEndpoints, setLineRestitution, setPolygonBodyId, setPolygonDensity, setPolygonFriction, setPolygonRelativeVertices, setPolygonRestitution, setPolygonVertices, setPositionIterations, setTargetBodyId, setTargetCenter, setTargetRelativeCenter, setTimeStep, setVelocityIterations, setWrapXy, showWorld;
-      createWorld = function() {
-        return Physics.createWorld();
-      };
+      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createPolygon, createTarget, deleteBody, deleteCircle, deleteLine, deletePolygon, deleteTarget, disconnectWho, exportFile, getBodyAngle, getBodyAngularVelocity, getBodyBehavior, getBodyCoords, getBodyLinearVelocity, getCircleBodyId, getCircleCenter, getCircleDensity, getCircleFriction, getCircleRadius, getCircleRelativeCenter, getCircleRestitution, getData, getGravityXy, getLineBodyId, getLineDensity, getLineEndpoints, getLineFriction, getLineRelativeEndpoints, getLineRestitution, getPolygonDensity, getPolygonFriction, getPolygonId, getPolygonRelativeVertices, getPolygonRestitution, getPolygonVertices, getTargetBodyId, getTargetCenter, getTargetRelativeCenter, getTimeStep, getVelocityIterations, getWrapXy, hideWorld, importFile, setBodyAngle, setBodyAngularVelocity, setBodyBehavior, setBodyCoords, setBodyLinearVelocity, setCircleBodyId, setCircleCenter, setCircleDensity, setCircleFriction, setCircleRadius, setCircleRelativeCenter, setCircleRestitution, setData, setGravityXy, setLineBodyId, setLineDensity, setLineEndpoints, setLineFriction, setLineRelativeEndpoints, setLineRestitution, setPolygonBodyId, setPolygonDensity, setPolygonFriction, setPolygonRelativeVertices, setPolygonRestitution, setPolygonVertices, setPositionIterations, setTargetBodyId, setTargetCenter, setTargetRelativeCenter, setTimeStep, setVelocityIterations, setWrapXy, showWorld;
       hideWorld = function() {
         return Physics.hideWorld();
       };
       showWorld = function() {
         return Physics.showWorld();
       };
-      deleteWorld = function() {
-        return Physics.deleteWorld();
-      };
-      importWorld = function(data) {
-        return Physics.importWorld(data);
+      setData = function(data) {
+        return Physics.setData(data);
       };
       importFile = function(filename) {
         return Physics.importFile(filename);
       };
-      exportWorld = function() {
-        return Physics.exportWorld();
+      getData = function() {
+        return Physics.getData();
       };
-      exportFile = function(filename) {
-        return Physics.exportFile(filename);
-      };
-      setGravityXy = function(data) {
-        return Physics.setGravityXy(data);
+      exportFile = function() {
+        return Physics.exportFile();
       };
       getGravityXy = function() {
         return Physics.getGravityXy();
+      };
+      setGravityXy = function(data) {
+        return Physics.setGravityXy(data);
       };
       setWrapXy = function(data) {
         return Physics.setWrapXy(data);
@@ -19231,16 +19229,14 @@ function hasOwnProperty(obj, prop) {
       return {
         name: "physics",
         prims: {
-          "CREATE-WORLD": createWorld,
           "HIDE-WORLD": hideWorld,
           "SHOW-WORLD": showWorld,
-          "DELETE-WORLD": deleteWorld,
-          "IMPORT-WORLD": importWorld,
+          "SET-DATA": setData,
           "IMPORT-FILE": importFile,
-          "EXPORT-WORLD": exportWorld,
+          "GET-DATA": getData,
           "EXPORT-FILE": exportFile,
-          "SET-GRAVITY-XY": setGravityXy,
           "GET-GRAVITY-XY": getGravityXy,
+          "SET-GRAVITY-XY": setGravityXy,
           "SET-WRAP-XY": setWrapXy,
           "GET-WRAP-XY": getWrapXy,
           "SET-TIME-STEP": setTimeStep,

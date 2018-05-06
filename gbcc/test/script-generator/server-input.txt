@@ -1,4 +1,5 @@
 filename
+gbcc/app/gbcc/exportworld.js
 gbcc/app/gbcc/fontawesome-webfont.eot
 gbcc/app/gbcc/fontawesome-webfont.svg
 gbcc/app/gbcc/fontawesome-webfont.ttf
@@ -8,10 +9,11 @@ gbcc/app/gbcc/gbcc-client.js
 gbcc/app/gbcc/gbcc-events.js
 gbcc/app/gbcc/gbcc-export.js
 gbcc/app/gbcc/gbcc-gallery.js
+gbcc/app/gbcc/gbcc-gallery.css
 gbcc/app/gbcc/gbcc-interface.js
 gbcc/app/gbcc/graph.js
 gbcc/app/gbcc/html2canvas.min.js
-gbcc/app/gbcc/image-extension.js
+gbcc/app/gbcc/image.js
 gbcc/app/gbcc/jquery.min.js
 gbcc/app/gbcc/maps.js
 gbcc/app/gbcc/physics-api.js
