@@ -1,6 +1,6 @@
 prim-name,input-type,input-name,output-type
 hide-map, , ,
-show-map, , ,
+show-map,(list),(settings),
 set-data,(string),(data),
 import-file,(string),(filename),
 get-data, , ,(string)
@@ -11,6 +11,9 @@ set-center-latlng,(list),(coords),
 get-center-latlng, , ,(list)
 create-marker,(string; list), (name; coords),
 create-markers,(list),(data),
+get-markers,,,(data)
+hide-marker,(string),(name),
+show-marker,(string),(name),
 set-lat,(string; number), (name; lat),
 set-lng,(string; number), (name; lng),
 set-latlng,(string; list), (name; latlng),

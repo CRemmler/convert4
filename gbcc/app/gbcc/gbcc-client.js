@@ -27,7 +27,8 @@ jQuery(document).ready(function() {
     userId = data.userId;
     userType = data.userType;
     Gallery.setupGallery({settings: data.gallerySettings, userId: userId});
-    Physics.setupInterface();
+    //Physics.setupInterface();
+    console.log("from here");
     Maps.setupInterface();
     Graph.setupInterface();
     $(".netlogo-canvas").attr("id","netlogoCanvas"); 

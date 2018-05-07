@@ -127,12 +127,12 @@
 <pre>
 ;; GRAPH
 <span class='blue'>graph:show-graph</span> <span class="red">[ top left width height ]</span>
-<span class='blue'>graph:hide-graph</span>
-<span class='blue'>graph:import-file</span> <span class="red">filename</span>
-<span class='blue'>graph:export-file</span>
-<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
-<span class='blue'>show graph:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+&#x2713; <span class='blue'>graph:hide-graph</span>
 </pre>
+<!--<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
+<span class='blue'>show graph:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+<span class='blue'>graph:import-file</span> <span class="red">filename</span>
+<span class='blue'>graph:export-file</span>-->
     </td>
   </tr>
   <tr>
@@ -140,21 +140,21 @@
     <td>
 <pre>
 ;; POINTS
-<span class='blue'>graph:create-point</span> <span class='red'>"point-1" </span>[ <span class="red">0 0</span> ]
-<span class='blue'>graph:create-points </span> [ [ <span class='red'>"point-1" </span>[ <span class="red">0 2</span> ] ] [ <span class='red'>"point-2"</span> [ <span class="red">0 0</span> ] ] ]
-<span class='blue'>show graph:get-points </span> <span class="gray">;; [ [ "point-1" [ 0 2 ] ] [ "point-2" [ 0 0 ] ] ]</span>
+&#x2713; <span class='blue'>graph:create-point</span> <span class='red'>"point-1" </span>[ <span class="red">0 0</span> ]
+&#x2713; <span class='blue'>graph:create-points </span> [ [ <span class='red'>"point-1" </span>[ <span class="red">0 2</span> ] ] [ <span class='red'>"point-2"</span> [ <span class="red">0 0</span> ] ] ]
+&#x2713; <span class='blue'>show graph:get-points </span> <span class="gray">;; [ [ "point-1" [ 0 2 ] ] [ "point-2" [ 0 0 ] ] ]</span>
 </pre>
 <!--<span class='blue'>graph:delete-point</span> <span class='red'>"point-1"</span> 
 <span class='blue'>graph:delete-points</span>
 -->
 <pre>
-<span class='blue'>graph:set-x</span><span class='red'> "point-1" 0 </span> 
-<span class='blue'>graph:set-y</span><span class='red'> "point-1" 2 </span> 
-<span class='blue'>graph:set-xy</span><span class='red'> "point-1" </span>[ <span class='red'>0 2</span> ] 
+&#x2713; <span class='blue'>graph:set-x</span><span class='red'> "point-1" 0 </span> 
+&#x2713; <span class='blue'>graph:set-y</span><span class='red'> "point-1" 2 </span> 
+&#x2713; <span class='blue'>graph:set-xy</span><span class='red'> "point-1" </span>[ <span class='red'>0 2</span> ] 
 
-<span class='blue'>show graph:get-x</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 0</span> 
-<span class='blue'>show graph:get-y</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 2</span>
-<span class='blue'>show graph:get-xy</span> <span class='red'>"point-1"</span> <span class="gray">;; returns [ 0 2 ] </span>
+&#x2713; <span class='blue'>show graph:get-x</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 0</span> 
+&#x2713; <span class='blue'>show graph:get-y</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 2</span>
+&#x2713; <span class='blue'>show graph:get-xy</span> <span class='red'>"point-1"</span> <span class="gray">;; returns [ 0 2 ] </span>
 </pre>
     </td>
   </tr>
@@ -165,20 +165,21 @@
     <td>
 <pre>
 ;; OBJECTS (Including Points)
-<span class='blue'>show graph:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
-<span class='blue'>graph:create-objects</span> <span class='red'> [ [ "my-point" "(0, 0)"] [ "my-triangle" "Polygon(F, G, H)")"] ] </span>
-<span class='blue'>show graph:get-object</span> <span class='red'> "triangle-1" </span><span class="gray">;; returns getCommandString (non-points) or getValueString (points)</span> 
-<span class='blue'>graph:create-object</span> <span class='red'> [ "my-point" "(0, 0)"]</span>
-<span class='blue'>show graph:get-value</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns getValue</span> 
-<span class='blue'>show graph:get-object-type</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns type</span> 
-<span class='blue'>show graph:exists</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns boolean</span> 
-<span class='blue'>graph:rename-object</span> <span class='red'> "triangle-1" "triangle-2" </span>
-<span class='blue'>graph:delete-object</span> <span class='red'> "triangle-1" </span>
-<span class='blue'>graph:hide-object</span> <span class='red'> "triangle-1" </span>
-<span class='blue'>graph:show-object</span> <span class='red'> "triangle-1" </span> </pre>
+&#x2713; <span class='blue'>show graph:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
+&#x2713; <span class='blue'>graph:create-objects</span> <span class='red'> [ [ "my-point" "(0, 0)"] [ "my-triangle" "Polygon(F, G, H)")"] ] </span>
+&#x2713; <span class='blue'>show graph:get-object</span> <span class='red'> "triangle-1" </span><span class="gray">;; returns getCommandString (non-points) or getValueString (points)</span> 
+&#x2713; <span class='blue'>show graph:get-value</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns getValue</span> 
+&#x2713; <span class='blue'>show graph:get-object-type</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns type</span> 
+&#x2713; <span class='blue'>show graph:exists</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns boolean</span> 
+&#x2713; <span class='blue'>graph:rename-object</span> <span class='red'> "triangle-1" "triangle-2" </span>
+&#x2713; <span class='blue'>graph:delete-object</span> <span class='red'> "triangle-1" </span>
+&#x2713; <span class='blue'>graph:hide-object</span> <span class='red'> "triangle-1" </span>
+&#x2713; <span class='blue'>graph:show-object</span> <span class='red'> "triangle-1" </span> </pre>
     </td>
   </tr>
 <!--  
+<span class='blue'>graph:create-object</span> <span class='red'> [ "my-point" "(0, 0)"]</span>
+
   <tr>
     <td><img src="./images/graph-world.png"></td>
     <td>
@@ -200,7 +201,7 @@
 
 <h3>GeoGebra Eval Commands</h3>
 <pre>
-<span class="blue">graph:eval-command</span> <span class="red">geogebra-command </span>
+&#x2713; <span class="blue">graph:eval-command</span> <span class="red">geogebra-command </span>
 <span class="blue">show graph:eval-reporter</span> <span class="red">geogebra-command</span> <span class="gray">;; returns a value</span>
 </pre>
 
@@ -238,7 +239,7 @@
     <td>
 <pre>
 <span class='green'>extensions</span> [ graph ]
-<span class='blue'>graph:create-graph</span>
+<span class='blue'>graph:show-graph</span>
 <span class="gray">;; Save current state of points.</span>
 <span class='blue'>set </span><span class="black">saved-graph </span><span class='blue'>graph:get-points</span> <span class="gray">;; returns points </span>
 <span class="gray">;; Grab points from someone else.</span>
@@ -257,19 +258,19 @@
     </td>
     <td>
 <pre>
-  <span class='green'>extensions</span> [ graph ]
-  <span class='blue'>graph:create-graph</span>
-  <span class="gray">;; Save current state of environment, locally.</span>
-  <span class='blue'>set </span><span class="black">saved-xml </span><span class='blue'>graph:export </span> 
-  <span class="gray">;; Grab xml from someone else, by clicking on gallery.</span>
-  <span class='blue'>set </span><span class="black">new-xml</span><span class='blue'> gbcc:get-from-user</span> <span class="red">"my-xml"</span> 
-  <span class="gray">;; Replace old environment with new environment.</span>
-  <span class='blue'>graph:import </span><span class='black'>new-xml </span>
-  <span class="gray">;; Change environment with Gui</span>
-  <span class="gray">;; Save new environment, where other users can access it.</span>
-  <span class='blue'>gbcc:set </span><span class='black'>"my-xml"</span> <span class="blue">graph:export</span>
-  <span class="gray">;; Share screenshot.</span>
-  <span class='blue'>gbcc:broadcast-view</span><span class='black'>""</span>
+<span class='green'>extensions</span> [ graph ]
+<span class='blue'>graph:show-graph</span>
+<span class="gray">;; Save current state of environment, locally.</span>
+<span class='blue'>set </span><span class="black">saved-xml </span><span class='blue'>graph:export </span> 
+<span class="gray">;; Grab xml from someone else, by clicking on gallery.</span>
+<span class='blue'>set </span><span class="black">new-xml</span><span class='blue'> gbcc:get-from-user</span> <span class="red">"my-xml"</span> 
+<span class="gray">;; Replace old environment with new environment.</span>
+<span class='blue'>graph:import </span><span class='black'>new-xml </span>
+<span class="gray">;; Change environment with Gui</span>
+<span class="gray">;; Save new environment, where other users can access it.</span>
+<span class='blue'>gbcc:set </span><span class='black'>"my-xml"</span> <span class="blue">graph:export</span>
+<span class="gray">;; Share screenshot.</span>
+<span class='blue'>gbcc:broadcast-view</span><span class='black'>""</span>
 </pre>
     </td>
   </tr>
@@ -282,19 +283,19 @@
     </td>
     <td>
 <pre>
-  <span class='green'>extensions</span> [ graph ]
-  <span class='blue'>graph:create-graph</span>
-  <span class="gray">;; Save objects, locally.</span>
-  <span class='blue'>set </span><span class="black">saved-objects </span><span class='blue'>graph:get-objects</span> 
-  <span class="gray">;; Grab objects from someone else, by clicking on gallery.</span>
-  <span class='blue'>set </span><span class="black">new-objects</span><span class='blue'> gbcc:get-from-user</span> <span class="red">user-id "my-objects"</span> 
-  <span class="gray">;; Add new objects.</span>
-  <span class='blue'>graph:create-objects </span><span class='black'>new-objects </span>
-  <span class="gray">;; Change environment with Gui</span>
-  <span class="gray">;; Save new environment, where other users can access it.</span>
-  <span class='blue'>gbcc:set </span><span class='black'>"my-objects"</span> <span class="blue">graph:get-objects</span>
-  <span class="gray">;; Share screenshot.</span>
-  <span class='blue'>gbcc:broadcast-view</span><span class='black'>""</span>
+<span class='green'>extensions</span> [ graph ]
+<span class='blue'>graph:show-graph</span>
+<span class="gray">;; Save objects, locally.</span>
+<span class='blue'>set </span><span class="black">saved-objects </span><span class='blue'>graph:get-objects</span> 
+<span class="gray">;; Grab objects from someone else, by clicking on gallery.</span>
+<span class='blue'>set </span><span class="black">new-objects</span><span class='blue'> gbcc:get-from-user</span> <span class="red">user-id "my-objects"</span> 
+<span class="gray">;; Add new objects.</span>
+<span class='blue'>graph:create-objects </span><span class='black'>new-objects </span>
+<span class="gray">;; Change environment with Gui</span>
+<span class="gray">;; Save new environment, where other users can access it.</span>
+<span class='blue'>gbcc:set </span><span class='black'>"my-objects"</span> <span class="blue">graph:get-objects</span>
+<span class="gray">;; Share screenshot.</span>
+<span class='blue'>gbcc:broadcast-view</span><span class='black'>""</span>
 </pre>
     </td>
   </tr>
@@ -308,31 +309,31 @@
     </td>
     <td>
 <pre>
-  <span class='green'>extensions</span> [ graph ]
-  <span class='blue'>graph:create-graph</span>
-  <span class="gray">;; Create a turtle that controls a point.</span>
-  <span class='blue'>create-turtles</span><span class='red'> 1</span> [ 
-    <span class='blue'>set</span> user-name (<span class='blue'>word</span><span class='red'> "carolyn"</span><span class='purple'> who</span>)
-    <span class='blue'>graph:create-point</span> user-name [ <span class='blue'>graph:patch-to-graph</span> [<span class='purple'> xcor ycor</span> ] ] 
-    <span class='blue'>set my-turtle-id</span> <span class='purple'>who</span>
-  ]  
-  <span class="gray">;; Connect your point to the two other endpoints, to form a triangle.</span>
-  <span class='blue'>graph:eval-command</span>...
-  <span class="gray">;; Move the turtle around, and watch the triangle change, too.</span>
-  <span class='blue'>ask</span><span class='purple'> turtle</span> my-turtle-id [
-    <span class='blue'>graph:set-xy</span> user-name [ <span class='blue'>graph:patch-to-graph</span> []<span class='purple'> xcor ycor</span> ] ] 
-  ]
+<span class='green'>extensions</span> [ graph ]
+<span class='blue'>graph:show-graph</span>
+<span class="gray">;; Create a turtle that controls a point.</span>
+<span class='blue'>create-turtles</span><span class='red'> 1</span> [ 
+  <span class='blue'>set</span> user-name (<span class='blue'>word</span><span class='red'> "carolyn"</span><span class='purple'> who</span>)
+  <span class='blue'>graph:create-point</span> user-name [ <span class='blue'>graph:patch-to-graph</span> [<span class='purple'> xcor ycor</span> ] ] 
+  <span class='blue'>set my-turtle-id</span> <span class='purple'>who</span>
+]  
+<span class="gray">;; Connect your point to the two other endpoints, to form a triangle.</span>
+<span class='blue'>graph:eval-command</span>...
+<span class="gray">;; Move the turtle around, and watch the triangle change, too.</span>
+<span class='blue'>ask</span><span class='purple'> turtle</span> my-turtle-id [
+  <span class='blue'>graph:set-xy</span> user-name [ <span class='blue'>graph:patch-to-graph</span> []<span class='purple'> xcor ycor</span> ] ] 
+]
 </pre>
 <pre>
-  <span class="gray">;; Get data from others.</span>
-  <span class="gray">;; to gbcc-on-select [ user-id ] [ ;;create turtle and point and programatically make triangle...]</span>
-  <span class="gray">;; to gbcc-on-deselect [ user-id ] [ ;;remove turtle and point...]</span>
-  <span class="gray">;; to gbcc-on-forever-go [ user-id ] [ ;;move turtle and point ]</span>
+<span class="gray">;; Get data from others.</span>
+<span class="gray">;; to gbcc-on-select [ user-id ] [ ;;create turtle and point and programatically make triangle...]</span>
+<span class="gray">;; to gbcc-on-deselect [ user-id ] [ ;;remove turtle and point...]</span>
+<span class="gray">;; to gbcc-on-forever-go [ user-id ] [ ;;move turtle and point ]</span>
 </pre>
 <pre>
-  <span class="gray">;; Version 1: Share each step, with others.</span>
-  <span class="gray">;; Version 2: Share each stamp, with others.</span>
-  <span class="gray">;; Version 3: Teacher saves stamps, replays action.</span>  
+<span class="gray">;; Version 1: Share each step, with others.</span>
+<span class="gray">;; Version 2: Share each stamp, with others.</span>
+<span class="gray">;; Version 3: Teacher saves stamps, replays action.</span>  
 </pre>
     </td>
   </tr>
@@ -341,6 +342,7 @@
 
 <h2>Maps Extension</h2>
 <br>LeafletJS <a href='http://leafletjs.com/'>http://leafletjs.com/</a>
+<br>GeoJson <a href="https://leafletjs.com/examples/geojson/">https://leafletjs.com/examples/geojson/</a>
 <br><img alt="Patch Command" src="images/maps-ext.png">
 
 <h3>Maps Extension</h3>
@@ -360,12 +362,13 @@
 <pre>
 ;; MAP
 <span class='blue'>maps:show-map</span> <span class="red">[ top left width height ]</span>
-<span class='blue'>maps:hide-map</span>
-<span class='blue'>maps:import-file</span> <span class="red">filename</span>
-<span class='blue'>maps:export-file</span> 
-<span class='blue'>maps:set-data</span> <span class="red">&lt;a string of json&gt;</span>
-<span class='blue'>show maps:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+&#x2713; <span class='blue'>maps:hide-map</span>
 </pre>
+<!--<span class='blue'>maps:set-data</span> <span class="red">&lt;a string of json&gt;</span>
+<span class='blue'>show maps:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+<span class='blue'>maps:import-file</span> <span class="red">filename</span>
+<span class='blue'>maps:export-file</span> -->
+
     </td>
   </tr>
   <tr>
@@ -373,10 +376,10 @@
     <td>
 <pre>
 ;; MAP SETTINGS
-<span class='blue'>maps:set-zoom</span><span class='red'> 3</span> 
-<span class='blue'>show maps:get-zoom</span>  <span class="gray">;; returns 3</span>
-<span class='blue'>maps:set-center-latlng</span> [<span class='red'> 30 97 </span>]
-<span class='blue'>show maps:get-center-latlng</span> <span class="gray">;; returns [ 30 97 ]</span>
+&#x2713; <span class='blue'>maps:set-zoom</span><span class='red'> 3</span> 
+&#x2713; <span class='blue'>show maps:get-zoom</span>  <span class="gray">;; returns 3</span>
+&#x2713; <span class='blue'>maps:set-center-latlng</span> [<span class='red'> 30 97 </span>]
+&#x2713; <span class='blue'>show maps:get-center-latlng</span> <span class="gray">;; returns [ 30 97 ]</span>
 </pre>
     </td>
   </tr>
@@ -385,22 +388,25 @@
     <td>
 <pre>
 ;; MARKERS
-<span class='blue'>maps:create-marker</span> <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ]
-<span class='blue'>maps:create-markers </span> [ [ <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ] ] [ <span class='red'>"marker-2"</span>[ <span class="red">0 0</span> ] ] ]
+&#x2713; <span class='blue'>maps:create-marker</span> <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ]
+&#x2713; <span class='blue'>maps:create-markers </span> [ [ <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ] ] [ <span class='red'>"marker-2"</span>[ <span class="red">0 0</span> ] ] ]
 <span class='blue'>show maps:get-markers </span> <span class="gray">;; [ [ "marker-1" [ 0 0 ] ] [ "marker-2" [ 0 0 ] ] ]
-<span class='blue'>maps:delete-marker</span> <span class='red'>"marker-1"</span> 
+&#x2713; <span class='blue'>maps:delete-marker</span> <span class='red'>"marker-1"</span> 
 </pre>
+<!--<span class='blue'>maps:hide-marker</span> <span class='red'>"marker-1"</span> 
+<span class='blue'>maps:show-marker</span> <span class='red'>"marker-1"</span> -->
 <pre>
-<span class='blue'>maps:set-lat</span><span class='red'> "marker-1" 30 </span> 
-<span class='blue'>maps:set-lng</span><span class='red'> "marker-1" 97 </span> 
-<span class='blue'>maps:set-latlng</span><span class='red'> "marker-1" </span>[  <span class='red'>30 97</span> ] 
-<span class='blue'>maps:set-label</span><span class='red'> "point-1" "cat's marker-1"</span>
+&#x2713; <span class='blue'>maps:set-lat</span><span class='red'> "marker-1" 30 </span> 
+&#x2713; <span class='blue'>maps:set-lng</span><span class='red'> "marker-1" 97 </span> 
+&#x2713; <span class='blue'>maps:set-latlng</span><span class='red'> "marker-1" </span>[  <span class='red'>30 97</span> ] 
 
-<span class='blue'>show maps:get-lat</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 30</span> 
-<span class='blue'>show maps:get-lng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 97</span>
-<span class='blue'>show maps:get-latlng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns [ 30 97 ] </span>
-<span class='blue'>show maps:get-label</span><span class='red'> "marker-1"</span> <span class="gray">;; returns "cat's point-1"</span>
+&#x2713; <span class='blue'>show maps:get-lat</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 30</span> 
+&#x2713; <span class='blue'>show maps:get-lng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 97</span>
+&#x2713; <span class='blue'>show maps:get-latlng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns [ 30 97 ] </span>
 </pre>
+<!--<span class='blue'>maps:set-label</span><span class='red'> "point-1" "cat's marker-1"</span>-->
+<!--<span class='blue'>show maps:get-label</span><span class='red'> "marker-1"</span> <span class="gray">;; returns "cat's point-1"</span>-->
+
     </td>
   </tr>
 </table>
@@ -408,7 +414,7 @@
 <h3>Translate between Patch Coordinates and Latitude / Latitude</h3>
 <pre>
 <span class='blue'>show maps:latlng-to-patch </span><span class='red'>[ 30 -97 ]</span> <span class="gray">;; returns latitude and longitude</span>
-<span class='blue'>show maps:patch-to-latlng </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
+&#x2713; <span class='blue'>show maps:patch-to-latlng </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
 </pre>
 
 
@@ -501,11 +507,11 @@ any of which can be represented by turtles.
 ;; WORLD
 <span class='blue'>physics:show-world</span> <span class="red">[ top left width height ]</span>
 <span class='blue'>physics:hide-world</span>
-<span class='blue'>physics:import-file</span> <span class="red">filename</span>
-<span class='blue'>physics:export-file</span> 
-<span class='blue'>physics:set-data</span> <span class="red">&lt;a string of json&gt;</span>
-<span class='blue'>show physics:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
 </pre>
+<!--<span class='blue'>physics:set-data</span> <span class="red">&lt;a string of json&gt;</span>
+<span class='blue'>show physics:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
+<span class='blue'>physics:import-file</span> <span class="red">filename</span>
+<span class='blue'>physics:export-file</span> -->
     </td>
   </tr>
   <tr>
@@ -753,25 +759,31 @@ extensions [ image ]
 </pre>
 
 <h3>Commands</h3>
-<pre>
-<span class="blue">image:import</span> <span class="red">"cats.png"</span>
+
 <!--
 <b>image:import-pcolors</b> <i>"cats.png"</i> <span class='blue'>;; unimplemented</span>
 -->
-<span class="blue">image:clear</span>
+<pre>
+&#x2713; <span class="blue">image:clear</span>
 
-<span class="blue">image:zoom</span> <span class="red">3</span> <span class='gray'>;; zooms so that there are 3 patches from an edge to the center patch</span>
+&#x2713; <span class="blue">image:zoom</span> <span class="red">3</span> <span class='gray'>;; zooms so that there are 3 patches from an edge to the center patch</span>
 
-<span class="blue">image:reset-zoom</span>
+&#x2713; <span class="blue">image:reset-zoom</span>
 
-<span class="blue">image:import</span> <span class="red">"cats.png"</span>
+&#x2713; <span class="blue">image:import</span> <span class="red">"cats.png"</span><span class='gray'>;; imports an image file, local to the app</span>
 
-<span class="blue">image:import-from-user</span> <span class="red">user-id</span><span class='gray'>;; imports the topmost view, plot or avatar displayed on a user's canvas</span>
-
+&#x2713; <span class="blue">image:import-from-user</span> <span class="red">user-id</span><span class='gray'>;; imports the topmost view, plot or avatar displayed on a user's canvas</span>
 </pre>
 
 
-
+<h2>Additional GbCC Commands</h2>  
+ 
+ <h3>Import and Export</h3>
+<pre>
+<span class="blue">gbcc:import</span> <span class="red">filename</span><span class='gray'> ;; primitive imports a json file, local to the app</span>
+&#x2713; [ EXPORT BUTTON ] <span class='gray'>;; button exports a json file and an html file</span>
+[ IMPORT BUTTON ] <span class='gray'>;; button prompts user for a json file or an image file</span>
+</pre>
 <p>
 <a href="./extensions-mar-18.html">Previous documentation using key/value pairs</a>
 </html>

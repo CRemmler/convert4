@@ -1,6 +1,6 @@
 prim-name,input-type,input-name,output-type
 hide-graph, , ,
-show-graph, , ,
+show-graph,(list),(settings),
 set-data,(string),(data),
 import-file,(string),(filename),
 get-data, , ,(string)

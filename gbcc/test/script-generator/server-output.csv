@@ -350,11 +350,11 @@ fs.readFileAsync("gbcc/app/netlogoweb/widget.js", "utf8").then(function(data) {
 fs.readFileAsync("gbcc/app/netlogoweb/widgets.css", "utf8").then(function(data) {
 	zip.file("app/netlogoweb/widgets.css", data);
 }).then(function() {
-fs.readFileAsync("gbcc/other/geogebra-default.ggb").then(function(data) {
-	zip.file("other/geogebra-default.ggb", data);
+fs.readFileAsync("gbcc/geogebra-default.ggb").then(function(data) {
+	zip.file("geogebra-default.ggb", data);
 }).then(function() {
-fs.readFileAsync("gbcc/other/ocean.png").then(function(data) {
-	zip.file("other/ocean.png", data);
+fs.readFileAsync("gbcc/ocean.png").then(function(data) {
+	zip.file("ocean.png", data);
 }).then(function() {
 fs.readFileAsync("gbcc/package.json", "utf8").then(function(data) {
 	zip.file("package.json", data);

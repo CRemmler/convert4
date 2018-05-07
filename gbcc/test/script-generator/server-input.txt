@@ -118,8 +118,8 @@ gbcc/app/netlogoweb/web.html
 gbcc/app/netlogoweb/widget-controller.js
 gbcc/app/netlogoweb/widget.js
 gbcc/app/netlogoweb/widgets.css
-gbcc/other/geogebra-default.ggb
-gbcc/other/ocean.png
+gbcc/geogebra-default.ggb
+gbcc/ocean.png
 gbcc/package.json
 gbcc/readme.md
 gbcc/server.js

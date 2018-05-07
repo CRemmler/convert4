@@ -1,13 +1,22 @@
+var map;
+var markers;
 Maps = (function() {
 
-  var zoom = 9;
-  var location = "Austin TX";
-  var map;
-  var markers = {};
+  var zoom = 11;
+  var center = [ 30.2672, -97.7431];
+  //var map;
+  markers = {};
   var viewWidth;
   var viewHeight;
   
+  //NOTES 
+  // show/hide using options.opacity 
+  // title using options.title
+  // make a path... ?
+  ////// SETUP MAP //////
+  
   function setupInterface() {
+    console.log("setupInterface for maps");
     viewWidth = parseFloat($(".netlogo-canvas").css("width"));
     viewHeight = parseFloat($(".netlogo-canvas").css("height"));
     var spanText = "<div class='map-controls'>";
@@ -25,33 +34,34 @@ Maps = (function() {
     $("#mapContainer").css("top", $(".netlogo-view-container").css("top"));
     $("#mapContainer").css("display", "none");
     if (L) {
-      map = L.map('mapContainer').setView([0,0], 13);
+      map = L.map('mapContainer').setView([ 30.2672, -97.7431], 11);      
+      if (map) { 
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+      }
     }
     setupEventListeners();
+    updateMap("mapOff");
+    hideMap();
   }
   
   function setupEventListeners() {
     $(".map-controls").on("click", "#mapOn", function() {
-      updateMap("mapOff");
+      updateMap("mapOn");
       triggerMapUpdate();
     });
     $(".map-controls").on("click", "#mapOff", function() {
-      updateMap("mapOn");
+      updateMap("mapOff");
     });
     $(".netlogo-view-container").css("background-color","transparent"); 
   }
   
-  function resetInterface() {
-    $("#mapContainer").css("display","inline-block");
-    $(".map-controls").css("display","inline-block");
-    updateMap("mapOff");
-  }
+  ////// DISPLAY MAP //////
   
   function updateMap(state) {
-  //  map.redraw();
-
     if (map) { map.invalidateSize(); }
-    if (state === "mapOn") {
+    if (state === "mapOff") {
       $("#mapOff").removeClass("selected");
       $("#mapOn").addClass("selected");
       $("#mapContainer").addClass("selected");
@@ -66,135 +76,14 @@ Maps = (function() {
     }
     world.triggerUpdate();
   }
-
-
-  function getMapAsString() {
-
-  }
-  
-  function redrawMap() {
-
-  }
   
   function triggerMapUpdate() {
     if (procedures.gbccOnMapUpdate != undefined) { session.run('gbcc-on-map-update'); }
   }
-
-  function importMap(data) {
-    var settings = data[0];
-    var allMarkers = data[1];
-    zoom = settings[0];
-    location = settings[1];
-    if (map) { 
-      map.setView(location, zoom);
-      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-    }
-    //Images.clearImage();
-    Physics.removePhysics();
-    Maps.removeMap();
-    Graph.removeGraph();
-    world.triggerUpdate();
-    if (allMarkers != "") { 
-      for (var i=0; i<allMarkers.length; i++) {
-        createMarker(allMarkers[i][0], allMarkers[i][1]);
-      }
-    }
-    redrawMap();
-    resetInterface();
-  }
   
-  function exportMap() {
-    //returns a list of settings and markers 
-    return [ [zoom, location], getMarkers() ];
-  }
+  ////// COORDINATE CONVERSION //////
   
-  function createMarker(name, settings) {
-    var newLatLng = assignMarkerSettings(name, settings);
-    var leafletMarker = map ? L.marker(newLatLng).addTo(map) : null;
-    markers[name].marker = leafletMarker;
-  }
-  
-  function updateMarker(name, settings) {
-    console.log("update marker ",name,settings)
-    var newLatLng = assignMarkerSettings(name, settings);
-    try {
-      markers[name].marker.setLatLng(newLatLng);
-    } catch(ex) {
-    }
-  }
-  
-  function assignMarkerSettings(name, settings) {
-    if (!markers[name]) { markers[name] = {}; }
-    if (!markers[name].settings) { markers[name].settings = {}; }
-    markers[name].settings["patch-coords"] = [ 0, 0 ];
-    markers[name].settings["lngLat"] = undefined;
-    for (var i=0; i<settings.length; i++) {
-      key = settings[i][0];
-      value = settings[i][1];
-      markers[name].settings[key] = value;
-    }
-    var lngLat = markers[name].settings["lngLat"];
-    if (!lngLat) {
-      lngLat = patchToLnglat(markers[name].settings["patch-coords"]);
-      markers[name].settings["lngLat"] = lngLat;
-    } 
-    return newLatLng = new L.LatLng(lngLat[0], lngLat[1]);
-  }
-
-  function getMarker(name, key) {
-    if (markers[name] && markers[name].settings) {
-      if (markers[name].settings[key]) {
-        return markers[name].settings[key];
-      }
-    }
-    return [ "does not exist" ]
-  }
-  
-  
-  function getMarkers() {
-    var markerList = [];
-    var mark, latLng, lng, lat;
-    for (marker in markers) {
-      markerSettings = [];
-      for (setting in markers[marker].settings) {
-        mark = [ setting, markers[marker].settings[setting]];
-        markerSettings.push(mark);
-      }
-      markerList.push([marker, markerSettings]);
-      
-    }
-    return markerList;
-  }
-  
-  function getMarkerList() {
-    return markers;
-  }
-  
-  function deleteMarker(name) {
-    if (map) { 
-      map.removeLayer(markers[name].marker); 
-      delete markers[name];
-    }
-  }
-  
-  function removeMap() {
-    $(".map-controls").css("display","none");
-    $("#mapContainer").css("display","none");
-    for (marker in markers) {
-      deleteMarker(marker);
-    }
-    markers = {};
-    updateMap("mapOn");
-  }
-  
-  // for testing 
-  function getMap() {
-    return map;
-  }
-  
-  function patchToLnglat(coords) {
+  function patchToLatlng(coords) {
     var xcor = coords[0];
     var ycor = coords[1];
     var pixelX = universe.view.xPcorToCanvas(xcor);
@@ -208,12 +97,12 @@ Maps = (function() {
     var boundaryMaxY = boundaries._southWest.lat;
     var markerX = (pixelPercentX * (boundaryMaxX - boundaryMinX)) + boundaryMinX;
     var markerY = (pixelPercentY * (boundaryMaxY - boundaryMinY)) + boundaryMinY;
-    return ([markerX, markerY]);
+    return ([markerY, markerX]);
   }
   
-  function lnglatToPatch(coords) {
-    var markerPositionX = coords[0];
-    var markerPositionY = coords[1];
+  function latlngToPatch(coords) {
+    var markerPositionX = coords[1];
+    var markerPositionY = coords[0];
     var boundaries = map ? map.getBounds() : { "_northEast": {"lat": 0, "lng": 0}, "_southWest": {"lat": 0, "lng": 0}};
     var boundaryMaxX = boundaries._northEast.lng;
     var boundaryMaxY = boundaries._northEast.lat;
@@ -233,51 +122,150 @@ Maps = (function() {
     var patchYcor = universe.view.yPixToPcor(pixelY);
     return ([patchXcor, patchYcor]);
   }
+
+  ////// SHOW AND HIDE MAP //////
   
+  function showMap() {
+    $("#mapContainer").css("display","inline-block");
+    $(".map-controls").css("display","inline-block");
+    updateMap("mapOn");
+    map.setView(center, zoom);
+
+    // left, top, width, height
+    // if (settings.length == 4) {
+      //$("#mapContainer").css("left", settings[0] + "px");
+      //$("#mapContainer").css("top", settings[1] + "px");
+      //$("#mapContainer").css("width", settings[2] + "px");
+      //$("#mapContainer").css("height", settings[3] + "px");
+    //}
+  }
+  
+  function hideMap() {
+    updateMap("mapOff");
+    $(".map-controls").css("display","none");
+    $("#mapContainer").css("display","none");
+  }
+  
+  ////// MAP SETTINGS //////
+  
+  function setZoom(value) {
+    zoom = value;
+    map.setZoom(zoom);
+  }
+  
+  function getZoom() {
+    zoom = map.getZoom();
+    return zoom;
+  }
+  
+  function setCenterLatlng(value) {
+    center = L.latLng(value[0], value[1]);
+    zoom = map.getZoom();
+    map.setView(center, zoom);
+  }
+  
+  function getCenterLatlng() {
+    center = map.getCenter();
+    return [center.lat, center.lng];
+  }
+  
+  //////// MARKERS //////////
+  
+  function createMarker(name, settings) {
+    if (!markers[name]) { markers[name] = {}; }
+    var newLatlng = L.latLng(settings[0], settings[1]);
+    var leafletMarker = map ? L.marker(newLatlng).addTo(map) : null;
+    markers[name].marker = leafletMarker;
+  }
+  
+  function createMarkers(data) {
+    for (var i=0; i<data.length; i++) {
+      createMarker(data[i][0], data[i][1]);
+    }
+  }
+  
+  function getMarker(name) {
+    return [name, getLatlng(name)];
+  }
+  
+  function getMarkers() {
+    var markers = [];
+    for (var key in markers) {
+      markers.push(getMarker(key));
+    }
+  }
+  
+  function deleteMarker(name) {
+    if (markers[name] && markers[name].marker) {
+      delete markers[name];
+    }
+  }
+  
+  ///////// MARKER ATTRIBUTES /////////
+  
+  function setLat(name, lat) {
+    if (markers[name] && markers[name].marker) {
+      var lng = markers[name].marker.getLatLng().lng;
+      markers[name].marker.setLatLng(L.latLng(lat, lng));
+    }
+  }
+  
+  function setLng(name, lng) {
+    if (markers[name] && markers[name].marker) {
+      var lat = markers[name].marker.getLatLng().lat;
+      markers[name].marker.setLatLng(L.latLng(lat, lng));
+    }
+  }
+  function setLatlng(name, latlng) {
+    if (markers[name] && markers[name].marker) {
+      markers[name].marker.setLatLng(L.latLng(latlng[0], latlng[1]));
+    }
+  }
+  function getLat(name) {
+    if (markers[name] && markers[name].marker) {
+      return markers[name].marker.getLatLng().lat;
+    }
+    return 0;
+  }
+  function getLng(name) {
+    if (markers[name] && markers[name].marker) {
+      return markers[name].marker.getLatLng().lng;
+    }
+    return 0;
+
+  }
+  function getLatlng(name) {
+    if (markers[name] && markers[name].marker) {
+      return [ markers[name].marker.getLatLng().lat, markers[name].marker.getLatLng().lng];
+    }
+    return [0, 0];
+
+  }
+
   return {
     setupInterface: setupInterface,
-    importMap: importMap,
+    showMap: showMap,
+    hideMap: hideMap,
+    setZoom: setZoom,
+    getZoom: getZoom,
+    setCenterLatlng: setCenterLatlng,
+    getCenterLatlng: getCenterLatlng,
     createMarker: createMarker,
+    createMarkers: createMarkers,
+    getMarkers: getMarkers,
     deleteMarker: deleteMarker,
-    updateMarker: updateMarker,
-    getMap: getMap,
-    getMarkers, getMarkers,
-    exportMap: exportMap,
-    redrawMap: redrawMap,
-    //getMarkerXY: getMarkerXY,
-    //setMarkerXY: setMarkerXY,
-    //getMarkerLngLat: getMarkerLngLat,
-    //setMarkerLngLat: setMarkerLngLat,
-    getMapAsString: getMapAsString,
-    patchToLnglat: patchToLnglat,
-    lnglatToPatch: lnglatToPatch,
-    removeMap: removeMap,
-    getMarker: getMarker,
-    getMarkerList: getMarkerList
-    /*
-    maps:show-map [ top left width height ]
-    maps:hide-map
-    maps:set-zoom 3 
-    show maps:get-zoom  ;; returns 3
-    maps:set-center-latlng [ 30 97 ]
-    show maps:get-center-latlng ;; returns [ 30 97 ]
-    maps:create-marker "marker-1" [ 0 0 ]
-    maps:create-markers  [ [ "marker-1" [ 0 0 ] ] [ "marker-2"[ 0 0 ] ] ]
-    show maps:get-markers  ;; [ [ "marker-1" [ 0 0 ] ] [ "marker-2" [ 0 0 ] ] ]
-    maps:delete-marker "marker-1" 
-    maps:set-lat "marker-1" 30  
-    maps:set-lng "marker-1" 97  
-    maps:set-latlng "marker-1" [  30 97 ] 
-    maps:set-label "point-1" "cat's marker-1"
-    show maps:get-lat "marker-1" ;; returns 30 
-    show maps:get-lng "marker-1" ;; returns 97
-    show maps:get-latlng "marker-1" ;; returns [ 30 97 ] 
-    show maps:get-label "marker-1" ;; returns "cat's point-1"
-    DOES NOT WORK:
-    maps:import-file filename
-    maps:export-file 
-    maps:set-data <a string of json>
-    show maps:get-data ;; <a string of json> */
+    setLat: setLat,
+    setLng: setLng,
+    setLatlng: setLatlng,
+    getLat: getLat,
+    getLng: getLng,
+    getLatlng: getLatlng,
+    //importFile: importFile,
+    //exportFile: exportFile,
+    //setData: setData,
+    //getData: getData,
+    latlngToPatch: latlngToPatch,
+    patchToLatlng: patchToLatlng
   };
  
 })();
