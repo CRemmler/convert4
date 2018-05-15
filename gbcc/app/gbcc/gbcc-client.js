@@ -173,7 +173,7 @@ jQuery(document).ready(function() {
         if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
         break;
       case "forever-select":
-        if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 1000); }
+        if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[data.userId] = data.key;
         break;
     }
