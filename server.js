@@ -7,7 +7,7 @@ var formidable = require('formidable');
 var Promise = require("bluebird");
 Promise.promisifyAll(fs);
 
-const PORT = process.env.PORT || 3006;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.static(__dirname));
 
