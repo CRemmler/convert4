@@ -520,11 +520,11 @@ Gallery = (function() {
     }
   }
   
-  function broadcastAvatar(data) {
+  function broadcastAvatar(shape, color, text) {
     //var shape = key.substring(0, key.indexOf("-"));
     //var color = parseFloat(key.substring( key.indexOf("-") + 1, key.length));
-    var shape = data[0];
-    var color = data[1];
+    //var shape = shape;
+    //var color = data[1];
     var avatarCanvasId = "avatarCanvasView";
     var width = 200;
     var height = 200;
