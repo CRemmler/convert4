@@ -12,6 +12,11 @@ Physicsb2 = (function() {
   var BOX2D_HEIGHT = 0; 
   var NLOGO_WIDTH = 0; 
   var NLOGO_HEIGHT = 0;
+  var WRAP_X = false;
+  var WRAP_Y = false;
+  var FRAME_RATE = 1/30;
+  var VELOCITY_ITERATIONS = 10;
+  var POSITION_ITERATIONS = 10;
   
   var bodyObj = {};
   var turtleObj = {};
@@ -47,8 +52,6 @@ Physicsb2 = (function() {
   var totalObjectsCreated;
   var fixtureClick = null;
   
-  var wrap = [false, false];
-  
   var prevSelectedBody;
   var prevSelectedFixture;
   
@@ -80,11 +83,14 @@ Physicsb2 = (function() {
   
   ///////// INITIALIZE
   
-  
-  $( window ).resize(function() {
+  function initializeView() {
     p = $( "#netlogoCanvas").parent();//$( "#netlogoCanvas";
     canvasPosition = p.offset();
-    //console.log("reset canvas position " + canvasPosition);
+    //console.log("reset canvas position ", canvasPosition);    
+  }
+  
+  $( window ).resize(function() {
+    initializeView();
   });
 
   ///////// CONVERSIONS
@@ -118,6 +124,16 @@ Physicsb2 = (function() {
     return ({x: nlogoLeftAbsolute, y: nlogoTopAbsolute});
   };
   
+  function patchToBox2d(nlogoCoords) {
+    var box2dCoords = nlogotobox2d(nlogoCoords);
+    return {x: box2dCoords[0], y: box2dCoords[1]};
+  }
+  
+  function box2dToPatch(box2dCoords) {
+    var nlogoCoords = box2dtonlogo(box2dCoords);
+    return [ nlogoCoords.x, nlogoCoords.y ];
+  }
+  
   function radiansToDegrees(angle) {
     return angle / 2 / Math.PI * 360;
   }
@@ -149,24 +165,26 @@ Physicsb2 = (function() {
 
   ////////// RUN WORLD
 
-  function createWorld(m) {
+  function createWorld(data) {//m) {
     bodyObj = {};
     turtleObj = {};
+    worldObj = {};
+    //WRAP_X = false;
+    //WRAP_Y = false;
+    worldObj.gravity = {x: false, y: true }
     bindElements();
-    var gravity = m[0]
-    var range = m[1];
-    wrap = m[2];
     totalObjectsCreated = 0;  
-    NLOGO_WIDTH = range[0];
-    NLOGO_HEIGHT = range[1];
+    NLOGO_WIDTH = data.width;
+    NLOGO_HEIGHT = data.height;
     if (canvas === null) {
       canvas = document.getElementsByClassName('netlogo-canvas')[0];
       ctx = canvas.getContext('2d');
     }
-    p = $( "#netlogoCanvas").parent();//$( "#netlogoCanvas";
-    canvasPosition = p.offset();
+    initializeView();
+    //p = $( "#netlogoCanvas").parent();//$( "#netlogoCanvas";
+    //canvasPosition = p.offset();
     world = new b2World(
-          new b2Vec2(gravity[0], gravity[1])    //gravity
+          new b2Vec2(worldObj.gravity.x, worldObj.gravity.y)    //gravity
        ,  true                 //allow sleep
     );
     if (universe.model) {
@@ -175,12 +193,6 @@ Physicsb2 = (function() {
       }
     }
     setupDebugDraw();
-  }
-  
-  function updateWorld() {
-    //save objects 
-    // create world 
-    // populate objects 
   }
 
   var lastUpdate = 0;
@@ -235,9 +247,10 @@ Physicsb2 = (function() {
     universe.repaint();
     //default 1/60, 10, 10
     world.Step(
-           1 / 30   //frame-rate
-        ,  10       //velocity iterations
-        ,  10       //position iterations
+      FRAME_RATE, VELOCITY_ITERATIONS, POSITION_ITERATIONS
+      //     1 / 30   //frame-rate
+      //  ,  10       //velocity iterations
+      //  ,  10       //position iterations
     );
     world.DrawDebugData();
     redrawWorld();
@@ -247,7 +260,7 @@ Physicsb2 = (function() {
     {
       b = bodyObj[id];
       if (b.GetType() == b2Body.b2_dynamicBody || b.GetType() === b2Body.b2_kinematicBody) {
-        if (wrap[0]) {
+        if (WRAP_X) {
           if (b.GetPosition().x * SCALE / 2 > BOX2D_WIDTH) {
             b.SetPosition(new b2Vec2(0,b.GetPosition().y));				
           } 
@@ -255,7 +268,7 @@ Physicsb2 = (function() {
              b.SetPosition(new b2Vec2(BOX2D_WIDTH / SCALE * 2 , b.GetPosition().y));
           }
         }
-        if (wrap[1]) {
+        if (WRAP_Y) {
           if (b.GetPosition().y * SCALE / 2 > BOX2D_HEIGHT) {
             b.SetPosition(new b2Vec2(b.GetPosition().x, 0));    
           }
@@ -299,7 +312,7 @@ Physicsb2 = (function() {
   }
      
   function drawCircle(data) {
-    console.log("draw circle",data);
+    //console.log("draw circle",data);
     var pointCoords, pixelCoords;
     ctx.beginPath();
     ctx.strokeStyle = data.strokeStyle;
@@ -415,7 +428,7 @@ Physicsb2 = (function() {
         shape = fixture.GetUserData().shape;
         fillStyle = fixture.GetUserData().fillStyle;
         strokeStyle = fixture.GetUserData().strokeStyle;
-        console.log(f,fillStyle);
+        //console.log(f,fillStyle);
         if (showAABB) {
           ctx.beginPath();
           ctx.strokeStyle="white";
@@ -482,7 +495,7 @@ Physicsb2 = (function() {
         //}
       }
     }
-    console.log("redrew world");
+    //console.log("redrew world");
   }
         
   //////// OBJECTS IN WORLD 
@@ -839,12 +852,12 @@ Physicsb2 = (function() {
   function createFixture(m) {
     //console.log("CREATE FIXTURE",m);
     var shapeId = m.shapeId;
-    var box2dCoords = m.box2dCoords ? [m.box2dCoords.x, m.box2dCoords.y] : nlogotobox2d(m.coords);
+    var box2dCoords = m.box2dCoords ? [m.box2dCoords.x, m.box2dCoords.y] : (m.coords) ? nlogotobox2d(m.coords) : [ 0, 0];
     var shape = m.typeOfShape;
-    var density = m.density;
-    var friction = m.friction;
-    var restitution = m.restitution;
-    var color = m.color;
+    var density = m.density || 0.5;
+    var friction = m.friction || 0.5;
+    var restitution = m.restitution || 0.5;
+    var color = m.color || "none";
     var box2dFixtureCoords = [];
     var radius = m.radius;
     if (m.vertices) {
@@ -871,11 +884,12 @@ Physicsb2 = (function() {
       strokeStyle: "(none)",
       defaultFillColor: color
     }
-    console.log("none");
+    fixDef.userData.coords = (shape === "circle") ? box2dCoords : box2dFixtureCoords;
+    //console.log("none");
     if (shape === "circle") {
-      var distance = (distanceBetweenCoords(box2dFixtureCoords[0], box2dFixtureCoords[1]));
+      var radius = m.radius ? m.radius : (distanceBetweenCoords(box2dFixtureCoords[0], box2dFixtureCoords[1]));
       fixDef.shape = new b2CircleShape();
-      fixDef.shape.SetRadius(distance);
+      fixDef.shape.SetRadius(radius);
     } else if (shape === "line") {
       fixDef.shape = new b2PolygonShape();
     } else if (shape === "polygon") {
@@ -1028,40 +1042,19 @@ Physicsb2 = (function() {
   ///////// FORCES IN WORLD
   
   function applyForce(m) {
-    //console.log("apply force");
-    var id, bodyA, coords, amount, radians;
     var amount = m.force;
-    radians = degreesToRadians(m.angle);
-    var position = m.position;
+    var radians = degreesToRadians(m.angle);
     var targetId = m.targetId;
-    
-    //console.log(position + " "+m.angle);
-    var direction;
-    /*
-    for (body in bodyObj) {
-      b = bodyObj[body];
-      coords = b.GetWorldCenter();
-      direction = new b2Vec2(Math.cos(radians)*amount, Math.sin(radians)*amount);
-      if (position === "relative") { 
-        direction = b.GetWorldVector(direction); 
-      }
-      b.ApplyForce(
-        direction, 
-        new b2Vec2(coords.x, coords.y) );
-    }*/
-    
-    
     var target = targetObj[targetId];
+    var position = target.position;
     if (target) {
-      
       var bodyId = target.bodyId;
       if (bodyId) {
         var body = bodyObj[bodyId];
         var coords = target.coords;
-        console.log("apply force to ",coords);
-        console.log("which is ",target.relativeCoords);
-        //var coords = target.relativeCoords;
-        direction = new b2Vec2(Math.cos(radians)*amount, Math.sin(radians)*amount);
+        //console.log("apply force to ",coords);
+        //console.log("which is ",target.relativeCoords);
+        var direction = new b2Vec2(Math.cos(radians)*amount, Math.sin(radians)*amount);
         if (position === "relative") { 
           direction = b.GetWorldVector(direction); 
         }
@@ -1073,28 +1066,50 @@ Physicsb2 = (function() {
   }
   
   function applyLinearImpulse(m) {
-    var id = m[0];
-    var bodyA = m[1];
-    var coords = m[2];
-    var heading = m[3];
-    var amount = m[4] * 50;
-    var coordsA = nlogotobox2d(coords);
-    var radians = degreesToRadians(heading);
-    bodyObj[bodyA].ApplyImpulse(
-      {x:Math.cos(radians)*amount, y:Math.sin(radians)*amount}, 
-      new b2Vec2(roundToTenths(coordsA[0]), roundToTenths(coordsA[1])) );
+    var amount = m.force;
+    var radians = degreesToRadians(m.angle);
+    var targetId = m.targetId;
+    var target = targetObj[targetId];
+    var position = target.position;
+    if (target) {
+      var bodyId = target.bodyId;
+      if (bodyId) {
+        var body = bodyObj[bodyId];
+        var coords = target.coords;
+        //console.log("apply force to ",coords);
+        //console.log("which is ",target.relativeCoords);
+        var direction = new b2Vec2(Math.cos(radians)*amount, Math.sin(radians)*amount);
+        if (position === "relative") { 
+          direction = b.GetWorldVector(direction); 
+        }
+        body.ApplyImpulse(
+          direction, 
+          new b2Vec2(coords.x, coords.y) );
+      }
+    }
   }
   
   function applyTorque(m) {
-    var bodyA = m[0];
-    var amount = m[1] * 40;
-    bodyObj[bodyA].ApplyTorque(amount); 
+    var target = targetObj[m.targetId];
+    if (target)
+    {
+      var bodyId = target.bodyId;
+      if (bodyId) {
+        var amount = m.force * 40;
+        bodyObj[bodyId].ApplyTorque(amount); 
+      }
+    }
   }
   
   function applyAngularImpulse(m) {
-    var bodyA = m[0];
-    var amount = m[1] * 5;
-    bodyObj[bodyA].ApplyAngularImpulse(amount);      
+    var target = targetObj[m.targetId];
+    if (target) {
+      var bodyId = target.bodyId;
+      if (bodyId) {
+        var amount = m.force * 5;
+        bodyObj[bodyId].ApplyAngularImpulse(amount);      
+      }
+    }
   }
 
   function setupDebugDraw() {
@@ -1337,6 +1352,8 @@ Physicsb2 = (function() {
    
     function handleMouseClick() {
       //console.log("handle mouse click");
+      //console.log(event);
+      //console.log(canvasPosition);
       universe.repaint();
       world.DrawDebugData();
       var mode = Physics.getDrawButtonMode();
@@ -1354,7 +1371,7 @@ Physicsb2 = (function() {
         if (fixture) {
           selectedBody = fixture.GetBody();
           createHelperLines({"color": "white"}); 
-          console.log("set lines white");
+          //console.log("set lines white");
           updateDragSettings(fixture);
         } 
         drawHelperPoints();
@@ -1375,7 +1392,7 @@ Physicsb2 = (function() {
           console.log("set lines green");
           
           body.SetLinearVelocity({x: 0, y: 0});
-          console.log("set linear velocity to 0");
+          //console.log("set linear velocity to 0");
           
         }
         break;
@@ -1416,7 +1433,7 @@ Physicsb2 = (function() {
         }
         break;
       case "target": 
-      console.log("target click");
+      //console.log("target click");
         var targetId = "target-"+totalObjectsCreated;
         createTarget( {
           "targetId": targetId,
@@ -1517,7 +1534,7 @@ Physicsb2 = (function() {
      }
      $('#bodyIdShapeMode').append("<option value='new'>new</option>");
      var color = fixture.GetUserData().fillStyle;
-     console.log(color);
+     //console.log(color);
      if (["(none)","#ff000032","#ffa50032","#ffff0032","#00ff0032","#0000ff32","#80008032"].indexOf(color) < 0) {
        $("#physicsSettings #color").val("(other)");
      } else {
@@ -1538,20 +1555,40 @@ Physicsb2 = (function() {
    }
    
    function updateWorld(key, value) {
-     console.log("update world");
+     console.log("update world",key,value);
+     var current;
+     if (key === "gravityX" || key === "gravityY") {
+       current = world.GetGravity();
+     } 
      switch (key) {
         case "gravityX":
-          worldObj["gravityX"] = value;
+          worldObj.gravity.x = value;
+          current.x = value;
+          world.SetGravity(current);
           break;
-        case "gravityX":
-           worldObj["gravityX"] = value;
+        case "gravityY":
+           worldObj.gravity.y = value;
+           current.y = value;
+           world.SetGravity(current);
            break;
-        case "gravityX":
-          worldObj["gravityX"] = value;
+        case "gravityXY":
+          world.SetGravity(value);
           break;
-        case "gravityX":
-           worldObj["gravityX"] = value;
-           break;
+        case "wrapX":
+          WRAP_X = value;
+          break;
+        case "wrapY":
+          WRAP_Y = value;
+          break;
+        case "timestep":
+          TIMESTEP = value;
+          break;
+        case "velocityIterations":
+          VELOCITY_ITERATIONS = value;
+          break;
+        case "positionInterations":
+          POSITION_ITERATIONS = value;
+          break;
       }  
    }
    
@@ -1664,7 +1701,7 @@ Physicsb2 = (function() {
      } else if (mode === "group") {
        createHelperLines({"color": "limegreen"}); 
      }
-     console.log("set lines either"+mode);
+     //console.log("set lines either"+mode);
    }
    
    function setupDragTargets(data) {
@@ -1755,7 +1792,7 @@ Physicsb2 = (function() {
    }
    
    function recenter(body) {
-     console.log(body);
+     //console.log(body);
      body.ResetMassData();
      var oldCenter = body.GetPosition();
      oldCenter = body.GetLocalPoint(oldCenter);
@@ -1920,7 +1957,7 @@ Physicsb2 = (function() {
       f = fixtureObj[fixture];
       userData = f.GetUserData();
       userData.fillStyle = userData.defaultFillColor;
-      console.log(userData.fillStyle);
+      //console.log(userData.fillStyle);
       f.SetUserData(userData);
     }
   }
@@ -1938,7 +1975,7 @@ Physicsb2 = (function() {
   }
 
   function createHelperLines(data) {
-    console.log("create helper lines");
+    //console.log("create helper lines");
     clearAllHelperLines();
     if (selectedBody) {
       var f = selectedBody.GetFixtureList();
@@ -2178,6 +2215,10 @@ Physicsb2 = (function() {
     return bodyObj[id];
   }
   
+  function getFixtureObj(id) {
+    return fixtureObj[id];
+  }
+  
   function getAllBodies() {
     return bodyObj;
   }
@@ -2198,12 +2239,35 @@ Physicsb2 = (function() {
     return totalObjectsCreated;
   }
   
+  function getWorldSettings(key) {
+    switch (key) {
+      case "wrap": 
+        return [ WRAPX, WRAPY ];
+        break;
+      case "timestep":
+        return TIMESTEP;
+        break;
+      case "velocityIterations":
+        return VELOCITY_ITERATIONS;
+        break;
+      case "positionInterations":
+        return POSITION_ITERATIONS;
+        break;
+      default:
+        return 0;
+    }
+  }
+
+  
   return {
+    initializeView: initializeView,
     startWorld: startWorld,
     stopWorld: stopWorld,
     runWorld: runWorld,
     world: world,
     updateOnce: updateOnce,
+    box2dToPatch: box2dToPatch,
+    patchToBox2d: patchToBox2d,
     
     setupDebugDraw: setupDebugDraw,
     drawDebugData: drawDebugData,
@@ -2227,6 +2291,7 @@ Physicsb2 = (function() {
     
     getWorld: getWorld,
     getBodyObj: getBodyObj,
+    getFixtureObj: getFixtureObj,
     getAllBodies: getAllBodies,
     getAllFixtures: getAllFixtures,
     getAllTargets: getAllTargets,
@@ -2240,6 +2305,7 @@ Physicsb2 = (function() {
     updateBody: updateBody,
     updateFixture: updateFixture,
     updateTarget: updateTarget,
+    updateWorld: updateWorld,
 
     deleteFixture: deleteFixture,    
     deleteBody: deleteBody,
@@ -2247,7 +2313,10 @@ Physicsb2 = (function() {
     deleteSelected: deleteSelected,
     
     triggerModeChange: triggerModeChange,
-    triggerDisplayChange: triggerDisplayChange
+    triggerDisplayChange: triggerDisplayChange,
+    
+    getWorldSettings: getWorldSettings//,
+  //  setWorldSettings: setWorldSettings
   };
 
 })();

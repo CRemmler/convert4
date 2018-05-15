@@ -18961,7 +18961,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createPolygon, createTarget, deleteBody, deleteCircle, deleteLine, deletePolygon, deleteTarget, disconnectWho, exportFile, getBodyAngle, getBodyAngularVelocity, getBodyBehavior, getBodyCoords, getBodyLinearVelocity, getCircleBodyId, getCircleCenter, getCircleDensity, getCircleFriction, getCircleRadius, getCircleRelativeCenter, getCircleRestitution, getData, getGravityXy, getLineBodyId, getLineDensity, getLineEndpoints, getLineFriction, getLineRelativeEndpoints, getLineRestitution, getPolygonDensity, getPolygonFriction, getPolygonId, getPolygonRelativeVertices, getPolygonRestitution, getPolygonVertices, getTargetBodyId, getTargetCenter, getTargetRelativeCenter, getTimeStep, getVelocityIterations, getWrapXy, hideWorld, importFile, setBodyAngle, setBodyAngularVelocity, setBodyBehavior, setBodyCoords, setBodyLinearVelocity, setCircleBodyId, setCircleCenter, setCircleDensity, setCircleFriction, setCircleRadius, setCircleRelativeCenter, setCircleRestitution, setData, setGravityXy, setLineBodyId, setLineDensity, setLineEndpoints, setLineFriction, setLineRelativeEndpoints, setLineRestitution, setPolygonBodyId, setPolygonDensity, setPolygonFriction, setPolygonRelativeVertices, setPolygonRestitution, setPolygonVertices, setPositionIterations, setTargetBodyId, setTargetCenter, setTargetRelativeCenter, setTimeStep, setVelocityIterations, setWrapXy, showWorld;
+      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createPolygon, createTarget, deleteBody, deleteCircle, deleteLine, deletePolygon, deleteTarget, disconnectWho, exportFile, getBodyAngle, getBodyAngularVelocity, getBodyBehavior, getBodyCoords, getBodyLinearVelocity, getCircleBodyId, getCircleCenter, getCircleDensity, getCircleFriction, getCircleRadius, getCircleRelativeCenter, getCircleRestitution, getData, getGravityXy, getLineBodyId, getLineDensity, getLineEndpoints, getLineFriction, getLineRelativeEndpoints, getLineRestitution, getPolygonDensity, getPolygonFriction, getPolygonId, getPolygonRelativeVertices, getPolygonRestitution, getPolygonVertices, getTargetBodyId, getTargetXy, getTargetRelativeXy, getTimeStep, getVelocityIterations, getWrapXy, hideWorld, importFile, setBodyAngle, setBodyAngularVelocity, setBodyBehavior, setBodyCoords, setBodyLinearVelocity, setCircleBodyId, setCircleCenter, setCircleDensity, setCircleFriction, setCircleRadius, setCircleRelativeCenter, setCircleRestitution, setData, setGravityXy, setLineBodyId, setLineDensity, setLineEndpoints, setLineFriction, setLineRelativeEndpoints, setLineRestitution, setPolygonBodyId, setPolygonDensity, setPolygonFriction, setPolygonRelativeVertices, setPolygonRestitution, setPolygonVertices, setPositionIterations, setTargetBodyId, setTargetXy, setTargetRelativeXy, setTimeStep, setVelocityIterations, setWrapXy, showWorld;
       hideWorld = function() {
         return Physics.hideWorld();
       };
@@ -19181,11 +19181,11 @@ function hasOwnProperty(obj, prop) {
       getTargetBodyId = function(name) {
         return Physics.getTargetBodyId(name);
       };
-      getTargetRelativeCenter = function(name) {
-        return Physics.getTargetRelativeCenter(name);
+      getTargetRelativeXy = function(name) {
+        return Physics.getTargetRelativeXy(name);
       };
-      getTargetCenter = function(name) {
-        return Physics.getTargetCenter(name);
+      getTargetXy = function(name) {
+        return Physics.getTargetXy(name);
       };
       deleteBody = function(name) {
         return Physics.deleteBody(name);
@@ -19275,8 +19275,8 @@ function hasOwnProperty(obj, prop) {
           "SET-POLYGON-DENSITY": setPolygonDensity,
           "SET-POLYGON-RESTITUTION": setPolygonRestitution,
           "SET-TARGET-BODY-ID": setTargetBodyId,
-          "SET-TARGET-RELATIVE-CENTER": setTargetRelativeCenter,
-          "SET-TARGET-CENTER": setTargetCenter,
+          "SET-TARGET-RELATIVE-XY": setTargetRelativeXy,
+          "SET-TARGET-Xy": setTargetXy,
           "GET-BODY-BEHAVIOR": getBodyBehavior,
           "GET-BODY-COORDS": getBodyCoords,
           "GET-BODY-ANGLE": getBodyAngle,
@@ -19302,8 +19302,8 @@ function hasOwnProperty(obj, prop) {
           "GET-POLYGON-DENSITY": getPolygonDensity,
           "GET-POLYGON-RESTITUTION": getPolygonRestitution,
           "GET-TARGET-BODY-ID": getTargetBodyId,
-          "GET-TARGET-RELATIVE-CENTER": getTargetRelativeCenter,
-          "GET-TARGET-CENTER": getTargetCenter,
+          "GET-TARGET-RELATIVE-XY": getTargetRelativeXy,
+          "GET-TARGET-XY": getTargetXy,
           "DELETE-BODY": deleteBody,
           "DELETE-LINE": deleteLine,
           "DELETE-CIRCLE": deleteCircle,

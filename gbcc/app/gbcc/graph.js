@@ -57,11 +57,9 @@ Graph = (function() {
   function updateGraph(state) {
     console.log(viewWidth);
     console.log(graphWidth);
-    
     if (!viewOffsetWidth) {
       findGraphBoundaries(); 
     }
-    
     if (state === "graphOff") {
       $("#graphOff").removeClass("selected");
       $("#graphOn").addClass("selected");
@@ -176,6 +174,8 @@ Graph = (function() {
   ////// SHOW AND HIDE GRAPH //////
   
   function showGraph() {
+    importFile("geogebra-default.ggb");
+
     $("#graphContainer").css("display","inline-block");
     $(".graph-controls").css("display","inline-block");
     updateGraph("graphOn");
@@ -211,26 +211,30 @@ Graph = (function() {
   
   function createPoint(name, coords) {
     //console.log("create point");
-    evalCommand(name+" = Point({"+coords[0]+", "+coords[1]+"})");
+    ggbApplet.evalCommand(name+" = Point({"+coords[0]+", "+coords[1]+"})");
     var commands = $($($.parseXML(ggbApplet.getXML())).find("command"))
-    var maxCommands = commands.length - 1;
+    var maxCommands = commands.length;
+    console.log("number of commands",maxCommands);
     var root = $.parseXML(ggbApplet.getXML());
-    $(root).find("command")[maxCommands].remove();
-    var elements = $(root).find("element");
     
-    var maxElements = elements.length - 1;
-    console.log("number of elements",maxElements);
-    var $point = $($(root).find("element")[maxElements]).find("pointSize")[maxElements];
-    
-    $($point).attr("val", "5");
-    $objColor =  $($(root).find("element")[maxElements]).find("objColor")[maxElements];
-    $($point).attr("r", "77");
-    $($point).attr("g", "77");
-    $($point).attr("b", "255");
-    $($point).attr("alpha", "0");
-    console.log($point);
-    rootString = (new XMLSerializer()).serializeToString(root);
-    ggbApplet.setXML(rootString);
+    if (maxCommands > 0) {
+      commandIndex = maxCommands - 1;
+      console.log($(commands[commandIndex]).attr("name"));
+      if ($(commands[commandIndex]).attr("name") === "Point") {
+        $(root).find("command")[commandIndex].remove();
+        var elements = $(root).find("element");
+        var maxElements = elements.length - 1;
+        var $point = $($(root).find("element")[maxElements]).find("pointSize")[0];
+        $($point).attr("val", "5");
+        $objColor =  $($(root).find("element")[maxElements]).find("objColor")[0];
+        $($objColor).attr("r", "77");
+        $($objColor).attr("g", "77");
+        $($objColor).attr("b", "255");
+        $($objColor).attr("alpha", "0");
+        rootString = (new XMLSerializer()).serializeToString(root);
+        ggbApplet.setXML(rootString);
+      }
+    }
   }
   
   function createPoints(points) {
@@ -298,11 +302,14 @@ Graph = (function() {
     var value;
     for (var i=0; i<objectNames.length; i++) {
       name = objectNames[i];
-      if (getObjectType(name) === "point") {
+      console.log(name, ggbApplet.getCommandString(name));
+      if (getObjectType(name) === "point" && ggbApplet.getCommandString(name) === "") {
+        console.log("is just a point");
         value = name +" = Point({" + getX(name) + "," + getY(name) + "})";
       } else {
-        value = ggbApplet.getCommandString(name);
+        value = name +" = " + ggbApplet.getCommandString(name);
       }
+      console.log(value);
       objectList.push(value);
     }
     return objectList;
@@ -349,9 +356,32 @@ Graph = (function() {
   /////// GEOGEBRA EVAL ///////
   
   function evalCommand(cmdString) {
+    console.log("evalCommand",cmdString);
     try {
-      console.log(cmdString);
-      ggbApplet.evalCommand(cmdString);
+      
+      if (cmdString.includes("Point({")) {
+        var equals = cmdString.indexOf("=");
+        var firstParenthesis = cmdString.indexOf("{");
+        var secondParenthesis = cmdString.indexOf("}");
+        var comma = cmdString.indexOf(",");
+        var name = cmdString.slice(0, equals).trim();
+        var xcor = cmdString.slice(firstParenthesis + 1, comma).trim();
+        var ycor = cmdString.slice(comma + 1, secondParenthesis).trim();
+        xcor = parseFloat(xcor) || 0;
+        ycor = parseFloat(ycor) || 0;
+//        var name = cmdString.substr(0,cmdString.indexOf("=")).trim();
+//        console.log(name);//
+//        console.log(cmdString.substr(cmdString.indexOf("{") + 1, cmdString.indexOf(",")));
+//        console.log(cmdString.substr(cmdString.indexOf(",") + 1, cmdString.indexOf("}")));
+
+//        var xcor = parseFloat(cmdString.substr(cmdString.indexOf("{") + 1, cmdString.indexOf(",")).trim());
+//        var xcor = parseFloat(cmdString.substr(cmdString.indexOf(",") + 1, cmdString.indexOf("}")).trim());
+        console.log("name",name,xcor,ycor);
+        createPoint(name, [xcor, ycor]);
+      } else {
+        console.log(cmdString);
+        ggbApplet.evalCommand(cmdString);
+      }
     } catch (ex) {
       console.log("cannot evalCommand")
     }

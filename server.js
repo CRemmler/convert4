@@ -7,7 +7,7 @@ var formidable = require('formidable');
 var Promise = require("bluebird");
 Promise.promisifyAll(fs);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3006;
 
 app.use(express.static(__dirname));
 
@@ -234,8 +234,8 @@ app.post('/fileupload',function(req,res){
          indexFile = "";
          var array = data.toString().split("\n");
          for (i in array) { indexFile += array[i] + "\n"; }
-         indexFile += "\ndocument.title = '"+title+"';\n</script>";
-         indexFile += "\n<script type='text/nlogo' id='nlogo-code' data-filename='"+title+"'>";
+         //indexFile += "\ndocument.title = '"+title+"';\n</script>";
+         //indexFile += "\n<script type='text/nlogo' id='nlogo-code' data-filename='"+title+"'>";
          indexFile += nlogoFile;
       }).then(function() {
       fs.readFileAsync("gbcc/index3.html", "utf8").then(function(data) {
@@ -337,11 +337,11 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a10.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a10.png", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a11.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a11.png", data);
+        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a19.png").then(function(data) {
+        	zip.file("app/gbcc/physics-ui/a19.png", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a12.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a12.png", data);
+        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a20.png").then(function(data) {
+        	zip.file("app/gbcc/physics-ui/a20.png", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a13.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a13.png", data);
@@ -639,7 +639,7 @@ app.post('/fileupload',function(req,res){
           console.error(e.stack);
           
           
-  }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
+  }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
      
      });
    });

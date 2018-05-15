@@ -26,12 +26,13 @@ jQuery(document).ready(function() {
   socket.on("save settings", function(data) {
     userId = data.userId;
     userType = data.userType;
+    $(".netlogo-canvas").attr("id","netlogoCanvas"); 
     Gallery.setupGallery({settings: data.gallerySettings, userId: userId});
-    //Physics.setupInterface();
+    Physics.setupInterface();
     console.log("from here");
     Maps.setupInterface();
     Graph.setupInterface();
-    $(".netlogo-canvas").attr("id","netlogoCanvas"); 
+    //$(".netlogo-canvas").attr("id","netlogoCanvas"); 
     allowMultipleButtonsSelected = data.gallerySettings.allowMultipleSelections; 
     allowGalleryForeverButton = data.gallerySettings.allowGalleryControls;
     $(".roomNameInput").val(data.myRoom);
