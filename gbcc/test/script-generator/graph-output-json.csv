@@ -5,7 +5,7 @@
 	}, {
 		"name": "show-graph",
 		"actionName": "show-graph",
-		"argTypes": []
+		"argTypes": ["list"]
 	}, {
 		"name": "set-data",
 		"actionName": "set-data",
@@ -53,6 +53,10 @@
 		"actionName": "set-xy",
 		"argTypes": ["string", "list"]
 	}, {
+		"name": "set-draggable",
+		"actionName": "set-draggable",
+		"argTypes": ["boolean"]
+	}, {
 		"name": "get-x",
 		"actionName": "get-x",
 		"argTypes": ["string"],
@@ -72,6 +76,10 @@
 		"actionName": "get-objects",
 		"argTypes": [],
 		"returnType": "list"
+	}, {
+		"name": "delete-objects",
+		"actionName": "delete-objects",
+		"argTypes": []
 	}, {
 		"name": "create-objects",
 		"actionName": "create-objects",
@@ -96,8 +104,8 @@
 		"argTypes": ["string"],
 		"returnType": "string"
 	}, {
-		"name": "exists",
-		"actionName": "exists",
+		"name": "exists?",
+		"actionName": "exists?",
 		"argTypes": ["string"],
 		"returnType": "boolean"
 	}, {
@@ -134,5 +142,14 @@
 		"name": "eval-reporter",
 		"actionName": "eval-reporter",
 		"argTypes": ["string"],
-		"returnType": "any"
+		"returnType": "wildcard"
+	}, {
+		"name": "graph-on",
+		"actionName": "graph-on",
+		"argTypes": []
+	}, {
+		"name": "graph-off",
+		"actionName": "graph-off",
+		"argTypes": []
 	}
+	

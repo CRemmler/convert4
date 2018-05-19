@@ -8,9 +8,9 @@ module.exports = {
     hideMap = () ->
         Maps.hideMap()
 
-    # () => ()
-    showMap = () ->
-        Maps.showMap()
+    # (list) => ()
+    showMap = (settings) ->
+        Maps.showMap(settings)
 
     # (string) => ()
     setData = (data) ->
@@ -52,6 +52,18 @@ module.exports = {
     createMarkers = (data) ->
         Maps.createMarkers(data)
 
+    # () => (data)
+    getMarkers = () ->
+        return Maps.getMarkers()
+
+    # (string) => ()
+    hideMarker = (name) ->
+        Maps.hideMarker(name)
+
+    # (string) => ()
+    showMarker = (name) ->
+        Maps.showMarker(name)
+
     # (string, number) => ()
     setLat = (name, lat) ->
         Maps.setLat(name, lat)
@@ -76,6 +88,10 @@ module.exports = {
     getLatlng = (name) ->
         return Maps.getLatlng(name)
 
+    # (boolean) => ()
+    setDraggable = (draggable) ->
+        Maps.setDraggable(draggable)
+
     # (string) => ()
     deleteMarker = (name) ->
         Maps.deleteMarker(name)
@@ -92,6 +108,18 @@ module.exports = {
     patchToLatlng = (coords) ->
         return Maps.patchToLatlng(coords)
 
+    # () => ()
+    mapOn = () ->
+        Maps.mapOn()
+
+    # () => ()
+    mapOff = () ->
+        Maps.mapOff()
+
+    # (string) => (boolean)
+    exists? = (name) ->
+        return Maps.exists?(name)
+
     {
       name: "maps"
     , prims: {
@@ -107,16 +135,23 @@ module.exports = {
       "GET-CENTER-LATLNG": getCenterLatlng,
       "CREATE-MARKER": createMarker,
       "CREATE-MARKERS": createMarkers,
+      "GET-MARKERS": getMarkers,
+      "HIDE-MARKER": hideMarker,
+      "SHOW-MARKER": showMarker,
       "SET-LAT": setLat,
       "SET-LNG": setLng,
       "SET-LATLNG": setLatlng,
       "GET-LAT": getLat,
       "GET-LNG": getLng,
       "GET-LATLNG": getLatlng,
+      "SET-DRAGGABLE": setDraggable,
       "DELETE-MARKER": deleteMarker,
       "DELETE-MARKERS": deleteMarkers,
       "LATLNG-TO-PATCH": latlngToPatch,
       "PATCH-TO-LATLNG": patchToLatlng,
+      "MAP-ON": mapOn,
+      "MAP-OFF": mapOff,
+      "EXISTS?": exists?,
     }
     }
 }

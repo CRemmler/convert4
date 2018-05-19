@@ -1,6 +1,6 @@
 
+var applet1;
 Graph = (function() {
-  var applet1;
   var viewWidth;
   var viewHeight;
   var viewOffsetWidth;
@@ -9,15 +9,11 @@ Graph = (function() {
   var graphHeight;
   var boundaries;
   var points = {};
-  //var currentApplet = "";
-  //var evalCmdToggle = 0;
-  //var canvasWidth = 200;
-
+  var graphLoaded = false;
   
   ////// SETUP MAP //////
 
   function setupInterface() {
-    console.log("graph setup interface");
     if ($("#appletContainer").length === 0) {
       viewWidth = parseFloat($(".netlogo-canvas").css("width"));
       viewHeight = parseFloat($(".netlogo-canvas").css("height"));
@@ -34,11 +30,37 @@ Graph = (function() {
       $("#appletContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 4 + "px");
       $("#appletContainer").css("left", $(".netlogo-view-container").css("left"));
       $("#appletContainer").css("top", $(".netlogo-view-container").css("top"));
-      applet1 = new GGBApplet({filename: "geogebra-default.ggb","showToolbar":true}, true);
+      
+      applet1 = new GGBApplet({filename: "geogebra-default.ggb","showToolbar":true, "appletOnLoad": appletOnLoadHidden}, true);
       applet1.inject('appletContainer');
       $("#appletContainer").css("display", "none");
       setupEventListeners();
     }
+  }
+  
+  function appletOnLoadHidden() {
+    drawPatches = true;
+    universe.repaint();
+    setTimeout(function(){ 
+      checkLoadStatus(); 
+      //updateGraph("graphOn");
+      //drawPatches = false;
+      //universe.repaint();
+    }, 3000);
+  }
+  
+  function appletOnLoadVisible() {
+    drawPatches = true;
+    universe.repaint();
+    setTimeout(function(){ 
+      $("#graphContainer").css("display","inline-block");
+      $(".graph-controls").css("display","inline-block");
+      $("#appletContainer").css("display","inline-block");
+      checkLoadStatus(); 
+      updateGraph("graphOn");
+      drawPatches = false;
+      universe.repaint();
+    }, 3000);
   }
   
   function setupEventListeners() {
@@ -49,17 +71,35 @@ Graph = (function() {
     $(".graph-controls").on("click", "#graphOff", function() {
       updateGraph("graphOff");
     });
-    $(".netlogo-view-container").css("background-color","transparent");    
+    $(".netlogo-view-container").css("background-color","transparent");   
   }
   
   ////// DISPLAY GRAPH //////
   
-  function updateGraph(state) {
-    console.log(viewWidth);
-    console.log(graphWidth);
-    if (!viewOffsetWidth) {
-      findGraphBoundaries(); 
+  function checkLoadStatus() {
+    console.log("check load status");
+    if (ggbApplet) {
+      var properties = JSON.parse(ggbApplet.getViewProperties());
+      graphWidth = properties.width;
+      graphHeight = properties.height;
+      console.log(graphWidth, graphHeight);
+      //if (graphWidth > 0 && graphHeight > 0) {
+      viewOffsetWidth = viewWidth - graphWidth;
+      viewOffsetHeight = viewHeight - graphHeight;
+      var xMin = properties.xMin;
+      var yMin = properties.yMin;;    
+      var xScale = properties.invXscale;
+      var yScale = properties.invYscale;
+      var xMax = graphWidth * xScale + xMin; // how many sections there are  
+      var yMax = graphHeight * yScale + yMin;
+      boundaries = {xmin: xMin, xmax: xMax , ymin: yMin, ymax: yMax};
+      graphLoaded = true;
+      ggbApplet.setWidth(viewWidth + Math.random(1));
+      ggbApplet.setHeight(viewHeight + Math.random(1)); 
     }
+  }
+  
+  function updateGraph(state) {
     if (state === "graphOff") {
       $("#graphOff").removeClass("selected");
       $("#graphOn").addClass("selected");
@@ -76,126 +116,85 @@ Graph = (function() {
     world.triggerUpdate();
   }
 
-  
   function triggerGraphUpdate() {
-    if (procedures.gbccOnGraphUpdate != undefined) { session.run('gbcc-on-graph-update'); }
+    if (procedures.gbccOnGraphUpdate != undefined) { 
+      session.run('gbcc-on-graph-update'); 
+      checkLoadStatus();
+    }
   }
   
   ////// COORDINATE CONVERSION //////
-  
-  function findGraphBoundaries() {
-    if (ggbApplet) {
-      var properties = JSON.parse(ggbApplet.getViewProperties());
-      graphWidth = properties.width;
-      graphHeight = properties.height;
-      viewOffsetWidth = viewWidth - graphWidth;
-      viewOffsetHeight = viewHeight - graphHeight;
-      var xMin = properties.xMin;
-      var yMin = properties.yMin;;    
-      var xScale = properties.invXscale;
-      var yScale = properties.invYscale;
-      var xMax = graphWidth * xScale + xMin; // how many sections there are  
-      var yMax = graphHeight * yScale + yMin;
-      
-      boundaries = {xmin: xMin, xmax: xMax , ymin: yMin, ymax: yMax};
-    }
-  }
-  /*
-  function getBounds() {
-    if (ggbApplet) {
-      var properties = JSON.parse(ggbApplet.getViewProperties());
-      var xMin = properties.xMin;
-      var yMin = properties.yMin;;    
-      var xScale = properties.invXscale;
-      var yScale = properties.invYscale;
-      width = viewWidth;
-      height = viewHeight;
-      var xMax = width * xScale + xMin; // how many sections there are  
-      var yMax = height * yScale + yMin;
-      boundaries = {xmin: xMin, xmax: xMax , ymin: yMin, ymax: yMax};
-    } else {
-      boundaries = {xmin: 0, xmax: 0, ymin: 0, ymax: 0};
-    }
-  }
-  */
+
   function patchToGraph(coords) {
-    //console.log(coords);
-    applet1.getAppletObject().setSize(viewWidth + Math.random()*2, viewHeight + Math.random()*2);
-    if (!viewOffsetWidth) {
-      findGraphBoundaries(); 
-    }
-    var xcor = coords[0];
-    var ycor = coords[1];
-    var pixelX = universe.view.xPcorToPix(xcor);
-    var pixelY = universe.view.yPcorToPix(ycor);
-    pixelX -= (viewOffsetWidth );
-    pixelY -= (viewOffsetHeight );
-    var pixelPercentX = (pixelX / (graphWidth));
-    var pixelPercentY = 1 - (pixelY / (graphHeight));
-    //var boundaries = getBounds();
-    var boundaryMinX = boundaries.xmin;
-    var boundaryMinY = boundaries.ymin;
-    var boundaryMaxX = boundaries.xmax;
-    var boundaryMaxY = boundaries.ymax;
-    var pointX = (pixelPercentX * (boundaryMaxX - boundaryMinX)) + boundaryMinX;
-    var pointY = (pixelPercentY * (boundaryMaxY - boundaryMinY)) + boundaryMinY;
-    return [pointX, pointY];
+    //checkLoadStatus();
+    if (graphLoaded) {
+      var xcor = coords[0];
+      var ycor = coords[1];
+      var pixelX = universe.view.xPcorToPix(xcor);
+      var pixelY = universe.view.yPcorToPix(ycor);
+      pixelX -= (viewOffsetWidth );
+      pixelY -= (viewOffsetHeight );
+      var pixelPercentX = (pixelX / (graphWidth));
+      var pixelPercentY = 1 - (pixelY / (graphHeight));
+      var boundaryMinX = boundaries.xmin;
+      var boundaryMinY = boundaries.ymin;
+      var boundaryMaxX = boundaries.xmax;
+      var boundaryMaxY = boundaries.ymax;
+      var pointX = (pixelPercentX * (boundaryMaxX - boundaryMinX)) + boundaryMinX;
+      var pointY = (pixelPercentY * (boundaryMaxY - boundaryMinY)) + boundaryMinY;
+      return [pointX, pointY];
+    } else { return [ 0, 0 ]}
   }
   
   function graphToPatch(coords) {
-    //console.log(coords);
-    applet1.getAppletObject().setSize(viewWidth + Math.random()*2, viewHeight + Math.random()*2);
-    if (!viewOffsetWidth) {
-      findGraphBoundaries(); 
-    }
-    var pointPositionX = coords[0];
-    var pointPositionY = coords[1];
-    var boundaryMinX = boundaries.xmin;
-    var boundaryMinY = boundaries.ymin;
-    var boundaryMaxX = boundaries.xmax;
-    var boundaryMaxY = boundaries.ymax;
-    if ( pointPositionX < boundaryMinX 
-      || pointPositionX > boundaryMaxX
-      || pointPositionY < boundaryMinY
-      || pointPositionY > boundaryMaxY) {
-      return (["out of bounds", "out of bounds"]);
-    }
-    var pointPercentX = 1 - ((boundaryMaxX - pointPositionX) / (boundaryMaxX - boundaryMinX));
-    var pointPercentY = (boundaryMaxY - pointPositionY) / (boundaryMaxY - boundaryMinY);
-    var pixelX = pointPercentX * graphWidth;
-    var pixelY = pointPercentY * graphHeight;
-    pixelX += (viewOffsetWidth / 2);    
-    pixelY += (viewOffsetHeight / 2);
-    var patchXcor = universe.view.xPixToPcor(pixelX);
-    var patchYcor = universe.view.yPixToPcor(pixelY);
-    return ([patchXcor, patchYcor]);
+    //checkLoadStatus();
+    if (graphLoaded) {
+      var pointPositionX = coords[0];
+      var pointPositionY = coords[1];
+      var boundaryMinX = boundaries.xmin;
+      var boundaryMinY = boundaries.ymin;
+      var boundaryMaxX = boundaries.xmax;
+      var boundaryMaxY = boundaries.ymax;
+      if ( pointPositionX < boundaryMinX 
+        || pointPositionX > boundaryMaxX
+        || pointPositionY < boundaryMinY
+        || pointPositionY > boundaryMaxY) {
+        return (["out of bounds", "out of bounds"]);
+      }
+      var pointPercentX = 1 - ((boundaryMaxX - pointPositionX) / (boundaryMaxX - boundaryMinX));
+      var pointPercentY = (boundaryMaxY - pointPositionY) / (boundaryMaxY - boundaryMinY);
+      var pixelX = pointPercentX * graphWidth;
+      var pixelY = pointPercentY * graphHeight;
+      pixelX += viewOffsetWidth;//(viewOffsetWidth / 2);    
+      pixelY += viewOffsetHeight;//(viewOffsetHeight / 2);
+      var patchXcor = universe.view.xPixToPcor(pixelX);
+      var patchYcor = universe.view.yPixToPcor(pixelY);
+      return ([patchXcor, patchYcor]);
+    } else { return [ 0, 0 ]}
   }
+  
   
   ////// SHOW AND HIDE GRAPH //////
   
-  function showGraph() {
-    importFile("geogebra-default.ggb");
-
+  function showGraph(settings) {
     $("#graphContainer").css("display","inline-block");
     $(".graph-controls").css("display","inline-block");
     updateGraph("graphOn");
     $("#appletContainer").css("display","inline-block");
-
-    //map.setView(center, zoom);
-
     // left, top, width, height
-    // if (settings.length == 4) {
-      //$("#mapContainer").css("left", settings[0] + "px");
-      //$("#mapContainer").css("top", settings[1] + "px");
-      //$("#mapContainer").css("width", settings[2] + "px");
-      //$("#mapContainer").css("height", settings[3] + "px");
-    //}
+    /*if (settings.length == 4) {
+      $("#mapContainer").css("left", settings[0] + "px");
+      $("#mapContainer").css("top", settings[1] + "px");
+      $("#mapContainer").css("width", settings[2] + "px");
+      $("#mapContainer").css("height", settings[3] + "px");
+    }*/
   }
   
   function hideGraph() {
     updateGraph("graphOff");
     $(".graph-controls").css("display","none");
     $("#graphContainer").css("display","none");
+    $("#appletContainer").css("display","none");
   }
 
   ///////// GRAPH SETTINGS  ///////
@@ -203,36 +202,46 @@ Graph = (function() {
   ///////// IMPORT GGB ///////
   
   function importFile(filename) { 
-    applet1 = new GGBApplet({filename: filename,"showToolbar":true}, true);
+    //applet1 = new GGBApplet({filename: filename,"showToolbar":true}, true);
+    drawPatches = true;
+    universe.repaint();
+    applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
     applet1.inject('appletContainer');
+    $("#appletContainer").css("display","inline-block");
+    $("#graphContainer").css("display","inline-block");
+    $(".graph-controls").css("display","inline-block");
+    checkLoadStatus();
   }
   
   //////// POINTS /////////
   
   function createPoint(name, coords) {
     //console.log("create point");
-    ggbApplet.evalCommand(name+" = Point({"+coords[0]+", "+coords[1]+"})");
-    var commands = $($($.parseXML(ggbApplet.getXML())).find("command"))
-    var maxCommands = commands.length;
-    console.log("number of commands",maxCommands);
-    var root = $.parseXML(ggbApplet.getXML());
-    
-    if (maxCommands > 0) {
-      commandIndex = maxCommands - 1;
-      console.log($(commands[commandIndex]).attr("name"));
-      if ($(commands[commandIndex]).attr("name") === "Point") {
-        $(root).find("command")[commandIndex].remove();
-        var elements = $(root).find("element");
-        var maxElements = elements.length - 1;
-        var $point = $($(root).find("element")[maxElements]).find("pointSize")[0];
-        $($point).attr("val", "5");
-        $objColor =  $($(root).find("element")[maxElements]).find("objColor")[0];
-        $($objColor).attr("r", "77");
-        $($objColor).attr("g", "77");
-        $($objColor).attr("b", "255");
-        $($objColor).attr("alpha", "0");
-        rootString = (new XMLSerializer()).serializeToString(root);
-        ggbApplet.setXML(rootString);
+    //checkLoadStatus();
+    if (graphLoaded) { 
+      deleteObject(name);
+      ggbApplet.evalCommand(name+" = Point({"+coords[0]+", "+coords[1]+"})");
+      var commands = $($($.parseXML(ggbApplet.getXML())).find("command"))
+      var maxCommands = commands.length;
+      //console.log("number of commands",maxCommands);
+      var root = $.parseXML(ggbApplet.getXML());
+      if (maxCommands > 0) {
+        commandIndex = maxCommands - 1;
+        //console.log($(commands[commandIndex]).attr("name"));
+        if ($(commands[commandIndex]).attr("name") === "Point") {
+          $(root).find("command")[commandIndex].remove();
+          var elements = $(root).find("element");
+          var maxElements = elements.length - 1;
+          var $point = $($(root).find("element")[maxElements]).find("pointSize")[0];
+          $($point).attr("val", "5");
+          $objColor =  $($(root).find("element")[maxElements]).find("objColor")[0];
+          $($objColor).attr("r", "77");
+          $($objColor).attr("g", "77");
+          $($objColor).attr("b", "255");
+          $($objColor).attr("alpha", "0");
+          rootString = (new XMLSerializer()).serializeToString(root);
+          ggbApplet.setXML(rootString);
+        }
       }
     }
   }
@@ -242,13 +251,12 @@ Graph = (function() {
     var point;
     for (var i=0; i<points.length; i++) {
       point = points[i];
-      //console.log(point);
       createPoint(point[0], point[1]);
     }
   }
   
   function getPoint(name) {
-    return [name, getXy(name) ];
+    return exists(name) ? [name, getXy(name)] : [ "undefined", [ 0,0] ];
   }
   
   function getPoints() {
@@ -282,15 +290,15 @@ Graph = (function() {
   }
   
   function getX(name) {
-    return ggbApplet.getXcoord(name);
+    return exists(name) ? ggbApplet.getXcoord(name) : 0;
   }
   
   function getY(name) {
-    return ggbApplet.getYcoord(name);
+    return exists(name) ? ggbApplet.getYcoord(name) : 0;
   }
   
   function getXy(name) {
-    return [ggbApplet.getXcoord(name), ggbApplet.getYcoord(name)];
+    return exists(name) ? [ggbApplet.getXcoord(name), ggbApplet.getYcoord(name)] : [ 0, 0];
   }
   
   /////// OBJECTS ////////
@@ -302,14 +310,14 @@ Graph = (function() {
     var value;
     for (var i=0; i<objectNames.length; i++) {
       name = objectNames[i];
-      console.log(name, ggbApplet.getCommandString(name));
+      //console.log(name, ggbApplet.getCommandString(name));
       if (getObjectType(name) === "point" && ggbApplet.getCommandString(name) === "") {
-        console.log("is just a point");
+        //console.log("is just a point");
         value = name +" = Point({" + getX(name) + "," + getY(name) + "})";
       } else {
         value = name +" = " + ggbApplet.getCommandString(name);
       }
-      console.log(value);
+      //console.log(value);
       objectList.push(value);
     }
     return objectList;
@@ -322,35 +330,36 @@ Graph = (function() {
   }
   
   function renameObject(name1, name2) {
-    ggbApplet.renameObject(name1, name2);
+    if (exists(name1)) { ggbApplet.renameObject(name1, name2); }
   }
   
   function deleteObject(name) {
-    ggbApplet.deleteObject(name);
+    if (exists(name)) { ggbApplet.deleteObject(name); }
   }
   
   //////// SHOW AND HIDE ///////
   
   function hideObject(name) {
-    ggbApplet.setVisible(name, false)
+    if (exists(name)) { ggbApplet.setVisible(name, false); }
   }
 
   function showObject(name) {
-    ggbApplet.setVisible(name, true)
+    if (exists(name)) { ggbApplet.setVisible(name, true); }
   }
   
   /////// OBJECT ATTRIBUTES ///////
   
-  function getValue(name) {
-    return ggbApplet.getValue(name);
+  function getValue(arg) {
+    var value = ggbApplet.getValue(arg);
+    return (value || value === 0) ? value : "undefined";
   }
   
   function getObjectType(name) {
-    return ggbApplet.getObjectType(name);
+    return (exists(name)) ? ggbApplet.getObjectType(name) : "undefined";
   }
   
   function exists(name) {
-    return ggbApplet.exists(name);
+    return (ggbApplet) ? ggbApplet.exists(name) : false;
   }
   
   /////// GEOGEBRA EVAL ///////
@@ -369,18 +378,12 @@ Graph = (function() {
         var ycor = cmdString.slice(comma + 1, secondParenthesis).trim();
         xcor = parseFloat(xcor) || 0;
         ycor = parseFloat(ycor) || 0;
-//        var name = cmdString.substr(0,cmdString.indexOf("=")).trim();
-//        console.log(name);//
-//        console.log(cmdString.substr(cmdString.indexOf("{") + 1, cmdString.indexOf(",")));
-//        console.log(cmdString.substr(cmdString.indexOf(",") + 1, cmdString.indexOf("}")));
-
-//        var xcor = parseFloat(cmdString.substr(cmdString.indexOf("{") + 1, cmdString.indexOf(",")).trim());
-//        var xcor = parseFloat(cmdString.substr(cmdString.indexOf(",") + 1, cmdString.indexOf("}")).trim());
-        console.log("name",name,xcor,ycor);
+        //console.log("name",name,xcor,ycor);
         createPoint(name, [xcor, ycor]);
       } else {
-        console.log(cmdString);
-        ggbApplet.evalCommand(cmdString);
+        //console.log(cmdString);
+        //checkLoadStatus();
+        if (graphLoaded) { ggbApplet.evalCommand(cmdString) };
       }
     } catch (ex) {
       console.log("cannot evalCommand")
@@ -391,365 +394,7 @@ Graph = (function() {
     return "0";
   }
   
-  /*
-  function resetInterface() {
-    //console.log("reset interface");
-    $("#appletContainer").css("display","inline-block");
-    $(".graph-controls").css("display","inline-block");
-    updateGraph("graphOff");
-  }
-  */
-
-  /*
-  function scaleCanvas(sourceWidth, sourceHeight) {
-    var dataObj = {};
-    var ratio = sourceWidth / sourceHeight;
-    var width = canvasWidth;
-    var height = canvasWidth;
-    (sourceWidth > sourceHeight) ? height = width / ratio : width = height * ratio;
-    dataObj.width = width;
-    dataObj.height = height;
-    return dataObj;
-  }*/
-    
-
-
-/*
-  
-  function importGraph(data) {
-    //Images.clearImage();
-    var settings = data[0];
-    var elements = data[1];
-    Physics.removePhysics();
-    Maps.removeMap();
-    Graph.removeGraph();
-    world.triggerUpdate();
-    if (elements != "" && ggbApplet) { 
-      ggbApplet.setXML(elements); 
-    }
-    resetInterface();
-  }
-  
-  function createPoint(name, settings) {
-    assignPointSettings(name, settings);
-  }
-  
-  function updatePoint(name, settings) {
-    assignPointSettings(name, settings);
-  }
-  
-  
-  function setX(name, xcor) { 
-  
-  }
-  function setY(name, xcor) { 
-  
-  }
-  function setXy(name, center) { 
-    //console.log("set xy");
-    createPoint(name, center);
-  }
-  
-  
-  function assignPointSettings(name, settings) {
-    console.log("assign point settings",name,settings);
-    if (!points[name]) { points[name] = {}; }
-    if (!points[name].settings) { points[name].settings = {}; }
-    points[name].settings["patch-coords"] = [ 0, 0 ];
-    points[name].settings["graph-coords"] = undefined;
-    for (var i=0; i<settings.length; i++) {
-      key = settings[i][0];
-      value = settings[i][1];
-      points[name].settings[key] = value;
-    }
-    var graphCoords = points[name].settings["graph-coords"];
-    if (!graphCoords) {
-      graphCoords = patchToGraph(points[name].settings["patch-coords"]);
-      points[name].settings["graph-coords"] = graphCoords;
-    } 
-    try {
-      ggbApplet.evalCommand(name+" = Point({"+graphCoords[0]+", "+graphCoords[1]+"})");
-    } catch (ex) {
-      console.log("cannot add point to applet")
-    }
-  }
-  
-  function deletePoint(name) {
-    if (ggbApplet) {
-      ggbApplet.evalCommand("Delete("+name+")");
-    }
-  } 
-  
-  function getPoint(name, key) {
-    if (points[name] && points[name].settings) {
-      if (points[name].settings[key]) {
-        return points[name].settings[key];
-      }
-    }
-    return [ "does not exist" ]
-  }
-  
-  function getPoints() {
-    var pointList = [];
-    var mark;
-    for (point in points) {
-      pointSettings = [];
-      for (setting in points[point].settings) {
-        mark = [ setting, points[point].settings[setting]];
-        pointSettings.push(mark);
-      }
-      pointList.push([point, pointSettings]);
-      
-    }
-    return pointList;
-    
-    return [];
-  }
-  
-  
-  function getElements() {
-    var results = [];
-    var result;
-    var body;
-    var allBodies = Physicsb2.getAllBodies();
-    for (obj in allBodies) {
-      body = allBodies[obj];
-      //result = body.GetAngle() / Math.PI * 180;
-      //if (result < 0) { result+= 360;}
-      //results.push(Math.round(result));
-      result = body.GetPosition();
-      results.push([ Math.round(result.x), Math.round(result.y) ]);
-    }
-    //console.log(results);
-    return results;
-
-    //return ggbApplet.getXML()
-  }
-
-  function removeGraph() {
-    $(".graph-controls").css("display","none");
-    $("#appletContainer").css("display","none");
-    if (ggbApplet) {
-      var xml = $.parseXML(ggbApplet.getXML());
-      var $xml = $(xml);
-      var $construction = $xml.find('construction');
-      $construction.find('element').each(function(){
-        Graph.getApplet().getAppletObject().evalCommand("Delete("+$(this).attr('label')+")");
-      });
-      updateGraph("graphOn");
-    }
-  }
-  
-
-  function getApplet() {
-    return applet1;
-  }
-  
-  function evalCommand(cmdString) {
-    if (Graph.getApplet().getAppletObject())
-    Graph.getApplet().getAppletObject().evalCommand(cmdString);
-  }
-  
-  function evalCommandGetLabels(cmdString) {
-    return Graph.getApplet().getAppletObject().evalCommandGetLabels(cmdString);
-  }
-  
-  function evalCommandCAS(cmdString) {
-    return ggbApplet.evalCommand(cmdString);
-  }
-  */
-  
-
-  /*
-  function getXml() {
-    return getConstructions()
-  }
-  function setXml(xmlString) {
-    return setConstructions(xmlString);
-  }
-  function createGraph() { }
-  function showGraph() { 
-    drawPatches = false;
-    universe.repaint();
-  }
-  function deleteGraph() { }
-  function hideGraph() { 
-    drawPatches = false;
-    universe.repaint();
-  }
-  function importGraph(data) {
-    //console.log("import graph");
-    resetInterface();
-  }
-  
-  function loadFile(filename) {
-    //console.log("load file");
-    applet1 = new GGBApplet({filename: "js/extensions/graph/"+filename,"showToolbar":true}, true);
-    applet1.inject('appletContainer');
-    resetInterface();
-  }
-  
-
-  
-  
-  function exportGraph() { }
-  function createPoint(name, center) { 
-    evalCommand(name+" = Point({"+center[0]+", "+center[1]+"})");
-  }
-  function createPoints(data) { 
-    //console.log("create points",data);
-    var pointsList = data;
-    for (var p=0; p<pointsList.length; p++) {
-      createPoint(pointsList[p][0], pointsList[p][1]);
-    }
-  }
-  function getPoints() {
-    console.log("get points"); 
-    var xml = ggbApplet.getXML();
-    var $xml = $(xml);
-    var $construction = $xml.find("construction");
-    var $elements = $construction.find("element");
-    var element, $element;
-    var $points, point;
-    var x, y;
-    var pointsList = [];
-    //console.log($($elements)[1])
-    for (var e = 0; e<$elements.length; e++) {
-      element = $elements[e];
-      type = element.getAttribute("type");
-      $element = $(element);
-      if (type === "point") {
-        $points = $(element).find("coords");
-        x = parseFloat($($points)[0].getAttribute("x"));
-        y = parseFloat($($points)[0].getAttribute("y"));
-        label = element.getAttribute("label");
-        if (x != "NaN" && y != "NaN") {
-          pointsList.push([ label, [x, y]]);
-        }
-      }
-    }
-          console.log(pointsList);
-    //console.log(pointsList);
-    return pointsList;
-  }
-  function getPoint(name) {
-    var pointsList = getPoints();
-    for (var i=0; i<pointsList.length; i++) {
-      if (name === pointsList[i][0]) {
-        return pointsList[i];
-      }
-    }
-    return ["null" [ 0, 0]];
-  }
-  function deletePoints() { }
-  function getConstructions() { 
-    return ggbApplet.getXML();
-  }
-  function setConstructions(data) { 
-    ggbApplet.setXML(data);
-  }
-  function appendConstructions(data) { }
-  /*function setX(name, xcor) { }
-  function setY(name, xcor) { }
-  function setXy(name, center) { }
-  function setLabel(name, label) { }
-  function setElements(xml) { }
-  function getX(name) { return parseFloat(getPoint(name)[1][0]); }
-  function getY(name) { return parseFloat(getPoint(name)[1][1]); }
-  function getXy(name) { 
-    var point = getPoint(name);
-    return [parseFloat(point[1][0]), parseFloat(point[1][1]) ]
-  }
-  function getLabel(name) { }
-  function deletePoint(name) { 
-    evalCommand("Delete("+name+")");
-    //ggbApplet.evalCommand("Delete("+name+")");
-  }*/
-  //function graphToPatch(coords) { }
-  //function patchToGraph(coords) { }
-  //function evalCommand(command) { }
-  /*
-  function evalCommand(cmdString) {
-    try {
-      console.log(cmdString);
-      //ggbApplet.evalCommand(cmdString);
-      ggbApplet.evalCommand(cmdString);
-    } catch (ex) {
-      console.log("cannot evalCommand")
-    }
-  }
-  */
-  /*
-  function adjustSize() {
-    if (viewWidth && viewHeight) {
-      //console.log("set it at ",viewWidth,viewHeight)
-      ggbApplet.setWidth(viewWidth + random(1)*10);
-      ggbApplet.setHeight(viewHeight + random(1)*10); 
-    }
-  }
-
-  function evalCommandCas(command) { 
-    console.log(command);
-    return 0
-  }
-  
-  function evalCommandGetLabels(command) {
-      return ggbApplet.getValue(command);
-   }*/
-
   return {
-    /*
-    importGraph: importGraph,
-    createPoint: createPoint,
-    updatePoint: updatePoint,
-    deletePoint: deletePoint,
-    getPoint: getPoint,
-    getPoints: getPoints,
-    getElements: getElements,
-    setupInterface: setupInterface,
-    getApplet: getApplet,
-    evalCommand: evalCommand,
-    evalCommandGetLabels: evalCommandGetLabels,
-    evalCommandCAS: evalCommandCAS,
-    patchToGraph: patchToGraph,
-    graphToPatch: graphToPatch,
-    removeGraph: removeGraph
-    */
-    /*
-    createGraph: createGraph,
-    deleteGraph: deleteGraph,
-    hideGraph: hideGraph,
-    importGraph: importGraph,
-    importFile: importFile,
-    exportGraph: exportGraph,
-    createPoint: createPoint,
-    createPoints: createPoints,
-    getPoints: getPoints,
-    deletePoints: deletePoints,
-    getConstructions: getConstructions,
-    setConstructions: setConstructions,
-    appendConstructions: appendConstructions,
-    setX: setX,
-    setY: setY,
-    setXy: setXy,
-    setLabel: setLabel,
-    setElements: setElements,
-    getX: getX,
-    getY: getY,
-    getXy: getXy,
-    getLabel: getLabel,
-    deletePoint: deletePoint,
-    graphToPatch: graphToPatch,
-    patchToGraph: patchToGraph,
-    evalCommand: evalCommand,
-    evalCommandCas: evalCommandCas,
-    evalCommandGetLabels: evalCommandGetLabels,
-    showGraph: showGraph,
-    getApplet: getApplet,
-    setupInterface: setupInterface,
-    getXml: getXml,
-    setXml: setXml
-    */
     setupInterface: setupInterface,
     hideGraph: hideGraph,
     showGraph: showGraph,
@@ -766,7 +411,6 @@ Graph = (function() {
     createObjects: createObjects,
     getValue: getValue,
     getObjectType: getObjectType,
-    exists: exists,
     renameObject: renameObject,
     deleteObject: deleteObject,
     hideObject: hideObject,
@@ -775,7 +419,9 @@ Graph = (function() {
     patchToGraph: patchToGraph,
     evalCommand: evalCommand,
     evalReporter: evalReporter,
-    importFile: importFile
+    importFile: importFile,
+    exists: exists,
+    checkLoadStatus: checkLoadStatus
   };
  
 })();

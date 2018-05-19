@@ -5,7 +5,7 @@
 }, {
 	"name": "show-map",
 	"actionName": "show-map",
-	"argTypes": []
+	"argTypes": ["list"]
 }, {
 	"name": "set-data",
 	"actionName": "set-data",
@@ -50,6 +50,19 @@
 	"actionName": "create-markers",
 	"argTypes": ["list"]
 }, {
+	"name": "get-markers",
+	"actionName": "get-markers",
+	"argTypes": [],
+	"returnType": "data"
+}, {
+	"name": "hide-marker",
+	"actionName": "hide-marker",
+	"argTypes": ["string"]
+}, {
+	"name": "show-marker",
+	"actionName": "show-marker",
+	"argTypes": ["string"]
+}, {
 	"name": "set-lat",
 	"actionName": "set-lat",
 	"argTypes": ["string", "number"]
@@ -77,6 +90,10 @@
 	"argTypes": ["string"],
 	"returnType": "list"
 }, {
+	"name": "set-draggable",
+	"actionName": "set-draggable",
+	"argTypes": ["boolean"]
+}, {
 	"name": "delete-marker",
 	"actionName": "delete-marker",
 	"argTypes": ["string"]
@@ -94,4 +111,17 @@
 	"actionName": "patch-to-latlng",
 	"argTypes": ["list"],
 	"returnType": "list"
+}, {
+	"name": "map-on",
+	"actionName": "map-on",
+	"argTypes": []
+}, {
+	"name": "map-off",
+	"actionName": "map-off",
+	"argTypes": []
+}, {
+	"name": "exists?",
+	"actionName": "exists?",
+	"argTypes": ["string"],
+	"returnType": "boolean"
 }

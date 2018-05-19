@@ -5,24 +5,7 @@
 }, {
 	"name": "show-world",
 	"actionName": "show-world",
-	"argTypes": []
-}, {
-	"name": "set-data",
-	"actionName": "set-data",
-	"argTypes": ["string"]
-}, {
-	"name": "import-file",
-	"actionName": "import-file",
-	"argTypes": ["string"]
-}, {
-	"name": "get-data",
-	"actionName": "get-data",
-	"argTypes": [],
-	"returnType": "string"
-}, {
-	"name": "export-file",
-	"actionName": "export-file",
-	"argTypes": []
+	"argTypes": ["list"]
 }, {
 	"name": "set-gravity-xy",
 	"actionName": "set-gravity-xy",
@@ -64,8 +47,8 @@
 	"actionName": "set-position-iterations",
 	"argTypes": ["number"]
 }, {
-	"name": "get-velocity-iterations",
-	"actionName": "get-velocity-iterations",
+	"name": "get-position-iterations",
+	"actionName": "get-position-iterations",
 	"argTypes": [],
 	"returnType": "number"
 }, {
@@ -73,44 +56,80 @@
 	"actionName": "create-body",
 	"argTypes": ["string"]
 }, {
+	"name": "set-behavior",
+	"actionName": "set-behavior",
+	"argTypes": ["string", "string"]
+}, {
+	"name": "set-body-xy",
+	"actionName": "set-body-xy",
+	"argTypes": ["string", "list"]
+}, {
+	"name": "set-angle",
+	"actionName": "set-angle",
+	"argTypes": ["string", "number"]
+}, {
+	"name": "set-linear-velocity",
+	"actionName": "set-linear-velocity",
+	"argTypes": ["string", "list"]
+}, {
+	"name": "set-angular-velocity",
+	"actionName": "set-angular-velocity",
+	"argTypes": ["string", "number"]
+}, {
+	"name": "get-behavior",
+	"actionName": "get-behavior",
+	"argTypes": ["string"],
+	"returnType": "string"
+}, {
+	"name": "get-body-xy",
+	"actionName": "get-body-xy",
+	"argTypes": ["string"],
+	"returnType": "list"
+}, {
+	"name": "get-angle",
+	"actionName": "get-angle",
+	"argTypes": ["string"],
+	"returnType": "number"
+}, {
+	"name": "get-linear-velocity",
+	"actionName": "get-linear-velocity",
+	"argTypes": ["string"],
+	"returnType": "list"
+}, {
+	"name": "get-angular-velocity",
+	"actionName": "get-angular-velocity",
+	"argTypes": ["string"],
+	"returnType": "number"
+}, {
+	"name": "set-friction",
+	"actionName": "set-friction",
+	"argTypes": ["string", "number"]
+}, {
+	"name": "set-density",
+	"actionName": "set-density",
+	"argTypes": ["string", "number"]
+}, {
+	"name": "set-restitution",
+	"actionName": "set-restitution",
+	"argTypes": ["string", "number"]
+}, {
+	"name": "get-friction",
+	"actionName": "get-friction",
+	"argTypes": ["string"],
+	"returnType": "number"
+}, {
+	"name": "get-density",
+	"actionName": "get-density",
+	"argTypes": ["string"],
+	"returnType": "number"
+}, {
+	"name": "get-restitution",
+	"actionName": "get-restitution",
+	"argTypes": ["string"],
+	"returnType": "number"
+}, {
 	"name": "create-line",
 	"actionName": "create-line",
-	"argTypes": ["string", "string"]
-}, {
-	"name": "create-circle",
-	"actionName": "create-circle",
-	"argTypes": ["string", "string"]
-}, {
-	"name": "create-polygon",
-	"actionName": "create-polygon",
-	"argTypes": ["string", "string"]
-}, {
-	"name": "create-target",
-	"actionName": "create-target",
-	"argTypes": ["string", "string"]
-}, {
-	"name": "set-body-behavior",
-	"actionName": "set-body-behavior",
-	"argTypes": ["string", "string"]
-}, {
-	"name": "set-body-coords",
-	"actionName": "set-body-coords",
-	"argTypes": ["string", "list"]
-}, {
-	"name": "set-body-angle",
-	"actionName": "set-body-angle",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-body-linear-velocity",
-	"actionName": "set-body-linear-velocity",
-	"argTypes": ["string", "list"]
-}, {
-	"name": "set-body-angular-velocity",
-	"actionName": "set-body-angular-velocity",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-line-body-id",
-	"actionName": "set-line-body-id",
 	"argTypes": ["string", "string"]
 }, {
 	"name": "set-line-relative-endpoints",
@@ -121,20 +140,18 @@
 	"actionName": "set-line-endpoints",
 	"argTypes": ["string", "list", "list"]
 }, {
-	"name": "set-line-friction",
-	"actionName": "set-line-friction",
-	"argTypes": ["string", "number"]
+	"name": "get-line-relative-endpoints",
+	"actionName": "get-line-relative-endpoints",
+	"argTypes": ["string"],
+	"returnType": "list"
 }, {
-	"name": "set-line-density",
-	"actionName": "set-line-density",
-	"argTypes": ["string", "number"]
+	"name": "get-line-endpoints",
+	"actionName": "get-line-endpoints",
+	"argTypes": ["string"],
+	"returnType": "list"
 }, {
-	"name": "set-line-restitution",
-	"actionName": "set-line-restitution",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-circle-body-id",
-	"actionName": "set-circle-body-id",
+	"name": "create-circle",
+	"actionName": "create-circle",
 	"argTypes": ["string", "string"]
 }, {
 	"name": "set-circle-radius",
@@ -148,114 +165,6 @@
 	"name": "set-circle-center",
 	"actionName": "set-circle-center",
 	"argTypes": ["string", "list"]
-}, {
-	"name": "set-circle-friction",
-	"actionName": "set-circle-friction",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-circle-density",
-	"actionName": "set-circle-density",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-circle-restitution",
-	"actionName": "set-circle-restitution",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-polygon-body-id",
-	"actionName": "set-polygon-body-id",
-	"argTypes": ["string", "string"]
-}, {
-	"name": "set-polygon-relative-vertices",
-	"actionName": "set-polygon-relative-vertices",
-	"argTypes": ["string", "list"]
-}, {
-	"name": "set-polygon-vertices",
-	"actionName": "set-polygon-vertices",
-	"argTypes": ["string", "list"]
-}, {
-	"name": "set-polygon-friction",
-	"actionName": "set-polygon-friction",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-polygon-density",
-	"actionName": "set-polygon-density",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-polygon-restitution",
-	"actionName": "set-polygon-restitution",
-	"argTypes": ["string", "number"]
-}, {
-	"name": "set-target-body-id",
-	"actionName": "set-target-body-id",
-	"argTypes": ["string", "string"]
-}, {
-	"name": "set-target-relative-center",
-	"actionName": "set-target-relative-center",
-	"argTypes": ["string", "list"]
-}, {
-	"name": "set-target-center",
-	"actionName": "set-target-center",
-	"argTypes": ["string", "list"]
-}, {
-	"name": "get-body-behavior",
-	"actionName": "get-body-behavior",
-	"argTypes": ["string"],
-	"returnType": "string"
-}, {
-	"name": "get-body-coords",
-	"actionName": "get-body-coords",
-	"argTypes": ["string"],
-	"returnType": "list"
-}, {
-	"name": "get-body-angle",
-	"actionName": "get-body-angle",
-	"argTypes": ["string"],
-	"returnType": "number"
-}, {
-	"name": "get-body-linear-velocity",
-	"actionName": "get-body-linear-velocity",
-	"argTypes": ["string"],
-	"returnType": "list"
-}, {
-	"name": "get-body-angular-velocity",
-	"actionName": "get-body-angular-velocity",
-	"argTypes": ["string"],
-	"returnType": "number"
-}, {
-	"name": "get-line-body-id",
-	"actionName": "get-line-body-id",
-	"argTypes": ["string"],
-	"returnType": "string"
-}, {
-	"name": "get-line-relative-endpoints",
-	"actionName": "get-line-relative-endpoints",
-	"argTypes": ["string"],
-	"returnType": "list"
-}, {
-	"name": "get-line-endpoints",
-	"actionName": "get-line-endpoints",
-	"argTypes": ["string"],
-	"returnType": "list"
-}, {
-	"name": "get-line-friction",
-	"actionName": "get-line-friction",
-	"argTypes": ["string"],
-	"returnType": "number"
-}, {
-	"name": "get-line-density",
-	"actionName": "get-line-density",
-	"argTypes": ["string"],
-	"returnType": "number"
-}, {
-	"name": "get-line-restitution",
-	"actionName": "get-line-restitution",
-	"argTypes": ["string"],
-	"returnType": "number"
-}, {
-	"name": "get-circle-body-id",
-	"actionName": "get-circle-body-id",
-	"argTypes": ["string"],
-	"returnType": "string"
 }, {
 	"name": "get-circle-radius",
 	"actionName": "get-circle-radius",
@@ -272,25 +181,17 @@
 	"argTypes": ["string"],
 	"returnType": "list"
 }, {
-	"name": "get-circle-friction",
-	"actionName": "get-circle-friction",
-	"argTypes": ["string"],
-	"returnType": "number"
+	"name": "create-polygon",
+	"actionName": "create-polygon",
+	"argTypes": ["string", "string"]
 }, {
-	"name": "get-circle-density",
-	"actionName": "get-circle-density",
-	"argTypes": ["string"],
-	"returnType": "number"
+	"name": "set-polygon-relative-vertices",
+	"actionName": "set-polygon-relative-vertices",
+	"argTypes": ["string", "list"]
 }, {
-	"name": "get-circle-restitution",
-	"actionName": "get-circle-restitution",
-	"argTypes": ["string"],
-	"returnType": "number"
-}, {
-	"name": "get-polygon-id",
-	"actionName": "get-polygon-id",
-	"argTypes": ["string"],
-	"returnType": "string"
+	"name": "set-polygon-vertices",
+	"actionName": "set-polygon-vertices",
+	"argTypes": ["string", "list"]
 }, {
 	"name": "get-polygon-relative-vertices",
 	"actionName": "get-polygon-relative-vertices",
@@ -302,28 +203,20 @@
 	"argTypes": ["string"],
 	"returnType": "list"
 }, {
-	"name": "get-polygon-friction",
-	"actionName": "get-polygon-friction",
-	"argTypes": ["string"],
-	"returnType": "number"
+	"name": "create-target",
+	"actionName": "create-target",
+	"argTypes": ["string", "string"]
 }, {
-	"name": "get-polygon-density",
-	"actionName": "get-polygon-density",
-	"argTypes": ["string"],
-	"returnType": "number"
+	"name": "set-target-relative-xy",
+	"actionName": "set-target-relative-xy",
+	"argTypes": ["string", "list"]
 }, {
-	"name": "get-polygon-restitution",
-	"actionName": "get-polygon-restitution",
-	"argTypes": ["string"],
-	"returnType": "number"
+	"name": "set-target-xy",
+	"actionName": "set-target-xy",
+	"argTypes": ["string", "list"]
 }, {
-	"name": "get-target-body-id",
-	"actionName": "get-target-body-id",
-	"argTypes": ["string"],
-	"returnType": "string"
-}, {
-	"name": "get-target-relative-center",
-	"actionName": "get-target-relative-center",
+	"name": "get-target-relative-xy",
+	"actionName": "get-target-relative-xy",
 	"argTypes": ["string"],
 	"returnType": "list"
 }, {
@@ -332,25 +225,49 @@
 	"argTypes": ["string"],
 	"returnType": "list"
 }, {
-	"name": "delete-body",
-	"actionName": "delete-body",
+	"name": "set-body-id",
+	"actionName": "set-body-id",
+	"argTypes": ["string", "string"]
+}, {
+	"name": "get-body-id",
+	"actionName": "get-body-id",
+	"argTypes": ["string"],
+	"returnType": "string"
+}, {
+	"name": "create-objects",
+	"actionName": "create-objects",
+	"argTypes": ["list"]
+}, {
+	"name": "create-object",
+	"actionName": "create-object",
 	"argTypes": ["string"]
 }, {
-	"name": "delete-line",
-	"actionName": "delete-line",
+	"name": "get-objects",
+	"actionName": "get-objects",
+	"argTypes": [],
+	"returnType": "list"
+}, {
+	"name": "get-object",
+	"actionName": "get-object",
+	"argTypes": ["string"],
+	"returnType": "list"
+}, {
+	"name": "get-object-type",
+	"actionName": "get-object-type",
+	"argTypes": ["string"],
+	"returnType": "string"
+}, {
+	"name": "delete-object",
+	"actionName": "delete-object",
 	"argTypes": ["string"]
 }, {
-	"name": "delete-circle",
-	"actionName": "delete-circle",
-	"argTypes": ["string"]
+	"name": "delete-targets",
+	"actionName": "delete-targets",
+	"argTypes": []
 }, {
-	"name": "delete-polygon",
-	"actionName": "delete-polygon",
-	"argTypes": ["string"]
-}, {
-	"name": "delete-target",
-	"actionName": "delete-target",
-	"argTypes": ["string"]
+	"name": "delete-objects",
+	"actionName": "delete-objects",
+	"argTypes": []
 }, {
 	"name": "apply-force",
 	"actionName": "apply-force",
@@ -383,4 +300,17 @@
 	"name": "disconnect-who",
 	"actionName": "disconnect-who",
 	"argTypes": ["number"]
+}, {
+	"name": "world-on",
+	"actionName": "world-on",
+	"argTypes": []
+}, {
+	"name": "world-off",
+	"actionName": "world-off",
+	"argTypes": []
+}, {
+	"name": "exists?",
+	"actionName": "exists?",
+	"argTypes": ["string"],
+	"returnType": "boolean"
 }

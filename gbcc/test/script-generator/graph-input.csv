@@ -12,10 +12,12 @@ delete-points,,,
 set-x,(string; number), (name; xcor),
 set-y,(string; number), (name; ycor),
 set-xy,(string; list), (name; center),
+set-draggable,(boolean),(draggable),
 get-x,(string),(name),(number)
 get-y,(string),(name),(number)
 get-xy,(string),(name),(list)
 get-objects,,,(list)
+delete-objects,,,
 create-objects,(list),(objects),
 get-object,(string),(name),(list)
 create-object,(list),(object),
@@ -30,3 +32,6 @@ graph-to-patch,(list),(coords),(list)
 patch-to-graph,(list),(coords),(list)
 eval-command,(string),(command),
 eval-reporter,(string),(command),(wildcard)
+graph-on,,,
+graph-off,,,
+get-points-string,,,(string)

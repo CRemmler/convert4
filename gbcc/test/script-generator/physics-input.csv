@@ -1,10 +1,6 @@
 prim-name,input-type,input-name,output-type
 hide-world, , ,
 show-world,(list),(settings),
-set-data,(string),(data),
-import-file,(string),(filename),
-get-data, , ,(string)
-export-file,,,
 set-gravity-xy,(list),(data),
 get-gravity-xy, , ,(list)
 set-wrap-xy,(list),(data),
@@ -14,71 +10,56 @@ get-time-step, , ,(number)
 set-velocity-iterations,(number),(iterations),
 get-velocity-iterations, , ,(number)
 set-position-iterations,(number),(iterations),
-get-velocity-iterations, , ,(number)
+get-position-iterations, , ,(number)
 create-body,(string),(name),
+set-behavior,(string; string), (name; behavior),
+set-body-xy,(string; list), (name; coords),
+set-angle,(string; number), (name; angle),
+set-linear-velocity,(string; list), (name; coords),
+set-angular-velocity,(string; number),(name; velocity),
+get-behavior,(string),(name),(string)
+get-body-xy,(string),(name),(list)
+get-angle,(string),(name),(number)
+get-linear-velocity,(string),(name),(list)
+get-angular-velocity,(string),(name),(number)
+set-friction,(string; number), (name; friction),
+set-density,(string; number), (name; density),
+set-restitution,(string; number), (name; restitution),
+get-friction,(string),(name),(number)
+get-density,(string),(name),(number)
+get-restitution,(string),(name),(number)
 create-line,(string; string), (name; body),
-create-circle,(string; string),(name; body),
-create-polygon,(string; string),(name; body),
-create-target,(string; string),(name; body),
-set-body-behavior,(string; string), (name; behavior),
-set-body-coords,(string; list), (name; coords),
-set-body-angle,(string; number), (name; angle),
-set-body-linear-velocity,(string; list), (name; coords),
-set-body-angular-velocity,(string; number),(name; velocity),
-set-line-body-id,(string; string), (name; body),
 set-line-relative-endpoints,(string; list; list), (name; point1; point2),
 set-line-endpoints,(string; list; list), (name; point1; point2),
-set-line-friction,(string; number), (name; friction),
-set-line-density,(string; number), (name; density),
-set-line-restitution,(string; number), (name; restitution),
-set-circle-body-id,(string; string), (name; body),
+get-line-relative-endpoints,(string),(name),(list)
+get-line-endpoints,(string),(name),(list)
+create-circle,(string; string),(name; body),
 set-circle-radius,(string; number), (name; radius),
 set-circle-relative-center,(string; list), (name; center),
 set-circle-center,(string; list), (name; center),
-set-circle-friction,(string; number), (name; friction),
-set-circle-density,(string; number), (name; density),
-set-circle-restitution,(string; number), (name; restitution),
-set-polygon-body-id,(string; string), (name; body),
-set-polygon-relative-vertices,(string; list), (name; vertices),
-set-polygon-vertices,(string; list), (name; vertices),
-set-polygon-friction,(string; number), (name; friction),
-set-polygon-density,(string; number), (name; density),
-set-polygon-restitution,(string; number), (name; restitution),
-set-target-body-id,(string; string), (name; body),
-set-target-relative-center,(string; list), (name; center),
-set-target-center,(string; list), (name; center),
-get-body-behavior,(string),(name),(string)
-get-body-coords,(string),(name),(list)
-get-body-angle,(string),(name),(number)
-get-body-linear-velocity,(string),(name),(list)
-get-body-angular-velocity,(string),(name),(number)
-get-line-body-id,(string),(name),(string)
-get-line-relative-endpoints,(string),(name),(list)
-get-line-endpoints,(string),(name),(list)
-get-line-friction,(string),(name),(number)
-get-line-density,(string),(name),(number)
-get-line-restitution,(string),(name),(number)
-get-circle-body-id,(string),(name),(string)
 get-circle-radius,(string),(name),(number)
 get-circle-relative-center,(string),(name),(list)
 get-circle-center,(string),(name),(list)
-get-circle-friction,(string),(name),(number)
-get-circle-density,(string),(name),(number)
-get-circle-restitution,(string),(name),(number)
-get-polygon-id,(string),(name),(string)
+create-polygon,(string; string),(name; body),
+set-polygon-relative-vertices,(string; list), (name; vertices),
+set-polygon-vertices,(string; list), (name; vertices),
 get-polygon-relative-vertices,(string),(name),(list)
 get-polygon-vertices,(string),(name),(list)
-get-polygon-friction,(string),(name),(number)
-get-polygon-density,(string),(name),(number)
-get-polygon-restitution,(string),(name),(number)
-get-target-body-id,(string),(name),(string)
-get-target-relative-center,(string),(name),(list)
+create-target,(string; string),(name; body),
+set-target-relative-xy,(string; list), (name; center),
+set-target-xy,(string; list), (name; center),
+get-target-relative-xy,(string),(name),(list)
 get-target-center,(string),(name),(list)
-delete-body,(string),(name),
-delete-line,(string),(name),
-delete-circle,(string),(name),
-delete-polygon,(string),(name),
-delete-target,(string),(name),
+set-body-id,(string; string), (name; body),
+get-body-id,(string),(name),(string)
+create-objects,(list),(data),
+create-object,(string),(data),
+get-objects,,,(list)
+get-object,(string),(name),(list)
+get-object-type,(string),(name),(string)
+delete-object,(string),(name),
+delete-targets,,,
+delete-objects,,,
 apply-force,(string; number; number),(name; force; angle),
 apply-force-relative-angle,(string; number; number), (name; force; angle),
 apply-linear-impulse,(string; number; number),(name; force; angle),
@@ -87,3 +68,7 @@ apply-torque,(string; number),(name; force),
 apply-angular-impulse,(string; number),(name; force),
 connect-who-to-object,(number; string),(who; name),
 disconnect-who,(number),(who),
+world-on,,,
+world-off,,,
+exists,(string),(name),(boolean)
+

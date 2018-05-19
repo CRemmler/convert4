@@ -11,7 +11,7 @@ set-center-latlng,(list),(coords),
 get-center-latlng, , ,(list)
 create-marker,(string; list), (name; coords),
 create-markers,(list),(data),
-get-markers,,,(data)
+get-markers,,,(list)
 hide-marker,(string),(name),
 show-marker,(string),(name),
 set-lat,(string; number), (name; lat),
@@ -20,7 +20,11 @@ set-latlng,(string; list), (name; latlng),
 get-lat,(string),(name),(number)
 get-lng,(string),(name),(number)
 get-latlng,(string),(name),(list)
+set-draggable,(boolean),(draggable),
 delete-marker,(string),(name),
 delete-markers,,,
 latlng-to-patch,(list),(coords),(list)
 patch-to-latlng,(list),(coords),(list)
+map-on,,,
+map-off,,,
+exists,(string),(name),(boolean)

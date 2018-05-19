@@ -204,11 +204,13 @@ Gallery = (function() {
       
   function itemMouseoutHandler(thisLi) {
     var thisId = $(thisLi).attr("id") || "";
-    if ($("#"+thisId).find(".card").length > 1) { 
+    if ($("#"+thisId).find(".card").length > 0) { 
       $("#"+thisId+" .arrow").css("display","none");
     } 
     if ($("#"+thisId).hasClass("selected")) {
-      $("#"+thisId+" .forever-icon:not(.selected)").css("display","none");    
+      $("#"+thisId+" .forever-icon:not(.selected)").css("display","none");   
+      
+      console.log("hide it on mouseout",thisId) 
     }
   }
   
@@ -323,8 +325,8 @@ Gallery = (function() {
     var newLiHtml = "<li id='gallery-item-"+data.userId+"' usertype='"+data.userType+"' userid='"+data.userId+"' ";
     newLiHtml += (myUserId === data.userId) ? "myUser=\"true\">" : "myUser=\"false\">";
     newLiHtml += (myUserId === data.userId) ? "<span class=\"label z20 selected\">"+label+"</span>" : "<span class=\"label z20\">"+label+"</span>";
-    newLiHtml += "<span class=\"arrow arrow-left z20\"></span>";//"<i class='fa fa-chevron-left' aria-hidden='true'></i></span>";
-    newLiHtml += "<span class=\"arrow arrow-right z20\"></span>";//"<i class='fa fa-chevron-right' aria-hidden='true'></i></span>";
+    newLiHtml += "<span class=\"arrow arrow-left z20\" style=\"display:none\"></span>";//"<i class='fa fa-chevron-left' aria-hidden='true'></i></span>";
+    newLiHtml += "<span class=\"arrow arrow-right z20\" style=\"display:none\"></span>";//"<i class='fa fa-chevron-right' aria-hidden='true'></i></span>";
     if (allowCanvasForeverButtons) {
       newLiHtml += "<span class=\"forever-icon z20\"><i class='fa fa-refresh' aria-hidden='true'></i></span>";
     } else {
@@ -338,6 +340,7 @@ Gallery = (function() {
     $("#gallery-item-"+data.userId+" .forever-icon").click(function() { foreverClickHandler(this, data.userId, data.userType) });
     $("#gallery-item-"+data.userId).mouseover(function() { itemMouseoverHandler(this); });
     $("#gallery-item-"+data.userId).mouseout(function() { itemMouseoutHandler(this); });
+    //$("#"+myUserId+" .arrow").css("display","none");
   }
   
   function createImageCard(data) {

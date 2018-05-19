@@ -89,7 +89,7 @@ io.on('connection', function(socket){
       socket.myUserType = (countUsers(myRoom, school) === 0) ? "teacher" : "student";
       myUserType = socket.myUserType;
       // declare myUserId
-      myUserId = socket.id;
+      myUserId = socket.id.replace("_","").replace("-","");
       allRooms[myRoom].userData[myUserId] = {};
       allRooms[myRoom].userData[myUserId].exists = true;
       allRooms[myRoom].userData[myUserId]["userType"] = myUserType;
@@ -172,7 +172,7 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
-    var myUserId = socket.id;
+    var myUserId = socket.id.replace("_","").replace("-","");
     var canvases;
     if (allRooms[myRoom] != undefined) {
       for (var j=0; j < allRooms[myRoom].canvasOrder.length; j++) {
@@ -235,7 +235,7 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom; 
-    var myUserId = socket.id;
+    var myUserId = socket.id.replace("_","").replace("-","");
     socket.to(school+"-"+myRoom+"-teacher").emit("execute command", {
       hubnetMessageSource: myUserId,
       hubnetMessageTag: data.hubnetMessageTag,
@@ -248,7 +248,7 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
-    var myUserId = socket.id;
+    var myUserId = socket.id.replace("_","").replace("-","");
     var myUserType = socket.myUserType;
     var destination = data.hubnetMessageSource;
     if (data.hubnetMessageTag === "canvas-text") {
@@ -324,7 +324,7 @@ io.on('connection', function(socket){
     //console.log("get reporter "+ data.hubnetMessageTag);
     var allRooms = schools[socket.school];
     var myRoom = socket.myRoom;
-    var myUserId = socket.id;
+    var myUserId = socket.id.replace("_","").replace("-","");
     var myUserType = socket.userType;
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData[data.hubnetMessageSource]) {
@@ -345,7 +345,7 @@ io.on('connection', function(socket){
   socket.on("get value", function(data) {
     var allRooms = schools[socket.school];
     var myRoom = socket.myRoom;
-    var myUserId = socket.id;
+    var myUserId = socket.id.replace("_","").replace("-","");
     if (data.hubnetMessageSource === "") { data.hubnetMessageSource = myUserId; }
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData[data.hubnetMessageSource]) {
@@ -378,7 +378,7 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
-    var myUserId = socket.id;
+    var myUserId = socket.id.replace("_","").replace("-","");
     var myUserType = socket.userType;
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData[myUserId] != undefined) {

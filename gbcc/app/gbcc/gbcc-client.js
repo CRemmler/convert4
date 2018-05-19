@@ -29,7 +29,6 @@ jQuery(document).ready(function() {
     $(".netlogo-canvas").attr("id","netlogoCanvas"); 
     Gallery.setupGallery({settings: data.gallerySettings, userId: userId});
     Physics.setupInterface();
-    console.log("from here");
     Maps.setupInterface();
     Graph.setupInterface();
     //$(".netlogo-canvas").attr("id","netlogoCanvas"); 
@@ -37,6 +36,13 @@ jQuery(document).ready(function() {
     allowGalleryForeverButton = data.gallerySettings.allowGalleryControls;
     $(".roomNameInput").val(data.myRoom);
     $(".schoolNameInput").val(data.school);
+    var secondView = data.gallerySettings.secondViewString;
+    if (userType === "student" && typeof secondView === "object" && secondView.length === 4) {
+      $(".netlogo-view-container").css("left", secondView[0]);
+      $(".netlogo-view-container").css("top", secondView[1]);
+      $(".netlogo-view-container").css("width", secondView[2] - secondView[0]);
+      $(".netlogo-view-container").css("height", secondView[3] - secondView[1]);    
+    }
   });
 
   // display teacher or student interface

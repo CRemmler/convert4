@@ -8,9 +8,9 @@ module.exports = {
     hideGraph = () ->
         Graph.hideGraph()
 
-    # () => ()
-    showGraph = () ->
-        Graph.showGraph()
+    # (list) => ()
+    showGraph = (settings) ->
+        Graph.showGraph(settings)
 
     # (string) => ()
     setData = (data) ->
@@ -56,6 +56,10 @@ module.exports = {
     setXy = (name, center) ->
         Graph.setXy(name, center)
 
+    # (boolean) => ()
+    setDraggable = (draggable) ->
+        Graph.setDraggable(draggable)
+
     # (string) => (number)
     getX = (name) ->
         return Graph.getX(name)
@@ -71,6 +75,10 @@ module.exports = {
     # () => (list)
     getObjects = () ->
         return Graph.getObjects()
+
+    # () => ()
+    deleteObjects = () ->
+        Graph.deleteObjects()
 
     # (list) => ()
     createObjects = (objects) ->
@@ -124,9 +132,17 @@ module.exports = {
     evalCommand = (command) ->
         Graph.evalCommand(command)
 
-    # (string) => (any)
+    # (string) => (wildcard)
     evalReporter = (command) ->
         return Graph.evalReporter(command)
+
+    # () => ()
+    graphOn = () ->
+        Graph.graphOn()
+
+    # () => ()
+    graphOff = () ->
+        Graph.graphOff()
 
     {
       name: "graph"
@@ -144,10 +160,12 @@ module.exports = {
       "SET-X": setX,
       "SET-Y": setY,
       "SET-XY": setXy,
+      "SET-DRAGGABLE": setDraggable,
       "GET-X": getX,
       "GET-Y": getY,
       "GET-XY": getXy,
       "GET-OBJECTS": getObjects,
+      "DELETE-OBJECTS": deleteObjects,
       "CREATE-OBJECTS": createObjects,
       "GET-OBJECT": getObject,
       "CREATE-OBJECT": createObject,
@@ -162,6 +180,8 @@ module.exports = {
       "PATCH-TO-GRAPH": patchToGraph,
       "EVAL-COMMAND": evalCommand,
       "EVAL-REPORTER": evalReporter,
+      "GRAPH-ON": graphOn,
+      "GRAPH-OFF": graphOff,
     }
     }
 }
