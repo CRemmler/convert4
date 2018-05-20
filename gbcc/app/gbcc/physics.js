@@ -269,6 +269,7 @@ Physics = (function() {
       //$("#mapContainer").css("width", settings[2] + "px");
       //$("#mapContainer").css("height", settings[3] + "px");
     //}
+    Physicsb2.bindElements();
   }
   
   function hideWorld() {
@@ -281,6 +282,7 @@ Physics = (function() {
       $("#physicsPlay").removeClass("inactive");  
       $("#physicsPause").addClass("inactive");  
     }
+    Physicsb2.unBindElements();
   }
 
   ///////// START AND STOP WORLD  ///////

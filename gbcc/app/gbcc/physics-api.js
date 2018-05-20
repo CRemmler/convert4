@@ -172,7 +172,7 @@ Physicsb2 = (function() {
     //WRAP_X = false;
     //WRAP_Y = false;
     worldObj.gravity = {x: false, y: true }
-    bindElements();
+    //bindElements();
     totalObjectsCreated = 0;  
     NLOGO_WIDTH = data.width;
     NLOGO_HEIGHT = data.height;
@@ -1837,7 +1837,17 @@ Physicsb2 = (function() {
      handleMove();
    };
    
+   function unBindElements() {
+     console.log('un bind elements');
+     $('#netlogoCanvas').off('mousedown');
+     $('#netlogoCanvas').off('mouseup');
+     $('#netlogoCanvas').off('mousemove');
+     $('#netlogoCanvas').off('click');
+     $('#netlogoCanvas').off('touchstart');
+     $('#netlogoCanvas').off('touchend');
+   }
    function bindElements() {
+     console.log('bind elements');
      if (elementsBound) { return } else { elementsBound = true; }
      //console.log("bind elements")
      $('#netlogoCanvas').on('mousedown', function(event) {
@@ -2260,6 +2270,8 @@ Physicsb2 = (function() {
 
   
   return {
+    unBindElements: unBindElements,
+    bindElements: bindElements,
     initializeView: initializeView,
     startWorld: startWorld,
     stopWorld: stopWorld,
