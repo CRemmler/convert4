@@ -76,14 +76,14 @@ jQuery(document).ready(function() {
 
   socket.on("gbcc user enters", function(data) {
     //console.log("enters "+data.userType);
+    if (data.userData) {
+      userData[data.userId] = data.userData;
+    }
     if (data.userType === "teacher" && procedures.gbccOnTeacherEnter != undefined) 
     {
       session.run('gbcc-on-teacher-enter "'+data.userId+'"');
     } else {
       if (procedures.gbccOnEnter != undefined) { session.run('gbcc-on-enter "'+data.userId+'"'); }
-    }
-    if (data.userData) {
-      userData[data.userId] = data.userData;
     }
   });
   

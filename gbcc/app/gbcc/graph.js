@@ -42,6 +42,7 @@ Graph = (function() {
       $("#appletContainer").css("opacity","1")
       $("#graphContainer").css("display","inline-block");
       $(".graph-controls").css("display","inline-block");
+      ggbApplet.setErrorDialogsActive(false);  
     }, 2000);
   }
   
@@ -200,8 +201,6 @@ Graph = (function() {
   //////// POINTS /////////
   
   function createPoint(name, coords) {
-    
-    console.log("create point " ,name );
     //checkLoadStatus();
     if (graphLoaded) { 
       deleteObject(name);
@@ -262,19 +261,37 @@ Graph = (function() {
   
   function setX(name, x) {
     var y = ggbApplet.getYcoord(name);
+    if (ggbApplet.exists(name)) {
     //createPoint(name, [x, y]);
-    ggbApplet.setCoords(name, x, y);
+      ggbApplet.setCoords(name, x, y);
+    } else {
+      createPoint(name, [x, y]);
+    }
   }
   
   function setY(name, y) {
     var x = ggbApplet.getXcoord(name);
     //createPoint(name, [x, y]);
-    ggbApplet.setCoords(name, x, y);
+    //ggbApplet.setCoords(name, x, y);
+    if (ggbApplet.exists(name)) {
+    //createPoint(name, [x, y]);
+      ggbApplet.setCoords(name, x, y);
+    } else {
+      createPoint(name, [x, y]);
+    }
   }
   
   function setXy(name, coords) {
     //createPoint(name, coords);
-    ggbApplet.setCoords(name, coords[0], coords[1]);
+    var x = coords[0];
+    var y = coords[1];
+    //ggbApplet.setCoords(name, coords[0], coords[1]);
+    if (ggbApplet.exists(name)) {
+    //createPoint(name, [x, y]);
+      ggbApplet.setCoords(name, x, y);
+    } else {
+      createPoint(name, [x, y]);
+    }
   }
   
   function getX(name) {
@@ -365,7 +382,6 @@ Graph = (function() {
   function evalCommand(cmdString) {
     console.log("evalCommand",cmdString);
     try {
-      ggbApplet.setErrorDialogsActive(false);  
       if (cmdString.includes("Point({")) {
         var equals = cmdString.indexOf("=");
         var firstParenthesis = cmdString.indexOf("{");
@@ -386,7 +402,6 @@ Graph = (function() {
     } catch (ex) {
       console.log("cannot evalCommand")
     }
-    ggbApplet.setErrorDialogsActive(true);  
   }
   
   function evalReporter(string) {
