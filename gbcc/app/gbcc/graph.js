@@ -42,6 +42,7 @@ Graph = (function() {
       $("#appletContainer").css("opacity","1")
       $("#graphContainer").css("display","inline-block");
       $(".graph-controls").css("display","inline-block");
+      updateGraph("graphOn");
       ggbApplet.setErrorDialogsActive(false);  
     }, 2000);
   }
@@ -60,13 +61,10 @@ Graph = (function() {
   ////// DISPLAY GRAPH //////
   
   function checkLoadStatus() {
-    console.log("check load status");
     if (ggbApplet) {
       var properties = JSON.parse(ggbApplet.getViewProperties());
       graphWidth = properties.width;
       graphHeight = properties.height;
-      console.log(graphWidth, graphHeight);
-      //if (graphWidth > 0 && graphHeight > 0) {
       viewOffsetWidth = viewWidth - graphWidth;
       viewOffsetHeight = viewHeight - graphHeight;
       var xMin = properties.xMin;
@@ -162,12 +160,16 @@ Graph = (function() {
   ////// SHOW AND HIDE GRAPH //////
   
   function showGraph(settings) {
-    if (!applet1) {
+    if (!applet1) 
+    {
+      $("#graphContainer").css("display","none");
+      $(".graph-controls").css("display","none");
       importFile("geogebra-default.ggb");
+    } else { 
+      $("#graphContainer").css("display","inline-block");
+      $(".graph-controls").css("display","inline-block");
+      updateGraph("graphOn");
     }
-    $("#graphContainer").css("display","inline-block");
-    $(".graph-controls").css("display","inline-block");
-    updateGraph("graphOn");
     $("#appletContainer").css("display","inline-block");
     // left, top, width, height
     /*if (settings.length == 4) {

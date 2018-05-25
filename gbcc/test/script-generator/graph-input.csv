@@ -35,3 +35,5 @@ eval-reporter,(string),(command),(wildcard)
 graph-on,,,
 graph-off,,,
 get-points-string,,,(string)
+set-coord-system,(number;number;number;number;),(xmin;xmax;ymin;ymax;),
+set-fixed,(string;boolean),(name,fixed),

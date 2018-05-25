@@ -96,7 +96,7 @@ Physicsb2 = (function() {
   ///////// CONVERSIONS
   
   function nlogotobox2d(coords) {
-    // console.log("nlogotobox2d", coords);
+    //console.log("NLOGO", coords);
     BOX2D_WIDTH = parseFloat($("#netlogoCanvas").css("width").replace("px",""));
     BOX2D_HEIGHT = parseFloat($("#netlogoCanvas").css("height").replace("px",""));
     var nlogoLeftAbsolute = coords[0] + NLOGO_WIDTH / 2;
@@ -105,7 +105,7 @@ Physicsb2 = (function() {
     var nlogoTopAbsolute = NLOGO_HEIGHT / 2 - coords[1];
     var nlogoTopPercent = nlogoTopAbsolute / NLOGO_HEIGHT;
     var box2dTopAbsolute = BOX2D_HEIGHT * nlogoTopPercent / SCALE * 2;
-    //console.log([ box2dLeftAbsolute, box2dTopAbsolute]);
+    //console.log("BOX2D",[ box2dLeftAbsolute, box2dTopAbsolute]);
     return ([ box2dLeftAbsolute, box2dTopAbsolute]);
   };
   
@@ -259,32 +259,35 @@ Physicsb2 = (function() {
     for (id in bodyObj)
     {
       b = bodyObj[id];
+      t = b.GetUserData().turtleId;
+      x = b.GetPosition().x;
+      y = b.GetPosition().y;
       if (b.GetType() == b2Body.b2_dynamicBody || b.GetType() === b2Body.b2_kinematicBody) {
         if (WRAP_X) {
-          if (b.GetPosition().x * SCALE / 2 > BOX2D_WIDTH) {
-            b.SetPosition(new b2Vec2(0,b.GetPosition().y));				
+          if (x * SCALE / 2 > BOX2D_WIDTH) {
+            b.SetPosition(new b2Vec2(0,y));				
           } 
-          if (b.GetPosition().x * SCALE / 2 < 0) {
-             b.SetPosition(new b2Vec2(BOX2D_WIDTH / SCALE * 2 , b.GetPosition().y));
+          if (x * SCALE / 2 < 0) {
+             b.SetPosition(new b2Vec2(BOX2D_WIDTH / SCALE * 2 , y));
           }
         }
         if (WRAP_Y) {
-          if (b.GetPosition().y * SCALE / 2 > BOX2D_HEIGHT) {
-            b.SetPosition(new b2Vec2(b.GetPosition().x, 0));    
+          if (y * SCALE / 2 > BOX2D_HEIGHT) {
+            b.SetPosition(new b2Vec2(x, 0));    
           }
-          if (b.GetPosition().y * SCALE / 2 < 0) {
-            b.SetPosition(new b2Vec2(b.GetPosition().x, BOX2D_HEIGHT / SCALE));
+          if (y * SCALE / 2 < 0) {
+            b.SetPosition(new b2Vec2(x, BOX2D_HEIGHT / SCALE));
           }
         }
         
-        var pos = box2dtonlogo(b.GetPosition());
-        //console.log(pos);
         var heading = radiansToDegrees(b.GetAngle());
-        //if (id != -1 && universe.model.turtles && universe.model.turtles[id]) {
-        //  universe.model.turtles[id].xcor = pos.x;
-        //  universe.model.turtles[id].ycor = pos.y;
-        //  universe.model.turtles[id].heading = heading;
-        //}
+        if (t != -1 && universe.model.turtles && universe.model.turtles[t]) {
+          var pos = box2dtonlogo(b.GetPosition());
+          var heading = radiansToDegrees(b.GetAngle());
+          universe.model.turtles[t].xcor = pos.x;
+          universe.model.turtles[t].ycor = pos.y;  
+          universe.model.turtles[t].heading = heading;
+        }
         
         // move associated targets
         targetList = b.GetUserData().targetList;
@@ -296,11 +299,11 @@ Physicsb2 = (function() {
         }
         
       } else if (b.GetType() == b2Body.b2_staticBody) {
-        //var pos = box2dtonlogo(b.GetPosition());
-        //if (id != -1 && universe.model.turtles && universe.model.turtles[id]) {
-        //  universe.model.turtles[id].xcor = pos.x;
-        //  universe.model.turtles[id].ycor = pos.y;
-        //}
+        var pos = box2dtonlogo(b.GetPosition());
+        if (t != -1 && universe.model.turtles && universe.model.turtles[t]) {
+          universe.model.turtles[t].xcor = pos.x;
+          universe.model.turtles[t].ycor = pos.y;
+        }
       }
     }
   }
@@ -525,6 +528,7 @@ Physicsb2 = (function() {
     var bodyDef = new b2BodyDef;
     bodyDef.userData = {
       id: bodyId,
+      turtleId: -1,
       selected: false,
       ghost: false,
       targetList: []
@@ -696,8 +700,7 @@ Physicsb2 = (function() {
     var offsetY = bodyObj[bodyId].GetPosition().y;
     if (shape === "circle") {
       fixDef.shape.SetLocalPosition(
-        new b2Vec2(roundToTenths(coords[0][0] - offsetX), roundToTenths(coords[0][1] - offsetY)),
-        new b2Vec2(roundToTenths(coords[1][0] - offsetX), roundToTenths(coords[1][1] - offsetY)));
+        new b2Vec2(roundToTenths(coords[0] - offsetX), roundToTenths(coords[1] - offsetY)));
     } else if (shape === "line") {
         var v1 = new b2Vec2(roundToTenths(coords[0][0] - offsetX), roundToTenths(coords[0][1] - offsetY));
         var v2 = new b2Vec2(roundToTenths(coords[1][0] - offsetX), roundToTenths(coords[1][1] - offsetY));
@@ -934,7 +937,7 @@ Physicsb2 = (function() {
     var bodyId = m.bodyId;
     if (bodyId) {
       targetObj[targetId].relativeCoords = bodyObj[bodyId].GetLocalPoint(target.coords);
-      console.log("rel coords" + targetObj[targetId].relativeCoords);
+      console.log("rel coords", targetObj[targetId].relativeCoords);
       bodyObj[bodyId].GetUserData().targetList.push(targetId);
     }
   }
@@ -1389,7 +1392,7 @@ Physicsb2 = (function() {
           selectedBody = body;
           updateBodySettings(body);
           createHelperLines({"color": "limegreen"}); 
-          console.log("set lines green");
+          //console.log("set lines green");
           
           body.SetLinearVelocity({x: 0, y: 0});
           //console.log("set linear velocity to 0");
@@ -1551,11 +1554,11 @@ Physicsb2 = (function() {
    }
    
    function updateWorldSettings() {
-     console.log("update world settings");
+     //console.log("update world settings");
    }
    
    function updateWorld(key, value) {
-     console.log("update world",key,value);
+     //console.log("update world",key,value);
      var current;
      if (key === "gravityX" || key === "gravityY") {
        current = world.GetGravity();
@@ -2222,11 +2225,15 @@ Physicsb2 = (function() {
   }
   
   function getBodyObj(id) {
-    return bodyObj[id];
+    return bodyObj ? bodyObj[id] : undefined;
   }
   
   function getFixtureObj(id) {
-    return fixtureObj[id];
+    return fixtureObj ? fixtureObj[id] : undefined;
+  }
+  
+  function getTargetObj(id) {
+    return targetObj ? targetObj[i] : undefined;
   }
   
   function getAllBodies() {
@@ -2252,7 +2259,7 @@ Physicsb2 = (function() {
   function getWorldSettings(key) {
     switch (key) {
       case "wrap": 
-        return [ WRAPX, WRAPY ];
+        return [ WRAP_X, WRAP_Y ];
         break;
       case "timestep":
         return TIMESTEP;
@@ -2268,8 +2275,21 @@ Physicsb2 = (function() {
     }
   }
 
+  function connectWho(who, name) {
+    bodyObj[name].GetUserData().turtleId = who;
+  }
   
+  function disconnectWho(who) {
+    bodyObj[name].GetUserData().turtleId = -1;
+  }
+  
+  function refresh() {
+    universe.repaint();
+    world.DrawDebugData();
+  }
   return {
+    
+    refresh: refresh,
     unBindElements: unBindElements,
     bindElements: bindElements,
     initializeView: initializeView,
@@ -2293,6 +2313,7 @@ Physicsb2 = (function() {
     createBody: createBody,
     createFixture: createFixture,
     createWorld: createWorld,
+    createTarget: createTarget,
     
     addBodyToWorld: addBodyToWorld,
     addFixtureToBody: addFixtureToBody,
@@ -2304,6 +2325,7 @@ Physicsb2 = (function() {
     getWorld: getWorld,
     getBodyObj: getBodyObj,
     getFixtureObj: getFixtureObj,
+    getTargetObj: getTargetObj,
     getAllBodies: getAllBodies,
     getAllFixtures: getAllFixtures,
     getAllTargets: getAllTargets,
@@ -2327,8 +2349,12 @@ Physicsb2 = (function() {
     triggerModeChange: triggerModeChange,
     triggerDisplayChange: triggerDisplayChange,
     
-    getWorldSettings: getWorldSettings//,
+    getWorldSettings: getWorldSettings,
   //  setWorldSettings: setWorldSettings
+  
+    connectWho: connectWho,
+    disconnectWho: disconnectWho
+  
   };
 
 })();

@@ -135,7 +135,8 @@
     <td>
 <pre>
 ;; GRAPH
-<span class='blue'>graph:show-graph</span> <span class="red">[ top left width height ]</span>
+<span class='blue'>graph:show-graph</span> <span class="red">[ top left width height ] </span><span class="gray">;; offset graph from uppoer-left</span> 
+&#x2713; <span class='blue'>graph:show-graph</span> <span class="red">[ ]</span> <span class="gray">;; place graph on view</span> 
 &#x2713; <span class='blue'>graph:hide-graph</span>
 </pre>
 <!--<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
@@ -205,8 +206,8 @@
 
 <h3>Translate between Patch Coordinates and GeoGebra Coordinates</h3>
 <pre>
-<span class='blue'>show graph:graph-to-patch </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns graph coordinates</span>
-<span class='blue'>show graph:patch-to-graph </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
+&#x2713; <span class='blue'>show graph:graph-to-patch </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns graph coordinates</span>
+&#x2713; <span class='blue'>show graph:patch-to-graph </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
 </pre>
 
 <h3>GeoGebra Eval Commands</h3>
@@ -516,8 +517,9 @@ any of which can be represented by turtles.
     <td>
 <pre>
 ;; WORLD
-<span class='blue'>physics:show-world</span> <span class="red">[ top left width height ]</span>
-<span class='blue'>physics:hide-world</span>
+<span class='blue'>physics:show-world</span> <span class="red">[ top left width height ] </span><span class="gray">;; offset graph from uppoer-left</span> 
+&#x2713; <span class='blue'>physics:show-world</span> <span class="red">[ ]</span> <span class="gray">;; place graph on view</span> 
+&#x2713; <span class='blue'>physics:hide-world</span>
 </pre>
 <!--<span class='blue'>physics:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show physics:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -530,10 +532,10 @@ any of which can be represented by turtles.
     <td>
 <pre>
 ;; WORLD SETTINGS
-<span class='blue'>physics:set-gravityxy</span><span class='red'> [ false true ]</span>
-<span class='blue'>show physics:get-gravityxy</span>  <span class="gray">;; returns [ false true ]</span>
-<span class='blue'>physics:set-wrapxy</span><span class='red'> [ true true ]</span> <span class="gray">;; </span> 
-<span class='blue'>show physics:get-wrapxy</span>  <span class="gray">;; returns [ true true ]</span>
+&#x2713; <span class='blue'>physics:set-gravity-xy</span><span class='red'> [ false true ]</span>
+&#x2713; <span class='blue'>show physics:get-gravity-xy</span>  <span class="gray">;; returns [ false true ]</span>
+&#x2713; <span class='blue'>physics:set-wrap-xy</span><span class='red'> [ true true ]</span> <span class="gray">;; </span> 
+&#x2713; <span class='blue'>show physics:get-wrap-xy</span>  <span class="gray">;; returns [ true true ]</span>
 <span id="physicsWorldSettings"><span class="more"><button>More</button></span><span id="physicsWorldSettingsInfo">
 <span class='blue'>physics:set-time-step</span><span class='red'> 1 / 20</span> <span class="gray">;; length of time passed to simulate (seconds) </span> 
 <span class='blue'>show physics:get-time-step</span>  <span class="gray">;; returns 1 / 20</span>
@@ -553,54 +555,54 @@ any of which can be represented by turtles.
 <pre>
 ;; LINES
 <img class="obj" id="line-obj" src="./images/physics-line-obj.png">
-<span class="line-obj-info"><span class='blue'>physics:create-line</span> <span class='red'>"line-1" "body-1"</span> <span class="gray">;; create a line attached to a body</span>
+<span class="line-obj-info">&#x2713; <span class='blue'>physics:create-line</span> <span class='red'>"line-1" "body-1"</span> <span class="gray">;; create a line attached to a body</span>
 <span class='blue'>physics:set-line-relative-endpoints</span> <span class='red'>"line-1" [ 0 0 ] [ 2 2 ]</span> <span class="gray">;; name of line, coords of endpoints relative to center of mass of body</span> 
-<span class='blue'>physics:set-line-endpoints</span> <span class='red'>"line-1" [ 10 10 ] [ 5 5 ]</span> <span class="gray">;; name of line, absolute coords of endpoints</span> 
+&#x2713; <span class='blue'>physics:set-line-endpoints</span> <span class='red'>"line-1" [ 10 10 ] [ 5 5 ]</span> <span class="gray">;; name of line, absolute coords of endpoints</span> 
 <span class='blue'>show physics:get-line-relative-endpoints</span> <span class='red'>"line-1"</span> 
-<span class='blue'>show physics:get-line-endpoints</span> <span class='red'>"line-1"</span></span>
+&#x2713; <span class='blue'>show physics:get-line-endpoints</span> <span class='red'>"line-1"</span></span>
 </pre>
 <pre>
 ;; CIRCLES
 <img class="obj" id="circle-obj" src="./images/physics-circle-obj.png">
-<span class="circle-obj-info"><span class='blue'>physics:create-circle</span> <span class='red'>"circle-1" "body-1"</span> <span class="gray">;; create a circle attached to a body</span>
-<span class='blue'>physics:set-circle-radius</span> <span class='red'>"circle-1" 4</span> <span class="gray">;; name of circle, radius</span> 
+<span class="circle-obj-info">&#x2713; <span class='blue'>physics:create-circle</span> <span class='red'>"circle-1" "body-1"</span> <span class="gray">;; create a circle attached to a body</span>
+&#x2713; <span class='blue'>physics:set-circle-radius</span> <span class='red'>"circle-1" 4</span> <span class="gray">;; name of circle, radius</span> 
 <span class='blue'>physics:set-circle-relative-center</span> <span class='red'>"circle-1" [ 0 0 ]</span> <span class="gray">;; name of circle, coords of center of circle, relative to center of mass of body</span> 
-<span class='blue'>physics:set-circle-center</span> <span class='red'>"circle-1" [ 10 10 ]</span> <span class="gray">;; name of circle, absolute coords of center of circle</span> 
-<span class='blue'>show physics:get-circle-radius</span> <span class='red'>"circle-1"</span> 
+&#x2713; <span class='blue'>physics:set-circle-center</span> <span class='red'>"circle-1" [ 10 10 ]</span> <span class="gray">;; name of circle, absolute coords of center of circle</span> 
+&#x2713; <span class='blue'>show physics:get-circle-radius</span> <span class='red'>"circle-1"</span> 
 <span class='blue'>show physics:get-circle-relative-center</span> <span class='red'>"circle-1"</span>
-<span class='blue'>show physics:get-circle-center</span> <span class='red'>"circle-1"</span> </span>
+&#x2713; <span class='blue'>show physics:get-circle-center</span> <span class='red'>"circle-1"</span> </span>
 </pre>
 <pre>
 ;; POLYGONS
 <img class="obj" id="polygon-obj" src="./images/physics-polygon-obj.png"> 
-<span class="polygon-obj-info"><span class='blue'>physics:create-polygon</span> <span class='red'>"polygon-1"</span> <span class="gray">;; create a polygon attached to a body</span>
-<span class='blue'>physics:set-polygon-relative-vertices</span> <span class='red'>"polygon-1" [ 0 0 ] [ 2 2 ]</span> <span class="gray">;; name of line, coords of vertices for concave polygon, in clockwise order, relative to center of mass of body</span> 
-<span class='blue'>physics:set-polygon-vertices</span> <span class='red'>"polygon-1" [ 10 10 ] [ 5 5 ] [ 5 10]</span> <span class="gray">;; name of line, absolute coords of vertices for concave polygon, in clockwise order</span> 
+<span class="polygon-obj-info">&#x2713; <span class='blue'>physics:create-polygon</span> <span class='red'>"polygon-1"</span> <span class="gray">;; create a polygon attached to a body</span>
+<span class='blue'>physics:set-polygon-relative-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, coords of vertices for concave polygon, in clockwise order, relative to center of mass of body</span> 
+&#x2713; <span class='blue'>physics:set-polygon-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, absolute coords of vertices for concave polygon, in clockwise order</span> 
 <span class='blue'>show physics:get-polygon-relative-vertices</span> <span class='red'>"polygon-1"</span>
-<span class='blue'>show physics:get-polygon-vertices</span> <span class='red'>"polygon-1"</span></span>
+&#x2713; <span class='blue'>show physics:get-polygon-vertices</span> <span class='red'>"polygon-1"</span></span>
 </pre>
 <pre>
 ;; SHAPES
 <span class="obj" id="shape-obj"><img src="./images/physics-line-obj.png"> <img src="./images/physics-circle-obj.png"> <img src="./images/physics-polygon-obj.png"></span> </span>
-<span class='shape-obj-info'><span class="circle-shape-info"><span class='blue'>physics:set-friction</span> <span class='red'>"shape-1" 0.5</span> <span class="gray">;; name of shape, number between 0 and 1 (from no friction to a lot of friction)</span> 
-<span class='blue'>physics:set-density</span> <span class='red'>"shape-1" 0.5</span> <span class="gray">;; name of shape, number between 0 and 1 (from not dense to very dense</span> 
-<span class='blue'>physics:set-restitution</span> <span class='red'>"shape-1" 0.5</span> <span class="gray">;; name of shape, number between 0 and 1 (from not bouncy to very bouncy)</span> 
-<span class='blue'>show physics:get-friction</span> <span class='red'>"shape-1"</span>
-<span class='blue'>show physics:get-density</span> <span class='red'>"shape-1"</span>
-<span class='blue'>show physics:get-restitution</span> <span class='red'>"shape-1"</span></span>
+<span class='shape-obj-info'>&#x2713; <span class="circle-shape-info"><span class='blue'>physics:set-friction</span> <span class='red'>"shape-1" 0.5</span> <span class="gray">;; name of shape, number between 0 and 1 (from no friction to a lot of friction)</span> 
+&#x2713; <span class='blue'>physics:set-density</span> <span class='red'>"shape-1" 0.5</span> <span class="gray">;; name of shape, number between 0 and 1 (from not dense to very dense</span> 
+&#x2713; <span class='blue'>physics:set-restitution</span> <span class='red'>"shape-1" 0.5</span> <span class="gray">;; name of shape, number between 0 and 1 (from not bouncy to very bouncy)</span> 
+&#x2713; <span class='blue'>show physics:get-friction</span> <span class='red'>"shape-1"</span>
+&#x2713; <span class='blue'>show physics:get-density</span> <span class='red'>"shape-1"</span>
+&#x2713; <span class='blue'>show physics:get-restitution</span> <span class='red'>"shape-1"</span></span>
 
 </pre>
 <pre>
 ;; BODIES
 <img class="obj" id="body-obj" src="./images/physics-body-obj.png">
-<span class='body-obj-info' class="obj"><span class='blue'>physics:set-behavior</span> <span class='red'>"body-1" "dynamic"</span> <span class="gray">;; static (doesn't move, does collide), dynamic (does move and collide), ghost (does move, doesn't collide)</span> 
-<span class='blue'>physics:set-body-xy</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray"></span> 
-<span class='blue'>physics:set-angle</span> <span class='red'>"body-1" 180</span> <span class="gray">;; degrees</span> 
+<span class='body-obj-info' class="obj">&#x2713; <span class='blue'>physics:set-behavior</span> <span class='red'>"body-1" "dynamic"</span> <span class="gray">;; static (doesn't move, does collide), dynamic (does move and collide), ghost (does move, doesn't collide)</span> 
+&#x2713; <span class='blue'>physics:set-body-xy</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray"></span> 
+&#x2713; <span class='blue'>physics:set-angle</span> <span class='red'>"body-1" 180</span> <span class="gray">;; degrees</span> 
 <span class='blue'>physics:set-linear-velocity</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray">;; vector </span> 
 <span class='blue'>physics:set-angular-velocity</span> <span class='red'>"body-1" 180</span> <span class="gray">;; angle in degrees </span> 
-<span class='blue'>show physics:get-behavior</span> <span class='red'>"body-1"</span>
-<span class='blue'>show physics:get-body-xy</span> <span class='red'>"body-1"</span>
-<span class='blue'>show physics:get-angle</span> <span class='red'>"body-1"</span>
+&#x2713; <span class='blue'>show physics:get-behavior</span> <span class='red'>"body-1"</span>
+&#x2713; <span class='blue'>show physics:get-body-xy</span> <span class='red'>"body-1"</span>
+&#x2713; <span class='blue'>show physics:get-angle</span> <span class='red'>"body-1"</span>
 <span class='blue'>show physics:get-linear-velocity</span> <span class='red'>"body-1"</span>
 <span class='blue'>show physics:get-angular-velocity</span> <span class='red'>"body-1"</span></span>
 </pre>
@@ -617,17 +619,15 @@ any of which can be represented by turtles.
 ;; OBJECTS
 <span id="object-obj" class="obj"><img src="./images/physics-line-obj.png"> <img src="./images/physics-circle-obj.png"> <img src="./images/physics-polygon-obj.png"> <img src="./images/physics-target-obj.png"></span>
 <span class='object-obj-info'><span class='blue'>physics:set-body-id</span> <span class='red'>"shape-1" "body-2"</span> <span class="gray">;; connect line, circle, polygon or target to a different body</span> 
-<span class='blue'>show physics:get-body-id</span> <span class='red'>"shape-1"</span> <span class="gray">;; get which body the shape or target is connected to</span>
+&#x2713; <span class='blue'>show physics:get-body-id</span> <span class='red'>"shape-1"</span> <span class="gray">;; get which body the shape or target is connected to</span>
 <span class='blue'>physics:create-objects</span> <span class='red'> list-of-objects </span>
-<span class='blue'>show physics:get-objects</span> <span class="gray">;; returns list of objects</span>
+&#x2713; <span class='blue'>show physics:get-objects</span> <span class="gray">;; returns list of objects</span>
 <span class='blue'>physics:create-object</span> <span class='red'> "shape-1" "{'name':'shape-1','bodyId':'body2'}"</span>
-<span class='blue'>show physics:get-object</span> <span class="red">"shape-1"</span><span class="gray">;; returns string describing "shape-1"</span>
-
-
-<span class='blue'>show physics:get-object-type</span> <span class='red'> "my-triangle-1" </span> <span class="gray">;; returns "triangle"</span> 
-<span class='blue'>physics:delete-object</span> <span class='red'>"object-1"</span> 
-<span class='blue'>physics:delete-objects</span>
-<span class='blue'>physics:delete-targets</span> </span></span>
+&#x2713; <span class='blue'>show physics:get-object</span> <span class="red">"shape-1"</span><span class="gray">;; returns string describing "shape-1"</span>
+&#x2713; <span class='blue'>show physics:get-object-type</span> <span class='red'> "my-triangle-1" </span> <span class="gray">;; returns "triangle"</span> 
+&#x2713; <span class='blue'>physics:delete-object</span> <span class='red'>"object-1"</span> 
+&#x2713; <span class='blue'>physics:delete-objects</span>
+&#x2713; <span class='blue'>physics:delete-targets</span> </span></span>
 </pre>
 <pre>
 ;; SHAPES AND BODIES
