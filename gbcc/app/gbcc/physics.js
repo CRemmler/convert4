@@ -303,9 +303,17 @@ Physics = (function() {
 
   ///////// PHYSICS SETTINGS  ///////
   function setGravityXy(data) {
-    // get-objects
-    Physicsb2.updateWorld("gravityXY", {x: data[0], y:data[1]});
-    Physicsb2.createWorld({width: universe.model.world.worldwidth, height: universe.model.world.worldheight});//[[false, true], [viewWidth, viewHeight], [true, true]]);
+    // get-ObjectSettingsc
+    var objects = getObjects();
+    var connectedTurtles = getConnected();
+    deleteObjects();
+    var gravity =  {x: data[0], y:data[1]};
+    Physicsb2.updateWorld("gravityXY", gravity);;
+    Physicsb2.createWorld({width: universe.model.world.worldwidth, height: universe.model.world.worldheight, gravity:gravity});//[[false, true], [viewWidth, viewHeight], [true, true]]);
+    createObjects(objects);
+    for (var i=0; i<connectedTurtles.length; i++) {
+      connectWhoToObject(connectedTurtles[i][0], connectedTurtles[i][1]);
+    }
     // create-objects
   }
   function getGravityXy() {
@@ -340,13 +348,12 @@ Physics = (function() {
   
   ///////// BODY ////////
   function createBody(name, patchCoords) {
-    console.log("CREATE BODY", createBody);
     Physicsb2.createBody({ "bodyId": name, "behavior": "dynamic", "coords": patchCoords, "angle": 0 });
     Physicsb2.addBodyToWorld(name);
     Physicsb2.refresh();
   }
   function setBehavior(name, behavior) {
-    if (Physicsb2.getBodyObj(name)) {
+    if (Physicsb2.getBodyObj(name) != undefined) {
       var bodyType = (behavior === "static") ? 0 : (behavior === "ghost") ? 1 : 2;
       Physicsb2.getBodyObj(name).SetType(bodyType);
     }
@@ -359,18 +366,18 @@ Physics = (function() {
   }
   function setAngle(name, angle) {
     if (Physicsb2.getBodyObj(name)) {
-      Physicsb2.getBodyObj(name).SetAngle(angle);
+      Physicsb2.getBodyObj(name).SetAngle(Physicsb2.degreesToRadians(angle));
     }
     Physicsb2.refresh();
   }
   function setLinearVelocity(name, data) {
     if (Physicsb2.getBodyObj(name) && data && typeof data[0] === "number" && typeof data[1] === "number") {
-      Physicsb2.getBodyObj(name).setLinearVelocity({x: data[0], y: data[1]});
+      Physicsb2.getBodyObj(name).SetLinearVelocity({x: data[0], y: data[1]});
     }
   }
   function setAngularVelocity(name, angularVelocity) {
     if (Physicsb2.getBodyObj(name)) {
-      Physicsb2.getBodyObj(name).setAngularVelocity(angle);
+      Physicsb2.getBodyObj(name).SetAngularVelocity(angularVelocity);
     }
   }
   function getBehavior(name) {
@@ -389,9 +396,9 @@ Physics = (function() {
     }
   }
   function getAngle(name) {
-    return Physicsb2.getBodyObj(name) ? Physicsb2.getBodyObj(name).GetAngle() : 0;
+    return Physicsb2.getBodyObj(name) ? Physicsb2.radiansToDegrees(Physicsb2.getBodyObj(name).GetAngle()) : 0;
   }
-  function getLinearVelocity() {
+  function getLinearVelocity(name) {
     if (Physicsb2.getBodyObj(name)) {
       var linearVelocity = Physicsb2.getBodyObj(name).GetLinearVelocity();
       return [ linearVelocity.x, linearVelocity.y ];
@@ -400,7 +407,7 @@ Physics = (function() {
     }
   }
   function getAngularVelocity(name) {
-    return Physicsb2.getBodyObj(name) ? rePhysicsb2.getBodyObj(name).GetAngularVelocity() : 0;
+    return Physicsb2.getBodyObj(name) ? Physicsb2.getBodyObj(name).GetAngularVelocity() : 0;
   }
   
   ///////// SHAPE ////////
@@ -446,12 +453,13 @@ Physics = (function() {
     Physicsb2.addFixtureToBody({ "shapeId": name, "bodyId": bodyId }); 
     Physicsb2.refresh();
   }
-  function setLineRelativeEndpoints(name, patchEndpoints) {
+  function setLineRelativeEndpoints(name, patchEndpoint0, patchEndpoint1) {
+    var patchEndpoints = [ patchEndpoint0, patchEndpoint1];
     setPolygonRelativeVertices(name, patchEndpoints);
     Physicsb2.refresh();
   }
   function setLineEndpoints(name, patchEndpoint0, patchEndpoint1) {
-    patchEndpoints = [ patchEndpoint0, patchEndpoint1];
+    var patchEndpoints = [ patchEndpoint0, patchEndpoint1];
     setPolygonVertices(name, patchEndpoints);
     Physicsb2.refresh();
   }
@@ -489,14 +497,13 @@ Physics = (function() {
     Physicsb2.refresh();
   }
   function setCircleRelativeCenter(name, relativePatchCoords) {
-    if (Physicsb2.getFixtureObj(name) && patchCoords.length > 0) {
-      /*var bodyId = Physicsb2.getFixtureObj(name).GetBody().GetUserData().id;     
-      var absoluteNlogoCoords = Physicsb2.getBodyObj(bodyId).GetPosition(); 
-      relativePatchesToAbsoluteNlogo(relativePatchCoords,)
+    if (Physicsb2.getFixtureObj(name) && relativePatchCoords.length > 0) {
+      var bodyId = Physicsb2.getFixtureObj(name).GetBody().GetUserData().id;     
+      var offset = Physicsb2.getBodyObj(bodyId).GetPosition(); 
       var absolutePatchOffset = Physicsb2.box2dToPatch(offset); 
-      var absoluteBox2dCoords = Physicsb2.patchToBox2d({ x:absolutePatchOffset[0] + patchCoords[0], y:absolutePatchOffset[1] + patchCoords[1]});
+      var absoluteBox2dCoords = Physicsb2.patchToBox2d([ absolutePatchOffset[0] + relativePatchCoords[0], absolutePatchOffset[1] + relativePatchCoords[1]]);
       var relativeCenter = {x: offset.x - absoluteBox2dCoords.x, y:offset.y - absoluteBox2dCoords.y};
-      Physicsb2.getFixtureObj(name).GetShape().SetLocalPosition(relativeCenter);*/
+      Physicsb2.getFixtureObj(name).GetShape().SetLocalPosition(relativeCenter);
     }
     Physicsb2.refresh();
   }
@@ -553,13 +560,18 @@ Physics = (function() {
   }
   function setPolygonRelativeVertices(name, patchVertices) {
     if (Physicsb2.getFixtureObj(name) && patchVertices.length > 0) {
+      var bodyId = Physicsb2.getFixtureObj(name).GetBody().GetUserData().id;    
+      var offset = Physicsb2.getBodyObj(bodyId).GetPosition(); 
+      var absolutePatchOffset = Physicsb2.box2dToPatch(offset); 
       var vertices = [];
       for (var i=0; i<patchVertices.length; i++) {
-        vertices.push(Physicsb2.patchToBox2d(patchVertices[i]));
+        var absoluteBox2dCoords = Physicsb2.patchToBox2d([ absolutePatchOffset[0] + patchVertices[i][0], absolutePatchOffset[1] + patchVertices[i][1]]);
+        var relativeCenter = {x: offset.x - absoluteBox2dCoords.x, y:offset.y - absoluteBox2dCoords.y};
+        vertices.push(relativeCenter);
       }
       Physicsb2.getFixtureObj(name).GetShape().SetAsArray(vertices, vertices.length);
     }
-    Physicsb2.refresh();
+  Physicsb2.refresh();
   }
   function setPolygonVertices(name, patchVertices) {
     if (Physicsb2.getFixtureObj(name) && patchVertices.length > 0) {
@@ -577,47 +589,54 @@ Physics = (function() {
   }
   function getPolygonRelativeVertices(name) {
     var vertices = [];
+    var bodyId = Physicsb2.getFixtureObj(name).GetBody().GetUserData().id;
+    var offset = Physicsb2.getBodyObj(bodyId).GetPosition(); 
     if (Physicsb2.getFixtureObj(name)) {
-        vertices = Physicsb2.getFixtureObj(name).GetShape().GetVertices();
-        vertices = box2dToPatch(vertices);
+      var box2dCoords, absoluteBox2dCoords, absoluteNlogoCoords, absoluteOffset, relativeCenter;
+      box2dVertices = Physicsb2.getFixtureObj(name).GetShape().GetVertices();
+      for (var i=0; i<box2dVertices.length; i++) {
+        box2dCoords = box2dVertices[i];
+        absoluteBox2dCoords = { x: offset.x - box2dCoords.x, y: offset.y - box2dCoords.y};
+        absoluteNlogoCoords = Physicsb2.box2dToPatch(absoluteBox2dCoords);
+        absoluteOffset = Physicsb2.box2dToPatch(offset);
+        relativeCenter = [absoluteNlogoCoords[0] - absoluteOffset[0],absoluteNlogoCoords[0] - absoluteOffset[0] ];
+        vertices.push(relativeCenter);
+      }
     }
     return vertices;
   }
   function getPolygonVertices(name) {
     var vertices = [ ];
-    console.log("get line endpoints",name);
     if (Physicsb2.getFixtureObj(name)) {
-      console.log('yep');
       var bodyId = Physicsb2.getFixtureObj(name).GetBody().GetUserData().id;
       var offset = Physicsb2.getBodyObj(bodyId).GetPosition();
       var relativeVertices = Physicsb2.getFixtureObj(name).GetShape().GetVertices();
       var vertex;
-      console.log("box2d vertices", relativeVertices);
       for (var i=0; i<relativeVertices.length; i++) {
         vertex = { x: relativeVertices[i].x + offset.x, y: relativeVertices[i].y + offset.y};
         vertices.push(Physicsb2.box2dToPatch(vertex));
       }
-      console.log("patch vertices",vertices);
     }
     return vertices;
   }
   
   ///////// TARGET ////////
   function createTarget(name, bodyId) {
-    Physicsb2.createTarget( { "targetId": name, "bodyId": bodyId, "snap": true });  
+    Physicsb2.createTarget( { "targetId": name, "bodyId": bodyId, "snap": true, "box2dCoords": Physicsb2.getBodyObj(bodyId).GetPosition() });  
     Physicsb2.addTargetToBody({"targetId": name, "bodyId": bodyId });
     Physicsb2.refresh();
   }
-  function setTargetRelativeXy() {
-
+  function setTargetRelativeXy(name, coords) {
   }
-  function setTargetXy() {
-
+  function setTargetXy(name, coords) {
+    if (Physicsb2.getTargetObj(name)) {
+      Physicsb2.getTargetObj(name).coords = coords;
+    }
   }
-  function getTargetRelativeXy() {
+  function getTargetRelativeXy(name) {
   }
-  function getTargetXy() {
-
+  function getTargetXy(name) {
+    return Physicsb2.getTargetObj(name) ? Physicsb2.getTargetObj(name).coords : [0, 0];
   }
   
   ///////// OBJECT ////////
@@ -641,27 +660,28 @@ Physics = (function() {
     var objectType = result.objectType;
     switch (objectType) {
       case "body":
-        createBody(name, result.bodyId);
+        createBody(name, result.xy);
         setBehavior(name, result.behavior);
         setBodyXy(name, result.xy);
         setAngle(name, result.angle);
         break;
       case "target":
         createTarget(name, result.bodyId);
-        setTargetRelativeXy(name, result.relativeXy);
+        setTargetXy(name, result.coords);
         break;
       case "circle":
         createCircle(name, result.bodyId);
-        setRadius(name, result.angle);
+        setCircleRadius(name, result.radius);
         setCircleCenter(name, result.center);
         break;
       case "line":
         createLine(name, result.bodyId);
-        setRelativeEndpoints(name, result.relativeEndpoints);
+        setLineEndpoints(name, result.endpoints[0], result.endpoints[1]);
         break;
       case "polygon":
         createPolygon(name, result.bodyId);
-        setRelativeVertices(name, result.relativeVertices);
+        setPolygonVertices(name, result.vertices);
+        console.log(result.vertices);
         break;
     }
     if (objectType === "circle" || objectType === "line" || objectType === "polygon") {
@@ -697,14 +717,15 @@ Physics = (function() {
     };
     switch (objectType) {
       case "line": 
-        result.relativeEndpoints = getLineRelativeEndpoints(name);
+        result.endpoints = getLineEndpoints(name);
         break;
       case "polygon":
-        result.relativeVertices = getPolygonRelativeVertices(name);
+        result.vertices = getPolygonVertices(name);
         break;
       case "circle":
-        result.radius = getRadius(name);
+        result.radius = getCircleRadius(name);
         result.center = getCircleCenter(name);
+        console.log(result.radius);
     }
     return JSON.stringify(result);
   }
@@ -713,7 +734,8 @@ Physics = (function() {
       "name": name,
       "objectType": "target",
       "bodyId": getBodyId(name),
-      "relativeXy": getTargetRelativeXy(name)
+      "coords": getTargetXy(name)
+      //"Xy": getTargetXy(name)
     };
     return JSON.stringify(result);
   }
@@ -731,14 +753,14 @@ Physics = (function() {
     var fixtureList = [];
     for (f in fList) { fixtureList.push(f); }
     for (var i=0; i<fixtureList.length; i++) {
-      objectList.push([fixtureList[i], getBody(fixtureList[i])]);
+      objectList.push([fixtureList[i], getFixture(fixtureList[i])]);
     }
     
     var tList = Physicsb2.getAllTargets();
     var targetList = [];
     for (t in tList) { targetList.push(t); }
     for (var i=0; i<targetList.length; i++) {
-      objectList.push([targetList[i], getBody(targetList[i])]);
+      objectList.push([targetList[i], getTarget(targetList[i])]);
     }
   
     return objectList;
@@ -774,15 +796,35 @@ Physics = (function() {
       Physicsb2.deleteTarget(name);
     }
   }
+  
   function deleteTargets() {
     var tList = Physicsb2.getAllTargets();
-    var tList = [];
+    var targetList = [];
     for (t in tList) { targetList.push(t); }
     for (var i=0; i<targetList.length; i++) {
       Physicsb2.deleteTarget(targetList[i]);
     }
   }
   function deleteObjects() {
+    
+    var targetList = Physicsb2.getAllTargets();
+    var targetsToRemove = [];
+    for (b in targetList) {
+      targetsToRemove.push(b);
+    }
+    for (var i=0; i<targetsToRemove.length; i++) {
+      Physicsb2.deleteTarget(targetsToRemove[i]);
+    }
+    
+    var fixtureList = Physicsb2.getAllFixtures();
+    var fixturesToRemove = [];
+    for (f in fixtureList) {
+      fixturesToRemove.push(f);
+    }
+    for (var i=0; i<fixturesToRemove.length; i++) {
+      Physicsb2.deleteFixture(fixturesToRemove[i]);
+    }
+    
     var bodyList = Physicsb2.getAllBodies();
     var bodiesToRemove = [];
     for (b in bodyList) {
@@ -791,29 +833,35 @@ Physics = (function() {
     for (var i=0; i<bodiesToRemove.length; i++) {
       Physicsb2.deleteBody(bodiesToRemove[i]);
     }
-    /*
-    var fixtureList = Physicsb2.getAllFixtures();
-    for (var i=0; i<fixtureList.length; i++) {
-      console.log(fixtureList[i]);
-      Physicsb2.deleteFixture(fixtureList[i]);
-    }*/
-    var targetList = Physicsb2.getAllTargets();
-    var targetsToRemove = [];
-    for (b in targetList) {
-      bodiesToRemove.push(b);
-    }
-    for (var i=0; i<targetsToRemove.length; i++) {
-      Physicsb2.deleteTarget(targetsToRemove[i]);
-    }
+    
 
   }
   
   ////////// FORCES /////////
   function applyForce(name, force, angle) {
-    Physicsb2.applyForce({ targetId: name, force: force, position: "absolute", angle: angle});
+    if (Physicsb2.getTargetObj(name)) {
+      Physicsb2.applyForce({ targetId: name, force: force, position: "absolute", angle: angle});
+    } else {
+      if (Physicsb2.getBodyObj(name)) {
+        var targetList = Physicsb2.getBodyObj("line-body-0").GetUserData().targetList;
+        if (targetList.length > 0) {
+          Physicsb2.applyForce({ targetId: targetList[0], force: force, position: "absolute", angle: angle});
+        }
+      }
+    }
   }
   function applyForceRelativeAngle(name, force, angle) {
-    Physicsb2.applyForce({ targetId: name, force: force, position: "relative", angle: angle});
+    if (Physicsb2.getTargetObj(name)) {
+      Physicsb2.applyForce({ targetId: name, force: force, position: "relative", angle: angle});
+    } else {
+      if (Physicsb2.getBodyObj(name)) {
+        var targetList = Physicsb2.getBodyObj(name).GetUserData().targetList;
+        if (targetList.length > 0) {
+          Physicsb2.applyForce({ targetId: targetList[0], force: force, position: "relative", angle: angle});
+        }
+      }
+    }
+    //Physicsb2.applyForce({ targetId: name, force: force, position: "relative", angle: angle});
   }
   function applyLinearImpulse() {
     Physicsb2.applyLinearImpulse({ targetId: name, force: force, position: "absolute", angle: angle});
@@ -839,210 +887,18 @@ Physics = (function() {
     Physicsb2.disconnectWho(who);
   }
 
-
-
-  
-  /*
-  function resetInterface() {
-    $("#physicsContainer").css("display","inline-block");
-    $(".physics-controls").css("display","inline-block");
-    $("#physicsMenu").css("display","inline-block");
-    $("#physicsMenu .purple").addClass("hidden");
-    $("#physicsMenu .white").removeClass("hidden");
-    
-    updatePhysics("physicsOff");
-
-  }
-  function importPhysics(data) {
-    var settings = data[0];
-    var objects = data[1];
-    //Images.clearImage();
-    Physics.removePhysics();
-    Maps.removeMap();
-    Graph.removeGraph();
-    world.triggerUpdate();
-    Physicsb2.createWorld(settings);
-    
-    resetInterface();
-  }
-  //physics:create-object "body-0" [ [ "type-of-object" "body"] ]
-  //physics:create-object "shape-0" [ ["type-of-object" "shape"] ["body-id" "body-0"] ]
-  function createObject(name, settings) {
-    var key, value;
-    var parentId;
-    
-    var angle = 0; 
-    var behavior = "dynamic";
-    var color = "(none)";
-    var coords = [0,0];
-    var coords = [0,0];
-    var force = 0;
-    var density = 0.5;
-    var friction = 0.5;
-    var radius = 2;
-    var restitution = 0.5;
-    var typeOfObject = "body";
-    var typeOfShape = "circle";
-    var vertices = [[0,0], [2,2]];
-    var bodyId;
-    var shapeId;
-    var bodyCoords, fixtureCoords;
-    var position = "absolute";
-    var targetId = undefined;
-    for (var i=0; i<settings.length; i++) {
-      key = settings[i][0];
-      value = settings[i][1];
-      switch ( key ) {
-        case "heading": angle = value; break;
-        case "behavior": behavior = value; break;
-        case "body-id": bodyId = value; break;
-        case "color": color = value; break;
-        case "position": position = value; break;
-        //case "coords": coords = value; break;
-        case "coords": coords = value; break;
-        case "density": density = value; break;
-        case "force": force = value; break;
-        case "friction": friction = value; break;
-        case "radius": radius = value; break;
-        case "restitution": restitution = value; break;
-        case "type-of-object": typeOfObject = value; break;
-        case "type-of-shape": typeOfShape = value; break;
-        case "vertices": vertices = value; break;
-        case "target-id": targetId = value; break;
+  function getConnected() {
+    var connectedList = [];
+    var bodies = Physicsb2.getAllBodies(); 
+    for (var b in bodies) {
+      var userdata = bodies[b].GetUserData();
+      if (userdata.turtleId != -1) {
+        connectedList.push([userdata.turtleId, userdata.id]);
       }
     }
-    if (typeof color === "object") {
-      color = rgbToHex(color);
-    }
-    
-    if (typeOfObject === "body") {
-      bodyId = name;
-      Physicsb2.createBody({
-        "bodyId": bodyId, 
-        "behavior": behavior, 
-        "coords": coords, 
-        "angle": angle
-      });
-      Physicsb2.addBodyToWorld(bodyId);
-
-
-    } else if (typeOfObject === "shape") {
-      shapeId = name;
-      Physicsb2.createFixture({
-        "shapeId": shapeId, 
-        "coords": coords, 
-        "vertices": vertices, 
-        "typeOfShape": typeOfShape, 
-        "density": density,
-        "friction": friction,
-        "restitution": restitution,
-        "color": color,
-        "radius": radius
-      });  
-      Physicsb2.addFixtureToBody({
-        "shapeId": shapeId, 
-        "bodyId": bodyId, 
-      });  
-    } else if (typeOfObject === "target") {
-      //console.log("index.html to physicsJs apply force");
-      /*Physicsb2.addTargetToBody({
-        "id": name+"-"+target,
-        "bodyA": parentId,
-        "coords": null
-      });
-      Physicsb2.applyForce({angle: angle, force: force, position: position, targetId: targetId});
-
-    }
-    Physicsb2.redrawWorld();
+    return connectedList;
   }
 
-  function connectToObject(who, name) {
-    var parentId = name+"body";
-    //console.log("connect to turtle "+parentId+" to " + who);
-    Physicsb2.updateBodyId(parentId, who);
-  }
-  
-  function disconnectFromObject(who, name) {
-    var parentId = name+"body";
-    //console.log("connect to turtle "+parentId+" to " + who);
-    Physicsb2.updateBodyId(who, parentId);
-  }
-  function removeObject(name) {
-    return ([]);
-  }
-  
-  function getObject(name) {
-    var results = [];
-    var body;
-    var allBodies = Physicsb2.getAllBodies();
-    for (obj in allBodies) {
-      body = allBodies[obj];
-      results.push(body.GetAngle());
-    }
-    return results;
-  }
-  
-  function getObjects() {
-    results = [];
-    return results;
-  }
-
-
-  
-
-
-
-  
-
-
-  
-  function removePhysics() {
-    Physicsb2.stopWorld();
-    $(".physics-controls").css("display","none");
-    $("#physicsMenu").css("display","none");
-    if ($("#physicsPlay").hasClass("inactive")) { 
-      $("#physicsPlay").removeClass("inactive");  
-      $("#physicsPause").addClass("inactive");  
-    }
-    $(".netlogo-canvas").off("keydown");
-  }
-  function patchToWorld(coords) {
-    return [ coords.x, coords.y ];
-  }
-  
-  function worldToPatch(coords) {
-    return {x: coords[0], y:coords[1]};
-  }
-  
-  
-  //////// OTHER /////////
-  
-  function rgbToHex(color) {
-    var result;
-    var r = color[0];
-    var g = color[1];
-    var b = color[2];
-    if (color[3] != undefined) {
-      var a = color[3];
-      a = a.toString(16);
-      if (a.length === 1) { a = "0" + a; }
-    }
-    r = r.toString(16);
-    g = g.toString(16);
-    b = b.toString(16);
-    if (r.length === 1) { r = "0" + r; }
-    if (g.length === 1) { g = "0" + g; }
-    if (b.length === 1) { b = "0" + b; }
-    result = r+g+b;
-    if (color[3] != undefined) {
-      var a = color[3];
-      a = a.toString(16);
-      if (a.length === 1) { a = "0" + a; }
-      result = result + a;
-    }
-    return "#"+result;
-  }
-  */
   return {
     setupInterface: setupInterface,
     getDrawButtonMode: getDrawButtonMode,
@@ -1119,6 +975,7 @@ Physics = (function() {
     applyAngularImpulse: applyAngularImpulse,
     connectWhoToObject: connectWhoToObject,
     disconnectWho: disconnectWho,
+    getConnected: getConnected
 
   };
  

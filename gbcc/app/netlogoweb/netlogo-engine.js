@@ -18332,7 +18332,11 @@ function hasOwnProperty(obj, prop) {
         myData[messageTag] = message;
       };
       get = function(messageTag) {
-        return myData[messageTag] ? myData[messageTag] : "undefined";
+        if (myData[messageTag] != null) {
+          return myData[messageTag];
+        } else {
+          return "undefined";
+        }
       };
       getFromUser = function(messageSource, messageTag) {
         if (userData[messageSource] && (userData[messageSource][messageTag] != null)) {
@@ -19005,7 +19009,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createObject, createObjects, createPolygon, createTarget, deleteObject, deleteObjects, deleteTargets, disconnectWho, exists, getAngle, getAngularVelocity, getBehavior, getBodyId, getBodyXy, getCircleCenter, getCircleRadius, getCircleRelativeCenter, getDensity, getFriction, getGravityXy, getLineEndpoints, getLineRelativeEndpoints, getLinearVelocity, getObject, getObjectType, getObjects, getPolygonRelativeVertices, getPolygonVertices, getPositionIterations, getRestitution, getTargetCenter, getTargetRelativeXy, getTimeStep, getVelocityIterations, getWrapXy, hideWorld, setAngle, setAngularVelocity, setBehavior, setBodyId, setBodyXy, setCircleCenter, setCircleRadius, setCircleRelativeCenter, setDensity, setFriction, setGravityXy, setLineEndpoints, setLineRelativeEndpoints, setLinearVelocity, setPolygonRelativeVertices, setPolygonVertices, setPositionIterations, setRestitution, setTargetRelativeXy, setTargetXy, setTimeStep, setVelocityIterations, setWrapXy, showWorld, worldOff, worldOn;
+      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createObject, createObjects, createPolygon, createTarget, deleteObject, deleteObjects, deleteTargets, disconnectWho, exists, getAngle, getAngularVelocity, getBehavior, getBodyId, getBodyXy, getCircleCenter, getCircleRadius, getCircleRelativeCenter, getConnected, getDensity, getFriction, getGravityXy, getLineEndpoints, getLineRelativeEndpoints, getLinearVelocity, getObject, getObjectType, getObjects, getPolygonRelativeVertices, getPolygonVertices, getPositionIterations, getRestitution, getTargetCenter, getTargetRelativeXy, getTimeStep, getVelocityIterations, getWrapXy, hideWorld, setAngle, setAngularVelocity, setBehavior, setBodyId, setBodyXy, setCircleCenter, setCircleRadius, setCircleRelativeCenter, setDensity, setFriction, setGravityXy, setLineEndpoints, setLineRelativeEndpoints, setLinearVelocity, setPolygonRelativeVertices, setPolygonVertices, setPositionIterations, setRestitution, setTargetRelativeXy, setTargetXy, setTimeStep, setVelocityIterations, setWrapXy, showWorld, worldOff, worldOn;
       hideWorld = function() {
         return Physics.hideWorld();
       };
@@ -19222,6 +19226,9 @@ function hasOwnProperty(obj, prop) {
       exists = function(name) {
         return Physics.exists(name);
       };
+      getConnected = function() {
+        return Physics.getConnected();
+      };
       return {
         name: "physics",
         prims: {
@@ -19296,7 +19303,8 @@ function hasOwnProperty(obj, prop) {
           "DISCONNECT-WHO": disconnectWho,
           "WORLD-ON": worldOn,
           "WORLD-OFF": worldOff,
-          "EXISTS?": exists
+          "EXISTS": exists,
+          "GET-CONNECTED": getConnected
         }
       };
     }
