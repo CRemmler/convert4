@@ -78,7 +78,7 @@ jQuery(document).ready(function() {
     if (data.userData) {
       userData[data.userId] = data.userData;
     }
-    if (procedures.gbccOnGo) {
+    if (procedures.gbccOnEnter) {
       session.run('gbcc-on-enter "'+data.userId+'" "'+data.userType+'"');
     }
   });
