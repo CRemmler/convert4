@@ -63,7 +63,7 @@ end
 <pre>
 to share
   gbcc:broadcast-plot "my-plot" "populations"
-  gbcc:set-globals
+  gbcc:store-globals
 end
 
 to gbcc-on-select [ user-id role ]
@@ -77,11 +77,18 @@ end
 			<h2>NetLogo Code</h2>
 <pre>
 to setup
+	;; note choose one of the following
+  graph:show-graph [ ] ;; if you want to show the default graph
+  graph:import-file "geogebra-default.ggb" ;; if you want to a specific ggb file
+end 
+
+to create-turtle-and-point
   create-turtles 1 [
     set my-turtle-number who
     set patch-coords (list xcor ycor)
     set graph-coords graph:patch-to-graph patch-coords
-    graph:create-point "my-point" graph-coords
+		;; point names must only contain letters
+    graph:create-point "mypoint" graph-coords
   ]
 end
 
@@ -106,7 +113,7 @@ to go-forward [ direction ]
     set heading direction
     fd 1
     set graph-coords graph:patch-to-graph (list xcor ycor)
-    graph:set-xy "my-point" graph-coords
+    graph:set-xy "mypoint" graph-coords
   ]
 end
 </pre>
@@ -140,6 +147,7 @@ to setup
     set my-turtle-number who 
     gbcc:set "shape" shape
     gbcc:set "color" color	
+    gbcc:broadcast-avatar shape color ""
   ]
 end
 
@@ -172,10 +180,10 @@ to gbcc-on-select [ user-id role ]
   if (user-id != gbcc:who-am-i) [	
     create-turtles 1 [
       set id user-id
-      set shape gbcc:get-from-user "shape"
-      set color gbcc:get-from-user "color"
-      set xcor gbcc:get-from-user "xcor"
-      set ycor gbcc:get-from-user "ycor"
+      set shape gbcc:get-from-user user-id "shape"
+      set color gbcc:get-from-user user-id "color"
+      set xcor gbcc:get-from-user user-id "xcor"
+      set ycor gbcc:get-from-user user-id "ycor"
     ]
   ]
 end
@@ -188,8 +196,8 @@ end
 
 to gbcc-on-go [ user-id role ]
   ask turtles with [ id = user-id ] [
-    set xcor gbcc:get-from-user "xcor"
-    set ycor gbcc:get-from-user "ycor"
+    set xcor gbcc:get-from-user user-id "xcor"
+    set ycor gbcc:get-from-user user-id "ycor"
   ] 
 end
 </pre>
