@@ -78,11 +78,15 @@ jQuery(document).ready(function() {
     if (data.userData) {
       userData[data.userId] = data.userData;
     }
-    session.run('gbcc-on-enter "'+data.userId+'" "'+data.userType+'"');
+    if (procedures.gbccOnGo) {
+      session.run('gbcc-on-enter "'+data.userId+'" "'+data.userType+'"');
+    }
   });
   
   socket.on("gbcc user exits", function(data) {
-    session.run('gbcc-on-exit "'+data.userId+'" "'+data.userType+'"');
+    if (procedures.gbccOnExit) {
+      session.run('gbcc-on-exit "'+data.userId+'" "'+data.userType+'"');
+    }
   });
 
   // display admin interface
@@ -158,10 +162,14 @@ jQuery(document).ready(function() {
     //console.log(data.userId+" "+userId+" "+userType);
     switch (data.status) {
       case "select":
-        session.run('gbcc-on-select "'+data.userId+'" "'+data.userType+'"');
+        if (procedures.gbccOnSelect) {
+          session.run('gbcc-on-select "'+data.userId+'" "'+data.userType+'"');
+        }
         break;
       case "deselect":
-        session.run('gbcc-on-deselect "'+data.userId+'" "'+data.userType+'"');
+        if (procedures.gbccOnDeselect) {
+          session.run('gbcc-on-deselect "'+data.userId+'" "'+data.userType+'"');
+        }
         break;
       case "forever-deselect":
         delete foreverButtonCode[data.userId];
