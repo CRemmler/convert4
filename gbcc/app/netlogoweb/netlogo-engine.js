@@ -18322,7 +18322,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, get, getFromUser, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, set, storeGlobals;
+      var broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, get, getFromUser, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, set, storeGlobals, whoAmI;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
@@ -18417,6 +18417,9 @@ function hasOwnProperty(obj, prop) {
       runPatchCode = function(pxcor, pycor, key) {
         return session.runPatchCode(pxcor, pycor, key);
       };
+      whoAmI = function() {
+        return Gallery.whoAmI();
+      };
       return {
         name: "gbcc",
         prims: {
@@ -18436,7 +18439,8 @@ function hasOwnProperty(obj, prop) {
           "COMPILE-PATCH-CODE": compilePatchCode,
           "RUN-OBSERVER-CODE": runObserverCode,
           "RUN-TURTLE-CODE": runTurtleCode,
-          "RUN-PATCH-CODE": runPatchCode
+          "RUN-PATCH-CODE": runPatchCode,
+          "WHO-AM-I": whoAmI
         }
       };
     }
@@ -19009,7 +19013,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createObject, createObjects, createPolygon, createTarget, deleteObject, deleteObjects, deleteTargets, disconnectWho, exists, getAngle, getAngularVelocity, getBehavior, getBodyId, getBodyXy, getCircleCenter, getCircleRadius, getCircleRelativeCenter, getConnected, getDensity, getFriction, getGravityXy, getLineEndpoints, getLineRelativeEndpoints, getLinearVelocity, getObject, getObjectType, getObjects, getPolygonRelativeVertices, getPolygonVertices, getPositionIterations, getRestitution, getTargetCenter, getTargetRelativeXy, getTimeStep, getVelocityIterations, getWrapXy, hideWorld, setAngle, setAngularVelocity, setBehavior, setBodyId, setBodyXy, setCircleCenter, setCircleRadius, setCircleRelativeCenter, setDensity, setFriction, setGravityXy, setLineEndpoints, setLineRelativeEndpoints, setLinearVelocity, setPolygonRelativeVertices, setPolygonVertices, setPositionIterations, setRestitution, setTargetRelativeXy, setTargetXy, setTimeStep, setVelocityIterations, setWrapXy, showWorld, worldOff, worldOn;
+      var applyAngularImpulse, applyForce, applyForceRelativeAngle, applyLinearImpulse, applyLinearImpulseRelativeAngle, applyTorque, connectWhoToObject, createBody, createCircle, createLine, createObject, createObjects, createPolygon, createRectangle, createTarget, deleteObject, deleteObjects, deleteTargets, disconnectWho, exists, getAngle, getAngularVelocity, getBehavior, getBodyId, getBodyXy, getCircleCenter, getCircleRadius, getCircleRelativeCenter, getConnected, getDensity, getFriction, getGravityXy, getLineEndpoints, getLineRelativeEndpoints, getLinearVelocity, getObject, getObjectType, getObjects, getPolygonRelativeVertices, getPolygonVertices, getPositionIterations, getRectangleRelativeVertices, getRectangleVertices, getRestitution, getTargetRelativeXy, getTargetXy, getTimeStep, getVelocityIterations, getWrapXy, hideObject, hideWorld, repaint, resetTicks, setAngle, setAngularVelocity, setBehavior, setBodyId, setBodyXy, setCircleCenter, setCircleRadius, setCircleRelativeCenter, setDensity, setFriction, setGravityXy, setLineEndpoints, setLineRelativeEndpoints, setLinearVelocity, setPolygonRelativeVertices, setPolygonVertices, setPositionIterations, setRectangleRelativeVertices, setRectangleVertices, setRestitution, setTargetRelativeXy, setTargetXy, setTimeStep, setVelocityIterations, setWrapXy, showObject, showWorld, tick, worldOff, worldOn;
       hideWorld = function() {
         return Physics.hideWorld();
       };
@@ -19100,11 +19104,11 @@ function hasOwnProperty(obj, prop) {
       createLine = function(name, body) {
         return Physics.createLine(name, body);
       };
-      setLineRelativeEndpoints = function(name, point1, point2) {
-        return Physics.setLineRelativeEndpoints(name, point1, point2);
+      setLineRelativeEndpoints = function(name, endpoints) {
+        return Physics.setLineRelativeEndpoints(name, endpoints);
       };
-      setLineEndpoints = function(name, point1, point2) {
-        return Physics.setLineEndpoints(name, point1, point2);
+      setLineEndpoints = function(name, endpoints) {
+        return Physics.setLineEndpoints(name, endpoints);
       };
       getLineRelativeEndpoints = function(name) {
         return Physics.getLineRelativeEndpoints(name);
@@ -19160,8 +19164,8 @@ function hasOwnProperty(obj, prop) {
       getTargetRelativeXy = function(name) {
         return Physics.getTargetRelativeXy(name);
       };
-      getTargetCenter = function(name) {
-        return Physics.getTargetCenter(name);
+      getTargetXy = function(name) {
+        return Physics.getTargetXy(name);
       };
       setBodyId = function(name, body) {
         return Physics.setBodyId(name, body);
@@ -19229,6 +19233,36 @@ function hasOwnProperty(obj, prop) {
       getConnected = function() {
         return Physics.getConnected();
       };
+      resetTicks = function() {
+        return Physics.resetTicks();
+      };
+      tick = function() {
+        return Physics.tick();
+      };
+      repaint = function() {
+        return Physics.repaint();
+      };
+      createRectangle = function(name, body) {
+        return Physics.createRectangle(name, body);
+      };
+      setRectangleRelativeVertices = function(name, vertices) {
+        return Physics.setRectangleRelativeVertices(name, vertices);
+      };
+      setRectangleVertices = function(name, vertices) {
+        return Physics.setRectangleVertices(name, vertices);
+      };
+      getRectangleRelativeVertices = function(name) {
+        return Physics.getRectangleRelativeVertices(name);
+      };
+      getRectangleVertices = function(name) {
+        return Physics.getRectangleVertices(name);
+      };
+      showObject = function(name) {
+        return Physics.showObject(name);
+      };
+      hideObject = function(name) {
+        return Physics.hideObject(name);
+      };
       return {
         name: "physics",
         prims: {
@@ -19282,7 +19316,7 @@ function hasOwnProperty(obj, prop) {
           "SET-TARGET-RELATIVE-XY": setTargetRelativeXy,
           "SET-TARGET-XY": setTargetXy,
           "GET-TARGET-RELATIVE-XY": getTargetRelativeXy,
-          "GET-TARGET-CENTER": getTargetCenter,
+          "GET-TARGET-XY": getTargetXy,
           "SET-BODY-ID": setBodyId,
           "GET-BODY-ID": getBodyId,
           "CREATE-OBJECTS": createObjects,
@@ -19304,7 +19338,17 @@ function hasOwnProperty(obj, prop) {
           "WORLD-ON": worldOn,
           "WORLD-OFF": worldOff,
           "EXISTS": exists,
-          "GET-CONNECTED": getConnected
+          "GET-CONNECTED": getConnected,
+          "RESET-TICKS": resetTicks,
+          "TICK": tick,
+          "REPAINT": repaint,
+          "CREATE-RECTANGLE": createRectangle,
+          "SET-RECTANGLE-RELATIVE-VERTICES": setRectangleRelativeVertices,
+          "SET-RECTANGLE-VERTICES": setRectangleVertices,
+          "GET-RECTANGLE-RELATIVE-VERTICES": getRectangleRelativeVertices,
+          "GET-RECTANGLE-VERTICES": getRectangleVertices,
+          "SHOW-OBJECT": showObject,
+          "HIDE-OBJECT": hideObject
         }
       };
     }

@@ -453,13 +453,11 @@ Physics = (function() {
     Physicsb2.addFixtureToBody({ "shapeId": name, "bodyId": bodyId }); 
     Physicsb2.refresh();
   }
-  function setLineRelativeEndpoints(name, patchEndpoint0, patchEndpoint1) {
-    var patchEndpoints = [ patchEndpoint0, patchEndpoint1];
+  function setLineRelativeEndpoints(name, patchEndpoints) {
     setPolygonRelativeVertices(name, patchEndpoints);
     Physicsb2.refresh();
   }
-  function setLineEndpoints(name, patchEndpoint0, patchEndpoint1) {
-    var patchEndpoints = [ patchEndpoint0, patchEndpoint1];
+  function setLineEndpoints(name, patchEndpoints) {
     setPolygonVertices(name, patchEndpoints);
     Physicsb2.refresh();
   }
@@ -640,7 +638,9 @@ Physics = (function() {
   }
   
   ///////// OBJECT ////////
-  function setBodyId() {
+  function setBodyId(oldBodyId, newBodyId) {
+    console.log("move "+oldBodyId+" to " +newBodyId);
+    Physicsb2.updateBody(oldBodyId, bodyIdBodyMode, newBodyId);
 
   }
   function getBodyId(name) {

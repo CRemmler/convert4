@@ -39,7 +39,10 @@ Gallery = (function() {
       var galleryControlSpan = "<div class='gallery-controls'>";
       galleryControlSpan += "<span class='gallery-right'>Size: <select id='canvasSize'><option>Small</option><option>Medium</option><option>Large</option></select>";
       galleryControlSpan += "<input type='checkbox' checked id='galleryUpdates'> Listen</span>";
-      galleryControlSpan += "<span class='gallery-left'><input type='checkbox' id='selectAll'> Select All <input type='checkbox' id='foreverSelectAll'> Forever</span>";
+      //galleryControlSpan += "<span class='gallery-left'><input type='checkbox' id='selectAll'> Select All <input type='checkbox' id='foreverSelectAll'> Forever</span>";
+      galleryControlSpan += "<span class='gallery-left'><button id='selectAll'>Select All</button> ";
+      galleryControlSpan += "<button id='deselectAll'>Deselect All</button> ";
+      galleryControlSpan += "<button id='foreverSelectAll'><i class='fa fa-refresh' aria-hidden='true'></i> Forever</button></span>";
       galleryControlSpan += "</div>";
       $(".netlogo-gallery-tab-content").append(galleryControlSpan);
       socket.emit("request gallery data", {userId: myUserId, status: "select"});
@@ -88,6 +91,7 @@ Gallery = (function() {
           $(".gbcc-gallery li").removeClass("gray-border");
           galleryForeverButton = "on";
           socket.emit("request user broadcast data");
+          socket.emit("request user data");
         } else {
           //$(".netlogo-gallery-tab").addClass("selected");
           $(".netlogo-gallery-tab-content").addClass("selected");
@@ -98,8 +102,11 @@ Gallery = (function() {
       $("#selectAll").on("click", function() {
         selectAll();
       });
+      $("#deselectAll").on("click", function() {
+        deselectAll();
+      });
       $("#foreverSelectAll").on("click", function() {
-        foreverSelectAll();
+        foreverSelectSelected();
       });
     }
     if (!allowGalleryControls) { $(".gallery-controls").css("display","none"); }
@@ -116,7 +123,38 @@ Gallery = (function() {
     $("body").append("<canvas id=\"avatarCanvasView\" width=\"300\" height=\"300\" style=\"display:none\"></canvas>");
 
   }
-  
+
+  function selectAll() {
+    $("li").each(function() {
+      myId = $(this).attr("id")
+      $elt = $("#"+myId+" .card.card-image");
+      if (!$elt.parent().hasClass("selected")) {
+        //$elt.parent().click(); 
+        cardClickHandler($elt);
+        $("#"+myId+" .forever-icon:not(.selected)").css("display","none");     
+      }
+    });
+  }
+  function deselectAll() {
+    $("li").each(function() {
+      myId = $(this).attr("id")
+      $elt = $("#"+myId+" .card.card-image");
+      if ($elt.parent().hasClass("selected")) {
+        //$elt.click(); 
+        cardClickHandler($elt);
+        $("#"+myId+" .forever-icon:not(.selected)").css("display","none");     
+      }
+    });
+  }
+  function foreverSelectSelected() {
+    $(".forever-icon").each(function() {
+      if ($(this).parent().hasClass("selected")) {
+        $(this).click(); 
+        $(this).css("display","block");
+      }
+    });
+  }
+    /*
   function selectAll() {
     var $elt;
     var myId;
@@ -124,12 +162,12 @@ Gallery = (function() {
      $("#foreverSelectAll").click();
     }
     var isChecked = $("#selectAll").is(":checked");
-    /*
+    
     $(".card.card-image").each(function() {
       if (isChecked != ($(this).parent().hasClass("selected"))) {
         $(this).click(); 
       }
-    });*/
+    });
     $("li").each(function() {
       myId = $(this).attr("id")
       $elt = $("#"+myId+" .card.card-image");
@@ -146,7 +184,7 @@ Gallery = (function() {
     //}
     var isChecked = $("#foreverSelectAll").is(":checked");
     $(".forever-icon").each(function() {
-      /*
+      
       if (!isChecked) {
         if (isChecked != ($(this).hasClass("selected"))) {
           $(this).click(); 
@@ -158,7 +196,7 @@ Gallery = (function() {
           $(this).click(); 
           (isChecked) ? $(this).css("display","block") : $(this).css("display","none");
         }
-      }*/
+      }
       if (isChecked) {
         if ($(this).parent().hasClass("selected")) {
           $(this).click(); 
@@ -172,6 +210,7 @@ Gallery = (function() {
       }
     });
   }
+  */
   
   //assignZIndex();
   
@@ -209,8 +248,6 @@ Gallery = (function() {
     } 
     if ($("#"+thisId).hasClass("selected")) {
       $("#"+thisId+" .forever-icon:not(.selected)").css("display","none");   
-      
-      console.log("hide it on mouseout",thisId) 
     }
   }
   
@@ -273,15 +310,8 @@ Gallery = (function() {
       socket.emit("request user action", {userId: userId, status: "forever-deselect", userType: userType});  
     } else {
       $(thisSpan).addClass("selected");
-      $(thisSpan).parent().addClass("selected"); 
-      if (procedures.gbccOnTeacherGo != undefined && userType === "teacher") {
-        //console.log("compile teacher code");
-        session.compileObserverCode("gbcc-forever-button-code-"+userId, "gbcc-on-teacher-go \""+userId+"\"");
-      } else {
-        if (procedures.gbccOnGo != undefined) {
-          session.compileObserverCode("gbcc-forever-button-code-"+userId, "gbcc-on-go \""+userId+"\"");
-        }
-      }
+      $(thisSpan).parent().addClass("selected");
+      session.compileObserverCode("gbcc-forever-button-code-"+userId, "gbcc-on-go \""+userId+"\" \""+userType+"\"");
       socket.emit("request user action", {userId: userId, status: "forever-select", userType: userType})  
     }      
   }

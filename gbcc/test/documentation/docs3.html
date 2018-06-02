@@ -43,15 +43,10 @@
     </h3>
     <p id="patchgroup">
       <a href="#gbcc-on-enter">gbcc-on-enter</a>
-      <a href="#gbcc-on-enter">gbcc-on-teacher-enter</a>
       <a href="#gbcc-on-exit">gbcc-on-exit</a>
-      <a href="#gbcc-on-exit">gbcc-on-teacher-exit</a>
       <a href="#gbcc-on-select">gbcc-on-select</a>  
-      <a href="#gbcc-on-select">gbcc-on-teacher-select</a>        
       <a href="#gbcc-on-deselect">gbcc-on-deselect</a>
-      <a href="#gbcc-on-deselect">gbcc-on-teacher-deselect</a>    
       <a href="#gbcc-on-go">gbcc-on-go</a>
-      <a href="#gbcc-on-go">gbcc-on-teacher-go</a>    
     </div>
     
     <h2>
@@ -243,97 +238,80 @@ gbcc:compile-patch-code pxcor pycor "code" "set pcolor orange"
     </h2>
     
     <div class="dict_entry" id="gbcc-on-enter">
-      <h3><a>gbcc-on-enter<br>gbcc-on-teacher-enter</a></h3>
-      <h4><span class="prim_example">gbcc-on-enter [ user-id ]</span>
-        <span class="prim_example">gbcc-on-teacher-enter [ user-id ]</span>
+      <h3><a>gbcc-on-enter</a></h3>
+      <h4><span class="prim_example">gbcc-on-enter [ user-id role ]</span>
         <img alt="Observer Command" src="images/observer.png">
       </h4>
       <p>
         User-defined procedure which, if it exists, will be called when any
         user first enters the room.
       <pre>
-to gbcc-on-enter [user-id]
-  show "This is called when a student enters."
-  show "This is called when a teacher enters..."
-  show"...as long as there is not a defined gbcc-on-teacher-enter procedure."
-end
-
-to gbcc-on-teacher-enter [user-id]
-  show "This is called when a teacher enters."
+to gbcc-on-enter [ user-id role ]
+  show "This is called when a user enters."
+  show word user-id " is the unique identifier for this user."
+  if (role = "teacher") [ show "User is a teacher." ]
+  if (role = "student") [ show "User is a student." ]
 end
       </pre>
     </div>
     
     <div class="dict_entry" id="gbcc-on-exit">
-      <h3><a>gbcc-on-exit<br>gbcc-on-teacher-exit</a></h3>
-      <h4><span class="prim_example">gbcc-on-exit [ user-id ]</span>
-        <span class="prim_example">gbcc-on-teacher-exit [ user-id ]</span>
+      <h3><a>gbcc-on-exit</a></h3>
+      <h4><span class="prim_example">gbcc-on-exit [ user-id role ]</span>
         <img alt="Observer Command" src="images/observer.png">
       </h4>
       <p>
         User-defined procedure which, if it exists, will be called when any
         user exits the room.
       <pre>
-to gbcc-on-exit [user-id]
-  show "This is called when a student exits."
-  show "This is called when a teacher exits..."
-  show"...as long as there is not a defined gbcc-on-teacher-exit procedure."
-end
-
-to gbcc-on-teacher-exit [user-id]
-  show "This is called when a teacher exit."
+to gbcc-on-exit [ user-id role ]
+  show "This is called when a user exits."
+  show word user-id " is the unique identifier for this user."
+  if (role = "teacher") [ show "User is a teacher." ]
+  if (role = "student") [ show "User is a student." ]
 end
       </pre>
     </div>
     
     <div class="dict_entry" id="gbcc-on-select">
-      <h3><a>gbcc-on-select<br>gbcc-on-teacher-select</a></h3>
-      <h4><span class="prim_example">gbcc-on-select [ user-id ]</span>
-        <span class="prim_example">gbcc-on-teacher-select [ user-id ]</span>
+      <h3><a>gbcc-on-select</a></h3>
+      <h4><span class="prim_example">gbcc-on-select [ user-id role ]</span>
         <img alt="Observer Command" src="images/observer.png">
       </h4>
       <p>
         User-defined procedure which, if it exists, will be called when a
         user selects a canvas in the gallery.
       <pre>
-to gbcc-on-select [user-id]
-  show "This is called when a student selects a canvas."
-  show "This is called when a teacher selects a canvas..."
-  show"...as long as there is not a defined gbcc-on-teacher-select procedure."
-end
-
-to gbcc-on-teacher-select [user-id]
-  show "This is called when a teacher selects a canvas."
+to gbcc-on-select [ user-id role ]
+  show "This is called when a user's canvas is selected."
+  show word user-id " is the unique identifier for this user."
+  if (role = "teacher") [ show "User is a teacher." ]
+  if (role = "student") [ show "User is a student." ]
 end
       </pre>
     </div>
     
     <div class="dict_entry" id="gbcc-on-deselect">
-      <h3><a>gbcc-on-deselect<br>gbcc-on-teacher-deselect</a></h3>
-      <h4><span class="prim_example">gbcc-on-deselect [ user-id ]</span>
-        <span class="prim_example">gbcc-on-teacher-deselect [ user-id ]</span>
+      <h3><a>gbcc-on-deselect</a></h3>
+      <h4><span class="prim_example">gbcc-on-deselect [ user-id role ]</span>
         <img alt="Observer Command" src="images/observer.png">
       </h4>
       <p>
         User-defined procedure which, if it exists, will be called when a
         user deselects a canvas in the gallery.
       <pre>
-to gbcc-on-deselect [user-id]
-  show "This is called when a student deselects a canvas."
-  show "This is called when a teacher deselects a canvas..."
-  show "...as long as there is not a defined gbcc-on-teacher-deselect procedure."
-end
-
-to gbcc-on-teacher-deselect [user-id]
-  show "This is called when a teacher deselects a canvas."
+to gbcc-on-deselect [ user-id role ]
+  show "This is called when a user's canvas is deselected."
+  show word user-id " is the unique identifier for this user."
+  if (role = "teacher") [ show "User is a teacher." ]
+  if (role = "student") [ show "User is a student." ]
 end
       </pre>
     </div>
     
     <div class="dict_entry" id="gbcc-on-go">
-      <h3><a>gbcc-on-go<br>gbcc-on-teacher-go</a></h3>
+      <h3><a>gbcc-on-go</a></h3>
       <h4><span class="prim_example">gbcc-on-go [ user-id ]</span>
-        <span class="prim_example">gbcc-on-teacher-go [ user-id ]</span>
         <img alt="Observer Command" src="images/observer.png">
       </h4>
       <p>
@@ -342,15 +320,11 @@ end
         This procedure will be called, continuously, until the canvas is deselected.
       <pre>
 ;; runs continuously
-to gbcc-on-go [user-id]
-  show "This is called when a student's canvas is selected."
-  show "This is called when a teacher's canvas is selected..."
-  show "...as long as there is not a defined gbcc-on-teacher-deselect procedure."
-end
-  
-;; runs continuously
-to gbcc-on-teacher-go [user-id]
-  show "This is called when a teacher's canvas is selected."
+to gbcc-on-go [ user-id role ]
+  show "This is called when a user's canvas is selected using it's forever button."
+  show word user-id " is the unique identifier for this user."
+  if (role = "teacher") [ show "User is a teacher." ]
+  if (role = "student") [ show "User is a student." ]
 end
       </pre>
     </div>

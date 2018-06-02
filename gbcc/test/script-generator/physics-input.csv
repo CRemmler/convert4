@@ -29,8 +29,8 @@ get-friction,(string),(name),(number)
 get-density,(string),(name),(number)
 get-restitution,(string),(name),(number)
 create-line,(string; string), (name; body),
-set-line-relative-endpoints,(string; list; list), (name; point1; point2),
-set-line-endpoints,(string; list; list), (name; point1; point2),
+set-line-relative-endpoints,(string; list), (name; endpoints),
+set-line-endpoints,(string; list), (name; endpoints),
 get-line-relative-endpoints,(string),(name),(list)
 get-line-endpoints,(string),(name),(list)
 create-circle,(string; string),(name; body),
@@ -49,7 +49,7 @@ create-target,(string; string),(name; body),
 set-target-relative-xy,(string; list), (name; center),
 set-target-xy,(string; list), (name; center),
 get-target-relative-xy,(string),(name),(list)
-get-target-center,(string),(name),(list)
+get-target-xy,(string),(name),(list)
 set-body-id,(string; string), (name; body),
 get-body-id,(string),(name),(string)
 create-objects,(list),(data),
@@ -71,4 +71,15 @@ disconnect-who,(number),(who),
 world-on,,,
 world-off,,,
 exists,(string),(name),(boolean)
+get-connected,,,(list)
+reset-ticks,,,
+tick,,,
+repaint,,,
+create-rectangle,(string; string),(name; body),
+set-rectangle-relative-vertices,(string; list), (name; vertices),
+set-rectangle-vertices,(string; list), (name; vertices),
+get-rectangle-relative-vertices,(string),(name),(list)
+get-rectangle-vertices,(string),(name),(list)
+show-object,(string),(name),
+hide-object,(string),(name),
 

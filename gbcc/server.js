@@ -93,13 +93,13 @@ io.on('connection', function(socket){
       allRooms[myRoom].userData[myUserId] = {};
       allRooms[myRoom].userData[myUserId].exists = true;
       allRooms[myRoom].userData[myUserId]["userType"] = myUserType;
+      // send settings to client
+      socket.emit("save settings", {userType: myUserType, userId: myUserId, gallerySettings: config.galleryJs, myRoom: myRoom, school: school});
       if (activityType != "hubnet") { 
         socket.emit("gbcc user enters", {userId: myUserId, userType: myUserType});
         socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
         socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
       }
-      // send settings to client
-      socket.emit("save settings", {userType: myUserType, userId: myUserId, gallerySettings: config.galleryJs, myRoom: myRoom, school: school});
       // join myRoom
       socket.join(school+"-"+myRoom+"-"+myUserType);
       // tell teacher or student to display their interface
@@ -167,6 +167,17 @@ io.on('connection', function(socket){
     }
     schools[school] = allRooms;
 	});
+
+  socket.on("request user data", function() {
+    var school = socket.school;
+    var allRooms = schools[school];
+    var myRoom = socket.myRoom;
+    var myUserId = socket.id.replace("_","").replace("-","");
+    var canvases;
+    if (allRooms[myRoom] != undefined) {
+      socket.emit("accept all user data", {userData: allRooms[myRoom].userData });
+    }
+  });
   
   socket.on("request user broadcast data", function() {
     var school = socket.school;

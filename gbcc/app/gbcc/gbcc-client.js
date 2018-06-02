@@ -75,26 +75,14 @@ jQuery(document).ready(function() {
   });
 
   socket.on("gbcc user enters", function(data) {
-    //console.log("enters "+data.userType);
     if (data.userData) {
       userData[data.userId] = data.userData;
     }
-    if (data.userType === "teacher" && procedures.gbccOnTeacherEnter != undefined) 
-    {
-      session.run('gbcc-on-teacher-enter "'+data.userId+'"');
-    } else {
-      if (procedures.gbccOnEnter != undefined) { session.run('gbcc-on-enter "'+data.userId+'"'); }
-    }
+    session.run('gbcc-on-enter "'+data.userId+'" "'+data.userType+'"');
   });
   
   socket.on("gbcc user exits", function(data) {
-    if (data.userType === "teacher" && procedures.gbccOnTeacherExit != undefined) {
-        session.run('gbcc-on-teacher-exit ["'+data.userId+'"]');
-    } else {
-      if (procedures.gbccOnExit != undefined) {
-        session.run('gbcc-on-exit ["'+data.userId+'"]');
-      }
-    }
+    session.run('gbcc-on-exit "'+data.userId+'" "'+data.userType+'"');
   });
 
   // display admin interface
@@ -149,7 +137,8 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept user data", function(data) {
-    if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab").hasClass("selected"))) {
+    //console.log("accept user data", data);
+    if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
       if (userData[data.userId] === undefined) {
         userData[data.userId] = {};
       }
@@ -157,22 +146,22 @@ jQuery(document).ready(function() {
     }
   });
   
+  socket.on("accept all user data", function(data) {
+    //console.log("accept ALL user data");
+    if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
+      userData = data.userData;
+    }
+  });
+
   socket.on("accept user action", function(data) {
     var userType = data.userType;
+    //console.log(data.userId+" "+userId+" "+userType);
     switch (data.status) {
       case "select":
-        if (userType === "teacher" && procedures.gbccOnTeacherSelect != undefined) {
-          session.run('gbcc-on-teacher-select "'+data.userId+'"');    
-        } else {
-          if (procedures.gbccOnSelect != undefined) { session.run('gbcc-on-select "'+data.userId+'"');}
-        }
+        session.run('gbcc-on-select "'+data.userId+'" "'+data.userType+'"');
         break;
       case "deselect":
-        if (userType === "teacher" && procedures.gbccOnTeacherDeselect != undefined) {
-          session.run('gbcc-on-teacher-deselect "'+data.userId+'"');    
-        } else {
-          if (procedures.gbccOnDeselect != undefined) { session.run('gbcc-on-deselect "'+data.userId+'"');}
-        }
+        session.run('gbcc-on-deselect "'+data.userId+'" "'+data.userType+'"');
         break;
       case "forever-deselect":
         delete foreverButtonCode[data.userId];

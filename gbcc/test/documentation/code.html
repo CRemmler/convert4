@@ -1,0 +1,309 @@
+<html>
+	<head>
+		<title>GbCC 3.0 Code Snippets</title>
+		<link rel="stylesheet" href="css/netlogo.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="css/style3.css" />
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<style>
+			img {border-radius:0%;}
+			img.turtle {width:60px; height: 60px; border: 6px solid #ddd; border-radius:50%; cursor:pointer;}
+	    /*
+			.selected#yellow1 { border:6px solid yellow; }
+	    .selected#red1 { border:6px solid red; }
+	    .selected#blue1 { border:6px solid blue; }
+	    .selected#purple1 { border:6px solid purple; }
+	    .selected#orange1 { border:6px solid  #ff8000; }
+	    .selected#pink1 { border:6px solid deeppink; }
+	    .selected#white1 {border: 6px solid green; }
+			*/
+			.selected#yellow1 { border:6px solid yellow; }
+	    .selected#red1 { border:6px solid yellow; }
+	    .selected#blue1 { border:6px solid yellow; }
+	    .selected#purple1 { border:6px solid yellow; }
+	    .selected#orange1 { border:6px solid yellow; }
+	    .selected#pink1 { border:6px solid yellow; }
+	    .selected#white1 {border: 6px solid yellow; }
+			table {text-align:center;}
+			#menu {padding-top:5px; padding-bottom:0px}
+			.spacer { height:72px;}
+		</style>
+		<script>
+			jQuery(document).ready(function() {
+				$(".turtle").click(function() {
+					var id = $(this).attr("id");
+					$(".turtle").removeClass("selected");
+					$(this).addClass("selected");
+					$(".container").hide();
+					$(".container."+id).show();
+				});
+				$("#yellow1").click();
+			});
+		</script>
+	</head>
+	<body>
+		<h1>NetLogo GbCC 3.0 Code Snippets</h1>
+		<div id="menu">
+			<img src="./images/yellow-turtle.png" class="turtle" id="yellow1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/pink-turtle.png" class="turtle" id="pink1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/blue-turtle.png" class="turtle" id="blue1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/white-turtle.png" class="turtle" id="white1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/purple-turtle.png" class="turtle" id="purple1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/orange-turtle.png" class="turtle" id="orange1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/red-turtle.png" class="turtle" id="red1">
+		</div>
+		<div class="container yellow1">
+			<h2>Hello World</h2>
+			<img src="./images/code-yellow-1.png" style="width:600px">
+			<h2>NetLogo Code</h2>
+<pre>
+to gbcc-on-enter [ user-id role ]
+  show (word "Hello world. User " user-id " entered.")
+end
+</pre>
+		</div>
+		<div class="container pink1">
+			<h2>Share Global Variables</h2>
+			<img src="./images/code-pink-2.png" style="height:150px">
+			<h2>NetLogo Code</h2>
+<pre>
+to share
+  gbcc:broadcast-plot "my-plot" "populations"
+  gbcc:set-globals
+end
+
+to gbcc-on-select [ user-id role ]
+  gbcc:restore-globals-from-user user-id
+end
+</pre>
+		</div>
+		<div class="container white1">
+			<h2>Use Direction Buttons to Move Turtle and it's GeoGebra Point</h2>
+			<img src="./images/code-white-2.png" style="height:150px">
+			<h2>NetLogo Code</h2>
+<pre>
+to setup
+  create-turtles 1 [
+    set my-turtle-number who
+    set patch-coords (list xcor ycor)
+    set graph-coords graph:patch-to-graph patch-coords
+    graph:create-point "my-point" graph-coords
+  ]
+end
+
+to go-up
+  go-forward 0
+end
+
+to go-down
+  go-forward 180
+end
+
+to go-left
+  go-forward 270
+end
+
+to go-right
+  go-forward 90
+end
+
+to go-forward [ direction ]
+  ask turtle my-turtle-number [
+    set heading direction
+    fd 1
+    set graph-coords graph:patch-to-graph (list xcor ycor)
+    graph:set-xy "my-point" graph-coords
+  ]
+end
+</pre>
+		</div>
+		<div class="container blue1">
+			<h2>Share Code and Run It</h2>
+			<img src="./images/code-blue-2.png" style="height:150px">
+			<h2>NetLogo Code</h2>
+<pre>
+to share
+  gbcc:broadcast-view "my-view"
+  gbcc:set "code" my-code
+end
+
+to gbcc-on-select [ user-id role ]
+  set code-example gbcc:get-from-user user-id "code"
+end
+
+to run-code
+  run code-example 
+end
+</pre>
+		</div>
+		<div class="container purple1">
+			<h2>Turtles to Walk Around at the Same Time</h2>
+			<img src="./images/code-purple-2.png" style="height:150px">
+			<h2>NetLogo Code</h2>
+<pre>
+to setup 
+  create-turtles 1 [ 
+    set my-turtle-number who 
+    gbcc:set "shape" shape
+    gbcc:set "color" color	
+  ]
+end
+
+to go-up
+  go-forward 0
+end
+
+to go-down
+  go-forward 180
+end
+
+to go-left
+  go-forward 270
+end
+
+to go-right
+  go-forward 90
+end
+
+to go-forward [ direction ]
+  ask turtle my-turtle-number [
+    set heading direction
+    fd 1
+    gbcc:set "xcor" xcor
+    gbcc:set "ycor" ycor 
+  ]
+end
+
+to gbcc-on-select [ user-id role ]
+  if (user-id != gbcc:who-am-i) [	
+    create-turtles 1 [
+      set id user-id
+      set shape gbcc:get-from-user "shape"
+      set color gbcc:get-from-user "color"
+      set xcor gbcc:get-from-user "xcor"
+      set ycor gbcc:get-from-user "ycor"
+    ]
+  ]
+end
+
+to gbcc-on-deselect [ user-id role ]
+  if (user-id != gbcc:who-am-i) [
+    ask turtles with [ id = user-id ] [ die ]
+  ]
+end
+
+to gbcc-on-go [ user-id role ]
+  ask turtles with [ id = user-id ] [
+    set xcor gbcc:get-from-user "xcor"
+    set ycor gbcc:get-from-user "ycor"
+  ] 
+end
+</pre>
+		</div>
+		<div class="container red1">
+			<h2>Add forces to a bristlebot</h2>
+			<img src="./images/code-red-2.png" style="height:150px">
+			<h2>NetLogo Code</h2>
+<pre>
+to setup
+  physics:create-rectangle "belly" "my-bristlebot"
+  physics:set-body-xy "my-bristlebot" [ 5 5 ]
+  physics:set-rectangle-relative-coords "belly" [ 0 0 ] [ 4 4 ]
+  physics:create-polygon "head" "my-bristlebot"
+  physics:set-polygon-coords "head" [ [ -1 -1 ] [ 0 0 ] [ 1 1 ] ]
+  physics:set-behavior "my-bristlebot" "dynamic"
+  physics:create-target "target-0" "my-bristlebot"
+  physics:set-target-relative-xy "target" [ 0 0 ]
+end
+
+to apply-force 
+  physics:apply-force-relative-angle "target-0" my-angle my-force
+end
+
+to shift-target-up
+  let center physics:get-target-relative-center "target-0"
+  physics:set-target-relative-center "target-0" (list item 0 center (item 0 center + 1) )
+end
+
+to shift-target-down
+  let center physics:get-target-relative-center "target-0"
+  physics:set-target-relative-center "target-0" (list item 0 center (item 0 center - 1) 
+end
+
+to go
+  every 0.1 [
+    tick
+  ]
+end
+</pre>
+		</div>
+		<div class="container orange1">
+			<h2>Turtles Explore Small Part of Big World</h2>
+			<img src="./images/code-orange-2.png" style="height:150px">
+			<h2>NetLogo Code</h2>
+<pre>
+to gbcc-on-enter [ user-id role ]
+  if (role = "student") [
+    image:zoom 5 
+    if (user-id = gbcc:who-am-i) [
+      create-turtles 1 [
+        set my-turtle-number who
+        setxy random-xcor random-ycor
+        set id user-id
+        gbcc:set "xcor" xcor
+        gbcc:set "ycor" ycor
+        gbcc:set "color" color
+        gbcc:set "exists" true
+        set pcolor color + 2
+      ]
+      follow turtle my-turtle-number
+    ]		
+  ]
+  if (user-id != gbcc:who-am-i ) [
+    if (gbcc:get-from-user "exists" = true) [
+    	create-turtles 1 [ 
+      	set id user-id 
+      	set xcor gbcc:get-from-user "xcor" 
+      	set ycor gbcc:get-from-user "ycor" 
+      	set color gbcc:get-from-user "color"
+        set pcolor color + 2
+      ]
+    ]
+  ]
+end
+
+to go-up
+  go-forward 0
+end
+
+to go-down
+  go-forward 180
+end
+
+to go-left
+  go-forward 270
+end
+
+to go-right
+  go-forward 90
+end
+
+to go-forward [ direction ]
+  ask turtle my-turtle-number [
+    set heading direction
+    fd 1
+    gbcc:set "xcor" xcor
+    gbcc:set "ycor" ycor 
+    set pcolor color
+  ]
+end
+
+to gbcc-on-go [ user-id role ]
+  every 0.1 [
+    if (role = "student") [
+      ask turtles with [ id = user-id ] [
+        set xcor gbcc:get-from-user "xcor"
+        set ycor gbcc:get-from-user "ycor"
+        set pcolor color
+      ]
+    ]
+  ]
+end
+</pre>
+		</div>
+	</body>
+</html>

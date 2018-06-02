@@ -852,6 +852,7 @@ Physicsb2 = (function() {
         body.SetType(value);
         break;
       case "bodyIdBodyMode": 
+        console.log("yep");
         var newBodyId = value;
         var bodyId = body.GetUserData().id;
         body.GetUserData().id = newBodyId;

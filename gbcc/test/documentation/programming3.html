@@ -25,7 +25,7 @@
     .wide { width: 700px; }
     .normal { width: 350px; }		
     img { margin-left: 1.5em; border-radius:0px;}	
-    .code {border: 6px solid yellow; padding-left: 5px; font-size: 14px; display:inline-block; margin-left: 1.5em}
+    .code {padding:5px; border: 6px solid yellow; padding-left: 5px; font-size: 14px; display:inline-block; margin-left: 1.5em}
     
     </style>
   </head>
@@ -42,28 +42,18 @@
     <h2>User Event Listeners</h2>
       <p>When certain <b>events</b> occur, then <b>Reserved Procedures</b> are called.
         Models do not require Reserved Procedures. </p>
-      <p><b>Teacher Reserved Procedures</b> are only called if the user is a teacher.
-      <b>User Reserved Procedures</b> are called on any user, (unless
-        that user is a teacher and there is an existing Teacher Reserved Procedure for that event).</p>
-        
-
-    
-    <h3><input id="teacherEntersRoom" type="checkbox"> Teacher Enters Room</h3>
-    <div id="teacherEntersRoomContainer" class="initHidden">
-      <div><img src="./images/on-teacher-enter.png"></div>
-      <div class="code"> to gbcc-on-teacher-enter [ teacher-id ] <br> ;; show (word "teacher" teacher-id "entered")<br>end</div>
-    </div>
+      <p>Reserved Procedures include two arguments: a <b>user-id</b> (unique identifier for a user) and <b>role</b> (either "teacher" or "student").
   
     <h3><input id="userEntersRoom" type="checkbox"> User Enters Room</h3>
       <div id="userEntersRoomContainer" class="initHidden">
       <div><img src="./images/on-enter.png"></div>
-      <div class="code"> to gbcc-on-enter [ user-id ] <br> ;; show (word "user" user-id "entered")<br>end</div>
+      <div class="code"> to gbcc-on-enter [ user-id role ] <br>&nbsp; ;; user-id identifies who entered<br>&nbsp; ;; role is either teacher or student"<br>end</div>
     </div>
     
     <h3><input id="userExitsRoom" type="checkbox"> User Exits Room</h3>
     <div id="userExitsRoomContainer" class="initHidden">
       <div><img src="./images/on-exit.png"></div>
-      <div class="code"> to gbcc-on-exit [ user-id ] <br> ;; show (word "user" user-id "exited")<br>end</div>
+      <div class="code"> to gbcc-on-exit [ user-id role ] <br>&nbsp; ;; user-id identifies who exited<br>&nbsp; ;; role is either teacher or student"<br>end</div>
     </div>
     
     
@@ -102,20 +92,17 @@
     <h3><input id="onSelect" type="checkbox"> Select Canvas</h3>
     <div id="onSelectContainer" class="initHidden">
       <div><img src="./images/on-select.png"></div>
-      <div class="code"> to gbcc-on-select [ user-id ] <br> ;; show (word "select canvas from " user-id)<br>end</div>
-      <br><br><div class="code"> to gbcc-on-teacher-select [ teacher-id ] <br> ;; show (word "select canvas from " teacher-id)<br>end</div>
+      <div class="code"> to gbcc-on-select [ user-id role ] <br>&nbsp; ;; user-id identifies whose canvas was selected<br>&nbsp; ;; role is either teacher or student"<br>end</div>
     </div>
     <h3><input id="onDeselect" type="checkbox"> Deselect Canvas</h3>
     <div id="onDeselectContainer" class="initHidden">
       <div><img src="./images/on-deselect.png"></div>
-      <div class="code"> to gbcc-on-deselect [ user-id ] <br> ;; show (word "deselect canvas from " user-id)<br>end</div>
-      <br><br><div class="code"> to gbcc-on-teacher-deselect [ teacher-id ] <br> ;; show (word "deselect canvas from " teacher-id)<br>end</div>
+      <div class="code"> to gbcc-on-deselect [ user-id role ] <br>&nbsp; ;; user-id identifies whose canvas was deselected<br>&nbsp; ;; role is either teacher or student"<br>end</div>
     </div>
     <h3><input id="onGo" type="checkbox"> Forever Select Canvas</h3>
     <div id="onGoContainer" class="initHidden">
       <div><img src="./images/on-go.png"></div>
-      <div class="code"> to gbcc-on-go[ teacher-id ] <br> ;; show (word "forever select canvas from" user-id") <br>end</div>
-      <br><br><div class="code"> to gbcc-on-teacher-go[ teacher-id ] <br> ;; show (word "forever select canvas from" teacher-id") <br>end</div>0
+      <div class="code"> to gbcc-on-go [ user-id role ] <br>&nbsp; ;; user-id identifies whose canvas was forever selected<br>&nbsp; ;; role is either teacher or student"<br>end</div>
     </div>
 
     <h2>Gallery Features</h2>
