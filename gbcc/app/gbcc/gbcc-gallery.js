@@ -635,6 +635,10 @@ Gallery = (function() {
     }
   }
   
+  function whoAmI() {
+    return myUserId;
+  }
+  
   return {
     displayCanvas: displayCanvas,
     broadcastView: broadcastView,
@@ -642,7 +646,8 @@ Gallery = (function() {
     broadcastText: broadcastText,
     broadcastAvatar: broadcastAvatar,
     clearBroadcast: clearBroadcast,
-    setupGallery: setupGallery
+    setupGallery: setupGallery,
+    whoAmI: whoAmI
   };
 
 })();
