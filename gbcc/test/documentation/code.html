@@ -7,7 +7,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<style>
 			img {border-radius:0%;}
-			img.turtle {width:60px; height: 60px; border: 6px solid #ddd; border-radius:50%; cursor:pointer;}
+			img.turtle {width:60px; height: 60px; border: 4px solid #ddd; cursor:pointer;}
 	    /*
 			.selected#yellow1 { border:6px solid yellow; }
 	    .selected#red1 { border:6px solid red; }
@@ -17,16 +17,20 @@
 	    .selected#pink1 { border:6px solid deeppink; }
 	    .selected#white1 {border: 6px solid green; }
 			*/
-			.selected#yellow1 { border:6px solid yellow; }
-	    .selected#red1 { border:6px solid yellow; }
-	    .selected#blue1 { border:6px solid yellow; }
-	    .selected#purple1 { border:6px solid yellow; }
-	    .selected#orange1 { border:6px solid yellow; }
-	    .selected#pink1 { border:6px solid yellow; }
-	    .selected#white1 {border: 6px solid yellow; }
+			.selected#yellow1 { border:4px solid orange; }
+	    .selected#red1 { border:4px solid orange; }
+	    .selected#blue1 { border:4px solid orange; }
+	    .selected#purple1 { border:4px solid orange; }
+	    .selected#orange1 { border:4px solid orange; }
+	    .selected#pink1 { border:4px solid orange; }
+	    .selected#white1 {border: 4px solid orange; }
+	    .selected#gray1 {border: 4px solid orange; }
 			table {text-align:center;}
 			#menu {padding-top:5px; padding-bottom:0px}
-			.spacer { height:72px;}
+			.spacer { height:72px;border:none;}
+			span.blue {color: blue;border:none;}
+			span.red {color: red;border:none;}
+			span.green {color:darkviolet;border:none;}
 		</style>
 		<script>
 			jQuery(document).ready(function() {
@@ -44,7 +48,14 @@
 	<body>
 		<h1>NetLogo GbCC 3.0 Code Snippets</h1>
 		<div id="menu">
-			<img src="./images/yellow-turtle.png" class="turtle" id="yellow1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/pink-turtle.png" class="turtle" id="pink1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/blue-turtle.png" class="turtle" id="blue1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/white-turtle.png" class="turtle" id="white1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/purple-turtle.png" class="turtle" id="purple1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/orange-turtle.png" class="turtle" id="orange1"><img src="./images/gray-turtle.png" class="spacer"><img src="./images/red-turtle.png" class="turtle" id="red1">
+			<img src="./images/yellow-turtle.png" class="turtle" id="yellow1">
+			<img src="./images/pink-turtle.png" class="turtle" id="pink1">
+			<img src="./images/blue-turtle.png" class="turtle" id="blue1">
+			<img src="./images/white-turtle.png" class="turtle" id="white1">
+			<img src="./images/purple-turtle.png" class="turtle" id="purple1">
+			<img src="./images/orange-turtle.png" class="turtle" id="orange1">
+			<img src="./images/red-turtle.png" class="turtle" id="red1">
+			<img src="./images/gray-turtle.png" class="turtle" id="gray1">
 		</div>
 		<div class="container yellow1">
 			<h2>Hello World</h2>
@@ -77,7 +88,7 @@ end
 			<h2>NetLogo Code</h2>
 <pre>
 to setup
-	;; note choose one of the following
+  ;; note choose one of the following
   graph:show-graph [ ] ;; if you want to show the default graph
   graph:import-file "geogebra-default.ggb" ;; if you want to a specific ggb file
 end 
@@ -87,7 +98,7 @@ to create-turtle-and-point
     set my-turtle-number who
     set patch-coords (list xcor ycor)
     set graph-coords graph:patch-to-graph patch-coords
-		;; point names must only contain letters
+    ;; point names must only contain letters
     graph:create-point "mypoint" graph-coords
   ]
 end
@@ -138,7 +149,7 @@ end
 </pre>
 		</div>
 		<div class="container purple1">
-			<h2>Turtles to Walk Around at the Same Time</h2>
+			<h2>Turtles Walk Around at the Same Time</h2>
 			<img src="./images/code-purple-2.png" style="height:150px">
 			<h2>NetLogo Code</h2>
 <pre>
@@ -205,7 +216,7 @@ end
 		<div class="container red1">
 			<h2>Add forces to a bristlebot</h2>
 			<img src="./images/code-red-2.png" style="height:150px">
-			<h2>NetLogo Code</h2>
+			<h2>NetLogo Code (NOT TESTED)</h2>
 <pre>
 to setup
   physics:create-rectangle "belly" "my-bristlebot"
@@ -245,31 +256,44 @@ end
 			<h2>NetLogo Code</h2>
 <pre>
 to gbcc-on-enter [ user-id role ]
-  if (role = "student") [
-    image:zoom 5 
-    if (user-id = gbcc:who-am-i) [
-      create-turtles 1 [
-        set my-turtle-number who
-        setxy random-xcor random-ycor
-        set id user-id
-        gbcc:set "xcor" xcor
-        gbcc:set "ycor" ycor
-        gbcc:set "color" color
-        gbcc:set "exists" true
-        set pcolor color + 2
-      ]
-      follow turtle my-turtle-number
-    ]		
+  if (user-id = gbcc:who-am-i and role = "student") [
+    image:zoom 5
+    create-turtles 1 [
+      set id user-id
+      set my-turtle-number who
+      setxy random-pxcor random-pycor
+      set size 2
+      set shape "circle"
+      gbcc:set "xcor" xcor
+      gbcc:set "ycor" ycor
+      gbcc:set "color" color
+      set pcolor color + 2
+      gbcc:broadcast-avatar shape color ""
+    ]
+    follow turtle my-turtle-number
   ]
   if (user-id != gbcc:who-am-i ) [
-    if (gbcc:get-from-user "exists" = true) [
-    	create-turtles 1 [ 
-      	set id user-id 
-      	set xcor gbcc:get-from-user "xcor" 
-      	set ycor gbcc:get-from-user "ycor" 
-      	set color gbcc:get-from-user "color"
-        set pcolor color + 2
+    create-turtles 1 [ 
+      set id user-id
+      set size 2
+      set shape "circle"
+      ht 
+      set setup? false
+    ]
+  ]
+end
+
+to gbcc-on-select [ user-id role ]
+  if (user-id != gbcc:who-am-i ) [
+    ask turtles with [ id = user-id ] [ 
+      if (not setup?) [ 
+        set setup? true 
+        set color gbcc:get-from-user id "color"
+        st
       ]
+      set xcor gbcc:get-from-user user-id "xcor" 
+      set ycor gbcc:get-from-user user-id "ycor" 
+      set pcolor color + 2
     ]
   ]
 end
@@ -296,22 +320,85 @@ to go-forward [ direction ]
     fd 1
     gbcc:set "xcor" xcor
     gbcc:set "ycor" ycor 
-    set pcolor color
+    set pcolor color + 2
   ]
 end
 
 to gbcc-on-go [ user-id role ]
-  every 0.1 [
-    if (role = "student") [
-      ask turtles with [ id = user-id ] [
-        set xcor gbcc:get-from-user "xcor"
-        set ycor gbcc:get-from-user "ycor"
-        set pcolor color
-      ]
+  if (role = "student") [
+    ask turtles with [ id = user-id ] [
+      set xcor gbcc:get-from-user user-id "xcor"
+      set ycor gbcc:get-from-user user-id "ycor"
+      set pcolor color + 2
     ]
   ]
 end
 </pre>
 		</div>
+		<div class="container gray1">
+			<h2>Disease</h2>
+			<img src="./images/code-gray-2.png" style="height:150px">
+			<h2>NetLogo Code (NOT TESTED)</h2>
+<pre>
+
+;; ------- Users run their own Disease model, with actions from other users.
+to go-up
+  ask turtle my-turtle-number [ set heading 0 fd 1 gbcc:set "ycor" ycor ]
+end
+
+to user-listen-to-user [ user-id ]
+  ask turtles with [ id = user-id ] [ set ycor gbcc:get-from-user user-id "ycor" ]
+end
+
+;; ------- Students participate in class Disease model (optional: teacher shares current state of world)
+to go-up
+  ask turtle my-turtle-number [ set heading 0 fd 1 gbcc:set "ycor" ycor ]
+end
+
+to teacher-listen-to-student [ user-id ]
+  ask turtles with [ id = user-id ] [ set ycor gbcc:get-from-user user-id "ycor" ]
+end
+
+to student-listen-to-teacher ;; optional, if students don't have their own view
+  ask turtles [ set ycor gbcc:get-from-user id "ycor" ]
+end
+
+;; ------ Students participate in class Disease model (teacher shares stream of updates to world)
+to go-up
+  <span class='green'>gbcc:add-to-stream "up" (my-user-id 1)</span>
+end
+
+to teacher-listen-to-student [ user-id ]
+  let input <span class='green'>gbcc:get-stream-from-user-id user-id "up"</span>
+  let output [ ]
+  foreach input [ [ turtle-id step ] -> 
+    ask turtles with [ id = turtle-id ] [ 
+      set heading 0 
+      fd step
+      set output lput (list turtle-id ycor) output
+      <span class='blue'>gbcc:set (word id "-ycor") ycor</span>
+    ] 
+  ]
+  foreach student-user-id-list [ student-id ->
+    <span class='red'>gbcc:add-to-stream (word student-id "-ycor") output</span>
+  ]
+end
+
+to student-setup-listen-to-teacher [
+  ask turtles [ set ycor <span class='blue'>gbcc:get-from-user teacher-user-id (word id "-ycor")</span> ]
+]
+
+to student-listen-to-teacher [
+  let input <span class='red'>gbcc:get-stream-from-user teacher-user-id (word my-user-id "-ycor")</span>
+  foreach input [ [ turtle-id turtle-ycor ] ->
+    ask turtles with [ id = turtle-id ] [ set ycor turtle-ycor ]
+  ]
+]
+</pre>
+	</div>
+		
+		
+		
+		
 	</body>
 </html>

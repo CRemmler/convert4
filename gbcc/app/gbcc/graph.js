@@ -17,20 +17,17 @@ Graph = (function() {
     if ($("#appletContainer").length === 0) {
       viewWidth = parseFloat($(".netlogo-canvas").css("width"));
       viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-      var spanText = "<div class='graph-controls'>";
-      spanText +=       "<i id='graphOn' class='fa fa-toggle-on' aria-hidden='true'></i>";
-      spanText +=       "<i id='graphOff' class='fa fa-toggle-off' aria-hidden='true'></i>";
-      spanText +=    "</div>";
-      $(".netlogo-widget-container").append(spanText);
+
       spanText =    "<div id='appletContainer'></div>";
-      $(".netlogo-widget-container").append(spanText);
-      $(".graph-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) + 8 + "px");
-      $(".graph-controls").css("top", $(".netlogo-view-container").css("top"));
+      $(".netlogo-widget-container").prepend(spanText);
+      $(".graph-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 145 + "px");
+      $(".graph-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) - 25 + "px");
       $("#appletContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 5 + "px");
       $("#appletContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 4 + "px");
       $("#appletContainer").css("left", $(".netlogo-view-container").css("left"));
       $("#appletContainer").css("top", $(".netlogo-view-container").css("top"));
       $("#appletContainer").css("display", "none");
+      $(".netlogo-view-container").css("pointer-events","none");
       setupEventListeners();
     }
   }
@@ -44,7 +41,7 @@ Graph = (function() {
       $(".graph-controls").css("display","inline-block");
       updateGraph("graphOn");
       ggbApplet.setErrorDialogsActive(false);  
-    }, 2000);
+    }, 1000);
   }
   
   function setupEventListeners() {
@@ -56,6 +53,12 @@ Graph = (function() {
       updateGraph("graphOff");
     });
     $(".netlogo-view-container").css("background-color","transparent");   
+    $(".graph-controls").on("input", "#graphOpacity", function() {
+      $("#appletContainer").css("opacity",($(this).val() / 100));
+    });
+    $("#graphTest").on("input", "#graphOpacity2", function() {
+      $("#appletContainer").css("opacity",($(this).val() / 100));
+    });
   }
   
   ////// DISPLAY GRAPH //////
@@ -84,14 +87,10 @@ Graph = (function() {
   
   function updateGraph(state) {
     if (state === "graphOff") {
-      $("#graphOff").removeClass("selected");
-      $("#graphOn").addClass("selected");
       $("#appletContainer").addClass("selected");
       $(".netlogo-view-container").css("z-index","0");
       drawPatches = true;
     } else {
-      $("#graphOn").removeClass("selected");
-      $("#graphOff").addClass("selected");
       $("#appletContainer").removeClass("selected");
       $(".netlogo-view-container").css("z-index","1");
       drawPatches = false;

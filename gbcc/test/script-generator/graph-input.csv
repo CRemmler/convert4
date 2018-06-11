@@ -2,10 +2,12 @@ prim-name,input-type,input-name,output-type
 hide-graph, , ,
 show-graph,(list),(settings),
 set-data,(string),(data),
-import-file,(string),(filename),
+import-ggb,(string),(filename),
 get-data, , ,(string)
 export-file,,,
 create-point,(string; list),(name; center),
+set-opacity,(number),(opacity),
+get-opacity,,,(number),
 create-points,(list),(data),
 get-points,,,(list)
 delete-points,,,
@@ -32,8 +34,9 @@ graph-to-patch,(list),(coords),(list)
 patch-to-graph,(list),(coords),(list)
 eval-command,(string),(command),
 eval-reporter,(string),(command),(wildcard)
-graph-on,,,
-graph-off,,,
 get-points-string,,,(string)
-set-coord-system,(number;number;number;number;),(xmin;xmax;ymin;ymax;),
-set-fixed,(string;boolean),(name,fixed),
+set-coord-system,(number;number;number;number),(xmin;xmax;ymin;ymax),
+set-fixed,(string;boolean),(name;fixed),
+import-world,(string),(filename),
+export-world,,,
+

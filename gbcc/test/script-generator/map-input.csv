@@ -25,6 +25,11 @@ delete-marker,(string),(name),
 delete-markers,,,
 latlng-to-patch,(list),(coords),(list)
 patch-to-latlng,(list),(coords),(list)
-map-on,,,
-map-off,,,
 exists,(string),(name),(boolean)
+create-path,(string;list),(name;vertices),
+get-path,(string),(name),(list)
+hide-path,(string),(name),
+show-path,(string),(name),
+delete-path,(string),(name),
+import-world,(string),(filename),
+export-world,,,

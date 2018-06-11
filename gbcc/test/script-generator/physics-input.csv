@@ -73,13 +73,17 @@ world-off,,,
 exists,(string),(name),(boolean)
 get-connected,,,(list)
 reset-ticks,,,
-tick,,,
+tick,,,(list)
 repaint,,,
 create-rectangle,(string; string),(name; body),
-set-rectangle-relative-vertices,(string; list), (name; vertices),
-set-rectangle-vertices,(string; list), (name; vertices),
-get-rectangle-relative-vertices,(string),(name),(list)
-get-rectangle-vertices,(string),(name),(list)
+set-rectangle-relative-corners,(string; list), (name; vertices),
+set-rectangle-corners,(string; list), (name; vertices),
+get-rectangle-relative-corners,(string),(name),(list)
+get-rectangle-corners,(string),(name),(list)
 show-object,(string),(name),
 hide-object,(string),(name),
-
+show-objects,,,
+hide-objects,,,
+import-world,(string),(filename),
+export-world,,,
+set-rectangle-patch,(list),(coords),
