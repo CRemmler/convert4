@@ -36,6 +36,9 @@
           return _this.updateWidgets();
         };
       })(this)));
+      if (widget.currentValue != null) {
+        world.observer.setGlobal(widget.variable, widget.currentValue);
+      }
       this.ractive.get('widgetObj')[id] = widget;
       this.ractive.update('widgetObj');
       this.ractive.findAllComponents("").find(function(c) {
@@ -202,7 +205,7 @@
             if (isntValidValue) {
               return 'N/A';
             } else {
-              if (typeof precision !== "undefined" && precision !== null) {
+              if (widget.precision != null) {
                 return NLMath.precision(value, widget.precision);
               } else {
                 return value;

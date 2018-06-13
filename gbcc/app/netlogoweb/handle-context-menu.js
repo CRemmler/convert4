@@ -59,6 +59,7 @@
       });
       if (theEditFormIsntUp) {
         ref = c == null ? [a, b] : [b, c], (ref1 = ref[0], component = ref1.component), (ref2 = ref[1], pageX = ref2.pageX, pageY = ref2.pageY);
+        ractive.fire('deselect-widgets');
         this.findComponent('contextMenu').fire('reveal-thineself', component, pageX, pageY);
         return false;
       } else {

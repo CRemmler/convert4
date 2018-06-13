@@ -47,13 +47,17 @@
       editForm: SwitchEditForm
     },
     eventTriggers: function() {
+      var recompileEvent;
+      recompileEvent = this.findComponent('editForm').get('amProvingMyself') ? this._weg.recompileLite : this._weg.recompile;
       return {
-        variable: [this._weg.recompile, this._weg.rename]
+        variable: [recompileEvent, this._weg.rename]
       };
     },
-    template: "{{>switch}}\n<editForm idBasis=\"{{id}}\" display=\"{{widget.display}}\" />\n{{>editorOverlay}}",
+    minWidth: 35,
+    minHeight: 33,
+    template: "{{>editorOverlay}}\n{{>switch}}\n<editForm idBasis=\"{{id}}\" display=\"{{widget.display}}\" />",
     partials: {
-      "switch": "<label id=\"{{id}}\" class=\"netlogo-widget netlogo-switcher netlogo-input{{#isEditing}} interface-unlocked{{/}}\" style=\"{{dims}}\">\n  <input type=\"checkbox\" checked=\"{{ widget.currentValue }}\" {{# isEditing }} disabled{{/}} />\n  <span class=\"netlogo-label\">{{ widget.display }}</span>\n</label>"
+      "switch": "<label id=\"{{id}}\" class=\"netlogo-widget netlogo-switcher netlogo-input {{classes}}\" style=\"{{dims}}\">\n  <input type=\"checkbox\" checked=\"{{ widget.currentValue }}\" {{# isEditing }} disabled{{/}} />\n  <span class=\"netlogo-label\">{{ widget.display }}</span>\n</label>"
     }
   });
 

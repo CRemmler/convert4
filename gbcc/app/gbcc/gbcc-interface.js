@@ -209,16 +209,22 @@ Interface = (function() {
   
   function addTeacherControls() {
     // add show/hide client view or tabs
+    var viewWidth = parseFloat($(".netlogo-canvas").css("width"));
+    var viewHeight = parseFloat($(".netlogo-canvas").css("height"));
     var spanText;
     if (activityType === "hubnet") {
-      $(".netlogo-view-container").append("<span class='teacher-controls' style='float:right'><input id='enableMirroring' checked type='checkbox'>Enable Mirroring</span>");
+      $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' checked type='checkbox'>Enable Mirroring</span>");
     } else {
-      spanText = "<span class='teacher-controls' style='float:right'>Enable:";
+      spanText = "<span class='teacher-controls hidden' style='float:right'>Enable:";
       spanText += "<input id='enableView' checked type='checkbox'>View";
       spanText += "<input id='enableTabs' checked type='checkbox'>Tabs";
       spanText += "<input id='enableWidgets' checked type='checkbox'>Widgets</span>";
-      $(".netlogo-view-container").append(spanText);
+      $(".netlogo-widget-container").append(spanText);
     }
+    $(".teacher-controls").css("position","absolute");
+    $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 200 + "px");
+    $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-canvas").css("height")) + "px");
+
     $(".netlogo-view-container").css("width", $(".netlogo-view-container canvas").css("width"));
     $("#enableView").click(function() {
       socket.emit('teacher requests UI change', {'display': $(this).prop("checked"), 'type': 'view'});
@@ -238,6 +244,7 @@ Interface = (function() {
   function showItems(min, max) {
     $(".netlogo-widget").addClass("hidden");
     $(".netlogo-model-title").removeClass("hidden");
+    $(".teacher-controls").removeClass("hidden");
     for (var i=min; i<=max; i++) {
       $("#"+items[i]).removeClass("hidden");
     }

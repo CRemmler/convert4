@@ -34,7 +34,7 @@
         }
       }
     },
-    template: "<div class=\"netlogo-model-masthead\">\n  <div class=\"flex-row\" style=\"justify-content: center; height: 30px; line-height: 30px;\">\n    <h2 id=\"netlogo-title\"\n        on-contextmenu=\"@this.fire('show-context-menu', @event)\"\n        class=\"netlogo-widget netlogo-model-title{{#isEditing}} interface-unlocked{{/}}\"\n        on-dblclick=\"edit-title\">\n      {{ title }}\n    </h2>\n  </div>\n</div>"
+    template: "<div class=\"netlogo-model-masthead\">\n  <div class=\"flex-row\" style=\"justify-content: center; height: 30px; line-height: 30px;\">\n    <h2 id=\"netlogo-title\"\n        on-contextmenu=\"@this.fire('show-context-menu', @event)\"\n        class=\"netlogo-widget netlogo-model-title {{classes}}{{# isEditing }} interface-unlocked initial-color{{/}}\"\n        on-dblclick=\"edit-title\">\n      {{ title }}\n    </h2>\n  </div>\n</div>"
   });
 
 }).call(this);

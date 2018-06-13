@@ -8,6 +8,7 @@ Maps = (function() {
   markers = {};
   var viewWidth;
   var viewHeight;
+  var boundaries;
   
   //NOTES 
   // show/hide using options.opacity 
@@ -19,68 +20,50 @@ Maps = (function() {
     console.log("setupInterface for maps");
     viewWidth = parseFloat($(".netlogo-canvas").css("width"));
     viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-    var spanText = "<div class='map-controls'>";
-    spanText +=       "<i id='mapOn' class='fa fa-toggle-on' aria-hidden='true'></i>";
-    spanText +=       "<i id='mapOff' class='fa fa-toggle-off' aria-hidden='true'></i>";
-    spanText +=    "</div>";
+    var spanText =    "<div id='mapContainer'></div>";
     $(".netlogo-widget-container").append(spanText);
-    spanText =    "<div id='mapContainer'></div>";
-    $(".netlogo-widget-container").append(spanText);
-    $(".map-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) + 8 + "px");
-    $(".map-controls").css("top", $(".netlogo-view-container").css("top"));
     $("#mapContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 5 + "px");
     $("#mapContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 4 + "px");
     $("#mapContainer").css("left", $(".netlogo-view-container").css("left"));
     $("#mapContainer").css("top", $(".netlogo-view-container").css("top"));
-    $("#mapContainer").css("display", "none");
+    //$("#mapContainer").css("display", "none");
+    $("#mapContainer").css("display","inline-block");
     if (L) {
       map = L.map('mapContainer').setView([ 30.2672, -97.7431], 11);      
       if (map) { 
+        console.log('b');
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+        console.log(map.getBounds());
+        updateMap();
       }
     }
     setupEventListeners();
-    updateMap("mapOff");
     hideMap();
+    $("#mapContainer").css("display","none");
+    $(".netlogo-view-container").css("pointer-events","none");
   }
-  
+
   function setupEventListeners() {
-    $(".map-controls").on("click", "#mapOn", function() {
-      updateMap("mapOn");
-      triggerMapUpdate();
-    });
-    $(".map-controls").on("click", "#mapOff", function() {
-      updateMap("mapOff");
-    });
     $(".netlogo-view-container").css("background-color","transparent"); 
+    //map.on('dragend', function onDragEnd(){
+    //  updateMap();
+    //});
   }
   
   ////// DISPLAY MAP //////
   
-  function updateMap(state) {
-    if (map) { map.invalidateSize(); }
-    if (state === "mapOff") {
-      $("#mapOff").removeClass("selected");
-      $("#mapOn").addClass("selected");
-      $("#mapContainer").addClass("selected");
-      $(".netlogo-view-container").css("z-index","0");
-      drawPatches = true;
-    } else {
-      $("#mapOn").removeClass("selected");
-      $("#mapOff").addClass("selected");
-      $("#mapContainer").removeClass("selected");
-      $(".netlogo-view-container").css("z-index","1");
-      drawPatches = false;
-    }
-    world.triggerUpdate();
+  function updateMap() {
+    var bounds = map ? map.getBounds() : { "_northEast": {"lat": 0, "lng": 0}, "_southWest": {"lat": 0, "lng": 0}};
+    var xMin = bounds._northEast.lng;
+    var yMin = bounds._northEast.lat;
+    var xMax = bounds._southWest.lng;
+    var yMax = bounds._southWest.lat;
+    boundaries = {xmin: xMin, xmax: xMax, ymin: yMin, ymax: yMax};
   }
-  
-  function triggerMapUpdate() {
-    if (procedures.gbccOnMapUpdate != undefined) { session.run('gbcc-on-map-update'); }
-  }
-  
+
+
   ////// COORDINATE CONVERSION //////
   
   function patchToLatlng(coords) {
@@ -90,11 +73,10 @@ Maps = (function() {
     var pixelY = universe.view.yPcorToCanvas(ycor);
     var pixelPercentX = 1 - (pixelX / (viewWidth * 2));
     var pixelPercentY = (pixelY / (viewHeight * 2));
-    var boundaries = map ? map.getBounds() : { "_northEast": {"lat": 0, "lng": 0}, "_southWest": {"lat": 0, "lng": 0}};
-    var boundaryMinX = boundaries._northEast.lng;
-    var boundaryMinY = boundaries._northEast.lat;
-    var boundaryMaxX = boundaries._southWest.lng;
-    var boundaryMaxY = boundaries._southWest.lat;
+    var boundaryMinX = boundaries.xmin;
+    var boundaryMinY = boundaries.ymin;
+    var boundaryMaxX = boundaries.xmax;
+    var boundaryMaxY = boundaries.ymax;
     var markerX = (pixelPercentX * (boundaryMaxX - boundaryMinX)) + boundaryMinX;
     var markerY = (pixelPercentY * (boundaryMaxY - boundaryMinY)) + boundaryMinY;
     return ([markerY, markerX]);
@@ -103,11 +85,10 @@ Maps = (function() {
   function latlngToPatch(coords) {
     var markerPositionX = coords[1];
     var markerPositionY = coords[0];
-    var boundaries = map ? map.getBounds() : { "_northEast": {"lat": 0, "lng": 0}, "_southWest": {"lat": 0, "lng": 0}};
-    var boundaryMaxX = boundaries._northEast.lng;
-    var boundaryMaxY = boundaries._northEast.lat;
-    var boundaryMinX = boundaries._southWest.lng;
-    var boundaryMinY = boundaries._southWest.lat;
+    var boundaryMinX = boundaries.xmin;
+    var boundaryMinY = boundaries.ymin;
+    var boundaryMaxX = boundaries.xmax;
+    var boundaryMaxY = boundaries.ymax;
     if ( markerPositionX < boundaryMinX 
       || markerPositionX > boundaryMaxX
       || markerPositionY < boundaryMinY
@@ -126,11 +107,13 @@ Maps = (function() {
   ////// SHOW AND HIDE MAP //////
   
   function showMap() {
-    $("#mapContainer").css("display","inline-block");
-    $(".map-controls").css("display","inline-block");
-    updateMap("mapOn");
     map.setView(center, zoom);
-
+    updateMap();
+    if (map) { map.invalidateSize(); }
+    $("#mapContainer").css("display","inline-block");
+    $("#mapContainer").css("z-index","0");
+    $(".netlogo-view-container").css("pointer-events","none");
+    $(".netlogo-view-container").css("z-index","1");
     // left, top, width, height
     // if (settings.length == 4) {
       //$("#mapContainer").css("left", settings[0] + "px");
@@ -138,14 +121,20 @@ Maps = (function() {
       //$("#mapContainer").css("width", settings[2] + "px");
       //$("#mapContainer").css("height", settings[3] + "px");
     //}
+    drawPatches = false;
+  
+    world.triggerUpdate();
   }
   
   function hideMap() {
-    updateMap("mapOff");
-    $(".map-controls").css("display","none");
     $("#mapContainer").css("display","none");
+    $("#mapContainer").css("z-index","1");
+    $(".netlogo-view-container").css("pointer-events","auto");
+    $(".netlogo-view-container").css("z-index","0");
+    drawPatches = true;
+    world.triggerUpdate();
   }
-  
+
   ////// MAP SETTINGS //////
   
   function setZoom(value) {
@@ -239,8 +228,32 @@ Maps = (function() {
       return [ markers[name].marker.getLatLng().lat, markers[name].marker.getLatLng().lng];
     }
     return [0, 0];
-
   }
+  
+  function createPath(name, vertices) {
+    
+  }
+  
+  function getVertices(name) {
+    
+  }
+  
+  function setVertices(name, vertices) {
+    
+  }
+  
+  function hidePath(name) {
+    
+  }
+  
+  function showPath(name) {
+    
+  }
+  
+  function deletePath(name) {
+    
+  }
+  
 
   return {
     setupInterface: setupInterface,
@@ -265,7 +278,15 @@ Maps = (function() {
     //setData: setData,
     //getData: getData,
     latlngToPatch: latlngToPatch,
-    patchToLatlng: patchToLatlng
+    patchToLatlng: patchToLatlng,
+    updateMap: updateMap,
+    createPath: createPath,
+    getPath: getVertices,
+    hidePath: hidePath,
+    showPath: showPath,
+    deletePath: deletePath
+    
+
   };
  
 })();

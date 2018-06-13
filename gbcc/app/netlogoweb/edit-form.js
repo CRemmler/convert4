@@ -26,12 +26,12 @@
         var newProps, node;
         node = arg.node;
         try {
-          this.set('amProvingMyself', false);
           newProps = this.genProps(node);
           if (newProps != null) {
             return this.fire('update-widget-value', {}, newProps);
           }
         } finally {
+          this.set('amProvingMyself', false);
           this.fire('activate-cloaking-device');
           return false;
         }
@@ -57,6 +57,7 @@
         elem = this.getElem();
         elem.focus();
         this.fire('lock-selection', this.parent);
+        this.fire('edit-form-opened', this);
         container = findParentByClass('netlogo-widget-container')(elem);
         containerMidX = container.offsetWidth / 2;
         containerMidY = container.offsetHeight / 2;
@@ -70,6 +71,7 @@
       'activate-cloaking-device': function() {
         this.set('visible', false);
         this.fire('unlock-selection');
+        this.fire('edit-form-closed', this);
         if (this.get('amProvingMyself')) {
           this.fire('has-been-proven-unworthy');
         }

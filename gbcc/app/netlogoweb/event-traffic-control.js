@@ -2,8 +2,9 @@
   var hasProp = {}.hasOwnProperty;
 
   window.controlEventTraffic = function(controller) {
-    var checkActionKeys, createWidget, hailSatan, mousetrap, onWidgetBottomChange, onWidgetRightChange, onWidgetValueChange, ractive, redrawView, refreshChooser, rejectDupe, renameGlobal, resizeView, setPatchSize, toggleInterfaceLock, trackFocus, unregisterWidget, updateTopology, viewController;
+    var checkActionKeys, createWidget, dropOverlay, hailSatan, mousetrap, onCloseDialog, onCloseEditForm, onOpenDialog, onOpenEditForm, onQMark, onWidgetBottomChange, onWidgetRightChange, onWidgetValueChange, openDialogs, ractive, redrawView, refreshChooser, refreshDims, rejectDupe, renameGlobal, resizeView, setPatchSize, toggleInterfaceLock, trackFocus, unregisterWidget, updateTopology, viewController;
     ractive = controller.ractive, viewController = controller.viewController;
+    openDialogs = new Set([]);
     checkActionKeys = function(e) {
       var _, char, ref, w;
       if (ractive.get('hasFocus')) {
@@ -14,7 +15,11 @@
           if (w.type === 'button' && w.actionKey === char && ractive.findAllComponents('buttonWidget').find(function(b) {
             return b.get('widget') === w;
           }).get('isEnabled')) {
-            w.run();
+            if (w.forever) {
+              w.running = !w.running;
+            } else {
+              w.run();
+            }
           }
         }
       }
@@ -22,11 +27,47 @@
     createWidget = function(widgetType, pageX, pageY) {
       controller.createWidget(widgetType, pageX, pageY);
     };
+    dropOverlay = function() {
+      ractive.set('isHelpVisible', false);
+      ractive.set('isOverlayUp', false);
+    };
     hailSatan = function(arg) {
       var clientX, clientY, ref;
       ref = arg.event, clientX = ref.clientX, clientY = ref.clientY;
       ractive.set("lastDragX", clientX);
       ractive.set("lastDragY", clientY);
+    };
+    onCloseDialog = function(dialog) {
+      openDialogs["delete"](dialog);
+      ractive.set('someDialogIsOpen', openDialogs.size > 0);
+      document.querySelector('.netlogo-model').focus();
+    };
+    onCloseEditForm = function(editForm) {
+      ractive.set('someEditFormIsOpen', false);
+      onCloseDialog(editForm);
+    };
+    onQMark = (function() {
+      var focusedElement;
+      focusedElement = void 0;
+      return function(arg) {
+        var elem, helpIsNowVisible, isProbablyEditingText, ref, target;
+        target = arg.target;
+        isProbablyEditingText = (((ref = target.tagName.toLowerCase()) === "input" || ref === "textarea") && !target.readOnly) || target.contentEditable === "true";
+        if (!isProbablyEditingText) {
+          helpIsNowVisible = !ractive.get('isHelpVisible');
+          ractive.set('isHelpVisible', helpIsNowVisible);
+          elem = helpIsNowVisible ? (focusedElement = document.activeElement, ractive.find('#help-dialog')) : focusedElement;
+          elem.focus();
+        }
+      };
+    })();
+    onOpenDialog = function(dialog) {
+      openDialogs.add(dialog);
+      ractive.set('someDialogIsOpen', true);
+    };
+    onOpenEditForm = function(editForm) {
+      ractive.set('someEditFormIsOpen', true);
+      onOpenDialog(editForm);
     };
     onWidgetBottomChange = function() {
       var i, w;
@@ -91,6 +132,10 @@
       world.observer.setGlobal(chooser.variable, chooser.currentValue);
       return false;
     };
+    refreshDims = function() {
+      onWidgetRightChange();
+      onWidgetBottomChange();
+    };
     rejectDupe = function(varName) {
       showErrors(["There is already a widget of a different type with a variable named '" + varName + "'"]);
     };
@@ -123,24 +168,25 @@
       ref = viewController.model.world, minpxcor = ref.minpxcor, maxpxcor = ref.maxpxcor, minpycor = ref.minpycor, maxpycor = ref.maxpycor, patchsize = ref.patchsize;
       setPatchSize(patchsize);
       world.resize(minpxcor, maxpxcor, minpycor, maxpycor);
+      refreshDims();
     };
     setPatchSize = function(patchSize) {
-      viewModel.dimensions.patchSize = patchSize;
       world.setPatchSize(patchSize);
+      refreshDims();
     };
     toggleInterfaceLock = function() {
       var isEditing;
-      isEditing = !ractive.get('isEditing');
-      ractive.set('isEditing', isEditing);
-      ractive.fire('editing-mode-changed-to', isEditing);
+      if (!this.get('someDialogIsOpen')) {
+        isEditing = !ractive.get('isEditing');
+        ractive.set('isEditing', isEditing);
+      }
     };
     trackFocus = function(node) {
       ractive.set('hasFocus', document.activeElement === node);
     };
     unregisterWidget = function(_, id, wasNew) {
       controller.removeWidgetById(id, wasNew);
-      onWidgetRightChange();
-      onWidgetBottomChange();
+      refreshDims();
     };
     updateTopology = function() {
       var ref, wrapX, wrapY;
@@ -148,8 +194,14 @@
       world.changeTopology(wrapX, wrapY);
     };
     mousetrap = Mousetrap(ractive.find('.netlogo-model'));
-    mousetrap.bind(['ctrl+shift+alt+i', 'command+shift+alt+i'], function() {
+    mousetrap.bind(['up', 'down', 'left', 'right'], function(_, name) {
+      return ractive.fire('nudge-widget', name);
+    });
+    mousetrap.bind(['ctrl+shift+l', 'command+shift+l'], function() {
       return ractive.fire('toggle-interface-lock');
+    });
+    mousetrap.bind(['ctrl+shift+h', 'command+shift+h'], function() {
+      return ractive.fire('hide-resizer');
     });
     mousetrap.bind('del', function() {
       return ractive.fire('delete-selected');
@@ -157,6 +209,7 @@
     mousetrap.bind('escape', function() {
       return ractive.fire('deselect-widgets');
     });
+    mousetrap.bind('?', onQMark);
     ractive.observe('widgetObj.*.currentValue', onWidgetValueChange);
     ractive.observe('widgetObj.*.right', onWidgetRightChange);
     ractive.observe('widgetObj.*.bottom', onWidgetBottomChange);
@@ -172,13 +225,16 @@
     ractive.on('create-widget', function(_, type, x, y) {
       return createWidget(type, x, y);
     });
+    ractive.on('drop-overlay', function(_, event) {
+      return dropOverlay();
+    });
     ractive.on('show-errors', function(_, event) {
       return window.showErrors(event.context.compilation.messages);
     });
     ractive.on('track-focus', function(_, node) {
       return trackFocus(node);
     });
-    ractive.on('*.refresh-chooser', function(_, chooser) {
+    ractive.on('*.refresh-chooser', function(_, nada, chooser) {
       return refreshChooser(chooser);
     });
     ractive.on('*.reject-duplicate-var', function(_, varName) {
@@ -192,6 +248,18 @@
     });
     ractive.on('*.update-widgets', function() {
       return controller.updateWidgets();
+    });
+    ractive.on('*.dialog-closed', function(_, dialog) {
+      return onCloseDialog(dialog);
+    });
+    ractive.on('*.dialog-opened', function(_, dialog) {
+      return onOpenDialog(dialog);
+    });
+    ractive.on('*.edit-form-closed', function(_, editForm) {
+      return onCloseEditForm(editForm);
+    });
+    ractive.on('*.edit-form-opened', function(_, editForm) {
+      return onOpenEditForm(editForm);
     });
   };
 

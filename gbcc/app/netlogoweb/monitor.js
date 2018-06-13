@@ -11,16 +11,19 @@
       };
     },
     components: {
-      formCode: RactiveEditFormCodeContainer,
+      formCode: RactiveEditFormMultilineCode,
       formFontSize: RactiveEditFormFontSize,
       labeledInput: RactiveEditFormLabeledInput,
       spacer: RactiveEditFormSpacer
     },
     twoway: false,
     genProps: function(form) {
+      var fontSize;
+      fontSize = parseInt(form.fontSize.value);
       return {
         display: (form.display.value !== "" ? form.display.value : void 0),
-        fontSize: parseInt(form.fontSize.value),
+        fontSize: fontSize,
+        bottom: this.parent.get('widget.top') + (2 * fontSize) + 23,
         precision: parseInt(form.precision.value),
         source: this.findComponent('formCode').findComponent('codeContainer').get('code')
       };
@@ -47,9 +50,11 @@
         source: [this._weg.recompile]
       };
     },
-    template: "{{>monitor}}\n<editForm idBasis=\"{{id}}\" display=\"{{widget.display}}\" fontSize=\"{{widget.fontSize}}\"\n          precision=\"{{widget.precision}}\" source=\"{{widget.source}}\" />\n{{>editorOverlay}}",
+    minWidth: 20,
+    minHeight: 45,
+    template: "{{>editorOverlay}}\n{{>monitor}}\n<editForm idBasis=\"{{id}}\" display=\"{{widget.display}}\" fontSize=\"{{widget.fontSize}}\"\n          precision=\"{{widget.precision}}\" source=\"{{widget.source}}\" />",
     partials: {
-      monitor: "<div id=\"{{id}}\" class=\"netlogo-widget netlogo-monitor netlogo-output{{#isEditing}} interface-unlocked{{/}}\"\n     style=\"{{dims}} font-size: {{widget.fontSize}}px;\">\n  <label class=\"netlogo-label {{errorClass}}\" on-click=\"show-errors\">{{widget.display || widget.source}}</label>\n  <output class=\"netlogo-value\">{{widget.currentValue}}</output>\n</div>"
+      monitor: "<div id=\"{{id}}\" class=\"netlogo-widget netlogo-monitor netlogo-output {{classes}}\"\n     style=\"{{dims}} font-size: {{widget.fontSize}}px;\">\n  <label class=\"netlogo-label {{errorClass}}\" on-click=\"show-errors\">{{widget.display || widget.source}}</label>\n  <output class=\"netlogo-value\">{{widget.currentValue}}</output>\n</div>"
     }
   });
 

@@ -11,6 +11,14 @@
         type: "recompile"
       };
     },
+    recompileLite: function() {
+      return {
+        run: function(ractive, widget) {
+          return ractive.fire('recompile-lite');
+        },
+        type: "recompile-lite"
+      };
+    },
     redrawView: function() {
       return {
         run: function(ractive, widget) {
@@ -22,7 +30,7 @@
     refreshChooser: function() {
       return {
         run: function(ractive, widget) {
-          return ractive.fire('refresh-chooser', widget);
+          return ractive.fire('refresh-chooser', "ignore", widget);
         },
         type: "refreshChooser"
       };
@@ -35,12 +43,28 @@
         type: "rename:" + oldName + "," + newName
       };
     },
+    resizePatches: function() {
+      return {
+        run: function(ractive, widget) {
+          return ractive.fire('set-patch-size', widget.dimensions.patchSize);
+        },
+        type: "resizePatches"
+      };
+    },
     resizeView: function() {
       return {
         run: function(ractive, widget) {
           return ractive.fire('resize-view');
         },
         type: "resizeView"
+      };
+    },
+    updateEngineValue: function() {
+      return {
+        run: function(ractive, widget) {
+          return world.observer.setGlobal(widget.variable, widget.currentValue);
+        },
+        type: "updateCurrentValue"
       };
     },
     updateTopology: function() {
@@ -59,6 +83,7 @@
       return {
         id: void 0,
         isEditing: void 0,
+        isSelected: void 0,
         resizeDirs: ['left', 'right', 'top', 'bottom', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'],
         widget: void 0
       };
@@ -67,10 +92,22 @@
       editForm: void 0
     },
     computed: {
+      classes: function() {
+        return (this.get('isEditing') ? 'interface-unlocked' : '') + "\n" + (this.get('isSelected') ? 'selected' : '');
+      },
       dims: function() {
         return "position: absolute;\nleft: " + (this.get('left')) + "px; top: " + (this.get('top')) + "px;\nwidth: " + (this.get('right') - this.get('left')) + "px; height: " + (this.get('bottom') - this.get('top')) + "px;";
       }
     },
+    handleResize: function(arg) {
+      var bottom, left, right, top;
+      left = arg.left, right = arg.right, top = arg.top, bottom = arg.bottom;
+      this.set('widget.left', left);
+      this.set('widget.right', right);
+      this.set('widget.top', top);
+      this.set('widget.bottom', bottom);
+    },
+    handleResizeEnd: function() {},
     on: {
       'edit-widget': function() {
         if (this.get('isNotEditable') !== true) {
@@ -174,7 +211,7 @@
       }
     },
     partials: {
-      editorOverlay: "{{ #isEditing }}\n  <div draggable=\"true\" style=\"{{dims}} z-index: 50;\"\n       on-click=\"@this.fire('hide-context-menu') && @this.fire('select-widget', @event)\"\n       on-contextmenu=\"@this.fire('show-context-menu', @event)\"\n       on-dblclick=\"@this.fire('edit-widget')\"\n       on-dragstart=\"start-widget-drag\"\n       on-drag=\"drag-widget\"\n       on-dragend=\"stop-widget-drag\"></div>\n{{/}}"
+      editorOverlay: "{{ #isEditing }}\n  <div draggable=\"true\" style=\"{{dims}}\" class=\"editor-overlay{{#isSelected}} selected{{/}}\"\n       on-click=\"@this.fire('hide-context-menu') && @this.fire('select-widget', @event)\"\n       on-contextmenu=\"@this.fire('show-context-menu', @event)\"\n       on-dblclick=\"@this.fire('edit-widget')\"\n       on-dragstart=\"start-widget-drag\"\n       on-drag=\"drag-widget\"\n       on-dragend=\"stop-widget-drag\"></div>\n{{/}}"
     }
   });
 

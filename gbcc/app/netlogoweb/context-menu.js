@@ -91,7 +91,7 @@
         }
       }
     },
-    template: "{{# visible }}\n<div id=\"netlogo-widget-context-menu\" class=\"widget-context-menu\" style=\"top: {{mouseY}}px; left: {{mouseX}}px;\">\n  <div id=\"{{id}}-context-menu\" class=\"netlogo-widget-editor-menu-items\">\n    <ul class=\"context-menu-list\">\n      {{# options }}\n        {{# (..enabler !== undefined && ..enabler(target)) || ..isEnabled }}\n          <li class=\"context-menu-item\" on-click=\"..action(target, mouseX, mouseY)\">{{..text}}</li>\n        {{ else }}\n          <li class=\"context-menu-item disabled\" on-click=\"ignore-click\">{{..text}}</li>\n        {{/}}\n      {{/}}\n    </ul>\n  </div>\n</div>\n{{/}}"
+    template: "{{# visible }}\n<div id=\"netlogo-widget-context-menu\" class=\"widget-context-menu\" style=\"top: {{mouseY}}px; left: {{mouseX}}px;\">\n  <div id=\"{{id}}-context-menu\" class=\"netlogo-widget-editor-menu-items\">\n    <ul class=\"context-menu-list\">\n      {{# options }}\n        {{# (..enabler !== undefined && ..enabler(target)) || ..isEnabled }}\n          <li class=\"context-menu-item\" on-mouseup=\"..action(target, mouseX, mouseY)\">{{..text}}</li>\n        {{ else }}\n          <li class=\"context-menu-item disabled\" on-mouseup=\"ignore-click\">{{..text}}</li>\n        {{/}}\n      {{/}}\n    </ul>\n  </div>\n</div>\n{{/}}"
   });
 
 }).call(this);

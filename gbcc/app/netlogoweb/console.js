@@ -119,6 +119,12 @@
           })(this)
         }
       });
+      commandCenterEditor.on('beforeChange', function(_, change) {
+        var oneLineText;
+        oneLineText = change.text.join('').replace(/\n/g, '');
+        change.update(change.from, change.to, [oneLineText]);
+        return true;
+      });
       commandCenterEditor.on('change', (function(_this) {
         return function() {
           return _this.set('input', commandCenterEditor.getValue());

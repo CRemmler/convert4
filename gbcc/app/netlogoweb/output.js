@@ -42,9 +42,11 @@
     setText: function(str) {
       this.set('text', str);
     },
-    template: "{{>output}}\n<editForm idBasis=\"{{id}}\" fontSize=\"{{widget.fontSize}}\" style=\"width: 285px;\" />\n{{>editorOverlay}}",
+    minWidth: 15,
+    minHeight: 25,
+    template: "{{>editorOverlay}}\n{{>output}}\n<editForm idBasis=\"{{id}}\" fontSize=\"{{widget.fontSize}}\" style=\"width: 285px;\" />",
     partials: {
-      output: "<div id=\"{{id}}\" class=\"netlogo-widget netlogo-output netlogo-output-widget{{#isEditing}} interface-unlocked{{/}}\" style=\"{{dims}}\">\n  <printArea id=\"{{id}}-print-area\" fontSize=\"{{widget.fontSize}}\" output=\"{{text}}\" />\n</div>"
+      output: "<div id=\"{{id}}\" class=\"netlogo-widget netlogo-output netlogo-output-widget {{classes}}\" style=\"{{dims}}\">\n  <printArea id=\"{{id}}-print-area\" fontSize=\"{{widget.fontSize}}\" output=\"{{text}}\" />\n</div>"
     }
   });
 

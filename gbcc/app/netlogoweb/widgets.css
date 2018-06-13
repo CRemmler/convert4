@@ -26,7 +26,8 @@
 }
 
 .netlogo-command,.netlogo-input {
-    user-select: none;
+    user-select:      none;
+    -moz-user-select: none;
 }
 
 .netlogo-command:hover,.netlogo-input:hover {
@@ -89,6 +90,7 @@
   font-weight: bold;
   text-align: center;
   user-select: none;
+  -moz-user-select: none;
 }
 
 .netlogo-tab-content {
@@ -99,7 +101,8 @@
 }
 
 .unselectable {
-  user-select: none;
+  user-select:      none;
+  -moz-user-select: none;
 }
 
 .growing {
@@ -217,7 +220,7 @@
 }
 
 .netlogo-command-center-editor .CodeMirror {
-  border: 1px solid #878782;
+  border: 1px solid #111;
   height: auto;
 }
 
@@ -490,4 +493,56 @@
 
 .CodeMirror-scroll.cm-disabled {
   background-color: #ebebe4;
+}
+
+.help-popup {
+  background-color: white;
+  border:           1px solid black;
+  border-radius:    5px;
+  box-shadow:       0 0 10px rgba(0,0,0,0.5);
+  font-size:        20px;
+  padding:          30px 15px;
+  position:         absolute;
+  outline:          none;
+  z-index:          200;
+}
+
+/* Credit for this keyboard table CSS goes to the fine folks at GitHub
+ * Their code is released under the MIT license. Copyright (c) 2018 GitHub Inc.
+ * https://assets-cdn.github.com/assets/github-ef9e6df593c3136722bd837c0437786d.css
+ * JAB (5/7/18)
+ */
+.help-key-table .help-keys {
+  padding-right: 10px;
+  text-align:    right;
+  white-space:   nowrap;
+}
+
+.help-key-table td {
+  font-size: 16px;
+  padding:   3px 0;
+}
+
+.help-key-table kbd {
+  background-color:    #fafbfc;
+  border-bottom-color: #c6cbd1;
+  border-radius:       3px;
+  border:              solid 1px #d1d5da;
+  box-shadow:          inset 0 -1px 0 #c6cbd1;
+  color:               #3b793a;
+  display:             inline-block;
+  font:                16px "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  line-height:         15px;
+  padding:             3px 5px;
+  vertical-align:      middle;
+}
+
+.modal-overlay {
+  background-color: rgba(200,200,200,0.7);
+  bottom:           0;
+  left:             0;
+  position:         absolute;
+  right:            0;
+  top:              0;
+  z-index:          99;
 }

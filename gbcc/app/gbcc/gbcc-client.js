@@ -3,6 +3,8 @@ var universe;
 var commandQueue = [];
 var userData = {};
 var myData = {};
+var userStreamData = {};
+var myStreamData = {};
 //var repaintPatches = true;
 var foreverButtonCode = new Object();
 var myUserType;
@@ -19,7 +21,6 @@ jQuery(document).ready(function() {
   var turtleDict = {};
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
-
   socket = io();
 
   // save student settings
@@ -150,6 +151,21 @@ jQuery(document).ready(function() {
     }
   });
   
+  socket.on("accept user stream data", function(data) {
+    //console.log("accept user stream data", data);
+    if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
+      if (userStreamData[data.userId] === undefined) {
+        userStreamData[data.userId] = {};
+      }
+      if (userStreamData[data.userId][data.tag] === undefined) {
+        userStreamData[data.userId][data.tag] = [];
+      }
+      userStreamData[data.userId][data.tag].push(data.value);
+      console.log(userStreamData[data.userId][data.tag]);
+    }
+  });
+
+  
   socket.on("accept all user data", function(data) {
     //console.log("accept ALL user data");
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
@@ -176,6 +192,9 @@ jQuery(document).ready(function() {
         if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
         break;
       case "forever-select":
+        userStreamData[data.userId] = {};
+        //myStreamData[data.userId] = {};
+        console.log("clear userStreamData");
         if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[data.userId] = data.key;
         break;

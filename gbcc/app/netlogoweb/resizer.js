@@ -1,13 +1,12 @@
 (function() {
   window.RactiveResizer = Ractive.extend({
-    isLocked: false,
-    lastUpdateMs: void 0,
-    lastX: void 0,
-    lastY: void 0,
-    view: void 0,
+    _isLocked: false,
+    _xAdjustment: void 0,
+    _yAdjustment: void 0,
     data: function() {
       return {
         isEnabled: false,
+        isVisible: true,
         target: null
       };
     },
@@ -43,32 +42,32 @@
     clearTarget: function() {
       var target;
       target = this.get('target');
-      if (!this.isLocked && (target != null)) {
+      if (!this._isLocked && (target != null)) {
         if (!target.destroyed) {
-          target.find('.netlogo-widget').classList.remove('widget-selected');
+          target.set('isSelected', false);
         }
         this.set('target', null);
       }
     },
     setTarget: function(newTarget) {
-      if (!this.isLocked) {
+      if (!this._isLocked) {
         setTimeout(((function(_this) {
           return function() {
             _this.clearTarget();
             _this.set('target', newTarget);
-            return newTarget.find('.netlogo-widget').classList.add('widget-selected');
+            return newTarget.set('isSelected', true);
           };
         })(this)), 0);
       }
     },
     lockTarget: function(newTarget) {
-      if (!this.isLocked && (newTarget != null)) {
+      if (!this._isLocked && (newTarget != null)) {
         this.setTarget(newTarget);
-        this.isLocked = true;
+        this._isLocked = true;
       }
     },
     unlockTarget: function() {
-      this.isLocked = false;
+      this._isLocked = false;
     },
     on: {
       'start-handle-drag': function(event) {
@@ -76,24 +75,34 @@
           return true;
         }), (function(_this) {
           return function(x, y) {
-            _this.lastX = x;
-            return _this.lastY = y;
+            var ref;
+            ref = _this.find('.widget-resizer').getBoundingClientRect(), x = ref.x, y = ref.y;
+            _this._xAdjustment = x - _this.get('left');
+            return _this._yAdjustment = y - _this.get('top');
           };
         })(this));
       },
       'drag-handle': function(event) {
         return CommonDrag.drag.call(this, event, (function(_this) {
           return function(x, y) {
-            var adjusted, adjusters, adjustment, bottom, currentCor, dir, direction, exceedsOpposite, findAdjustment, i, lastCor, left, len, newValue, oldBottom, oldLeft, oldRight, oldTop, ref, right, target, top;
+            var adjusters, bottom, clamp, dirCoordPairs, direction, isMac, isSnapping, left, newChanges, newCoords, oldBottom, oldCoords, oldLeft, oldRight, oldTop, ref, right, snapToGrid, snappedX, snappedY, target, top, xCoord, yCoord;
+            snapToGrid = function(n) {
+              return n - (n - (Math.round(n / 10) * 10));
+            };
+            isMac = window.navigator.platform.startsWith('Mac');
+            isSnapping = (!isMac && !event.original.ctrlKey) || (isMac && !event.original.metaKey);
+            ref = isSnapping ? [x, y].map(snapToGrid) : [x, y], snappedX = ref[0], snappedY = ref[1];
+            xCoord = snappedX - _this._xAdjustment;
+            yCoord = snappedY - _this._yAdjustment;
             target = _this.get('target');
             oldLeft = target.get('left');
             oldRight = target.get('right');
             oldTop = target.get('top');
             oldBottom = target.get('bottom');
-            left = ['left', _this.lastX, x];
-            right = ['right', _this.lastX, x];
-            top = ['top', _this.lastY, y];
-            bottom = ['bottom', _this.lastY, y];
+            left = ['left', xCoord];
+            right = ['right', xCoord];
+            top = ['top', yCoord];
+            bottom = ['bottom', yCoord];
             direction = event.original.target.dataset.direction;
             adjusters = (function() {
               switch (direction) {
@@ -117,7 +126,7 @@
                   throw new Error("What the heck resize direction is '" + direction + "'?");
               }
             })();
-            exceedsOpposite = function(dir, value) {
+            clamp = function(dir, value) {
               var opposite, oppositeValue;
               opposite = (function() {
                 switch (dir) {
@@ -133,37 +142,57 @@
                     throw new Error("What the heck opposite direction is '" + dir + "'?");
                 }
               })();
-              oppositeValue = _this.get(opposite);
-              return ((opposite === 'left' || opposite === 'top') && newValue <= (oppositeValue + 26)) || ((opposite === 'right' || opposite === 'bottom') && newValue >= (oppositeValue - 26));
-            };
-            findAdjustment = function(n) {
-              return n - (Math.round(n / 10) * 10);
-            };
-            for (i = 0, len = adjusters.length; i < len; i++) {
-              ref = adjusters[i], dir = ref[0], lastCor = ref[1], currentCor = ref[2];
-              newValue = target.get(dir) - (lastCor - currentCor);
-              adjustment = findAdjustment(newValue);
-              adjusted = newValue - adjustment;
-              if (!exceedsOpposite(dir, adjusted)) {
-                target.set(dir, adjusted);
+              oppositeValue = target.get(opposite);
+              switch (opposite) {
+                case 'left':
+                  return Math.max(value, oppositeValue + target.minWidth);
+                case 'top':
+                  return Math.max(value, oppositeValue + target.minHeight);
+                case 'right':
+                  return Math.min(value, oppositeValue - target.minWidth);
+                case 'bottom':
+                  return Math.min(value, oppositeValue - target.minHeight);
+                default:
+                  throw new Error("No, really, what the heck opposite direction is '" + opposite + "'?");
               }
-            }
-            _this.lastX = x;
-            _this.lastY = y;
-            return _this.get('target').fire('widget-resized', oldLeft, oldRight, oldTop, oldBottom, target.get('left'), target.get('right'), target.get('top'), target.get('bottom'));
+            };
+            dirCoordPairs = adjusters.map(function(arg) {
+              var currentCor, dir;
+              dir = arg[0], currentCor = arg[1];
+              return [dir, clamp(dir, currentCor)];
+            });
+            newChanges = dirCoordPairs.every(function(arg) {
+              var coord, dir;
+              dir = arg[0], coord = arg[1];
+              return !(((dir === 'left') || (dir === 'top')) && (coord < 0));
+            }) ? dirCoordPairs.reduce((function(acc, arg) {
+              var coord, dir;
+              dir = arg[0], coord = arg[1];
+              acc[dir] = coord;
+              return acc;
+            }), {}) : {};
+            oldCoords = {
+              left: oldLeft,
+              top: oldTop,
+              bottom: oldBottom,
+              right: oldRight
+            };
+            newCoords = Object.assign(oldCoords, newChanges);
+            return _this.get('target').handleResize(newCoords);
           };
         })(this));
       },
       'stop-handle-drag': function() {
         return CommonDrag.dragend.call(this, (function(_this) {
           return function() {
-            _this.lastX = void 0;
-            return _this.lastY = void 0;
+            _this._xAdjustment = void 0;
+            _this._yAdjustment = void 0;
+            return _this.get('target').handleResizeEnd();
           };
         })(this));
       }
     },
-    template: "{{# isEnabled && target !== null }}\n<div class=\"widget-resizer\" style=\"{{dims}}\">\n  {{ #target.get(\"resizeDirs\").includes(\"bottom\")      }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Bottom\"      style=\"cursor:  s-resize; bottom:          0; left:   {{midX}};\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"bottomLeft\")  }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"BottomLeft\"  style=\"cursor: sw-resize; bottom:          0; left:          0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"bottomRight\") }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"BottomRight\" style=\"cursor: se-resize; bottom:          0; right:         0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"left\")        }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Left\"        style=\"cursor:  w-resize; bottom:   {{midY}}; left:          0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"right\")       }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Right\"       style=\"cursor:  e-resize; bottom:   {{midY}}; right:         0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"top\")         }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Top\"         style=\"cursor:  n-resize; top:             0; left:   {{midX}};\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"topLeft\")     }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"TopLeft\"     style=\"cursor: nw-resize; top:             0; left:          0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"topRight\")    }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"TopRight\"    style=\"cursor: ne-resize; top:             0; right:         0;\"></div>{{/}}\n</div>\n{{/}}"
+    template: "{{# isEnabled && isVisible && target !== null }}\n<div class=\"widget-resizer\" style=\"{{dims}}\">\n  {{ #target.get(\"resizeDirs\").includes(\"bottom\")      }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Bottom\"      style=\"cursor:  s-resize; bottom:          0; left:   {{midX}};\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"bottomLeft\")  }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"BottomLeft\"  style=\"cursor: sw-resize; bottom:          0; left:          0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"bottomRight\") }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"BottomRight\" style=\"cursor: se-resize; bottom:          0; right:         0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"left\")        }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Left\"        style=\"cursor:  w-resize; bottom:   {{midY}}; left:          0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"right\")       }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Right\"       style=\"cursor:  e-resize; bottom:   {{midY}}; right:         0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"top\")         }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"Top\"         style=\"cursor:  n-resize; top:             0; left:   {{midX}};\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"topLeft\")     }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"TopLeft\"     style=\"cursor: nw-resize; top:             0; left:          0;\"></div>{{/}}\n  {{ #target.get(\"resizeDirs\").includes(\"topRight\")    }}<div draggable=\"true\" on-drag=\"drag-handle\" on-dragstart=\"start-handle-drag\" on-dragend=\"stop-handle-drag\" class=\"widget-resize-handle\" data-direction=\"TopRight\"    style=\"cursor: ne-resize; top:             0; right:         0;\"></div>{{/}}\n</div>\n{{/}}"
   });
 
 }).call(this);

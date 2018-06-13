@@ -12,6 +12,10 @@
   text-align: center;
 }
 
+.netlogo-view-container {
+  overflow: visible;
+}
+
 .login-tips {
   position: absolute; 
   //background-color:#eee;

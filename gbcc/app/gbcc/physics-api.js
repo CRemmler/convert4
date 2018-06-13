@@ -86,8 +86,10 @@ Physicsb2 = (function() {
   function initializeView() {
     p = $( "#netlogoCanvas").parent();//$( "#netlogoCanvas";
     canvasPosition = p.offset();
-    canvasPosition.top = canvasPosition.top - window.pageYOffset;
-    canvasPosition.left = canvasPosition.left - window.pageXOffset;
+    if (canvasPosition && window) {
+      canvasPosition.top = canvasPosition.top - window.pageYOffset;
+      canvasPosition.left = canvasPosition.left - window.pageXOffset;
+    }
   }
   
   $( window ).resize(function() {

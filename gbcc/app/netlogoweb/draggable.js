@@ -30,7 +30,7 @@
         })(this);
         x = clientX !== 0 ? clientX : (ref1 = root.get('lastDragX')) != null ? ref1 : -1;
         y = clientY !== 0 ? clientY : (ref2 = root.get('lastDragY')) != null ? ref2 : -1;
-        if (this.view === view && x > 0 && y > 0 && ((new Date).getTime() - this.lastUpdateMs) >= (1000 / 30)) {
+        if (this.view === view && x > 0 && y > 0 && ((new Date).getTime() - this.lastUpdateMs) >= (1000 / 60)) {
           this.lastUpdateMs = (new Date).getTime();
           callback(x, y);
         }
@@ -71,6 +71,24 @@
         bottom: void 0
       };
     },
+    nudge: function(direction) {
+      switch (direction) {
+        case "up":
+          this.set('top', this.get('top') - 1);
+          return this.set('bottom', this.get('bottom') - 1);
+        case "down":
+          this.set('top', this.get('top') + 1);
+          return this.set('bottom', this.get('bottom') + 1);
+        case "left":
+          this.set('left', this.get('left') - 1);
+          return this.set('right', this.get('right') - 1);
+        case "right":
+          this.set('left', this.get('left') + 1);
+          return this.set('right', this.get('right') + 1);
+        default:
+          return console.log("'" + direction + "' is an impossible direction for nudging...");
+      }
+    },
     on: {
       'start-widget-drag': function(event) {
         return CommonDrag.dragstart.call(this, event, (function() {
@@ -86,18 +104,33 @@
         })(this));
       },
       'drag-widget': function(event) {
+        var isMac, isSnapping;
+        isMac = window.navigator.platform.startsWith('Mac');
+        isSnapping = (!isMac && !event.original.ctrlKey) || (isMac && !event.original.metaKey);
         return CommonDrag.drag.call(this, event, (function(_this) {
           return function(x, y) {
-            var findAdjustment, xAdjust, yAdjust;
+            var findAdjustment, newLeft, newTop, xAdjust, yAdjust;
             findAdjustment = function(n) {
               return n - (Math.round(n / 5) * 5);
             };
-            xAdjust = findAdjustment(_this.startLeft + x);
-            yAdjust = findAdjustment(_this.startTop + y);
-            _this.set('left', _this.startLeft + x - xAdjust);
-            _this.set('right', _this.startRight + x - xAdjust);
-            _this.set('top', _this.startTop + y - yAdjust);
-            return _this.set('bottom', _this.startBottom + y - yAdjust);
+            xAdjust = isSnapping ? findAdjustment(_this.startLeft + x) : 0;
+            yAdjust = isSnapping ? findAdjustment(_this.startTop + y) : 0;
+            newLeft = _this.startLeft + x - xAdjust;
+            newTop = _this.startTop + y - yAdjust;
+            if (newLeft < 0) {
+              _this.set('left', 0);
+              _this.set('right', _this.startRight - _this.startLeft);
+            } else {
+              _this.set('left', newLeft);
+              _this.set('right', _this.startRight + x - xAdjust);
+            }
+            if (newTop < 0) {
+              _this.set('top', 0);
+              return _this.set('bottom', _this.startBottom - _this.startTop);
+            } else {
+              _this.set('top', newTop);
+              return _this.set('bottom', _this.startBottom + y - yAdjust);
+            }
           };
         })(this));
       },

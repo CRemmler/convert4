@@ -1,6 +1,6 @@
 (function() {
   window.handleWidgetSelection = function(ractive) {
-    var deleteSelected, deselectThoseWidgets, justSelectIt, lockSelection, resizer, selectThatWidget, unlockSelection;
+    var deleteSelected, deselectThoseWidgets, hideResizer, justSelectIt, lockSelection, nudgeWidget, resizer, selectThatWidget, unlockSelection;
     resizer = function() {
       return ractive.findComponent('resizer');
     };
@@ -22,7 +22,7 @@
       }
     };
     justSelectIt = function(event) {
-      return resizer().setTarget(event.component);
+      resizer().setTarget(event.component);
     };
     selectThatWidget = function(event, trueEvent) {
       if (ractive.get("isEditing")) {
@@ -37,10 +37,30 @@
     ractive.observe("isEditing", function(isEditing) {
       deselectThoseWidgets();
     });
+    hideResizer = function() {
+      if (ractive.get("isEditing")) {
+        ractive.set('isResizerVisible', !ractive.get('isResizerVisible'));
+        return false;
+      } else {
+        return true;
+      }
+    };
+    nudgeWidget = function(event, direction) {
+      var selected;
+      selected = resizer().get('target');
+      if ((selected != null) && (!ractive.get('someDialogIsOpen'))) {
+        selected.nudge(direction);
+        return false;
+      } else {
+        return true;
+      }
+    };
     ractive.on('*.select-component', justSelectIt);
     ractive.on('*.select-widget', selectThatWidget);
     ractive.on('deselect-widgets', deselectThoseWidgets);
     ractive.on('delete-selected', deleteSelected);
+    ractive.on('hide-resizer', hideResizer);
+    ractive.on('nudge-widget', nudgeWidget);
     ractive.on('*.lock-selection', lockSelection);
     return ractive.on('*.unlock-selection', unlockSelection);
   };

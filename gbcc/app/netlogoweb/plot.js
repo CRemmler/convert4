@@ -57,7 +57,9 @@
         });
       }
     },
-    template: "<div id=\"{{id}}\" class=\"netlogo-widget netlogo-plot{{#isEditing}} interface-unlocked{{/}}\"\n     style=\"{{dims}}{{#menuIsOpen}}z-index: 10;{{/}}\"></div>\n{{>editorOverlay}}"
+    minWidth: 100,
+    minHeight: 85,
+    template: "{{>editorOverlay}}\n<div id=\"{{id}}\" class=\"netlogo-widget netlogo-plot {{classes}}\"\n     style=\"{{dims}}{{#menuIsOpen}}z-index: 10;{{/}}\"></div>"
   });
 
 }).call(this);

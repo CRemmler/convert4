@@ -14,19 +14,16 @@ Graph = (function() {
   ////// SETUP MAP //////
 
   function setupInterface() {
-    if ($("#appletContainer").length === 0) {
+    if ($("#graphContainer").length === 0) {
       viewWidth = parseFloat($(".netlogo-canvas").css("width"));
       viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-
-      spanText =    "<div id='appletContainer'></div>";
-      $(".netlogo-widget-container").prepend(spanText);
-      $(".graph-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 145 + "px");
-      $(".graph-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) - 25 + "px");
-      $("#appletContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 5 + "px");
-      $("#appletContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 4 + "px");
-      $("#appletContainer").css("left", $(".netlogo-view-container").css("left"));
-      $("#appletContainer").css("top", $(".netlogo-view-container").css("top"));
-      $("#appletContainer").css("display", "none");
+      spanText =    "<div id='graphContainer'></div>";
+      $(".netlogo-widget-container").append(spanText);
+      $("#graphContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 5 + "px");
+      $("#graphContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 4 + "px");
+      $("#graphContainer").css("left", $(".netlogo-view-container").css("left"));
+      $("#graphContainer").css("top", $(".netlogo-view-container").css("top"));
+      $("#graphContainer").css("display", "none");
       $(".netlogo-view-container").css("pointer-events","none");
       setupEventListeners();
     }
@@ -34,36 +31,20 @@ Graph = (function() {
   
   function appletOnLoadVisible() {
     setTimeout(function(){ 
-      checkLoadStatus(); 
-      updateGraph("graphOn");
-      $("#appletContainer").css("opacity","1")
+      updateGraph(); 
       $("#graphContainer").css("display","inline-block");
-      $(".graph-controls").css("display","inline-block");
-      updateGraph("graphOn");
+      $(".netlogo-view-container").css("z-index","1");
       ggbApplet.setErrorDialogsActive(false);  
     }, 1000);
   }
   
   function setupEventListeners() {
-    $(".graph-controls").on("click", "#graphOn", function() {
-      updateGraph("graphOn");
-      triggerGraphUpdate();
-    });
-    $(".graph-controls").on("click", "#graphOff", function() {
-      updateGraph("graphOff");
-    });
     $(".netlogo-view-container").css("background-color","transparent");   
-    $(".graph-controls").on("input", "#graphOpacity", function() {
-      $("#appletContainer").css("opacity",($(this).val() / 100));
-    });
-    $("#graphTest").on("input", "#graphOpacity2", function() {
-      $("#appletContainer").css("opacity",($(this).val() / 100));
-    });
   }
   
   ////// DISPLAY GRAPH //////
   
-  function checkLoadStatus() {
+  function updateGraph() {
     if (ggbApplet) {
       var properties = JSON.parse(ggbApplet.getViewProperties());
       graphWidth = properties.width;
@@ -76,39 +57,16 @@ Graph = (function() {
       var yScale = properties.invYscale;
       var xMax = graphWidth * xScale + xMin; // how many sections there are  
       var yMax = graphHeight * yScale + yMin;
-      boundaries = {xmin: xMin, xmax: xMax , ymin: yMin, ymax: yMax};
+      boundaries = {xmin: xMin, xmax: xMax, ymin: yMin, ymax: yMax};
       graphLoaded = true;
       ggbApplet.setWidth(viewWidth + Math.random(1));
       ggbApplet.setHeight(viewHeight + Math.random(1)); 
-      //$("#graphContainer").css("display","inline-block");
-      //$(".graph-controls").css("display","inline-block");
-    }
-  }
-  
-  function updateGraph(state) {
-    if (state === "graphOff") {
-      $("#appletContainer").addClass("selected");
-      $(".netlogo-view-container").css("z-index","0");
-      drawPatches = true;
-    } else {
-      $("#appletContainer").removeClass("selected");
-      $(".netlogo-view-container").css("z-index","1");
-      drawPatches = false;
-    }
-    world.triggerUpdate();
-  }
-
-  function triggerGraphUpdate() {
-    if (procedures.gbccOnGraphUpdate != undefined) { 
-      session.run('gbcc-on-graph-update'); 
-      checkLoadStatus();
     }
   }
   
   ////// COORDINATE CONVERSION //////
 
   function patchToGraph(coords) {
-    //checkLoadStatus();
     if (graphLoaded) {
       var xcor = coords[0];
       var ycor = coords[1];
@@ -129,7 +87,6 @@ Graph = (function() {
   }
   
   function graphToPatch(coords) {
-    //checkLoadStatus();
     if (graphLoaded) {
       var pointPositionX = coords[0];
       var pointPositionY = coords[1];
@@ -162,14 +119,15 @@ Graph = (function() {
     if (!applet1) 
     {
       $("#graphContainer").css("display","none");
-      $(".graph-controls").css("display","none");
-      importFile("geogebra-default.ggb");
+      importGgb("geogebra-default.ggb");
     } else { 
       $("#graphContainer").css("display","inline-block");
-      $(".graph-controls").css("display","inline-block");
-      updateGraph("graphOn");
+      $(".netlogo-view-container").css("z-index","1");
+      world.triggerUpdate();
+
     }
-    $("#appletContainer").css("display","inline-block");
+    $("#graphContainer").css("display","inline-block");
+    $(".netlogo-view-container").css("pointer-events","none");
     // left, top, width, height
     /*if (settings.length == 4) {
       $("#mapContainer").css("left", settings[0] + "px");
@@ -177,32 +135,33 @@ Graph = (function() {
       $("#mapContainer").css("width", settings[2] + "px");
       $("#mapContainer").css("height", settings[3] + "px");
     }*/
+    drawPatches = false;
+    world.triggerUpdate();
   }
   
   function hideGraph() {
-    updateGraph("graphOff");
-    $(".graph-controls").css("display","none");
     $("#graphContainer").css("display","none");
-    $("#appletContainer").css("display","none");
+    $(".netlogo-view-container").css("z-index","0");
+    $(".netlogo-view-container").css("pointer-events","auto");
+    drawPatches = true;
+    world.triggerUpdate();
   }
 
   ///////// GRAPH SETTINGS  ///////
   
   ///////// IMPORT GGB ///////
   
-  function importFile(filename) { 
+  function importGgb(filename) { 
     //drawPatches = true;
     //universe.repaint();
-    $("#appletContainer").css("display","inline-block");
-    $("#appletContainer").css("opacity","0")
+    $("#graphContainer").css("display","inline-block");
     applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
-    applet1.inject('appletContainer');
+    applet1.inject('graphContainer');
   }
   
   //////// POINTS /////////
   
   function createPoint(name, coords) {
-    //checkLoadStatus();
     if (graphLoaded) { 
       deleteObject(name);
       ggbApplet.evalCommand(name+" = Point({"+coords[0]+", "+coords[1]+"})");
@@ -393,11 +352,8 @@ Graph = (function() {
         var ycor = cmdString.slice(comma + 1, secondParenthesis).trim();
         xcor = parseFloat(xcor) || 0;
         ycor = parseFloat(ycor) || 0;
-        //console.log("name",name,xcor,ycor);
         createPoint(name, [xcor, ycor]);
       } else {
-        //console.log(cmdString);
-        //checkLoadStatus();
         if (graphLoaded) { ggbApplet.evalCommand(cmdString) };
       }
     } catch (ex) {
@@ -434,10 +390,10 @@ Graph = (function() {
     patchToGraph: patchToGraph,
     evalCommand: evalCommand,
     evalReporter: evalReporter,
-    importFile: importFile,
+    importGgb: importGgb,
     exists: exists,
-    checkLoadStatus: checkLoadStatus,
-    getObject: getObject
+    getObject: getObject,
+    updateGraph: updateGraph
   };
  
 })();

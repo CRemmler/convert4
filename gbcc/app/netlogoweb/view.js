@@ -106,38 +106,52 @@
         'dimensions.maxPycor': [this._weg.resizeView, this._weg.redrawView],
         'dimensions.minPxcor': [this._weg.resizeView, this._weg.redrawView],
         'dimensions.minPycor': [this._weg.resizeView, this._weg.redrawView],
-        'dimensions.patchSize': [this._weg.redrawView],
+        'dimensions.patchSize': [this._weg.resizePatches, this._weg.redrawView],
         'dimensions.wrappingAllowedInX': [this._weg.updateTopology, this._weg.redrawView],
         'dimensions.wrappingAllowedInY': [this._weg.updateTopology, this._weg.redrawView]
       };
     },
-    on: {
-      'widget-resized': function(_, oldLeft, oldRight, oldTop, oldBottom, newLeft, newRight, newTop, newBottom) {
-        var dHeight, dWidth, dx, dy, newHeight, newWidth, oldHeight, oldWidth, patchSize, ratio, scaledHeight, scaledWidth;
+    handleResize: function(arg) {
+      var bottom, dHeight, dWidth, dx, dy, left, movedLeft, movedUp, newBottom, newHeight, newLeft, newRight, newTop, newWidth, oldBottom, oldHeight, oldLeft, oldRight, oldTop, oldWidth, patchSize, ratio, ref, ref1, right, scaledHeight, scaledWidth, top;
+      newLeft = arg.left, newRight = arg.right, newTop = arg.top, newBottom = arg.bottom;
+      if (newLeft >= 0 && newTop >= 0) {
+        oldLeft = this.get('left');
+        oldRight = this.get('right');
+        oldTop = this.get('top');
+        oldBottom = this.get('bottom');
         oldWidth = oldRight - oldLeft;
         oldHeight = oldBottom - oldTop;
         newWidth = newRight - newLeft;
         newHeight = newBottom - newTop;
         dWidth = Math.abs(oldWidth - newWidth);
         dHeight = Math.abs(oldHeight - newHeight);
-        ratio = dWidth > dHeight ? newWidth / oldWidth : newHeight / oldHeight;
+        ratio = dWidth > dHeight ? newHeight / oldHeight : newWidth / oldWidth;
         patchSize = parseFloat((this.get('widget.dimensions.patchSize') * ratio).toFixed(2));
         scaledWidth = patchSize * (this.get('widget.dimensions.maxPxcor') - this.get('widget.dimensions.minPxcor') + 1);
         scaledHeight = patchSize * (this.get('widget.dimensions.maxPycor') - this.get('widget.dimensions.minPycor') + 1);
-        dx = Math.round((scaledWidth - oldWidth) / 2);
-        dy = Math.round((scaledHeight - oldHeight) / 2);
-        this.set('widget.top', oldTop - dy);
-        this.set('widget.bottom', oldBottom + dy);
-        this.set('widget.left', oldLeft - dx);
-        this.set('widget.right', oldRight + dx);
-        this.findComponent('editForm').set('patchSize', patchSize);
-        this.fire('set-patch-size', patchSize);
-        return this.fire('redraw-view');
+        dx = scaledWidth - oldWidth;
+        dy = scaledHeight - oldHeight;
+        movedLeft = newLeft !== oldLeft;
+        movedUp = newTop !== oldTop;
+        ref = movedUp ? [oldTop - dy, newBottom] : [newTop, oldBottom + dy], top = ref[0], bottom = ref[1];
+        ref1 = movedLeft ? [oldLeft - dx, newRight] : [newLeft, oldRight + dx], left = ref1[0], right = ref1[1];
+        if (left >= 0 && top >= 0) {
+          this.set('widget.top', Math.round(top));
+          this.set('widget.bottom', Math.round(bottom));
+          this.set('widget.left', Math.round(left));
+          this.set('widget.right', Math.round(right));
+          this.findComponent('editForm').set('patchSize', patchSize);
+        }
       }
     },
-    template: "{{>view}}\n<editForm idBasis=\"view\"\n          maxX=\"{{widget.dimensions.maxPxcor}}\" maxY=\"{{widget.dimensions.maxPycor}}\"\n          minX=\"{{widget.dimensions.minPxcor}}\" minY=\"{{widget.dimensions.minPycor}}\"\n          wrapsInX=\"{{widget.dimensions.wrappingAllowedInX}}\" wrapsInY=\"{{widget.dimensions.wrappingAllowedInY}}\"\n          patchSize=\"{{widget.dimensions.patchSize}}\" turtleLabelSize=\"{{widget.fontSize}}\"\n          framerate=\"{{widget.frameRate}}\"\n          isShowingTicks=\"{{widget.showTickCounter}}\" tickLabel=\"{{widget.tickCounterLabel}}\" />\n{{>editorOverlay}}",
+    handleResizeEnd: function() {
+      this.fire('set-patch-size', this.findComponent('editForm').get('patchSize'));
+    },
+    minWidth: 10,
+    minHeight: 10,
+    template: "{{>editorOverlay}}\n{{>view}}\n<editForm idBasis=\"view\" style=\"width: 510px;\"\n          maxX=\"{{widget.dimensions.maxPxcor}}\" maxY=\"{{widget.dimensions.maxPycor}}\"\n          minX=\"{{widget.dimensions.minPxcor}}\" minY=\"{{widget.dimensions.minPycor}}\"\n          wrapsInX=\"{{widget.dimensions.wrappingAllowedInX}}\" wrapsInY=\"{{widget.dimensions.wrappingAllowedInY}}\"\n          patchSize=\"{{widget.dimensions.patchSize}}\" turtleLabelSize=\"{{widget.fontSize}}\"\n          framerate=\"{{widget.frameRate}}\"\n          isShowingTicks=\"{{widget.showTickCounter}}\" tickLabel=\"{{widget.tickCounterLabel}}\" />",
     partials: {
-      view: "<div id=\"{{id}}\" class=\"netlogo-widget netlogo-view-container{{#isEditing}} interface-unlocked{{/}}\" style=\"{{dims}}\"></div>"
+      view: "<div id=\"{{id}}\" class=\"netlogo-widget netlogo-view-container {{classes}}\" style=\"{{dims}}\"></div>"
     }
   });
 

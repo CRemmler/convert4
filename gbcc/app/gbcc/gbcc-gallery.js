@@ -39,10 +39,13 @@ Gallery = (function() {
       var galleryControlSpan = "<div class='gallery-controls'>";
       galleryControlSpan += "<span class='gallery-right'>Size: <select id='canvasSize'><option>Small</option><option>Medium</option><option>Large</option></select>";
       galleryControlSpan += "<input type='checkbox' checked id='galleryUpdates'> Listen</span>";
-      //galleryControlSpan += "<span class='gallery-left'><input type='checkbox' id='selectAll'> Select All <input type='checkbox' id='foreverSelectAll'> Forever</span>";
-      galleryControlSpan += "<span class='gallery-left'><button id='selectAll'>Select All</button> ";
-      galleryControlSpan += "<button id='deselectAll'>Deselect All</button> ";
-      galleryControlSpan += "<button id='foreverSelectAll'><i class='fa fa-refresh' aria-hidden='true'></i> Forever</button></span>";
+      if (allowMultipleSelections) {
+        galleryControlSpan += "<span class='gallery-left'><button id='selectAll'>Select All</button> ";
+        galleryControlSpan += "<button id='deselectAll'>Deselect All</button> ";
+      }
+      if (allowCanvasForeverButtons) {
+        galleryControlSpan += "<button id='foreverSelectAll'><i class='fa fa-refresh' aria-hidden='true'></i> Forever</button></span>";
+      }
       galleryControlSpan += "</div>";
       $(".netlogo-gallery-tab-content").append(galleryControlSpan);
       socket.emit("request gallery data", {userId: myUserId, status: "select"});
@@ -154,65 +157,6 @@ Gallery = (function() {
       }
     });
   }
-    /*
-  function selectAll() {
-    var $elt;
-    var myId;
-    if ( $("#foreverSelectAll").is(":checked") && ! $("#selectAll").is(":checked") ) {
-     $("#foreverSelectAll").click();
-    }
-    var isChecked = $("#selectAll").is(":checked");
-    
-    $(".card.card-image").each(function() {
-      if (isChecked != ($(this).parent().hasClass("selected"))) {
-        $(this).click(); 
-      }
-    });
-    $("li").each(function() {
-      myId = $(this).attr("id")
-      $elt = $("#"+myId+" .card.card-image");
-      if (isChecked != $elt.parent().hasClass("selected")) {
-        $elt.click(); 
-        $("#"+myId+" .forever-icon:not(.selected)").css("display","none");     
-      }
-    });
-  }
-  
-  function foreverSelectAll() {
-    //if ( $("#foreverSelectAll").is(":checked") && ! $("#selectAll").is(":checked") ) {
-    // $("#selectAll").click();
-    //}
-    var isChecked = $("#foreverSelectAll").is(":checked");
-    $(".forever-icon").each(function() {
-      
-      if (!isChecked) {
-        if (isChecked != ($(this).hasClass("selected"))) {
-          $(this).click(); 
-          (isChecked) ? $(this).css("display","block") : $(this).css("display","none");
-        }
-      }
-      if (isChecked) {
-        if (isChecked == $(this).parent().hasClass("selected")) {
-          $(this).click(); 
-          (isChecked) ? $(this).css("display","block") : $(this).css("display","none");
-        }
-      }
-      if (isChecked) {
-        if ($(this).parent().hasClass("selected")) {
-          $(this).click(); 
-          $(this).css("display","block");
-        }
-      } else  {
-        if (($(this).hasClass("selected"))) {
-          $(this).click(); 
-          $(this).css("display","none");
-        }
-      }
-    });
-  }
-  */
-  
-  //assignZIndex();
   
   function assignZIndex() {
     $("li").each(function() {
@@ -493,7 +437,7 @@ Gallery = (function() {
   
   function broadcastView(key) {
     var mapVisible = ($("#mapContainer").css("display") === "none") ? false : true;
-    var graphVisible = ($("#appletContainer").css("display") === "none") ? false : true;
+    var graphVisible = ($("#graphContainer").css("display") === "none") ? false : true;
     var mapControlsVisible = ($(".map-controls").css("display") === "none") ? false : true;
     var graphControlsVisible = ($(".graph-controls").css("display") === "none") ? false : true;
     var mapOff = ($("#mapOff").hasClass("selected")) ? true : false;
@@ -502,7 +446,7 @@ Gallery = (function() {
     var drawGraphLayer = (graphVisible && graphControlsVisible && true) ? true : false;
     var drawNetLogoCanvas = ((mapVisible && mapOff && true) || (graphVisible && graphOff && true) || (mapVisible === graphVisible)) ? true : false;
     if (drawMapLayer || drawGraphLayer) {
-      var container = drawMapLayer ? "mapContainer" : "appletContainer";
+      var container = drawMapLayer ? "mapContainer" : "graphContainer";
       html2canvas(document.getElementById(container), {
         useCORS: true
         }).then(function (canvas) {
@@ -521,7 +465,6 @@ Gallery = (function() {
             miniCtx.drawImage(document.getElementsByClassName("netlogo-canvas")[0], 1, ((canvasWidth - height) / 2) + 1, width - 2, height);
           }
           message = document.getElementById(miniCanvasId).toDataURL("image/jpeg", imageQuality); 
-          console.log(message);
           socket.emit("send reporter", {
             hubnetMessageSource: "all-users", 
             hubnetMessageTag: "canvas-view-"+key, 

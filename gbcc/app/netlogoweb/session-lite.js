@@ -17,7 +17,7 @@
 
   REDRAW_EXP = 2;
 
-  NETLOGO_VERSION = '2.3.0';
+  NETLOGO_VERSION = '2.4.0';
 
   codeCompile = function(code, commands, reporters, widgets, onFulfilled, onErrors) {
     var compileParams, error, ex;
@@ -73,6 +73,11 @@
           return _this.recompile(callback);
         };
       })(this));
+      this.widgetController.ractive.on('*.recompile-lite', (function(_this) {
+        return function(_, callback) {
+          return _this.recompileLite(callback);
+        };
+      })(this));
       this.widgetController.ractive.on('export-nlogo', (function(_this) {
         return function(_, event) {
           return _this.exportNlogo(event);
@@ -91,11 +96,6 @@
       this.widgetController.ractive.on('console.run', (function(_this) {
         return function(_, code) {
           return _this.run(code);
-        };
-      })(this));
-      this.widgetController.ractive.on('editing-mode-changed-to', (function(_this) {
-        return function(_, isEditing) {
-          return _this.setEventLoop(!isEditing);
         };
       })(this));
       this.widgetController.ractive.set('lastCompileFailed', lastCompileFailed);
@@ -134,13 +134,6 @@
       window.modelConfig.version = NETLOGO_VERSION;
       globalEval(modelJS);
     }
-
-    SessionLite.prototype.setEventLoop = function(isOn) {
-      cancelAnimationFrame(this._eventLoopTimeout);
-      if (isOn) {
-        requestAnimationFrame(this.eventLoop);
-      }
-    };
 
     SessionLite.prototype.modelTitle = function() {
       return this.widgetController.ractive.get('modelTitle');
@@ -189,11 +182,13 @@
       this._eventLoopTimeout = requestAnimationFrame(this.eventLoop);
       updatesDeadline = Math.min(this._lastRedraw + this.redrawDelay(), now() + MAX_UPDATE_TIME);
       maxNumUpdates = this.drawEveryFrame ? 1 : (now() - this._lastUpdate) / this.updateDelay();
-      for (i = j = 1, ref1 = maxNumUpdates; j <= ref1; i = j += 1) {
-        this._lastUpdate = now();
-        this.widgetController.runForevers();
-        if (now() >= updatesDeadline) {
-          break;
+      if (!this.widgetController.ractive.get('isEditing')) {
+        for (i = j = 1, ref1 = maxNumUpdates; j <= ref1; i = j += 1) {
+          this._lastUpdate = now();
+          this.widgetController.runForevers();
+          if (now() >= updatesDeadline) {
+            break;
+          }
         }
       }
       if (Updater.hasUpdates()) {
@@ -208,6 +203,21 @@
     SessionLite.prototype.teardown = function() {
       this.widgetController.teardown();
       return cancelAnimationFrame(this._eventLoopTimeout);
+    };
+
+    SessionLite.prototype.recompileLite = function(successCallback) {
+      var lastCompileFailed, someWidgetIsFailing;
+      if (successCallback == null) {
+        successCallback = (function() {});
+      }
+      lastCompileFailed = this.widgetController.ractive.get('lastCompileFailed');
+      someWidgetIsFailing = this.widgetController.widgets().some(function(w) {
+        var ref1;
+        return ((ref1 = w.compilation) != null ? ref1.success : void 0) === false;
+      });
+      if (lastCompileFailed || someWidgetIsFailing) {
+        this.recompile(successCallback);
+      }
     };
 
     SessionLite.prototype.recompile = function(successCallback) {

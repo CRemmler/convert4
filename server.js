@@ -247,12 +247,9 @@ app.post('/fileupload',function(req,res){
         zip.file("index.html", indexFile);
         
         
-        fs.readFileAsync("gbcc/app/gbcc/font-awesome.min.css", "utf8").then(function(data) {
-          zip.file("app/gbcc/font-awesome.min.css", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/gbcc-gallery.css", "utf8").then(function(data) {
-          zip.file("app/gbcc/gbcc-gallery.css", data);
-        }).then(function() {
+    
+    
+        
         fs.readFileAsync("gbcc/app/gbcc/exportworld.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/exportworld.js", data);
         }).then(function() {
@@ -283,6 +280,9 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/gbcc-gallery.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-gallery.js", data);
         }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/gbcc-gallery.css", "utf8").then(function(data) {
+        	zip.file("app/gbcc/gbcc-gallery.css", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-interface.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-interface.js", data);
         }).then(function() {
@@ -294,6 +294,9 @@ app.post('/fileupload',function(req,res){
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/image.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/image.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
+        	zip.file("app/gbcc/fontawesome-webfont.eot", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/jquery.min.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/jquery.min.js", data);
@@ -406,6 +409,9 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/netlogoweb/codemirror.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/codemirror.js", data);
         }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/color-input.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/color-input.js", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/app/netlogoweb/colors.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/colors.js", data);
         }).then(function() {
@@ -466,8 +472,14 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/netlogoweb/handle-widget-selection.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/handle-widget-selection.js", data);
         }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/help-dialog.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/help-dialog.js", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/app/netlogoweb/highcharts.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/highcharts.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/highcharts(1).js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/highcharts(1).js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/netlogoweb/html-sanitizer-minified.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/html-sanitizer-minified.js", data);
@@ -486,6 +498,9 @@ app.post('/fileupload',function(req,res){
         }).then(function() {
         fs.readFileAsync("gbcc/app/netlogoweb/jquery.min.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/jquery.min.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/keywords.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/keywords.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/netlogoweb/label.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/label.js", data);
@@ -574,6 +589,9 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/netlogoweb/title.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/title.js", data);
         }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/topbar.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/topbar.js", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/app/netlogoweb/tortoise-compiler.js", "utf8").then(function(data) {
         	zip.file("app/netlogoweb/tortoise-compiler.js", data);
         }).then(function() {
@@ -622,8 +640,8 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/server.js", "utf8").then(function(data) {
         	zip.file("server.js", data);
         }).then(function() {
-
-        zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+          
+          zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
           .pipe(fs.createWriteStream(filename+'.zip'))
           .on('finish', function () {
             res.download(filename+'.zip', function() {
@@ -637,9 +655,13 @@ app.post('/fileupload',function(req,res){
         }).catch(function(e) {
           res.sendfile('index.html');
           console.error(e.stack);
-          
-          
-  }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
+  
+
+        }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
+    
+    
+        
+        
      
      });
    });
