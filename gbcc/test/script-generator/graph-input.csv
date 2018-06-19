@@ -35,8 +35,8 @@ patch-to-graph,(list),(coords),(list)
 eval-command,(string),(command),
 eval-reporter,(string),(command),(wildcard)
 get-points-string,,,(string)
-set-coord-system,(number;number;number;number),(xmin;xmax;ymin;ymax),
-set-fixed,(string;boolean),(name;fixed),
+set-coord-system,(number; number; number; number),(xmin; xmax; ymin; ymax),
+set-fixed,(string; boolean),(name; fixed),
 import-world,(string),(filename),
 export-world,,,
-
+update-graph,,,

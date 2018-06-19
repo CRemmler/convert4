@@ -86,4 +86,5 @@ show-objects,,,
 hide-objects,,,
 import-world,(string),(filename),
 export-world,,,
-set-rectangle-patch,(list),(coords),
+set-rectangle-patch,(string; list),(name; coords),
+get-rectangle-patch,(string),(name),(patch)

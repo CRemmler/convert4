@@ -28,9 +28,11 @@ patch-to-latlng,(list),(coords),(list)
 exists,(string),(name),(boolean)
 create-path,(string; list),(name; vertices),
 get-path,(string),(name),(list)
+set-path,(string; list),(name; vertices),
 hide-path,(string),(name),
 show-path,(string),(name),
 delete-path,(string),(name),
+delete-paths,,,
 import-world,(string),(filename),
 export-world,,,
 update-map,,,

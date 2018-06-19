@@ -25,12 +25,14 @@
 	    .selected#pink1 { border:4px solid orange; }
 	    .selected#white1 {border: 4px solid orange; }
 	    .selected#gray1 {border: 4px solid orange; }
+			.selected#brown1 {border: 4px solid orange; }
 			table {text-align:center;}
 			#menu {padding-top:5px; padding-bottom:0px}
 			.spacer { height:72px;border:none;}
-			span.blue {color: blue;border:none;}
-			span.red {color: red;border:none;}
-			span.green {color:darkviolet;border:none;}
+			span.blue {border:none;}//{color: blue;border:none;}
+			span.red {border:none;}//{color: red;border:none;}
+			span.green {border:none;}//{color:darkviolet;border:none;}
+			span.gray {color:gray;border:none;}
 		</style>
 		<script>
 			jQuery(document).ready(function() {
@@ -56,6 +58,7 @@
 			<img src="./images/orange-turtle.png" class="turtle" id="orange1">
 			<img src="./images/red-turtle.png" class="turtle" id="red1">
 			<img src="./images/gray-turtle.png" class="turtle" id="gray1">
+			<img src="./images/brown-turtle.png" class="turtle" id="brown1">
 		</div>
 		<div class="container yellow1">
 			<h2>Hello World</h2>
@@ -81,6 +84,8 @@ to gbcc-on-select [ user-id role ]
   gbcc:restore-globals-from-user user-id
 end
 </pre>
+<h2>Model with Sample Code</h2>
+<a href="https://wolf-sheep-gbcc.herokuapp.com/">Wolf Sheep</a>
 		</div>
 		<div class="container white1">
 			<h2>Use Direction Buttons to Move Turtle and it's GeoGebra Point</h2>
@@ -128,6 +133,9 @@ to go-forward [ direction ]
   ]
 end
 </pre>
+<h2>Model with Sample Code</h2>
+<a href="https://gbcc-triangle.herokuapp.com/">Triangle</a>
+
 		</div>
 		<div class="container blue1">
 			<h2>Share Code and Run It</h2>
@@ -147,6 +155,9 @@ to run-code
   run code-example 
 end
 </pre>
+<h2>Model with Sample Code</h2>
+<a href="https://catch-a-planet-4.herokuapp.com/">Catch A Planet</a>
+		</div>
 		</div>
 		<div class="container purple1">
 			<h2>Turtles Walk Around at the Same Time</h2>
@@ -336,69 +347,106 @@ end
 </pre>
 		</div>
 		<div class="container gray1">
-			<h2>Disease</h2>
+			<h2>Streaming Worms</h2>
 			<img src="./images/code-gray-2.png" style="height:150px">
-			<h2>NetLogo Code (NOT TESTED)</h2>
+			<h2>NetLogo Code</h2>
 <pre>
-
-;; ------- Users run their own Disease model, with actions from other users.
+;;;; STUDENT ACTIONS ;;;;
 to go-up
-  ask turtle my-turtle-number [ set heading 0 fd 1 gbcc:set "ycor" ycor ]
+  gbcc:add-to-stream "move" "up"
 end
 
-to user-listen-to-user [ user-id ]
-  ask turtles with [ id = user-id ] [ set ycor gbcc:get-from-user user-id "ycor" ]
-end
-
-;; ------- Students participate in class Disease model (optional: teacher shares current state of world)
-to go-up
-  ask turtle my-turtle-number [ set heading 0 fd 1 gbcc:set "ycor" ycor ]
-end
-
-to teacher-listen-to-student [ user-id ]
-  ask turtles with [ id = user-id ] [ set ycor gbcc:get-from-user user-id "ycor" ]
-end
-
-to student-listen-to-teacher ;; optional, if students don't have their own view
-  ask turtles [ set ycor gbcc:get-from-user id "ycor" ]
-end
-
-;; ------ Students participate in class Disease model (teacher shares stream of updates to world)
-to go-up
-  <span class='green'>gbcc:add-to-stream "up" (my-user-id 1)</span>
-end
-
-to teacher-listen-to-student [ user-id ]
-  let input <span class='green'>gbcc:get-stream-from-user-id user-id "up"</span>
-  let output [ ]
-  foreach input [ [ turtle-id step ] -> 
-    ask turtles with [ id = turtle-id ] [ 
-      set heading 0 
-      fd step
-      set output lput (list turtle-id ycor) output
-      <span class='blue'>gbcc:set (word id "-ycor") ycor</span>
-    ] 
-  ]
-  foreach student-user-id-list [ student-id ->
-    <span class='red'>gbcc:add-to-stream (word student-id "-ycor") output</span>
+;;;; TEACHER LISTENS ;;;;
+to setup-listen-to-student [ user-id ] 
+  ask turtles with [ id = user-id ] [
+    show-turtle
+    let coords gbcc:get-from-user user-id (word "turtle-data-" id)
+    setxy item 1 coords item 2 coords
+    set color gbcc:get-from-user user-id "color"
   ]
 end
 
-to student-setup-listen-to-teacher [
-  ask turtles [ set ycor <span class='blue'>gbcc:get-from-user teacher-user-id (word id "-ycor")</span> ]
-]
-
-to student-listen-to-teacher [
-  let input <span class='red'>gbcc:get-stream-from-user teacher-user-id (word my-user-id "-ycor")</span>
-  foreach input [ [ turtle-id turtle-ycor ] ->
-    ask turtles with [ id = turtle-id ] [ set ycor turtle-ycor ]
+to listen-to-student [ user-id ]
+  let move-messages gbcc:get-stream-from-user user-id "move"
+  foreach move-messages [ message -> 
+    move-turtle user-id message
   ]
-]
+end
+
+to move-turtle [ user-id message ]
+  ask turtles with [ id = user-id ] [
+    ifelse (message = "up")
+    [ set ycor ycor + 1 ]
+    [ ifelse (message = "down")
+      [ set ycor ycor - 1 ]  
+      [ ifelse (message = "left") 
+        [ set xcor xcor - 1 ]
+        [ set xcor xcor + 1 ]
+      ]
+    ]
+    gbcc:set (word "turtle-data-" user-id) (list xcor ycor) 
+    let my-color color    
+    let turtle-data (list user-id xcor ycor)
+    ask turtles [ gbcc:add-to-stream (word id "-turtle-data") turtle-data ] 
+    let patch-data (list xcor ycor color) 
+    let turtle-data-for-patches (list color xcor ycor)
+    ask patches in-radius 3 
+    [
+       set pcolor item 0 turtle-data-for-patches + distancexy item 1 turtle-data-for-patches item 2 turtle-data-for-patches
+       set patch-data (list pxcor pycor pcolor)
+       gbcc:set (word "patch-data-" pxcor "-" pycor) patch-data
+       ask turtles [ gbcc:add-to-stream (word id "-patch-data") patch-data ]
+    ]
+  ]
+end
+
+;;;; STUDENT LISTENS ;;;;
+to setup-listen-to-teacher [ user-id ] 
+  let coords (list )
+  ask turtles [
+    set coords gbcc:get-from-user user-id (word "turtle-data-" id)
+    setxy item 1 coords item 2 coords
+  ]
+  ask patches [
+    set pcolor gbcc:get-from-user user-id (word "patch-data-" pxcor "-" pycor)
+  ]
+end
+
+to listen-to-teacher [ user-id ]
+   let turtle-messages gbcc:get-stream-from-user user-id (word my-user-id "-turtle-data")
+   foreach turtle-messages [ message ->
+     ;; message is of form [ user-id xcor ycor ]
+     ask turtles with [ id = item 0 message ] [ setxy item 1 message item 2 message ]
+   ]
+   let patch-messages gbcc:get-stream-from-user user-id (word my-user-id "-patch-data")
+   foreach patch-messages [ message ->
+     ;; message is of form [ pxcor pycor pcolor ]
+     ask patch item 0 message item 1 message [ set pcolor item 2 message ]
+   ]
+end
 </pre>
+<h2>Model with Sample Code</h2>
+<a href="https://gbcc-streaming-worms.herokuapp.com/">Streaming Worms</a>
+<br><a href="./streamingworms.zip">streamingworms.zip</a>
 	</div>
 		
-		
-		
-		
+	<div class="container brown1">
+		<h2>Update Turtles to match Map</h2>
+		<img src="./images/code-brown-2.png" style="height:150px">
+		<h2>NetLogo Code</h2>
+<pre>
+to update-turtles
+  graph:update-graph
+  ask turtles [
+    let graph-coords graph:get-xy point-name
+    let patch-coords graph:graph-to-patch graph-coords 
+    setxy item 0 patch-coords item 1 patch-coords
+  ]
+end
+</pre>
+<h2>Model with Sample Code</h2>
+<a href="https://gbcc-graph-test.herokuapp.com/">Graph Test</a>
+</div>
+
 	</body>
 </html>

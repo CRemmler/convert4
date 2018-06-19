@@ -6,6 +6,7 @@ Maps = (function() {
   var center = [ 30.2672, -97.7431];
   //var map;
   markers = {};
+  paths = {};
   var viewWidth;
   var viewHeight;
   var boundaries;
@@ -17,7 +18,7 @@ Maps = (function() {
   ////// SETUP MAP //////
   
   function setupInterface() {
-    console.log("setupInterface for maps");
+    //console.log("setupInterface for maps");
     viewWidth = parseFloat($(".netlogo-canvas").css("width"));
     viewHeight = parseFloat($(".netlogo-canvas").css("height"));
     var spanText =    "<div id='mapContainer'></div>";
@@ -31,11 +32,9 @@ Maps = (function() {
     if (L) {
       map = L.map('mapContainer').setView([ 30.2672, -97.7431], 11);      
       if (map) { 
-        console.log('b');
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        console.log(map.getBounds());
         updateMap();
       }
     }
@@ -231,11 +230,13 @@ Maps = (function() {
   }
   
   function createPath(name, vertices) {
-    
+    var latlngs = vertices;
+    paths[name] = L.polyline(latlngs, {color: 'black'}).addTo(map);
+    map.addLayer(paths[name]);
   }
   
   function getVertices(name) {
-    
+    return paths[name];
   }
   
   function setVertices(name, vertices) {
@@ -243,15 +244,16 @@ Maps = (function() {
   }
   
   function hidePath(name) {
-    
+    map.removeLayer(paths[name]);
   }
   
   function showPath(name) {
-    
+    map.addLayer(paths[name]);
   }
   
   function deletePath(name) {
-    
+    map.removeLayer(paths[name]);
+    delete paths[name];
   }
   
 

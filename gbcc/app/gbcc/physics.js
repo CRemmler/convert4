@@ -54,8 +54,8 @@ Physics = (function() {
     spanText +=       "<div class='rightControls'>"; //"<div id='physicsStateControls'>";
     //spanText +=         "<i class='fa fa-save' id='physicsSave' aria-hidden='true'></i>";
     //spanText +=         " <i class='fa fa-refresh' id='physicsRefresh' aria-hidden='true'></i>";
-    spanText +=         " <i class='fa fa-play' id='physicsPlay' aria-hidden='true'></i>";
-    spanText +=         " <i class='fa fa-pause hidden' id='physicsPause' aria-hidden='true'></i>";
+    //spanText +=         " <i class='fa fa-play' id='physicsPlay' aria-hidden='true'></i>";
+    //spanText +=         " <i class='fa fa-pause hidden' id='physicsPause' aria-hidden='true'></i>";
     spanText +=       "</div>";
     spanText += "</div>";
     $(".netlogo-view-container").append(spanText);  
@@ -235,7 +235,7 @@ Physics = (function() {
       $("#physicsMenu img.selected").removeClass("selected");
       $(".physics-drag").click()
     }
-    $("#physicsSettings").addClass("hidden");
+    //$("#physicsSettings").addClass("hidden");
   }
     
   
@@ -264,7 +264,15 @@ Physics = (function() {
       //$("#mapContainer").css("width", settings[2] + "px");
       //$("#mapContainer").css("height", settings[3] + "px");
     //}
+    $(".netlogo-view-container").css("pointer-events","auto");
+    $(".netlogo-view-container").css("cursor","pointer");
     Physicsb2.bindElements();
+    
+    /*
+    $("#mapContainer").css("display","inline-block");
+    $("#mapContainer").css("z-index","0");
+    $(".netlogo-view-container").css("pointer-events","none");
+    $(".netlogo-view-container").css("z-index","1");*/
   }
   
   function hideWorld() {
@@ -277,7 +285,17 @@ Physics = (function() {
       $("#physicsPlay").removeClass("inactive");  
       $("#physicsPause").addClass("inactive");  
     }
+    $(".netlogo-view-container").css("pointer-events","none");
+    $(".netlogo-view-container").css("cursor","auto");
     Physicsb2.unBindElements();
+    
+    /*
+    $("#mapContainer").css("display","none");
+    $("#mapContainer").css("z-index","1");
+    $(".netlogo-view-container").css("pointer-events","auto");
+    $(".netlogo-view-container").css("z-index","0");
+    drawPatches = true;
+    world.triggerUpdate();*/
   }
 
   ///////// START AND STOP WORLD  ///////
@@ -356,7 +374,10 @@ Physics = (function() {
     if (Physicsb2.getBodyObj(name) != undefined) {
       var bodyType = (behavior === "static") ? 0 : (behavior === "ghost") ? 1 : 2;
       Physicsb2.getBodyObj(name).SetType(bodyType);
+      Physicsb2.recenter(Physicsb2.getBodyObj(name));
     }
+    //Physicsb2.getBodyObj(name).ResetMassData();
+
   }
   function setBodyXy(name, patchCoords) {
     if (Physicsb2.getBodyObj(name) && patchCoords && typeof patchCoords[0] === "number" && typeof patchCoords[1] === "number") {
@@ -624,22 +645,47 @@ Physics = (function() {
     Physicsb2.addTargetToBody({"targetId": name, "bodyId": bodyId });
     Physicsb2.refresh();
   }
-  function setTargetRelativeXy(name, coords) {
+  function setTargetRelativeXy(name, relativePatchCoords) {
+    if (Physicsb2.getTargetObj(name) && relativePatchCoords.length > 0) {
+      var bodyId = Physicsb2.getTargetObj(name).bodyId;    
+      var offset = Physicsb2.getBodyObj(bodyId).GetPosition(); 
+      var absolutePatchOffset = Physicsb2.box2dToPatch(offset); 
+      var absoluteBox2dCoords = Physicsb2.patchToBox2d([ absolutePatchOffset[0] + relativePatchCoords[0], absolutePatchOffset[1] + relativePatchCoords[1]]);
+      Physicsb2.getTargetObj(name).coords = absoluteBox2dCoords;//Physicsb2.box2dToPatch(absoluteBox2dCoords);
+      Physicsb2.getTargetObj(name).relativeCoords = Physicsb2.getBodyObj(bodyId).GetLocalPoint(absoluteBox2dCoords);
+      Physicsb2.getTargetObj(name).snap = false;
+    }
+    Physicsb2.refresh();
   }
   function setTargetXy(name, coords) {
     if (Physicsb2.getTargetObj(name)) {
+      var bodyId = Physicsb2.getTargetObj(name).bodyId; 
       Physicsb2.getTargetObj(name).coords = coords;
+      Physicsb2.getTargetObj(name).relativeCoords = Physicsb2.getBodyObj(bodyId).GetLocalPoint(coords);
+      Physicsb2.getTargetObj(name).snap = false;
     }
   }
   function getTargetRelativeXy(name) {
+    var center = [ 0, 0];
+    if (Physicsb2.getTargetObj(name)) {
+      var bodyId = Physicsb2.getTargetObj(name).bodyId;
+      var offset = Physicsb2.getBodyObj(bodyId).GetPosition(); 
+      var box2dCoords = Physicsb2.getTargetObj(name).coords;
+      var absoluteOffset = { x: offset.x - box2dCoords.x, y: offset.y - box2dCoords.y};
+      absoluteOffset = Physicsb2.box2dToPatch(offset);
+      var absoluteNlogoCoords = Physicsb2.box2dToPatch(box2dCoords);
+      center = [absoluteNlogoCoords[0] - absoluteOffset[0],absoluteNlogoCoords[1] - absoluteOffset[1] ];
+    }
+    return center;
   }
   function getTargetXy(name) {
+    //console.log(Physicsb2.getTargetObj(name).coords);
     return Physicsb2.getTargetObj(name) ? Physicsb2.getTargetObj(name).coords : [0, 0];
   }
   
   ///////// OBJECT ////////
   function setBodyId(oldBodyId, newBodyId) {
-    console.log("move "+oldBodyId+" to " +newBodyId);
+    //console.log("move "+oldBodyId+" to " +newBodyId);
     Physicsb2.updateBody(oldBodyId, bodyIdBodyMode, newBodyId);
 
   }
@@ -899,6 +945,90 @@ Physics = (function() {
     return connectedList;
   }
 
+  function resetTicks() {
+    
+  }
+  function tick() {
+    var list = 0;
+    Physicsb2.updateOnce();
+    list = Physicsb2.getCollisions();
+    return list;
+  }
+  function repaint() {
+    //Physicsb2.refresh();
+    //Physicsb2.redrawWorld();
+    Physicsb2.updateOnce();
+  }
+  function createRectangle(name, body) {
+    createPolygon(name, body);
+  }
+  function setRectangleRelativeCorners(name, corners) {
+    var vertices = cornersToVertices(corners);
+    setPolygonRelativeVertices(name, vertices);
+  }
+  function setRectangleCorners(name, corners) {
+    var vertices = cornersToVertices(corners);
+    setPolygonVertices(name, vertices);
+  }
+  function setRectanglePatch(name, coords) {
+    var x = coords[0];
+    var y = coords[1];
+    setRectangleCorners(name, [ [ x - 0.45, y + 0.45 ], [ x + 0.45, y - 0.45]]);
+  }
+  function cornersToVertices(corners) {
+    var xmin, xmax, ymin, ymax;
+    var point0 = corners[0];
+    var point1 = corners[1];
+    var xmin = point0[0] < point1[0] ? point0[0] : point1[0];
+    if (point0[0] < point1[0]) {
+      xmin = point0[0];
+      xmax = point1[0];
+    } else {
+      xmax = point0[0];
+      xmin = point1[0];
+    }
+    if (point0[1] < point1[1]) {
+      ymin = point0[1];
+      ymax = point1[1];
+    } else {
+      ymax = point0[1];
+      ymin = point1[1];
+    }
+    return [[xmin, ymax],[xmax, ymax],[xmax, ymin],[xmin, ymin]];
+  }
+  function getRectangleRelativeCorners(name) {
+    var list = 0;
+    return list;
+  }
+  function getRectangleCorners(name) {
+    var list = 0;
+    return list;
+  }
+
+  function getRectanglePatch(name) {
+    var patch = 0;
+    return patch;
+  }
+  function showObject(name) {
+    
+  }
+  function hideObject(name) {
+    
+  }
+  function showObjects() {
+    Physicsb2.repaintPhysics(true);;
+  }
+  function hideObjects() {
+    Physicsb2.repaintPhysics(false);
+  }
+  function importWorld(filename) {
+    
+  }
+  function exportWorld() {
+    
+  }
+
+  
   return {
     setupInterface: setupInterface,
     getDrawButtonMode: getDrawButtonMode,
@@ -975,8 +1105,21 @@ Physics = (function() {
     applyAngularImpulse: applyAngularImpulse,
     connectWhoToObject: connectWhoToObject,
     disconnectWho: disconnectWho,
-    getConnected: getConnected
-
+    getConnected: getConnected,
+    tick: tick,
+    resetTicks: resetTicks,
+    showObject: showObject,
+    hideObject: hideObject,
+    repaint: repaint,
+    createRectangle: createRectangle,
+    setRectangleRelativeCorners: setRectangleRelativeCorners,
+    setRectangleCorners: setRectangleCorners,
+    getRectangleRelativeCorners: getRectangleRelativeCorners,
+    getRectangleCorners: getRectangleCorners,
+    setRectanglePatch: setRectanglePatch,
+    getRectanglePatch: getRectanglePatch,
+    showObjects: showObjects,
+    hideObjects: hideObjects
   };
  
 })();

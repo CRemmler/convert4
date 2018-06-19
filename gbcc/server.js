@@ -82,6 +82,7 @@ io.on('connection', function(socket){
         allRooms[myRoom].turtles = {};
         allRooms[myRoom].patches = {};
         allRooms[myRoom].userData = {};
+        allRooms[myRoom].userStreamData = {};
         allRooms[myRoom].canvasOrder = [];
         allRooms[myRoom].settings = {};
       }
@@ -91,6 +92,7 @@ io.on('connection', function(socket){
       // declare myUserId
       myUserId = socket.id.replace("_","").replace("-","");
       allRooms[myRoom].userData[myUserId] = {};
+      allRooms[myRoom].userStreamData[myUserId] = {};
       allRooms[myRoom].userData[myUserId].exists = true;
       allRooms[myRoom].userData[myUserId]["userType"] = myUserType;
       // send settings to client
@@ -167,17 +169,6 @@ io.on('connection', function(socket){
     }
     schools[school] = allRooms;
 	});
-
-  socket.on("request user data", function() {
-    var school = socket.school;
-    var allRooms = schools[school];
-    var myRoom = socket.myRoom;
-    var myUserId = socket.id.replace("_","").replace("-","");
-    var canvases;
-    if (allRooms[myRoom] != undefined) {
-      socket.emit("accept all user data", {userData: allRooms[myRoom].userData });
-    }
-  });
   
   socket.on("request user broadcast data", function() {
     var school = socket.school;
@@ -253,6 +244,27 @@ io.on('connection', function(socket){
       hubnetMessage: data.hubnetMessage
     });
   });
+
+   // pass stream of data from server to student
+   socket.on("send stream reporter", function(data) {
+     var school = socket.school;
+     var allRooms = schools[school];
+     var myRoom = socket.myRoom;
+     var myUserId = socket.id.replace("_","").replace("-","");
+     var myUserType = socket.myUserType;
+     var destination = data.hubnetMessageSource;
+     if (allRooms[myRoom] != undefined) {
+       if (allRooms[myRoom].userData[myUserId]) {
+         if (destination === "server") {
+           allRooms[myRoom].userStreamData[myUserId][data.hubnetMessageTag] = data.hubnetMessage;
+           socket.to(school+"-"+myRoom+"-teacher").emit("accept user stream data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+           socket.to(school+"-"+myRoom+"-student").emit("accept user stream data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+           socket.emit("accept user stream data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+         } 
+       }
+     }
+     schools[school] = allRooms;
+   });
 
   // pass reporter from server to student
   socket.on("send reporter", function(data) {

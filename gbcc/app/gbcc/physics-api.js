@@ -7,6 +7,8 @@ Physicsb2 = (function() {
   var running = false;
   var elementsBound = false;
   
+  var collisions = [];
+  
   var SCALE = 30;
   var BOX2D_WIDTH = 0; 
   var BOX2D_HEIGHT = 0; 
@@ -14,9 +16,10 @@ Physicsb2 = (function() {
   var NLOGO_HEIGHT = 0;
   var WRAP_X = false;
   var WRAP_Y = false;
-  var FRAME_RATE = 1/30;
-  var VELOCITY_ITERATIONS = 10;
-  var POSITION_ITERATIONS = 10;
+  var FRAME_RATE = 1/15; //1/30;
+  var VELOCITY_ITERATIONS = 20;//10;
+  var POSITION_ITERATIONS = 20; //10;
+  //var TIMESTEP = 1;
   
   var bodyObj = {};
   var turtleObj = {};
@@ -57,7 +60,8 @@ Physicsb2 = (function() {
   
   var showAABB = false;
   var showCenter = false;
-
+  var showObjects = false;
+  
   var   b2Vec2 = Box2D.Common.Math.b2Vec2
      ,	b2BodyDef = Box2D.Dynamics.b2BodyDef
      ,	b2Body = Box2D.Dynamics.b2Body
@@ -75,6 +79,8 @@ Physicsb2 = (function() {
      ,  b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef
      ,  b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef
      ,  b2MassData = Box2D.Collision.Shapes.b2MassData
+     ,  b2Listener = Box2D.Dynamics.b2ContactListener;
+
 
      ;
   
@@ -250,14 +256,20 @@ Physicsb2 = (function() {
     var b;
     universe.repaint();
     //default 1/60, 10, 10
+    
+    world.SetContactListener(listener);
+      
     world.Step(
       FRAME_RATE, VELOCITY_ITERATIONS, POSITION_ITERATIONS
       //     1 / 30   //frame-rate
       //  ,  10       //velocity iterations
       //  ,  10       //position iterations
     );
-    world.DrawDebugData();
-    redrawWorld();
+    
+    if (showObjects) {
+      world.DrawDebugData();
+      redrawWorld();
+    }
     world.ClearForces();
     var target, targetList;
     for (id in bodyObj)
@@ -297,7 +309,6 @@ Physicsb2 = (function() {
         targetList = b.GetUserData().targetList;
         for (var t=0; t<targetList.length; t++) {
           targetId = targetList[t];
-          //console.log(targetObj[targetId].relativeCoords);
           targetObj[targetId].coords = b.GetWorldPoint(targetObj[targetId].relativeCoords);
         }
         
@@ -499,7 +510,7 @@ Physicsb2 = (function() {
           universe.model.turtles[t].heading = heading;
         }
       }
-      if (mode === "force" || mode === "target") {
+      //if (mode === "force" || mode === "target") {
         drawAllTargets();
         //drawFreeTargets();
         //if (targetDragged) {
@@ -508,7 +519,7 @@ Physicsb2 = (function() {
         //if (bodyDragged && mode==="force") {
         //  drawTargetsForBody();
         //}
-      }
+      //}
     }
     //console.log("redrew world");
   }
@@ -567,6 +578,8 @@ Physicsb2 = (function() {
     //console.log("ADD BODY TO WORLD "+bodyId);
     bodyObj[bodyId] = world.CreateBody(bodyDefObj[bodyId]);
     totalObjectsCreated++;
+    
+    /*
     createTarget( {
       "targetId": "target-"+totalObjectsCreated,
       "bodyId": bodyId,
@@ -577,6 +590,7 @@ Physicsb2 = (function() {
       "targetId": "target-"+(totalObjectsCreated - 1),
       "bodyId": bodyId
     });
+    */
   }
   
   function deleteBody(bodyId) {
@@ -854,7 +868,6 @@ Physicsb2 = (function() {
         body.SetType(value);
         break;
       case "bodyIdBodyMode": 
-        console.log("yep");
         var newBodyId = value;
         var bodyId = body.GetUserData().id;
         body.GetUserData().id = newBodyId;
@@ -923,7 +936,7 @@ Physicsb2 = (function() {
     var snap = m.snap || false;
     var fillStyle = bodyId ? "limegreen" : "gray";
     if (bodyId) {
-      recenter(bodyObj[bodyId]);
+      //recenter(bodyObj[bodyId]);
     }
     if (snap) {
       coords = bodyObj[bodyId].GetWorldCenter();
@@ -939,6 +952,7 @@ Physicsb2 = (function() {
       targetId: targetId,
       snap: snap
     }
+    
     targetObj[targetId] = target;
     totalObjectsCreated++;
   }
@@ -1059,7 +1073,7 @@ Physicsb2 = (function() {
   ///////// FORCES IN WORLD
   
   function applyForce(m) {
-    //console.log("apply force");
+    console.log("apply force", m);
     var amount = m.force * 40;
     var radians = degreesToRadians(m.angle);
     var targetId = m.targetId;
@@ -1070,8 +1084,8 @@ Physicsb2 = (function() {
       if (bodyId) {
         var body = bodyObj[bodyId];
         var coords = target.coords;
-        //var direction = new b2Vec2(Math.cos(radians)*amount, Math.sin(radians)*amount);
-        var direction = {x: Math.cos(radians)*amount, y: Math.sin(radians)*amount};
+        var direction = new b2Vec2(Math.cos(radians)*amount, Math.sin(radians)*amount);
+        //var direction = {x: Math.cos(radians)*amount, y: Math.sin(radians)*amount};
         if (position === "relative") { 
           direction = b.GetWorldVector(direction); 
         }
@@ -1081,7 +1095,7 @@ Physicsb2 = (function() {
       }
     }
   }
-
+  
   function applyLinearImpulse(m) {
     var amount = m.force;
     var radians = degreesToRadians(m.angle);
@@ -1618,7 +1632,8 @@ Physicsb2 = (function() {
           WRAP_Y = value;
           break;
         case "timestep":
-          TIMESTEP = value;
+          //TIMESTEP = value;
+          FRAME_RATE = value;
           break;
         case "velocityIterations":
           VELOCITY_ITERATIONS = value;
@@ -2300,7 +2315,8 @@ Physicsb2 = (function() {
         return [ WRAP_X, WRAP_Y ];
         break;
       case "timestep":
-        return TIMESTEP;
+        //return TIMESTEP;
+        return FRAME_RATE;
         break;
       case "velocityIterations":
         return VELOCITY_ITERATIONS;
@@ -2315,7 +2331,7 @@ Physicsb2 = (function() {
 
   function connectWho(who, name) {
     bodyObj[name].GetUserData().turtleId = who;
-    recenter(bodyObj[name]);
+    //recenter(bodyObj[name]);
   }
   
   function disconnectWho(who) {
@@ -2326,6 +2342,77 @@ Physicsb2 = (function() {
     universe.repaint();
     world.DrawDebugData();
   }
+  
+  ///////// COLLISIONS ///////
+  //https://stackoverflow.com/questions/10878750/box2dweb-collision-contact-point
+  var listener = new b2Listener;
+
+  listener.BeginContact = function(contact) {
+    //console.log("begin contact");
+    //console.log(contact.GetFixtureA().GetBody().GetUserData());
+    //console.log(contact.GetFixtureB().GetBody().GetUserData());
+  }
+
+  listener.EndContact = function(contact) {
+    //console.log("end contact");
+    //console.log(contact.GetFixtureA().GetBody().GetUserData());
+    //console.log(contact.GetFixtureB().GetBody().GetUserData());
+  }
+
+  listener.PostSolve = function(contact, impulse) {
+    var bodyA = ["bodyA", contact.GetFixtureA().GetBody().GetUserData().id];
+    var bodyB = ["bodyB", contact.GetFixtureB().GetBody().GetUserData().id];
+    var normalImpulses = ["normalImpulses", round(impulse.normalImpulses)];
+    var tangetImpulses = [ "tangentImpulses", round(impulse.normalImpulses) ];
+    //var impulse = impulse.normalImpulses[0];
+    if (normalImpulses[0] < 0.2) { return; };
+    collisions.push([bodyA, bodyB, normalImpulses, tangetImpulses]);
+  }
+
+  function round(coords) {
+    var xcor = coords[0];
+    var ycor = coords[1];
+    return [ Math.round(xcor * 100) / 100, Math.round(ycor * 100) / 100 ];
+  }
+
+  function getCollisions() {
+    var currentCollisions = collisions;
+    collisions = [];
+    return currentCollisions;
+  }
+//  listener.PreSolve = function(contact, oldManifold) {
+      // PreSolve
+  //    console.log(presolve);
+    //console.log("presolve");
+//  }
+
+
+  function repaintPhysics(value) {
+    showObjects = value;
+    universe.repaint();
+    if (value) {
+      drawDebugData();
+      redrawWorld();
+      for (id in bodyObj)
+      {
+        b = bodyObj[id];
+        t = b.GetUserData().turtleId;
+        if (b.GetType() == b2Body.b2_dynamicBody || b.GetType() === b2Body.b2_kinematicBody) {
+          var heading = radiansToDegrees(b.GetAngle());
+          if (t != -1 && universe.model.turtles && universe.model.turtles[t]) {
+            var pos = box2dtonlogo(b.GetPosition());
+            var heading = radiansToDegrees(b.GetAngle());
+            universe.model.turtles[t].xcor = pos.x;
+            universe.model.turtles[t].ycor = pos.y;  
+            universe.model.turtles[t].heading = heading;
+          }
+          
+        }
+      }
+    }
+    //value ? drawDebugData() : universe.repaint();
+  }
+
   return {
     
     refresh: refresh,
@@ -2393,8 +2480,12 @@ Physicsb2 = (function() {
   //  setWorldSettings: setWorldSettings
   
     connectWho: connectWho,
-    disconnectWho: disconnectWho
-  
+    disconnectWho: disconnectWho,
+    
+    recenter: recenter,
+    getCollisions: getCollisions,
+
+    repaintPhysics: repaintPhysics
   };
 
 })();
