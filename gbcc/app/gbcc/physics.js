@@ -185,7 +185,7 @@ Physics = (function() {
     assignSettings("gravityY");
     assignSettings("wrapX");
     assignSettings("wrapY");
-
+    showObjects();
   }
   
   function assignSettings(setting) {
@@ -287,22 +287,9 @@ Physics = (function() {
     $(".physics-controls").css("display","inline-block");
     updatePhysics("physicsOn");
     $("#physicsContainer").css("display","inline-block");
-    // left, top, width, height
-    // if (settings.length == 4) {
-      //$("#mapContainer").css("left", settings[0] + "px");
-      //$("#mapContainer").css("top", settings[1] + "px");
-      //$("#mapContainer").css("width", settings[2] + "px");
-      //$("#mapContainer").css("height", settings[3] + "px");
-    //}
     $(".netlogo-view-container").css("pointer-events","auto");
     $(".netlogo-view-container").css("cursor","pointer");
     Physicsb2.bindElements();
-    
-    /*
-    $("#mapContainer").css("display","inline-block");
-    $("#mapContainer").css("z-index","0");
-    $(".netlogo-view-container").css("pointer-events","none");
-    $(".netlogo-view-container").css("z-index","1");*/
   }
   
   function hideWorld() {
@@ -318,14 +305,7 @@ Physics = (function() {
     $(".netlogo-view-container").css("pointer-events","none");
     $(".netlogo-view-container").css("cursor","auto");
     Physicsb2.unBindElements();
-    
-    /*
-    $("#mapContainer").css("display","none");
-    $("#mapContainer").css("z-index","1");
-    $(".netlogo-view-container").css("pointer-events","auto");
-    $(".netlogo-view-container").css("z-index","0");
-    drawPatches = true;
-    world.triggerUpdate();*/
+    universe.repaint();
   }
 
   ///////// START AND STOP WORLD  ///////
@@ -382,7 +362,7 @@ Physics = (function() {
     return Physicsb2.getWorldSettings("timestep");
   }
   function setVelocityIterations(velocityIterations) {
-    Physicsb2.updateWorld("velocityIterations", velocityiterations);
+    Physicsb2.updateWorld("velocityIterations", velocityIterations);
   }
   function getVelocityIterations() {
     return Physicsb2.getWorldSettings("velocityIterations");
@@ -494,6 +474,7 @@ Physics = (function() {
       patchCoords = Physicsb2.box2dToPatch(Physicsb2.getBodyObj(bodyId).GetPosition());
     } else {
       createBody(bodyId, patchCoords);
+      //setBehavior(bodyId, "static");
     }
     Physicsb2.createFixture({
       "shapeId": name, 
@@ -502,6 +483,7 @@ Physics = (function() {
       "typeOfShape": "line"
     });  
     Physicsb2.addFixtureToBody({ "shapeId": name, "bodyId": bodyId }); 
+    setBehavior(bodyId,"static");
     Physicsb2.refresh();
   }
   function setLineRelativeEndpoints(name, patchEndpoints) {
@@ -757,7 +739,7 @@ Physics = (function() {
       case "polygon":
         createPolygon(name, result.bodyId);
         setPolygonVertices(name, result.vertices);
-        console.log(result.vertices);
+        //console.log(result.vertices);
         break;
     }
     if (objectType === "circle" || objectType === "line" || objectType === "polygon") {
@@ -849,13 +831,14 @@ Physics = (function() {
     settings.timeStep = getTimeStep();
     settings.velocityIterations = getVelocityIterations();
     settings.getPositionIterations = getPositionIterations();
+    return settings;
   }
   
-  function setSettings(results) {
-    var data = JSON.parse(results);
+  function setSettings(data) {
+    //var data = JSON.parse(results);
     if (data.gravityXy) { setGravityXy(data.gravityXy); }
     if (data.wrapXy) { setWrapXy(data.wrapXy); }
-    if (data.timeStep) { setTimeStepXy(data.timeStep); }
+    if (data.timeStep) { setTimeStep(data.timeStep); }
     if (data.velocityIterations) { setVelocityIterations(data.velocityIterations); }
     if (data.getPositionIterations) { setPositionIterations(data.getPositionIterations); }
   }
@@ -1001,6 +984,7 @@ Physics = (function() {
     var list = 0;
     Physicsb2.updateOnce();
     list = Physicsb2.getCollisions();
+    //Physicsb2.redrawWorld();
   }
   function getTick() {
     var list = 0;
@@ -1009,9 +993,9 @@ Physics = (function() {
     return list;
   }
   function repaint() {
-    //Physicsb2.refresh();
+    Physicsb2.refresh();
     //Physicsb2.redrawWorld();
-    Physicsb2.updateOnce();
+    //Physicsb2.updateOnce();
   }
   function createRectangle(name, body) {
     createPolygon(name, body);
@@ -1028,6 +1012,7 @@ Physics = (function() {
     var x = coords[0];
     var y = coords[1];
     setRectangleCorners(name, [ [ x - 0.45, y + 0.45 ], [ x + 0.45, y - 0.45]]);
+    setBehavior(getBodyId(name), "static");
   }
   function cornersToVertices(corners) {
     var xmin, xmax, ymin, ymax;
@@ -1088,7 +1073,7 @@ Physics = (function() {
     $("#physicsMenu").css("display","none");
   }
   function getAll() {
-    var data = [];
+    var data = {};
     data.objects = getObjects();
     data.settings = getSettings();
     return JSON.stringify(data);

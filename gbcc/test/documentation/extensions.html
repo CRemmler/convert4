@@ -88,6 +88,7 @@
       img {border-radius: 0px;}
       .more, .less {cursor: default};
       .mediumImage {width: 200px;}
+      .update {border: 1px solid red; background-color:white;}
     </style>
   </head>
   <body>
@@ -706,7 +707,7 @@ WORLD
 <pre>
 ;; RECTANGLES
 <img class="obj" id="rectangle-obj" src="./images/physics-rect-obj.png"> 
-<span class="rectangle-obj-info">&#x2713; <span class='blue'>physics:create-rectangle</span> <span class='red'>"rectangle-1"</span> <span class="gray">;; create a rectangle attached to a body</span>
+<span class="rectangle-obj-info">&#x2713; <span class='blue'>physics:create-rectangle</span> <span class='red'>"rectangle-1" "body-1"</span> <span class="gray">;; create a rectangle attached to a body</span> <span class="update">*** new argument ***</span>
 &#x2713; <span class='blue'>physics:set-rectangle-relative-corners</span> <span class='red'>"rectangle-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
 &#x2713; <span class='blue'>physics:set-rectangle-corners</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
 &#x2713; <span class='blue'>show physics:get-rectangle-relative-corners</span> <span class='red'>"rectangle-1"</span>
@@ -717,7 +718,7 @@ WORLD
 <pre>
 ;; POLYGONS
 <img class="obj" id="polygon-obj" src="./images/physics-polygon-obj.png"> 
-<span class="polygon-obj-info">&#x2713; <span class='blue'>physics:create-polygon</span> <span class='red'>"polygon-1"</span> <span class="gray">;; create a polygon attached to a body</span>
+<span class="polygon-obj-info">&#x2713; <span class='blue'>physics:create-polygon</span> <span class='red'>"polygon-1" "body-1"</span> <span class="gray">;; create a polygon attached to a body</span> <span class="update">*** new argument ***</span>
 &#x2713; <span class='blue'>physics:set-polygon-relative-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, coords of vertices for concave polygon, in clockwise order, relative to center of mass of body</span> 
 &#x2713; <span class='blue'>physics:set-polygon-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, absolute coords of vertices for concave polygon, in clockwise order</span> 
 &#x2713; <span class='blue'>show physics:get-polygon-relative-vertices</span> <span class='red'>"polygon-1"</span>

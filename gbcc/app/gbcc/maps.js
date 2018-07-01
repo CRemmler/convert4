@@ -70,12 +70,13 @@ Maps = (function() {
     var ycor = coords[1];
     var pixelX = universe.view.xPcorToCanvas(xcor);
     var pixelY = universe.view.yPcorToCanvas(ycor);
-    var pixelPercentX = 1 - (pixelX / (viewWidth * 2));
-    var pixelPercentY = (pixelY / (viewHeight * 2));
+    var pixelPercentY = (pixelX / (viewWidth * 2));
+    var pixelPercentX = 1 - (pixelY / (viewHeight * 2));
     var boundaryMinX = boundaries.xmin;
     var boundaryMinY = boundaries.ymin;
     var boundaryMaxX = boundaries.xmax;
     var boundaryMaxY = boundaries.ymax;
+    //console.log(boundaries);
     var markerX = (pixelPercentX * (boundaryMaxX - boundaryMinX)) + boundaryMinX;
     var markerY = (pixelPercentY * (boundaryMaxY - boundaryMinY)) + boundaryMinY;
     return ([markerX, markerY]);
@@ -88,6 +89,7 @@ Maps = (function() {
     var boundaryMinY = boundaries.ymin;
     var boundaryMaxX = boundaries.xmax;
     var boundaryMaxY = boundaries.ymax;
+    //console.log(boundaries);
     if ( markerPositionX < boundaryMinX 
       || markerPositionX > boundaryMaxX
       || markerPositionY < boundaryMinY
@@ -184,7 +186,8 @@ Maps = (function() {
   
   function deleteMarker(name) {
     if (markers[name] && markers[name].marker) {
-      map.removeLayer(markers[name].marker);
+      hideObject(name);
+      //map.removeLayer(markers[name].marker);
       delete markers[name];
     }
   }
@@ -239,12 +242,12 @@ Maps = (function() {
   function createPath(name, vertices) {
     var latlngs = vertices;
     paths[name] = {};
-    paths[name].path = L.polyline(latlngs, {color: "#000000"}).addTo(map);
     paths[name].latlngs = latlngs;
     paths[name].color = "#000000";
-    map.addLayer(paths[name].path);
+    paths[name].polyline = L.polyline(latlngs, {color: paths[name].color});
+    map.addLayer(paths[name].polyline);
   }
-  
+
   function createPaths(paths) {
     for (var i=0; i<paths.length; i++) {
       createPath[paths[i][0], paths[i][1]];
@@ -252,16 +255,20 @@ Maps = (function() {
   }
   
   function hidePath(name) {
-    map.removeLayer(paths[name]);
+    hideObject(name);
+    //map.removeLayer(paths[name]);
   }
   
   function showPath(name) {
-    map.addLayer(paths[name]);
+    showObject(name);
+    //map.addLayer(paths[name]);
   }
   
   function deletePath(name) {
-    map.removeLayer(paths[name].path);
-    delete paths[name];
+    if (paths[name] && paths[name].polyline) {
+      hideObject(name);
+      delete paths[name];
+    }
   }
   
   function deletePaths() {
@@ -274,10 +281,10 @@ Maps = (function() {
     
   function setPathColor(name, color) {
     if (paths[name]) {
+      map.removeLayer(paths[name].polyline);
       paths[name].color = color;
-      var latlngs = getLatlng(name);
-      paths[name].path = L.polyline(latlngs, {color: color }).addTo(map);
-      map.addLayer(paths[name].path);
+      paths[name].polyline = L.polyline(paths[name].latlngs, {color: color});
+      map.addLayer(paths[name].polyline);
     }
   } 
   
@@ -300,9 +307,10 @@ Maps = (function() {
   function setPathVertices(name, vertices) {
     var latlngs = vertices;
     if (paths[name]) {
-      var color = paths[name].color ? paths[name].color : "black";
-      paths[name].marker = L.polyline(latlngs, {color: color }).addTo(map);
-      map.addLayer(paths[name].path);
+      map.removeLayer(paths[name].polyline);
+      paths[name].latlngs = latlngs;
+      maps[name].polyline = L.polyline(latlngs, {color: paths[name].color }).addTo(map);
+      map.addLayer(maps[name].polyline);
     } else {
       createPath(name, vertices);
     }
@@ -386,24 +394,23 @@ Maps = (function() {
   }
   
   function showObject(name) {
-    console.log(paths);
-    console.log(markers);
     var objectType = getObjectType(name);
     if (objectType === "path") {
       paths[name].visible = true;
-      map.addLayer(paths[name].path);
-      setPathColor(paths[name].color);
+      map.removeLayer(paths[name].polyline);
+      map.addLayer(paths[name].polyline);
     } else if (objectType === "marker") {
       markers[name].visible = true;
-      L.marker(markers[name].latlng).addTo(map);     
+      map.removeLayer(markers[name].marker);    
+      map.addLayer(markers[name].marker);    
     }
   }
-  
+
   function hideObject(name) {
     var objectType = getObjectType(name);
     if (objectType === "path") {
       paths[name].visible = false;
-      map.removeLayer(paths[name].path);
+      map.removeLayer(paths[name].polyline);
     } else if (objectType === "marker") {
       markers[name].visible = false;
       map.removeLayer(markers[name].marker);    
@@ -456,10 +463,12 @@ Maps = (function() {
     var data = {};
     data.objects = getObjects();
     data.settings = getSettings();
+    console.log(data);
     return JSON.stringify(data);
   }
   function setAll(dataString) {
     data = JSON.parse(dataString);
+    console.log(data);
     if (data.objects) { createObjects(data.objects); }
     if (data.settings) { setSettings(data.settings); }
   }
@@ -470,8 +479,8 @@ Maps = (function() {
     return data;
     //return JSON.stringify(data);
   }
-  function setSettings(results) {
-    var data = Parse.JSON(results); 
+  function setSettings(data) {
+    //var data = JSON.parse(results); 
     setZoom(data.zoom);
     setCenterLatlng(data.centerLatlng);
   }

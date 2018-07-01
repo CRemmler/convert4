@@ -511,7 +511,7 @@ Physicsb2 = (function() {
         }
       }
       //if (mode === "force" || mode === "target") {
-        drawAllTargets();
+        //drawAllTargets();
         //drawFreeTargets();
         //if (targetDragged) {
         //  drawTarget(targetDragged);
@@ -520,6 +520,7 @@ Physicsb2 = (function() {
         //  drawTargetsForBody();
         //}
       //}
+      drawAllTargets();
     }
     //console.log("redrew world");
   }
@@ -757,7 +758,7 @@ Physicsb2 = (function() {
       pos.y = center.y - offsetY;
       //console.log(pos);
       //polygonShape.SetAsBox(2, 1, b2Vec2(20,0), 0 ); //moved 20 units right, same angle
-      console.log("SET AS BOX 3");
+      //console.log("SET AS BOX 3");
       fixDef.shape.SetAsBox(halfWidth, halfHeight, pos, angle);
     } 
     
@@ -1346,6 +1347,7 @@ Physicsb2 = (function() {
       universe.repaint();
       world.DrawDebugData();
       redrawWorld();
+      redrawAllTargets();
     }
     
     function dragFixtureByPoint() {
@@ -1667,6 +1669,7 @@ Physicsb2 = (function() {
          "shapeId": shapeId, 
          "bodyId": bodyId, 
        });  
+       if (mode === "line") { Physicsb2.getBodyObj(bodyId).SetType(0); }
        universe.repaint();
        world.DrawDebugData();
        break;
@@ -2495,6 +2498,7 @@ Physicsb2 = (function() {
   function refresh() {
     universe.repaint();
     world.DrawDebugData();
+    drawAllTargets();
   }
   
   ///////// COLLISIONS ///////
@@ -2514,13 +2518,14 @@ Physicsb2 = (function() {
   }
 
   listener.PostSolve = function(contact, impulse) {
-    var bodyA = ["bodyA", contact.GetFixtureA().GetBody().GetUserData().id];
-    var bodyB = ["bodyB", contact.GetFixtureB().GetBody().GetUserData().id];
-    var normalImpulses = ["normalImpulses", round(impulse.normalImpulses)];
-    var tangetImpulses = [ "tangentImpulses", round(impulse.normalImpulses) ];
-    //var impulse = impulse.normalImpulses[0];
-    if (normalImpulses[0] < 0.2) { return; };
-    collisions.push([bodyA, bodyB, normalImpulses, tangetImpulses]);
+      var bodyA = ["bodyA", contact.GetFixtureA().GetBody().GetUserData().id];
+      var bodyB = ["bodyB", contact.GetFixtureB().GetBody().GetUserData().id];
+      var normalImpulses = ["normalImpulses", round(impulse.normalImpulses)];
+      var tangetImpulses = [ "tangentImpulses", round(impulse.normalImpulses) ];
+      //var impulse = impulse.normalImpulses[0];
+      if (normalImpulses[0] < 0.2) { return; };
+      collisions.push([bodyA, bodyB, normalImpulses, tangetImpulses]);
+
   }
 
   function round(coords) {
