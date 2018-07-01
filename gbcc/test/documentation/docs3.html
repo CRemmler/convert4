@@ -26,7 +26,10 @@
       <a href="#gbcc-get-from-user">gbcc:get-from-user</a> 
       <a href="#gbcc-store-globals">gbcc:store-globals</a> 
       <a href="#gbcc-restore-globals">gbcc:restore-globals</a> 
-      <a href="#gbcc-restore-globals-from-user">gbcc:restore-globals-from-user</a>       
+      <a href="#gbcc-restore-globals-from-user">gbcc:restore-globals-from-user</a> 
+      <a href="#gbcc-add-to-stream">gbcc:add-to-stream</a> 
+      <a href="#gbcc-get-stream">gbcc:get-stream</a> 
+      <a href="#gbcc-get-stream-from-user">gbcc:get-stream-from-user</a>       
       <a href="#gbcc-broadcast-view">gbcc:broadcast-view</a>    
       <a href="#gbcc-broadcast-text">gbcc:broadcast-text</a>    
       <a href="#gbcc-broadcast-plot">gbcc:broadcast-plot</a>    
@@ -38,6 +41,7 @@
       <a href="#gbcc-turtle-code">gbcc:run-turtle-code</a>
       <a href="#gbcc-patch-code">gbcc:compile-patch-code</a>
       <a href="#gbcc-patch-code">gbcc:run-patch-code</a>
+      <a href="#gbcc-who-am-i">gbcc:who-am-i</a>
     <h3>
       GbCC Reserved Procedures
     </h3>
@@ -125,6 +129,50 @@ gbcc:restore-globals
       <pre>
 to gbcc-on-select [user-id]
   gbcc:restore-globals-from-user user-id
+end
+      </pre>
+    </div>
+    
+    
+    <div class="dict_entry" id="gbcc-add-to-stream">
+      <h3><a>gbcc:add-to-stream</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:add-to-stream <i>key value</i></span></h4>
+      <p>Creates a stream of data by appending values to a list, which is accessible by it's key. Empties list upon retrieval.
+      <pre>
+gbcc:add-to-stream "code" "fd 3"
+      </pre>
+    </div>
+        
+    <div class="dict_entry" id="gbcc-get-stream">
+      <h3> <a>gbcc:get-stream</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get-stream <i>key</i></span></h4>
+      <p>Returns a stream of data by getting a list of values, based on it's key. 
+        Begins compiling list upon initialization of gbcc-on-go forever button.
+        Empties list upon retrieval.
+      <pre>
+to gbcc-on-go [user-id]
+  show gbcc:get-stream user-id "code"
+end
+      </pre>
+    </div>
+        
+    <div class="dict_entry" id="gbcc-get-stream-from-user">
+      <h3><a>gbcc:get-stream-from-user</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get-stream-from-user <i>user-id key</i></span></h4>
+      <p>Returns a stream of data by getting a list of values, based on it's user-id and key.
+        Empties list upon retrieval.
+      <pre>
+to gbcc-on-go [user-id]
+  show gbcc:get-stream-from-user user-id "code"
 end
       </pre>
     </div>
@@ -230,6 +278,18 @@ gbcc:compile-turtle-code who "code" "fd 5"
       <pre>
 gbcc:compile-patch-code pxcor pycor "code" "set pcolor orange"
 <br>gbcc:run-patch-code pxcor pycor "code"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-who-am-i">
+      <h3><a>gbcc:who-am-i</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:who-am-i</span></h4>
+      <p>Returns a user's user-id.
+      <pre>
+show gbcc:who-am-i
       </pre>
     </div>
     

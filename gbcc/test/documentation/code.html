@@ -26,6 +26,8 @@
 	    .selected#white1 {border: 4px solid orange; }
 	    .selected#gray1 {border: 4px solid orange; }
 			.selected#brown1 {border: 4px solid orange; }
+			.selected#teal1 {border: 4px solid orange; }
+			.selected#yellowstar { border: 4px solid orang; }
 			table {text-align:center;}
 			#menu {padding-top:5px; padding-bottom:0px}
 			.spacer { height:72px;border:none;}
@@ -59,6 +61,9 @@
 			<img src="./images/red-turtle.png" class="turtle" id="red1">
 			<img src="./images/gray-turtle.png" class="turtle" id="gray1">
 			<img src="./images/brown-turtle.png" class="turtle" id="brown1">
+			<img src="./images/teal-turtle.png" class="turtle" id="teal1">
+			
+			<img src="./images/yellow-star.png" class="turtle" id="yellowstar1">
 		</div>
 		<div class="container yellow1">
 			<h2>Hello World</h2>
@@ -446,6 +451,88 @@ end
 </pre>
 <h2>Model with Sample Code</h2>
 <a href="https://gbcc-graph-test.herokuapp.com/">Graph Test</a>
+</div>
+
+
+<div class="container teal1">
+<h2>Share Lists of Points</h2>
+<img src="./images/code-teal-2.png" style="height:150px">
+<h2>NetLogo Code</h2>
+<pre>
+to share 
+  ;; Share points, but make them unique. I prefixed my points with "butterfly".
+  let points (list) 
+  let new-name ""
+  let new-point (list)
+  foreach graph:get-points [ x ->	
+    set new-name (word "butterfly" item 0 x)
+    set new-point (list new-name item 1 x)
+    set points lput new-point points
+  ]
+  gbcc:set "my-points" points
+	gbcc:broadcast-view ""
+end 
+
+to gbcc-on-select [ user-id role ]
+  let points gbcc:get-from-user user-id "my-points"
+  graph:create-points points
+end 
+
+to gbcc-on-deselect [ user-id role ]
+  let points gbcc:get-from-user user-id "my-points"
+  foreach points [ x -> 
+    graph:delete-object item 0 x
+  ]
+end
+</pre>
+</div>
+
+<div class="container yellowstar1">
+<h2>Most Recent Code 94/25/18</h2>
+<a href="./maps-demo.zip">maps-demo.zip</a>
+<br><a href="./gbcc-moose-2.zip">gbcc-moose-2.zip</a>
+<br><a href="./triangle-jun-28.zip">triangle-jun-28.zip</a>
+<h2>More info</h2>
+This has the latest GbCC code, including:
+<pre>
+-- MAPS --
+maps:show-map
+maps:set-opacity 0.5
+show maps:get-opacity
+maps:bring-to-front
+maps:send-to-back
+show maps:get-map-offset
+maps:set-map-offset [ 10 10 ]
+
+-- GRAPH --
+graph:show-graph
+graph:set-opacity 0.5
+show graph:get-opacity
+graph:delete-points
+graph:delete-point "point0"
+graph:show-object-label "point0"
+graph:hide-object-label "point0"
+graph;show-toolbar
+graph:hide-toolbar
+graph:bring-to-front
+graph:send-to-back
+graph:set-all "some-long-string"
+show graph:get-all
+show graph:get-graph-offset
+graph:set-graph-offset [ 10 10 ]
+graph:delete-object
+
+-- PHYSICS --
+physics:show-toolbar
+physics:hide-toolbar
+physics:show-world
+
+-- GBCC --
+gbcc:show-patches 
+gbcc:hide-patches
+</pre>
+<h2>Still to come</h2>
+Rethinking paths. Include attributes like path color.
 </div>
 
 	</body>

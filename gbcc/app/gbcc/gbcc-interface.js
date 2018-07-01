@@ -218,11 +218,14 @@ Interface = (function() {
       spanText = "<span class='teacher-controls hidden' style='float:right'>Enable:";
       spanText += "<input id='enableView' checked type='checkbox'>View";
       spanText += "<input id='enableTabs' checked type='checkbox'>Tabs";
-      spanText += "<input id='enableWidgets' checked type='checkbox'>Widgets</span>";
+      //spanText += "<input id='enableGallery' checked type='checkbox'>Gallery</span>";
+      
       $(".netlogo-widget-container").append(spanText);
     }
     $(".teacher-controls").css("position","absolute");
-    $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 200 + "px");
+    //$(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 200 + "px");
+    $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 140 + "px");
+    
     $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-canvas").css("height")) + "px");
 
     $(".netlogo-view-container").css("width", $(".netlogo-view-container canvas").css("width"));
@@ -232,8 +235,8 @@ Interface = (function() {
     $("#enableTabs").click(function() {
       socket.emit('teacher requests UI change', {'display': $(this).prop("checked"), 'type': 'tabs'});
     });
-    $("#enableWidgets").click(function() {
-      socket.emit('teacher requests UI change', {'display': $(this).prop("checked"), 'type': 'widgets'});
+    $("#enableGallery").click(function() {
+      socket.emit('teacher requests UI change', {'display': $(this).prop("checked"), 'type': 'gallery'});
     });
     $("#enableMirroring").click(function() {
       mirroringEnabled = $(this).prop("checked") ? true : false;

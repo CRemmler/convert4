@@ -18,8 +18,10 @@
           $("#"+value).css("display","block");
         });
         $(".init").click();
-
-        
+        $(".mapTable img").css("border","2px solid orange");
+        $(".graphTable img").css("border","2px solid blue");
+        $(".physicsTable img:not(.obj)").css("border","2px solid limegreen");
+        $(".physicsTable .obj img").css("border","0px solid white");
         //<span class="more" onclick="function() { $('#physicsWorldSettingsWrapper .more').hide(); 
         //$('#physicsWorldSettingsWrapper .less').show(); $('#physicsWorldSettings').show(); }">More</span>
         //<span class="less" onclick="function() { $('#physicsWorldSettingsWrapper .less').hide(); $('#physicsWorldSettingsWrapper .more').show(); $('#physicsWorldSettings').show(); }">Less</span>
@@ -38,10 +40,10 @@
         });
         $(".less").click();
         function hideObjects() {
-          var objects = ["body","line","circle","polygon","target","shape","object","shape-body"];
+          var objects = ["body","line","circle","polygon","target","shape","object","shape-body", "physics-ideas", "graph-ideas", "rectangle"];
           for (var i=0; i<objects.length; i++) {
             $("."+objects[i]+"-obj-info").hide();
-            $("#"+objects[i]+"-obj").css("border", "2px solid #eee");
+            //$("#"+objects[i]+"-obj").css("border", "2px solid #eee");
             $("#"+objects[i]+"ObjectSettings"+" .less").click();
           }
         }
@@ -95,10 +97,10 @@
 
     <h2>Layers in a NetLogo View</h2>
       <h3>Patches + Drawing + Turtles</h3>
-        <p><img src="images/layers-7.png">
+        <p><img src="images/layers-7.png" style="width:400px">
       
       <h3>Patches + Javascript Extension + Image Extension + Drawing + Turtles</h3>
-        <p><img src="images/layers-6.png"> 
+        <p><img src="images/layers-6.png" style="width:480px"> 
       
     <h2>View Extensions</h2>
 <table>
@@ -119,9 +121,11 @@
 <h2>Graph Extension</h2>
 <br>Geogebra API <a href="https://wiki.geogebra.org/en/Reference:JavaScript">https://wiki.geogebra.org/en/Reference:JavaScript</a>
 
+<!--
 <br><img alt="Patch Command" src="images/graph-ext.png">
+-->
 <h3>Graph Commands</h3>
-<table>
+<table class="graphTable">
   <tr>
     <td></td>
     <td>
@@ -134,10 +138,25 @@
     <td><img src="./images/graph-en.png"></td>
     <td>
 <pre>
-;; GRAPH
-<span class='blue'>graph:show-graph</span> <span class="red">[ top left width height ] </span><span class="gray">;; offset graph from uppoer-left</span> 
-&#x2713; <span class='blue'>graph:show-graph</span> <span class="red">[ ]</span> <span class="gray">;; place graph on view</span> 
+GRAPH
+</pre>
+<pre>
+&#x2713; <span class='blue'>graph:show-graph</span>
 &#x2713; <span class='blue'>graph:hide-graph</span>
+&#x2713; <span class='blue'>graph:show-toolbar</span>
+&#x2713; <span class='blue'>graph:hide-toolbar</span>
+&#x2713; <span class='blue'>graph:bring-to-front</span>
+&#x2713; <span class='blue'>graph:send-to-back</span>
+&#x2713; <span class='blue'>graph:set-graph-offset</span><span class='red'> [ left top width height ] </span>
+&#x2713; <span class='blue'>show graph:get-graph-offset</span> <span class="gray">;; returns [ left top width height ]</span> 
+&#x2713; <span class='blue'>graph:set-opacity</span><span class='red'> 0.5 </span>
+&#x2713; <span class='blue'>show graph:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
+&#x2713; <span class='blue'>show graph:center-view</span> <span class='red'> [ x y ] </span>
+
+</pre>
+<pre>
+&#x2713; <span class='blue'>graph:set-all</span><span class='red'> "long-string-of-xml" </span>
+&#x2713; <span class='blue'>show graph:get-all</span> <span class="gray">;; returns "long-string-of-xml"</span> 
 </pre>
 <!--<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show graph:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -149,22 +168,26 @@
     <td><img src="./images/graph-pt.png"></td>
     <td>
 <pre>
-;; POINTS
-&#x2713; <span class='blue'>graph:create-point</span> <span class='red'>"point-1" </span>[ <span class="red">0 0</span> ]
-&#x2713; <span class='blue'>graph:create-points </span> [ [ <span class='red'>"point-1" </span>[ <span class="red">0 2</span> ] ] [ <span class='red'>"point-2"</span> [ <span class="red">0 0</span> ] ] ]
-&#x2713; <span class='blue'>show graph:get-points </span> <span class="gray">;; [ [ "point-1" [ 0 2 ] ] [ "point-2" [ 0 0 ] ] ]</span>
+POINTS
+</pre>
+<pre>
+&#x2713; <span class='blue'>graph:create-point</span> <span class='red'>"Point1" </span>[ <span class="red">0 0</span> ]
+&#x2713; <span class='blue'>graph:create-points </span> [ [ <span class='red'>"Point1" </span>[ <span class="red">0 2</span> ] ] [ <span class='red'>"point-2"</span> [ <span class="red">0 0</span> ] ] ]
+&#x2713; <span class='blue'>show graph:get-point "Point1" </span> <span class="gray">;; [ "Point1" [ 0 2 ] ]</span>
+&#x2713; <span class='blue'>show graph:get-points </span> <span class="gray">;; [ [ "Point1" [ 0 2 ] ] [ "point-2" [ 0 0 ] ] ]</span>
+&#x2713; <span class='blue'>graph:delete-point</span> <span class='red'>"Point1" </span>
+&#x2713; <span class='blue'>graph:delete-points</span> 
 </pre>
 <!--<span class='blue'>graph:delete-point</span> <span class='red'>"point-1"</span> 
 <span class='blue'>graph:delete-points</span>
 -->
 <pre>
-&#x2713; <span class='blue'>graph:set-x</span><span class='red'> "point-1" 0 </span> 
-&#x2713; <span class='blue'>graph:set-y</span><span class='red'> "point-1" 2 </span> 
-&#x2713; <span class='blue'>graph:set-xy</span><span class='red'> "point-1" </span>[ <span class='red'>0 2</span> ] 
-
-&#x2713; <span class='blue'>show graph:get-x</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 0</span> 
-&#x2713; <span class='blue'>show graph:get-y</span> <span class='red'>"point-1"</span> <span class="gray">;; returns 2</span>
-&#x2713; <span class='blue'>show graph:get-xy</span> <span class='red'>"point-1"</span> <span class="gray">;; returns [ 0 2 ] </span>
+&#x2713; <span class='blue'>graph:set-x</span><span class='red'> "Point1" 0 </span> 
+&#x2713; <span class='blue'>graph:set-y</span><span class='red'> "Point1" 2 </span> 
+&#x2713; <span class='blue'>graph:set-xy</span><span class='red'> "Point1" </span>[ <span class='red'>0 2</span> ] 
+&#x2713; <span class='blue'>show graph:get-x</span> <span class='red'>"Point1"</span> <span class="gray">;; returns 0</span> 
+&#x2713; <span class='blue'>show graph:get-y</span> <span class='red'>"Point1"</span> <span class="gray">;; returns 2</span>
+&#x2713; <span class='blue'>show graph:get-xy</span> <span class='red'>"Point1"</span> <span class="gray">;; returns [ 0 2 ] </span>
 </pre>
     </td>
   </tr>
@@ -174,19 +197,27 @@
     <td><img src="./images/graph-cons.png"></td>
     <td>
 <pre>
-;; OBJECTS (Including Points)
-&#x2713; <span class='blue'>graph:create-objects</span> <span class='red'> [ [ "my-point" "(0, 0)"] [ "my-triangle" "Polygon(F, G, H)")"] ] </span>
+OBJECTS (Including Points)
+</pre>
+<pre>
+&#x2713; <span class='blue'>graph:create-object</span> <span class='red'> [ "MyTriangle1" "Polygon(F, G, H)")"] </span>
+&#x2713; <span class='blue'>graph:create-objects</span> <span class='red'> [ [ "Point1" "(0, 0)"] [ "MyTriangle1" "Polygon(F, G, H)")"] ] </span>
+&#x2713; <span class='blue'>show graph:get-object</span> <span class='red'> "MyTriangle1" </span><span class="gray">;; returns a list with a name and a description</span> 
 &#x2713; <span class='blue'>show graph:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
-&#x2713; <span class='blue'>show graph:get-object</span> <span class='red'> "triangle-1" </span><span class="gray">;; returns getCommandString (non-points) or getValueString (points)</span> 
-&#x2713; <span class='blue'>show graph:get-value</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns getValue</span> 
-&#x2713; <span class='blue'>show graph:get-object-type</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns type</span> 
-&#x2713; <span class='blue'>show graph:exists</span> <span class='red'> "triangle-1" </span> <span class="gray">;; returns boolean</span> 
-&#x2713; <span class='blue'>graph:rename-object</span> <span class='red'> "triangle-1" "triangle-2" </span>
-&#x2713; <span class='blue'>graph:delete-object</span> <span class='red'> "triangle-1" </span>
-
-&#x2713; <span class='blue'>graph:hide-object</span> <span class='red'> "triangle-1" </span>
-&#x2713; <span class='blue'>graph:show-object</span> <span class='red'> "triangle-1" </span> </pre>
-    </td>
+&#x2713; <span class='blue'>graph:delete-object</span>  <span class='red'>"Triangle1" </span>
+&#x2713; <span class='blue'>graph:delete-objects</span>
+</pre>
+<pre>
+&#x2713; <span class='blue'>show graph:get-value</span> <span class='red'> "MyTriangle1" </span> <span class="gray">;; returns getValue</span> 
+&#x2713; <span class='blue'>show graph:get-object-type</span> <span class='red'> "MyTriangle1" </span> <span class="gray">;; returns type</span> 
+&#x2713; <span class='blue'>show graph:object-exists</span> <span class='red'> "MyTriangle1" </span> <span class="gray">;; returns boolean</span> 
+&#x2713; <span class='blue'>graph:rename-object</span> <span class='red'> "MyTriangle1" "MyTriangle2" </span>
+&#x2713; <span class='blue'>graph:show-object</span> <span class='red'> "MyTriangle1" </span>
+&#x2713; <span class='blue'>graph:hide-object</span> <span class='red'> "MyTriangle1" </span>
+&#x2713; <span class='blue'>graph:show-object-label</span> <span class='red'> "MyTriangle1" </span>
+&#x2713; <span class='blue'>graph:hide-object-label</span> <span class='red'> "MyTriangle1" </span>
+</pre>
+</td>ß
   </tr>
 <!--  
 <span class='blue'>graph:create-object</span> <span class='red'> [ "my-point" "(0, 0)"]</span>
@@ -202,22 +233,36 @@
     </td>
   </tr>
 -->  
-</table>
-
-<h3>Translate between Patch Coordinates and GeoGebra Coordinates</h3>
+<tr>
+  <td><img src="./images/graph-trans.png"></td>
+  <td>
+<pre>
+TRANSLATION between Patch Coordinates and GeoGebra Coordinates
+</pre>
 <pre>
 &#x2713; <span class='blue'>show graph:graph-to-patch </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns graph coordinates</span>
 &#x2713; <span class='blue'>show graph:patch-to-graph </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
+&#x2713; <span class='blue'>graph:update-graph</span> <span class='gray'>;; upon changing center or zoom of graph, sync graph coords and patch coords</class>
 </pre>
-
-<h3>GeoGebra Eval Commands</h3>
+  </td>
+</tr>
+<tr>
+  <td>
+  </td>
+  <td>
+<pre>
+GeoGebra Eval Commands
+</pre>
 <pre>
 &#x2713; <span class="blue">graph:eval-command</span> <span class="red">geogebra-command </span>
 <span class="blue">show graph:eval-reporter</span> <span class="red">geogebra-command</span> <span class="gray">;; returns a value</span>
 </pre>
+</table>
 
-<h3>Ideas from GbCC Crew</h3>
 
+<span id="graph-ideas-obj" class="obj">
+<h3><input type="checkbox" selected>Ideas</h3>
+<div class='graph-ideas-obj-info'>
 <table>
   <tr>
     <td>
@@ -310,7 +355,6 @@
 </pre>
     </td>
   </tr>
-  
   <tr>
     <td>
       5. Triangle Animation Ants
@@ -348,17 +392,17 @@
 </pre>
     </td>
   </tr>
-  
 </table>
+</div>
 
 <h2>Maps Extension</h2>
 <br>LeafletJS <a href='http://leafletjs.com/'>http://leafletjs.com/</a>
 <br>GeoJson <a href="https://leafletjs.com/examples/geojson/">https://leafletjs.com/examples/geojson/</a>
-<br><img alt="Patch Command" src="images/maps-ext.png">
+<!--<br><img alt="Patch Command" src="images/maps-ext.png">-->
 
 <h3>Maps Extension</h3>
 
-<table>
+<table class="mapTable">
   <tr>
     <td></td>
     <td>
@@ -370,10 +414,23 @@
   <tr>
     <td><img src="./images/map-en.png"></td>
     <td>
+</pre>
 <pre>
-;; MAP
-<span class='blue'>maps:show-map</span> <span class="red">[ top left width height ]</span>
+MAP
+</pre>
+<pre>
+&#x2713; <span class='blue'>maps:show-map</span>
 &#x2713; <span class='blue'>maps:hide-map</span>
+&#x2713; <span class='blue'>maps:bring-to-front</span>
+&#x2713; <span class='blue'>maps:send-to-back</span>
+&#x2713; <span class='blue'>maps:set-map-offset</span><span class='red'> [ left top width height ] </span>
+&#x2713; <span class='blue'>show maps:get-map-offset</span> <span class="gray">;; returns [ left top width height ]</span> 
+&#x2713; <span class='blue'>maps:set-opacity</span><span class='red'> 0.5 </span>
+&#x2713; <span class='blue'>show maps:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
+</pre>
+<pre>
+&#x2713; <span class='blue'>maps:set-all</span><span class='red'> "long-string-of-json" </span>
+&#x2713; <span class='blue'>show maps:get-all</span> <span class="gray">;; returns "long-string-of-json"</span> 
 </pre>
 <!--<span class='blue'>maps:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show maps:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -386,7 +443,9 @@
     <td><img src="./images/map-se.png"></td>
     <td>
 <pre>
-;; MAP SETTINGS
+MAP SETTINGS
+</pre>
+<pre>
 &#x2713; <span class='blue'>maps:set-zoom</span><span class='red'> 3</span> 
 &#x2713; <span class='blue'>show maps:get-zoom</span>  <span class="gray">;; returns 3</span>
 &#x2713; <span class='blue'>maps:set-center-latlng</span> [<span class='red'> 30 97 </span>]
@@ -398,12 +457,15 @@
     <td><img src="./images/map-ma.png"></td>
     <td>
 <pre>
-;; MARKERS
+MARKERS
+</pre>
+<pre>
 &#x2713; <span class='blue'>maps:create-marker</span> <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ]
 &#x2713; <span class='blue'>maps:create-markers </span> [ [ <span class='red'>"marker-1" </span>[ <span class="red">0 0</span> ] ] [ <span class='red'>"marker-2"</span>[ <span class="red">0 0</span> ] ] ]
-<span class='blue'>show maps:get-markers </span> <span class="gray">;; [ [ "marker-1" [ 0 0 ] ] [ "marker-2" [ 0 0 ] ] ]
+&#x2713; <span class='blue'>show maps:get-marker </span> <span class="gray">;; [ "marker-1" [ 0 0 ] ]
+&#x2713; <span class='blue'>show maps:get-markers </span> <span class="gray">;; [ [ "marker-1" [ 0 0 ] ] [ "marker-2" [ 0 0 ] ] ]
 &#x2713; <span class='blue'>maps:delete-marker</span> <span class='red'>"marker-1"</span>
-<span class='blue'>maps:delete-markers</span>
+&#x2713; <span class='blue'>maps:delete-markers</span>
 </pre>
 <!--<span class='blue'>maps:hide-marker</span> <span class='red'>"marker-1"</span> 
 <span class='blue'>maps:show-marker</span> <span class='red'>"marker-1"</span> -->
@@ -411,23 +473,73 @@
 &#x2713; <span class='blue'>maps:set-lat</span><span class='red'> "marker-1" 30 </span> 
 &#x2713; <span class='blue'>maps:set-lng</span><span class='red'> "marker-1" 97 </span> 
 &#x2713; <span class='blue'>maps:set-latlng</span><span class='red'> "marker-1" </span>[  <span class='red'>30 97</span> ] 
-
 &#x2713; <span class='blue'>show maps:get-lat</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 30</span> 
 &#x2713; <span class='blue'>show maps:get-lng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns 97</span>
 &#x2713; <span class='blue'>show maps:get-latlng</span> <span class='red'>"marker-1"</span> <span class="gray">;; returns [ 30 97 ] </span>
+</pre>
+<pre>
+<span class='blue'>maps:set-draggable</span> <span class='red'>"marker-1" </span><span class='purple'>true</span>
 </pre>
 <!--<span class='blue'>maps:set-label</span><span class='red'> "point-1" "cat's marker-1"</span>-->
 <!--<span class='blue'>show maps:get-label</span><span class='red'> "marker-1"</span> <span class="gray">;; returns "cat's point-1"</span>-->
 
     </td>
   </tr>
-</table>
-
-<h3>Translate between Patch Coordinates and Latitude / Latitude</h3>
+  
+  <tr>
+    <td><img src="./images/map-pa.png"></td>
+    <td>
 <pre>
-<span class='blue'>show maps:latlng-to-patch </span><span class='red'>[ 30 -97 ]</span> <span class="gray">;; returns latitude and longitude</span>
-&#x2713; <span class='blue'>show maps:patch-to-latlng </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
+PATHS
 </pre>
+<pre>
+&#x2713; <span class='blue'>maps:create-path</span> <span class='red'>"path-1" </span>[ <span class="red">0 0</span> ]
+&#x2713; <span class='blue'>maps:create-paths </span> [ [ <span class='red'>"path-1" </span>[ <span class="red">0 0</span> ] ] [ <span class='red'>"marker-2"</span>[ <span class="red">0 0</span> ] ] ]
+&#x2713; <span class='blue'>maps:delete-path</span> <span class='red'>"path-1"</span>
+&#x2713; <span class='blue'>maps:delete-paths</span>
+&#x2713; <span class='blue'>maps:set-path-color</span><span class='red'> "path-1" "#555555" </span> 
+&#x2713; <span class='blue'>show maps:get-path-color</span> <span class='red'>"path-1"</span> <span class="gray">;; returns "#555555"</span> 
+&#x2713; <span class='blue'>maps:set-path-vertices</span><span class='red'> "path-1" [ [ 30 60 ] [ 31 59 ] [ 39 59 ] ] </span> 
+&#x2713; <span class='blue'>show maps:get-path-vertices</span> <span class='red'>"path-1"</span> <span class="gray">;; returns [ [ 30 60 ] [ 31 59 ] [ 39 59 ] ]</span> 
+</pre>
+<!--<span class='blue'>maps:set-label</span><span class='red'> "point-1" "cat's marker-1"</span>-->
+<!--<span class='blue'>show maps:get-label</span><span class='red'> "marker-1"</span> <span class="gray">;; returns "cat's point-1"</span>-->
+
+    </td>
+  </tr>
+  
+  <tr>
+    <td><img src="./images/map-ob.png"></td>
+    <td>
+<pre>
+OBJECTS (Including Markers and Paths)
+</pre>
+<pre>
+&#x2713; <span class='blue'>maps:create-object</span> <span class='red'> [ "path-" "some-string"] </span>
+&#x2713; <span class='blue'>maps:create-objects</span> <span class='red'> [ [ "path-1" "some-string"] [ "MyPath2" "some-string"] ] </span>
+&#x2713; <span class='blue'>show maps:get-object</span> <span class='red'> "path-1" </span><span class="gray">;; returns a list with a name and definition</span> 
+&#x2713; <span class='blue'>show maps:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
+&#x2713; <span class='blue'>maps:delete-object</span>  <span class='red'>"path-1" </span>
+&#x2713; <span class='blue'>maps:delete-objects</span>
+</pre>
+<pre>
+&#x2713; <span class='blue'>show maps:object-exists</span> <span class='red'> "path-1" </span> <span class="gray">;; returns boolean</span> 
+&#x2713; <span class='blue'>maps:hide-object</span> <span class='red'> "path-1" </span>
+&#x2713; <span class='blue'>maps:show-object</span> <span class='red'> "path-1" </span> </pre>
+    </td>
+  </tr>
+  
+  <tr>
+    <td><img src="./images/map-trans.png"></td>
+    <td>
+  <pre>
+TRANSLATION between Patch Coordinates and Latitude / Latitude
+&#x2713; <span class='blue'>show maps:latlng-to-patch </span><span class='red'>[ 30 -97 ]</span> <span class="gray">;; returns latitude and longitude</span>
+&#x2713; <span class='blue'>show maps:patch-to-latlng </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
+&#x2713; <span class='blue'>maps:update-map</span> ;; upon changing center or zoom of map, sync lat-lng and patch coords
+</pre>
+  </tr>
+</table>
 
 
 
@@ -444,12 +556,12 @@ Box2DWeb Library. <a href="https://github.com/hecht-software/box2dweb">https://g
 impulses and angular impulses.
 The world can contain moving shapes, static shapes, joints and targets, 
 any of which can be represented by turtles.
-<br><img alt="Patch Command" src="images/physics-ext1.png">
-
+<!--<br><img alt="Patch Command" src="images/physics-ext1.png">
+-->
 
 
 <h3>Objects in a Box2D Physics World</h3>
-<table>
+<table class="physicsTable">
   <tr>
     <td>
       <img src="images/physics-lin.png">
@@ -503,7 +615,7 @@ any of which can be represented by turtles.
   </tr>
 </table>
 <h3>Physics Extension</h3>
-<table>
+<table class="physicsTable">
   <tr>
     <td></td>
     <td>
@@ -516,11 +628,31 @@ any of which can be represented by turtles.
     <td><img src="./images/physics-en.png"></td>
     <td>
 <pre>
-;; WORLD
-<span class='blue'>physics:show-world</span> <span class="red">[ top left width height ] </span><span class="gray">;; offset graph from uppoer-left</span> 
-&#x2713; <span class='blue'>physics:show-world</span> <span class="red">[ ]</span> <span class="gray">;; place graph on view</span> 
+WORLD
+</pre>
+<pre>
+&#x2713; <span class='blue'>physics:show-world</span>
 &#x2713; <span class='blue'>physics:hide-world</span>
-<span class='blue'>physics:update</span>
+&#x2713; <span class='blue'>graph:show-toolbar</span>
+&#x2713; <span class='blue'>graph:hide-toolbar</span>
+</pre>
+<pre>
+<span class='blue'>physics:bring-to-front</span>
+<span class='blue'>physics:send-to-back</span>
+<span class='blue'>physics:set-world-offset</span><span class='red'> [ left top width height ] </span>
+<span class='blue'>show physics:get-world-offset</span> <span class="gray">;; returns [ left top width height ]</span> 
+<span class='blue'>physics:set-opacity</span><span class='red'> 0.5 </span>
+<span class='blue'>show physics:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
+</pre>
+<pre>
+&#x2713; <span class='blue'>physics:set-all</span><span class='red'> "long-string-of-json" </span>
+&#x2713; <span class='blue'>show physics:get-all</span> <span class="gray">;; returns "long-string-of-json"</span> 
+</pre>
+<pre>
+<span class='blue'>physics:reset-ticks</span>
+&#x2713; <span class='blue'>physics:tick</span>
+&#x2713; <<span class='blue'>show physics:get-tick</span> <span class="gray">;; returns list of collisions since last tick</span> 
+&#x2713; <span class='blue'>physics:repaint</span>
 </pre>
 <!--<span class='blue'>physics:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show physics:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -560,8 +692,7 @@ any of which can be represented by turtles.
 &#x2713; <span class='blue'>physics:set-line-relative-endpoints</span> <span class='red'>"line-1" [ 0 0 ] [ 2 2 ]</span> <span class="gray">;; name of line, coords of endpoints relative to center of mass of body</span> 
 &#x2713; <span class='blue'>physics:set-line-endpoints</span> <span class='red'>"line-1" [ 10 10 ] [ 5 5 ]</span> <span class="gray">;; name of line, absolute coords of endpoints</span> 
 &#x2713; <span class='blue'>show physics:get-line-relative-endpoints</span> <span class='red'>"line-1"</span> 
-&#x2713; <span class='blue'>show physics:get-line-endpoints</span> <span class='red'>"line-1"</span></span>
-</pre>
+&#x2713; <span class='blue'>show physics:get-line-endpoints</span> <span class='red'>"line-1"</span></span></pre>
 <pre>
 ;; CIRCLES
 <img class="obj" id="circle-obj" src="./images/physics-circle-obj.png">
@@ -571,8 +702,18 @@ any of which can be represented by turtles.
 &#x2713; <span class='blue'>physics:set-circle-center</span> <span class='red'>"circle-1" [ 10 10 ]</span> <span class="gray">;; name of circle, absolute coords of center of circle</span> 
 &#x2713; <span class='blue'>show physics:get-circle-radius</span> <span class='red'>"circle-1"</span> 
 &#x2713; <span class='blue'>show physics:get-circle-relative-center</span> <span class='red'>"circle-1"</span>
-&#x2713; <span class='blue'>show physics:get-circle-center</span> <span class='red'>"circle-1"</span> </span>
-</pre>
+&#x2713; <span class='blue'>show physics:get-circle-center</span> <span class='red'>"circle-1"</span> </span></pre>
+<pre>
+;; RECTANGLES
+<img class="obj" id="rectangle-obj" src="./images/physics-rect-obj.png"> 
+<span class="rectangle-obj-info">&#x2713; <span class='blue'>physics:create-rectangle</span> <span class='red'>"rectangle-1"</span> <span class="gray">;; create a rectangle attached to a body</span>
+&#x2713; <span class='blue'>physics:set-rectangle-relative-corners</span> <span class='red'>"rectangle-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
+&#x2713; <span class='blue'>physics:set-rectangle-corners</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
+&#x2713; <span class='blue'>show physics:get-rectangle-relative-corners</span> <span class='red'>"rectangle-1"</span>
+&#x2713; <span class='blue'>show physics:get-rectangle-corners</span> <span class='red'>"rectangle-1"</span>
+&#x2713; <span class='blue'>physics:set-rectangle-corners</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
+&#x2713; <span class='blue'>show physics:set-rectangle-patch</span> <span class='red'>"rectangle-1" [ 0 0 ] </span>
+&#x2713; <span class='blue'>show physics:get-rectangle-patch</span> <span class='red'>"rectangle-1"</span><span class="gray">;; name of rectangle, patch coords</span> </span></pre>
 <pre>
 ;; POLYGONS
 <img class="obj" id="polygon-obj" src="./images/physics-polygon-obj.png"> 
@@ -580,8 +721,7 @@ any of which can be represented by turtles.
 &#x2713; <span class='blue'>physics:set-polygon-relative-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, coords of vertices for concave polygon, in clockwise order, relative to center of mass of body</span> 
 &#x2713; <span class='blue'>physics:set-polygon-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, absolute coords of vertices for concave polygon, in clockwise order</span> 
 &#x2713; <span class='blue'>show physics:get-polygon-relative-vertices</span> <span class='red'>"polygon-1"</span>
-&#x2713; <span class='blue'>show physics:get-polygon-vertices</span> <span class='red'>"polygon-1"</span></span>
-</pre>
+&#x2713; <span class='blue'>show physics:get-polygon-vertices</span> <span class='red'>"polygon-1"</span></span></pre>
 <pre>
 ;; SHAPES
 <span class="obj" id="shape-obj"><img src="./images/physics-line-obj.png"> <img src="./images/physics-circle-obj.png"> <img src="./images/physics-polygon-obj.png"></span> </span>
@@ -590,32 +730,30 @@ any of which can be represented by turtles.
 &#x2713; <span class='blue'>physics:set-restitution</span> <span class='red'>"shape-1" 0.5</span> <span class="gray">;; name of shape, number between 0 and 1 (from not bouncy to very bouncy)</span> 
 &#x2713; <span class='blue'>show physics:get-friction</span> <span class='red'>"shape-1"</span>
 &#x2713; <span class='blue'>show physics:get-density</span> <span class='red'>"shape-1"</span>
-&#x2713; <span class='blue'>show physics:get-restitution</span> <span class='red'>"shape-1"</span></span>
-
-</pre>
+&#x2713; <span class='blue'>show physics:get-restitution</span> <span class='red'>"shape-1"</span></span></pre>
 <pre>
 ;; BODIES
 <img class="obj" id="body-obj" src="./images/physics-body-obj.png">
 <span class='body-obj-info' class="obj">&#x2713; <span class='blue'>physics:set-behavior</span> <span class='red'>"body-1" "dynamic"</span> <span class="gray">;; static (doesn't move, does collide), dynamic (does move and collide), ghost (does move, doesn't collide)</span> 
 &#x2713; <span class='blue'>physics:set-body-xy</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray"></span> 
 &#x2713; <span class='blue'>physics:set-angle</span> <span class='red'>"body-1" 180</span> <span class="gray">;; degrees</span> 
-<span class='blue'>physics:set-linear-velocity</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray">;; vector </span> 
-<span class='blue'>physics:set-angular-velocity</span> <span class='red'>"body-1" 180</span> <span class="gray">;; angle in degrees </span> 
+&#x2713; <span class='blue'>physics:set-linear-velocity</span> <span class='red'>"body-1" [ 0 0 ]</span> <span class="gray">;; vector </span> 
+&#x2713; <span class='blue'>physics:set-angular-velocity</span> <span class='red'>"body-1" 180</span> <span class="gray">;; angle in degrees </span> 
 &#x2713; <span class='blue'>show physics:get-behavior</span> <span class='red'>"body-1"</span>
 &#x2713; <span class='blue'>show physics:get-body-xy</span> <span class='red'>"body-1"</span>
 &#x2713; <span class='blue'>show physics:get-angle</span> <span class='red'>"body-1"</span>
 &#x2713; <span class='blue'>show physics:get-linear-velocity</span> <span class='red'>"body-1"</span>
-&#x2713; <span class='blue'>show physics:get-angular-velocity</span> <span class='red'>"body-1"</span></span>
-</pre>
+&#x2713; <span class='blue'>show physics:get-angular-velocity</span> <span class='red'>"body-1"</span></span></pre>
 <pre>
 ;; TARGETS
 <img class="obj" id="target-obj" src="./images/physics-target-obj.png">
 <span class='target-obj-info'>&#x2713; <span class='blue'>physics:create-target</span> <span class='red'>"target-1" "body-1"</span> 
-<span class='blue'>physics:set-target-relative-xy</span> <span class='red'>"target-1" [ 0 0 ]</span> <span class="gray">;; name of target, coords relative to center of mass of body</span> 
+&#x2713; <span class='blue'>physics:set-target-relative-xy</span> <span class='red'>"target-1" [ 0 0 ]</span> <span class="gray">;; name of target, coords relative to center of mass of body</span> 
 &#x2713; <span class='blue'>physics:set-target-xy</span> <span class='red'>"target-1" [ 10 10 ]</span> <span class="gray">;; name of target, absolute coords</span> 
-<span class='blue'>show physics:get-target-relative-xy</span> <span class='red'>"target-1"</span>
-<span class='blue'>show physics:get-target-xy</span> <span class='red'>"target-1"</span></span>
-</pre>
+&#x2713; <span class='blue'>show physics:get-target-relative-xy</span> <span class='red'>"target-1"</span>
+&#x2713; <span class='blue'>show physics:get-target-xy</span> <span class='red'>"target-1"</span>
+&#x2713; <span class='blue'>physics:delete-target</span> <span class='red'>"target-1"</span> 
+&#x2713; <span class='blue'>physics:delete-targets</span></span></pre>
 <pre>
 ;; OBJECTS
 <span id="object-obj" class="obj"><img src="./images/physics-line-obj.png"> <img src="./images/physics-circle-obj.png"> <img src="./images/physics-polygon-obj.png"> <img src="./images/physics-target-obj.png"></span>
@@ -623,22 +761,19 @@ any of which can be represented by turtles.
 &#x2713; <span class='blue'>show physics:get-body-id</span> <span class='red'>"shape-1"</span> <span class="gray">;; get which body the shape or target is connected to</span>
 &#x2713; <span class='blue'>physics:create-objects</span> <span class='red'> list-of-objects </span>
 &#x2713; <span class='blue'>show physics:get-objects</span> <span class="gray">;; returns list of objects</span>
-&#x2713; <span class='blue'>physics:create-object</span> <span class='red'> "shape-1" "{'name':'shape-1','bodyId':'body2'}"</span>
-&#x2713; <span class='blue'>show physics:get-object</span> <span class="red">"shape-1"</span><span class="gray">;; returns string describing "shape-1"</span>
+&#x2713; <span class='blue'>physics:create-object</span> <span class='red'> [ "shape-1" "{'name':'shape-1','bodyId':'body2'}" ]</span>
+&#x2713; <span class='blue'>show physics:get-object</span> <span class="red">"shape-1"</span><span class="gray">;; returns a list with a shape and a description</span>
 &#x2713; <span class='blue'>show physics:get-object-type</span> <span class='red'> "my-triangle-1" </span> <span class="gray">;; returns "triangle"</span> 
 &#x2713; <span class='blue'>physics:delete-object</span> <span class='red'>"object-1"</span> 
 &#x2713; <span class='blue'>physics:delete-objects</span>
-&#x2713; <span class='blue'>physics:delete-targets</span> 
-<span class='blue'>physics:delete-targets</span>
-<span class='blue'>physics:exists</span> </span></span>
-</pre>
+<span class='blue'>physics:object-exists</span>
+&#x2713; <span class='blue'>show physics:show-objects</span>
+&#x2713; <span class='blue'>show physics:hide-objects</span></span></pre>
 <pre>
 ;; SHAPES AND BODIES
 <span id="shape-body-obj" class="obj"><img src="./images/physics-line-obj.png"> <img src="./images/physics-circle-obj.png"> <img src="./images/physics-polygon-obj.png"> <img src="./images/physics-body-obj.png"></span>
 <span class='shape-body-obj-info'><span class='blue'>show physics:get-mass</span> <span class='red'>"shape-1"</span>
-<span class='blue'>show physics:get-center-of-mass</span> <span class='red'>"shape-1"</span></span></span>
-</pre>
-
+<span class='blue'>show physics:get-center-of-mass</span> <span class='red'>"shape-1"</span></span></span></pre>
 
 </div>
 
@@ -659,16 +794,27 @@ any of which can be represented by turtles.
   </pre>
       </td>
     </tr>
-</table>
-
-<h3>Connections between Turtles and Objects</h3>
+    
+    <tr>
+      <td></td>
+      <td>
 <pre>
+  ;; Connections between Turtles and Objects
 &#x2713; <span class='blue'>physics:connect-who-to-object</span><span class='red'> who object-id</span>
 &#x2713; <span class='blue'>show physics:get-connected</span><span class='gray'>;; get list of pairs of turtle ids to object ids </span>
 &#x2713; <span class='blue'>physics:disconnect-who</span><span class='red'> who </span>
 </pre>
+      </td>
+      <td>
+      </td>
+    </tr>
+    
+</table>
 
-<h3>Ideas from GbCC Crew</h3>
+
+<span id="physics-ideas-obj" class="obj">
+<h3><input type="checkbox" selected>Ideas</h3>
+<div class='physics-ideas-obj-info'>
 <table>
 <tr>
   <td>
@@ -758,10 +904,11 @@ any of which can be represented by turtles.
   </td>
 </tr>
 </table>
+</div>
 
 <h2>Image Extension</h2>  
- <br><img alt="Patch Command" src="images/image-ext-3.png">
- 
+ <!--<br><img alt="Patch Command" src="images/image-ext-3.png">
+ -->
  <h3>Image Extension</h3>
 <pre>
 extensions [ image ]
@@ -783,16 +930,13 @@ extensions [ image ]
 
 &#x2713; <span class="blue">image:import-from-user</span> <span class="red">user-id</span><span class='gray'>;; imports the topmost view, plot or avatar displayed on a user's canvas</span>
 </pre>
-
-
+<!--
 <h2>Additional GbCC Commands</h2>  
  
- <h3>Import and Export</h3>
+ <h3>Export</h3>
 <pre>
-<span class="blue">gbcc:import</span> <span class="red">filename</span><span class='gray'> ;; primitive imports a json file, local to the app</span>
 &#x2713; [ EXPORT BUTTON ] <span class='gray'>;; button exports a json file and an html file</span>
-[ IMPORT BUTTON ] <span class='gray'>;; button prompts user for a json file or an image file</span>
 </pre>
 <p>
-<a href="./extensions-mar-18.html">Previous documentation using key/value pairs</a>
+<a href="./extensions-mar-18.html">Previous documentation using key/value pairs</a>-->
 </html>

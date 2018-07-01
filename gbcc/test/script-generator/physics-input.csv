@@ -1,6 +1,6 @@
 prim-name,input-type,input-name,output-type
 hide-world, , ,
-show-world,(list),(settings),
+show-world, , ,
 set-gravity-xy,(list),(data),
 get-gravity-xy, , ,(list)
 set-wrap-xy,(list),(data),
@@ -53,7 +53,7 @@ get-target-xy,(string),(name),(list)
 set-body-id,(string; string), (name; body),
 get-body-id,(string),(name),(string)
 create-objects,(list),(data),
-create-object,(string),(data),
+create-object,(list),(data),
 get-objects,,,(list)
 get-object,(string),(name),(list)
 get-object-type,(string),(name),(string)
@@ -68,12 +68,11 @@ apply-torque,(string; number),(name; force),
 apply-angular-impulse,(string; number),(name; force),
 connect-who-to-object,(number; string),(who; name),
 disconnect-who,(number),(who),
-world-on,,,
-world-off,,,
-exists,(string),(name),(boolean)
+object-exists,(string),(name),(boolean)
 get-connected,,,(list)
 reset-ticks,,,
-tick,,,(list)
+tick,,,
+get-tick,,,(list)
 repaint,,,
 create-rectangle,(string; string),(name; body),
 set-rectangle-relative-corners,(string; list), (name; vertices),
@@ -84,7 +83,13 @@ show-object,(string),(name),
 hide-object,(string),(name),
 show-objects,,,
 hide-objects,,,
+export-world,(string),(filename),
 import-world,(string),(filename),
-export-world,,,
 set-rectangle-patch,(string; list),(name; coords),
 get-rectangle-patch,(string),(name),(patch)
+get-world-offset,,,(list)
+set-world-offset,(list),(offset),
+set-all,(string),(data),
+get-all, , ,(string)
+show-toolbar,,,
+hide-toolbar,,,

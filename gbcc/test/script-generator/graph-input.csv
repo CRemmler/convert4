@@ -1,15 +1,17 @@
 prim-name,input-type,input-name,output-type
 hide-graph, , ,
-show-graph,(list),(settings),
+show-graph,,,
 set-data,(string),(data),
 import-ggb,(string),(filename),
 get-data, , ,(string)
-export-file,,,
+export-file,(string),(filename),
+import-file,(string),(filename),
 create-point,(string; list),(name; center),
 set-opacity,(number),(opacity),
 get-opacity,,,(number),
 create-points,(list),(data),
 get-points,,,(list)
+delete-point,(string),(name),
 delete-points,,,
 set-x,(string; number), (name; xcor),
 set-y,(string; number), (name; ycor),
@@ -25,7 +27,7 @@ get-object,(string),(name),(list)
 create-object,(list),(object),
 get-value,(string),(name),(number)
 get-object-type,(string),(name),(string)
-exists,(string),(name),(boolean)
+object-exists,(string),(name),(boolean)
 rename-object,(string; string),(old; next),
 delete-object,(string),(name),
 hide-object,(string),(name),
@@ -35,8 +37,19 @@ patch-to-graph,(list),(coords),(list)
 eval-command,(string),(command),
 eval-reporter,(string),(command),(wildcard)
 get-points-string,,,(string)
-set-coord-system,(number; number; number; number),(xmin; xmax; ymin; ymax),
-set-fixed,(string; boolean),(name; fixed),
 import-world,(string),(filename),
-export-world,,,
+export-world,(string),(filename),
 update-graph,,,
+show-object-label,(string),(name),
+hide-object-label,(string),(name),
+show-toolbar,,,
+hide-toolbar,,,
+bring-to-front,,,
+send-to-back,,,
+set-all,(string),(data),
+get-all, , ,(string)
+get-graph-offset,,,(list)
+set-graph-offset,(list),(offset),
+get-point,(string),(name),(list)
+center-view,(list),(center),
+

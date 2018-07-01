@@ -109,9 +109,10 @@ jQuery(document).ready(function() {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
       (data.display) ? $(".netlogo-tab-area").css("display","block") : $(".netlogo-tab-area").css("display","none");
-    } else if (data.type === "widgets") {
-      (data.display) ? $(".netlogo-widget-container .netlogo-button:not(.login)").css("display","block") : 
-        $(".netlogo-widget-container .netlogo-button").css("display","none");  
+    } else if (data.type === "gallery") {
+      console.log(data.display);
+      //(data.display) ? $(".netlogo-widget-container .netlogo-button:not(.login)").css("display","block") : 
+      //  $(".netlogo-widget-container .netlogo-button").css("display","none");  
     }
   });
 

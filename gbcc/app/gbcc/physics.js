@@ -8,11 +8,11 @@ Physics = (function() {
   function setupInterface() {
     viewWidth = parseFloat($(".netlogo-canvas").css("width"));
     viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-    var spanText = "<div class='physics-controls'>";
-    spanText +=       "<i id='physicsOn' class='fa fa-toggle-on' aria-hidden='true'></i>";
-    spanText +=       "<i id='physicsOff' class='fa fa-toggle-off' aria-hidden='true'></i>";
-    spanText +=    "</div>";
-    $(".netlogo-widget-container").append(spanText);
+    //var spanText = "<div class='physics-controls'>";
+    //spanText +=       "<i id='physicsOn' class='fa fa-toggle-on' aria-hidden='true'></i>";
+    //spanText +=       "<i id='physicsOff' class='fa fa-toggle-off' aria-hidden='true'></i>";
+    //spanText +=    "</div>";
+    //$(".netlogo-widget-container").append(spanText);
     spanText =    "<div id='physicsContainer'></div>";
     $(".netlogo-widget-container").append(spanText);
     $(".physics-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) + 8 + "px");
@@ -29,18 +29,18 @@ Physics = (function() {
     spanText +=         "<div style='display:inline-block'><div><input type='checkbox' id='showAABB'></div><div><input type='checkbox' id='showCenter'></div></div>";
     spanText +=         " <img src='./app/gbcc/physics-ui/a1.png' class='physics-drag purple hidden'>"
     spanText +=         " <img src='./app/gbcc/physics-ui/a2.png' class='physics-drag white'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a3.png' class='physics-line purple hidden'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a4.png' class='physics-line white'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a5.png' class='physics-circle purple hidden'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a6.png' class='physics-circle white'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a7.png' class='physics-triangle purple hidden'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a8.png' class='physics-triangle white'>"
     //spanText +=         " <img src='./app/gbcc/physics-ui/a14.png' class='physics-target purple hidden'>"
     //spanText +=         " <img src='./app/gbcc/physics-ui/a13.png' class='physics-target white'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a16.png' class='physics-group purple hidden'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a15.png' class='physics-group white'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a20.png' class='physics-force purple hidden'>"
-    spanText +=         " <img src='./app/gbcc/physics-ui/a19.png' class='physics-force white'>"
+    //spanText +=         " <img src='./app/gbcc/physics-ui/a16.png' class='physics-group purple hidden'>"
+    //spanText +=         " <img src='./app/gbcc/physics-ui/a15.png' class='physics-group white'>"
+    //spanText +=         " <img src='./app/gbcc/physics-ui/a20.png' class='physics-force purple hidden'>"
+    //spanText +=         " <img src='./app/gbcc/physics-ui/a19.png' class='physics-force white'>"
+
+    spanText +=         "<select id='selectionMode'>"
+    spanText +=           "<option selected >Shape</option>";
+    spanText +=           "<option>Body</option>";
+    spanText +=           "<option>Target</option>";
+    spanText +=         "</select>"
     
     //spanText +=         " <img src='./app/gbcc/physics-ui/a18.png' class='physics-force purple hidden'>"
     //spanText +=         " <img src='./app/gbcc/physics-ui/a17.png' class='physics-force white'>"
@@ -51,7 +51,20 @@ Physics = (function() {
     spanText +=         " <img src='./app/gbcc/physics-ui/a12.png' class='physics-target white'>"
     */
     spanText +=       "</div>";
+    spanText +=       "<div class='centerControls'>";
+    spanText +=         "<span></span>"
+    spanText +=       "</div>"
     spanText +=       "<div class='rightControls'>"; //"<div id='physicsStateControls'>";
+    
+    spanText +=         " <img src='./app/gbcc/physics-ui/a3.png' class='physics-line purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a4.png' class='physics-line white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a5.png' class='physics-circle purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a6.png' class='physics-circle white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a7.png' class='physics-triangle purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a8.png' class='physics-triangle white'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a23.png' class='physics-rect purple hidden'>"
+    spanText +=         " <img src='./app/gbcc/physics-ui/a22.png' class='physics-rect white'>"
+    
     //spanText +=         "<i class='fa fa-save' id='physicsSave' aria-hidden='true'></i>";
     //spanText +=         " <i class='fa fa-refresh' id='physicsRefresh' aria-hidden='true'></i>";
     //spanText +=         " <i class='fa fa-play' id='physicsPlay' aria-hidden='true'></i>";
@@ -59,7 +72,9 @@ Physics = (function() {
     spanText +=       "</div>";
     spanText += "</div>";
     $(".netlogo-view-container").append(spanText);  
-    spanText =  "<div id='physicsSettings' class='hidden'>";
+    
+    //spanText =  "<div id='physicsSettings' class='hidden'>";
+    /*
     spanText += "  <div class='leftControls'>";//"<span id='shapeSettings'>";
     spanText += "    <div id='dragModeSettings'>";
     spanText += "      ShapeId: <input id='shapeId' type='text'>";
@@ -91,8 +106,9 @@ Physics = (function() {
     spanText += "  <div class='rightControls'>";//"<span id='physicsTrash'>";
     spanText += "    <i class='fa fa-trash-o' id='physicsDelete' aria-hidden='true'></i>";
     spanText += "  </div>";
-    spanText += "</div>";
-    $(".netlogo-view-container").append(spanText);  
+    */
+    //spanText += "</div>";
+    //$(".netlogo-view-container").append(spanText);  
     $("#physicsMenu").css("display", "none");
     $("#physicsSettings").css("top", parseFloat($(".netlogo-canvas").css("height")) - 34 + "px");
     //$("#physicsContainer").css("display","inline-block");
@@ -143,11 +159,14 @@ Physics = (function() {
     assignDrawButtonMode("line"); 
     assignDrawButtonMode("circle"); 
     assignDrawButtonMode("triangle"); 
+    assignDrawButtonMode("rect");
+    
     //assignDrawButtonMode("quad"); 
-    assignDrawButtonMode("group"); 
+    //assignDrawButtonMode("group"); 
     //assignDrawButtonMode("joint"); 
     //assignDrawButtonMode("target");
-    assignDrawButtonMode("force");
+    //assignDrawButtonMode("force");
+    assignSelectionMode();
     assignSettings("color");
     assignSettings("density");
     assignSettings("restitution");
@@ -186,16 +205,25 @@ Physics = (function() {
   }
   
   function assignDrawButtonMode(buttonMode) {
-    $("#physicsMenu .leftControls").on("click", ".physics-"+buttonMode, function() {
+    $("#physicsMenu").on("click", ".physics-"+buttonMode, function() {
       if ($("#physicsMenu .leftControls").hasClass("selected")) {
         $("#physicsMenu .purple").addClass("hidden");
         $("#physicsMenu .white").removeClass("hidden");
         $(".physics-"+buttonMode+".purple").removeClass("hidden");
         $(".physics-"+buttonMode+".white").addClass("hidden");
-        mode = buttonMode;
+        mode = (buttonMode === "drag") ? $("#selectionMode").val().toLowerCase() : buttonMode;
         Physicsb2.triggerModeChange(mode);
       }
     });
+  }
+  
+  function assignSelectionMode() {
+    $("#selectionMode").on("change", function() {
+      mode = $(this).val().toLowerCase();
+      Physicsb2.triggerModeChange(mode);
+    });
+    mode = "shape";
+    Physicsb2.triggerModeChange(mode);
   }
   
   function assignDisplay(display) {
@@ -238,10 +266,12 @@ Physics = (function() {
     //$("#physicsSettings").addClass("hidden");
   }
     
-  
+/*  
   function getDrawButtonMode() {
+    console.log("asked for mode ",mode);
     return mode;
   }
+  */
   
   function triggerPhysicsUpdate() {
     if (procedures.gbccOnPhysicsUpdate != undefined) { session.run('gbcc-on-physics-update'); }
@@ -686,7 +716,7 @@ Physics = (function() {
   ///////// OBJECT ////////
   function setBodyId(oldBodyId, newBodyId) {
     //console.log("move "+oldBodyId+" to " +newBodyId);
-    Physicsb2.updateBody(oldBodyId, bodyIdBodyMode, newBodyId);
+    Physicsb2.updateBody(oldBodyId, "bodyIdBodyMode", newBodyId);
 
   }
   function getBodyId(name) {
@@ -811,6 +841,25 @@ Physics = (function() {
   
     return objectList;
   }
+  
+  function getSettings() {
+    var settings = {};
+    settings.gravityXy = getGravityXy();
+    settings.wrapXy = getWrapXy();
+    settings.timeStep = getTimeStep();
+    settings.velocityIterations = getVelocityIterations();
+    settings.getPositionIterations = getPositionIterations();
+  }
+  
+  function setSettings(results) {
+    var data = JSON.parse(results);
+    if (data.gravityXy) { setGravityXy(data.gravityXy); }
+    if (data.wrapXy) { setWrapXy(data.wrapXy); }
+    if (data.timeStep) { setTimeStepXy(data.timeStep); }
+    if (data.velocityIterations) { setVelocityIterations(data.velocityIterations); }
+    if (data.getPositionIterations) { setPositionIterations(data.getPositionIterations); }
+  }
+  
   function getObject(name) {
     if (Physicsb2.getBodyObj(name)) {
       return getBody(name);
@@ -952,6 +1001,11 @@ Physics = (function() {
     var list = 0;
     Physicsb2.updateOnce();
     list = Physicsb2.getCollisions();
+  }
+  function getTick() {
+    var list = 0;
+    Physicsb2.updateOnce();
+    list = Physicsb2.getCollisions();
     return list;
   }
   function repaint() {
@@ -1027,11 +1081,28 @@ Physics = (function() {
   function exportWorld() {
     
   }
+  function showToolbar() {
+    $("#physicsMenu").css("display","block");
+  }
+  function hideToolbar() {
+    $("#physicsMenu").css("display","none");
+  }
+  function getAll() {
+    var data = [];
+    data.objects = getObjects();
+    data.settings = getSettings();
+    return JSON.stringify(data);
+  }
+  function setAll(dataString) {
+    data = JSON.parse(dataString);
+    if (data.objects) { createObjects(data.objects); }
+    if (data.settings) { setSettings(data.settings); }
+  }
 
   
   return {
     setupInterface: setupInterface,
-    getDrawButtonMode: getDrawButtonMode,
+    //getDrawButtonMode: getDrawButtonMode,
     hideWorld: hideWorld,
     showWorld: showWorld,
     //setData: setData,
@@ -1107,6 +1178,7 @@ Physics = (function() {
     disconnectWho: disconnectWho,
     getConnected: getConnected,
     tick: tick,
+    getTick: getTick,
     resetTicks: resetTicks,
     showObject: showObject,
     hideObject: hideObject,
@@ -1119,7 +1191,11 @@ Physics = (function() {
     setRectanglePatch: setRectanglePatch,
     getRectanglePatch: getRectanglePatch,
     showObjects: showObjects,
-    hideObjects: hideObjects
+    hideObjects: hideObjects,
+    showToolbar: showToolbar,
+    hideToolbar: hideToolbar,
+    getAll: getAll,
+    setAll: setAll
   };
  
 })();

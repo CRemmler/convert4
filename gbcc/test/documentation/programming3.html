@@ -12,7 +12,7 @@
         //$(".room").css("display","none");
         $("input").on("click",function() {
           var id = $(this).attr("id");
-          console.log(id+" "+$(this).is(":checked"));
+          //console.log(id+" "+$(this).is(":checked"));
           ($(this).is(":checked")) ? 
             $("#"+id+"Container").css("display","block") : 
             $("#"+id+"Container").css("display","none");  
@@ -56,6 +56,10 @@
       <div class="code"> to gbcc-on-exit [ user-id role ] <br>&nbsp; ;; user-id identifies who exited<br>&nbsp; ;; role is either teacher or student"<br>end</div>
     </div>
     
+    <h3><input id="whoAmI" type="checkbox"> Who Am I</h3>
+    <div id="whoAmIContainer" class="initHidden">
+      <div class="code">show gbcc:who-am-i <br>;; returns your user's user-id</div>
+    </div>
     
     <h2>Share to Gallery</h2>
     <h3><input id="broadcastView" type="checkbox"> Broadcast View to Gallery</h3>
@@ -119,7 +123,7 @@
     </div>
     
 
-    <h2>Saving and Retrieving Data</h2>
+    <h2>Saving and Retrieving Data - Discrete</h2>
     
     <h3><input id="set" type="checkbox"> Set</h3>
     <div id="setContainer" class="initHidden">
@@ -140,7 +144,7 @@
     <h3><input id="getFromUser" type="checkbox"> Get From User</h3>
     <div id="getFromUserContainer" class="initHidden">
       <div><img src="./images/get-from-user.png"></div>
-      <div class="code"> to gbcc-on-select [ user-id ] <br>  show gbcc:get-from-user "code"<br>end</div>
+      <div class="code"> to gbcc-on-select [ user-id role ] <br>&nbsp;  show gbcc:get-from-user "code"<br>end</div>
     </div>
     
     <h3><input id="store" type="checkbox"> Store</h3>
@@ -162,9 +166,43 @@
     <h3><input id="restoreFromUser" type="checkbox"> Restore From User</h3>
     <div id="restoreFromUserContainer" class="initHidden">
       <div><img src="./images/restore-from-user.png"></div>
-      <div class="code"> to gbcc-on-select [ user-id ] <br> gbcc:restore-from-user "code"<br>end</div>
+      <div class="code"> to gbcc-on-select [ user-id role ] <br>&nbsp; gbcc:restore-from-user "code"<br>end</div>
     </div>
     
+    <h2>Saving and Retrieving Data - Continuous</h2>
+    
+    <h3><input id="addToStream" type="checkbox"> Add To Stream</h3>
+    <div id="addToStreamContainer" class="initHidden">
+      <div><img src="./images/add-to-stream.png"></div>
+      <div class="code"> 
+      gbcc:add-to-stream "code" "fd 2"
+      </div>
+    </div>
+    
+    <h3><input id="getStream" type="checkbox"> Get Stream</h3>
+    <div id="getStreamContainer" class="initHidden">
+      <div><img src="./images/get-stream.png"></div>
+      <div class="code"> 
+     show gbcc:get-stream "code"
+      </div>
+    </div>
+    
+    <h3><input id="getStreamFromUser" type="checkbox"> Get Stream From User</h3>
+    <div id="getStreamFromUserContainer" class="initHidden">
+      <div><img src="./images/get-stream-from-user.png"></div>
+      <div class="code"> to gbcc-on-go [ user-id role ] <br>  &nbsp;show gbcc:get-stream-from-user "code"<br>end</div>
+    </div>
+    
+    <h2>Visibility of Patches</h2>
+    <h3><input id="showPatches" type="checkbox"> Show Patches</h3>
+    <div id="showPatchesContainer" class="initHidden">
+      <div class="code"> gbcc:show-patches</div>
+    </div>
+    <h3><input id="hidePatches" type="checkbox"> Hide Patches</h3>
+    <div id="hidePatchesContainer" class="initHidden">
+      <div class="code"> gbcc:hide-patches</div>
+    </div>
+
     <h2>Authoring</h2>
     <h3><input id="desktop" type="checkbox"> Desktop NetLogo Environment with GbCC Extension</h3>
     <div id="desktopContainer" class="initHidden">

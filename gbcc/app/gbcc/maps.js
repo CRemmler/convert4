@@ -18,15 +18,14 @@ Maps = (function() {
   ////// SETUP MAP //////
   
   function setupInterface() {
-    //console.log("setupInterface for maps");
     viewWidth = parseFloat($(".netlogo-canvas").css("width"));
     viewHeight = parseFloat($(".netlogo-canvas").css("height"));
     var spanText =    "<div id='mapContainer'></div>";
     $(".netlogo-widget-container").append(spanText);
-    $("#mapContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 5 + "px");
-    $("#mapContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 4 + "px");
-    $("#mapContainer").css("left", $(".netlogo-view-container").css("left"));
-    $("#mapContainer").css("top", $(".netlogo-view-container").css("top"));
+    $("#mapContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 2 + "px");
+    $("#mapContainer").css("height", parseFloat($(".netlogo-canvas").css("height"))  - 2 + "px");
+    $("#mapContainer").css("left", parseFloat($(".netlogo-view-container").css("left")) + 0 + "px");
+    $("#mapContainer").css("top", parseFloat($(".netlogo-view-container").css("top")) + 0 + "px");
     //$("#mapContainer").css("display", "none");
     $("#mapContainer").css("display","inline-block");
     if (L) {
@@ -39,7 +38,8 @@ Maps = (function() {
       }
     }
     setupEventListeners();
-    hideMap();
+    //hideMap();
+    //sendToBack();
     $("#mapContainer").css("display","none");
     $(".netlogo-view-container").css("pointer-events","none");
   }
@@ -55,10 +55,10 @@ Maps = (function() {
   
   function updateMap() {
     var bounds = map ? map.getBounds() : { "_northEast": {"lat": 0, "lng": 0}, "_southWest": {"lat": 0, "lng": 0}};
-    var xMin = bounds._northEast.lng;
-    var yMin = bounds._northEast.lat;
-    var xMax = bounds._southWest.lng;
-    var yMax = bounds._southWest.lat;
+    var yMax = bounds._northEast.lng;
+    var xMax = bounds._northEast.lat;
+    var yMin = bounds._southWest.lng;
+    var xMin = bounds._southWest.lat;
     boundaries = {xmin: xMin, xmax: xMax, ymin: yMin, ymax: yMax};
   }
 
@@ -78,12 +78,12 @@ Maps = (function() {
     var boundaryMaxY = boundaries.ymax;
     var markerX = (pixelPercentX * (boundaryMaxX - boundaryMinX)) + boundaryMinX;
     var markerY = (pixelPercentY * (boundaryMaxY - boundaryMinY)) + boundaryMinY;
-    return ([markerY, markerX]);
+    return ([markerX, markerY]);
   }
   
   function latlngToPatch(coords) {
-    var markerPositionX = coords[1];
-    var markerPositionY = coords[0];
+    var markerPositionX = coords[0];
+    var markerPositionY = coords[1];
     var boundaryMinX = boundaries.xmin;
     var boundaryMinY = boundaries.ymin;
     var boundaryMaxX = boundaries.xmax;
@@ -94,8 +94,8 @@ Maps = (function() {
       || markerPositionY > boundaryMaxY) {
       return (["out of bounds"]);
     }
-    var markerPercentX = 1 - ((boundaryMaxX - markerPositionX) / (boundaryMaxX - boundaryMinX));
-    var markerPercentY = (boundaryMaxY - markerPositionY) / (boundaryMaxY - boundaryMinY);
+    var markerPercentY = ((boundaryMaxX - markerPositionX) / (boundaryMaxX - boundaryMinX));
+    var markerPercentX = 1 - (boundaryMaxY - markerPositionY) / (boundaryMaxY - boundaryMinY);
     var pixelX = markerPercentX * viewWidth;
     var pixelY = markerPercentY * viewHeight;
     var patchXcor = universe.view.xPixToPcor(pixelX);
@@ -113,15 +113,11 @@ Maps = (function() {
     $("#mapContainer").css("z-index","0");
     $(".netlogo-view-container").css("pointer-events","none");
     $(".netlogo-view-container").css("z-index","1");
-    // left, top, width, height
-    // if (settings.length == 4) {
-      //$("#mapContainer").css("left", settings[0] + "px");
-      //$("#mapContainer").css("top", settings[1] + "px");
-      //$("#mapContainer").css("width", settings[2] + "px");
-      //$("#mapContainer").css("height", settings[3] + "px");
-    //}
+    $("#opacityWrapper").css("top",parseInt($("#mapContainer").css("top") - 15) + "px");
+    $("#opacityWrapper").css("left",$("#mapContainer").css("left"));
+    $("#opacityWrapper").css("display", "inline-block");
     drawPatches = false;
-  
+    map.invalidateSize()
     world.triggerUpdate();
   }
   
@@ -130,6 +126,7 @@ Maps = (function() {
     $("#mapContainer").css("z-index","1");
     $(".netlogo-view-container").css("pointer-events","auto");
     $(".netlogo-view-container").css("z-index","0");
+    $("#opacityWrapper").css("display", "none");
     drawPatches = true;
     world.triggerUpdate();
   }
@@ -162,8 +159,9 @@ Maps = (function() {
   function createMarker(name, settings) {
     if (!markers[name]) { markers[name] = {}; }
     var newLatlng = L.latLng(settings[0], settings[1]);
-    var leafletMarker = map ? L.marker(newLatlng).addTo(map) : null;
-    markers[name].marker = leafletMarker;
+    markers[name].latlng = newLatlng;
+    map ? markers[name].marker = L.marker(newLatlng).addTo(map) : null;
+    //markers[name].marker = leafletMarker;
   }
   
   function createMarkers(data) {
@@ -177,15 +175,23 @@ Maps = (function() {
   }
   
   function getMarkers() {
-    var markers = [];
+    var markerList = [];
     for (var key in markers) {
-      markers.push(getMarker(key));
+      markerList.push(getMarker(key));
     }
+    return markerList;
   }
   
   function deleteMarker(name) {
     if (markers[name] && markers[name].marker) {
+      map.removeLayer(markers[name].marker);
       delete markers[name];
+    }
+  }
+  
+  function deleteMarkers() {
+    for (marker in markers) {
+      deleteMarker(marker);
     }
   }
   
@@ -220,7 +226,6 @@ Maps = (function() {
       return markers[name].marker.getLatLng().lng;
     }
     return 0;
-
   }
   function getLatlng(name) {
     if (markers[name] && markers[name].marker) {
@@ -229,18 +234,21 @@ Maps = (function() {
     return [0, 0];
   }
   
+    ///////// PATHS /////////
+  
   function createPath(name, vertices) {
     var latlngs = vertices;
-    paths[name] = L.polyline(latlngs, {color: 'black'}).addTo(map);
-    map.addLayer(paths[name]);
+    paths[name] = {};
+    paths[name].path = L.polyline(latlngs, {color: "#000000"}).addTo(map);
+    paths[name].latlngs = latlngs;
+    paths[name].color = "#000000";
+    map.addLayer(paths[name].path);
   }
   
-  function getVertices(name) {
-    return paths[name];
-  }
-  
-  function setVertices(name, vertices) {
-    
+  function createPaths(paths) {
+    for (var i=0; i<paths.length; i++) {
+      createPath[paths[i][0], paths[i][1]];
+    }
   }
   
   function hidePath(name) {
@@ -252,11 +260,222 @@ Maps = (function() {
   }
   
   function deletePath(name) {
-    map.removeLayer(paths[name]);
+    map.removeLayer(paths[name].path);
     delete paths[name];
   }
   
+  function deletePaths() {
+    for (path in paths) {
+      deletePath(path);
+    }
+  }
+  
+  ///////// PATH ATTRIBUTES /////////
+    
+  function setPathColor(name, color) {
+    if (paths[name]) {
+      paths[name].color = color;
+      var latlngs = getLatlng(name);
+      paths[name].path = L.polyline(latlngs, {color: color }).addTo(map);
+      map.addLayer(paths[name].path);
+    }
+  } 
+  
+  function getPathColor(name) {
+    if (paths[name] && paths[name].color) {
+      return paths[name].color;
+    } else {
+      return "#000000";
+    }
+  } 
+  
+  function getPathVertices(name) {
+    if (paths[name]) {
+      return paths[name].latlngs;
+    } else {
+      return "undefined";
+    }
+  }
+  
+  function setPathVertices(name, vertices) {
+    var latlngs = vertices;
+    if (paths[name]) {
+      var color = paths[name].color ? paths[name].color : "black";
+      paths[name].marker = L.polyline(latlngs, {color: color }).addTo(map);
+      map.addLayer(paths[name].path);
+    } else {
+      createPath(name, vertices);
+    }
+  }
+  
+  ////////// oBJECTS ///////////
+  function createObject(objectList) {
+    var name = objectList[0];
+    var result = JSON.parse(objectList[1]);
+    var type = result.type;
+    if (type === "marker") {
+      createMarker(name, result.latlng);
+    } else if (type === "path") {
+      createPath(name, result.vertices);
+      setPathColor(name, result.color);
+    }
+  }
+  
+  function createObjects(objects) {
+    for (var i=0; i<objects.length; i++) {
+      createObject(objects[i]);
+    }
+  }
+  
+  function getObject(name) {
+    var result = {};
+    if (getObjectType(name) === "marker") {
+      result.type = "marker";
+      result.latlng = getLatlng(name);
+    } else if (getObjectType(name) === "path") {
+      result.type = "path";
+      result.vertices = getPathVertices(name);
+      result.color = getPathColor(name);
+    }    
+    var resultString = JSON.stringify(result);
+    return [ name, resultString ];  
+  }
 
+  function getObjects() {
+    var objectList = [];
+    var name;
+    var value;
+    for (marker in markers) {
+      name = marker;
+      value = getObject(name);
+      objectList.push(value);
+    }
+    for (path in paths) {
+      name = path;
+      value = getObject(name);
+      objectList.push(value);
+    }
+    return objectList;
+  }
+  
+  function deleteObject(name) {
+    if (getObjectType(name) === "marker") {
+      deleteMarker(name);
+    } else if (getObjectType(name) === "path") {
+      deletePath(name);
+    }
+  }
+  
+  function deleteObjects() {
+    deleteMarkers();
+    deletePaths();
+  }
+  
+  function getObjectType(name) {
+    if (markers[name]) {
+      return "marker";
+    } else if (paths[name]) {
+      return "path";
+    } else {
+      return "none";
+    }  
+  }
+  
+  function objectExists(name) {
+    return (markers[name] || paths[name]) ? true : false;
+  }
+  
+  function showObject(name) {
+    console.log(paths);
+    console.log(markers);
+    var objectType = getObjectType(name);
+    if (objectType === "path") {
+      paths[name].visible = true;
+      map.addLayer(paths[name].path);
+      setPathColor(paths[name].color);
+    } else if (objectType === "marker") {
+      markers[name].visible = true;
+      L.marker(markers[name].latlng).addTo(map);     
+    }
+  }
+  
+  function hideObject(name) {
+    var objectType = getObjectType(name);
+    if (objectType === "path") {
+      paths[name].visible = false;
+      map.removeLayer(paths[name].path);
+    } else if (objectType === "marker") {
+      markers[name].visible = false;
+      map.removeLayer(markers[name].marker);    
+    }
+  }
+  
+  ////////// MAP SETTINGS //////////
+  
+  function bringToFront() {
+    $("#mapContainer").css("z-index","3");
+  }
+  
+  function sendToBack() {
+    $("#mapContainer").css("z-index","0"); 
+  }
+
+  function setOpacity(value) {
+    $("#mapContainer").css("opacity", value);
+    $("#opacity").val(value * 100);
+  }
+  
+  function getOpacity() {
+    return parseFloat($("#mapContainer").css("opacity"));
+  }
+  
+  function setMapOffset(offset) {
+    var top = offset[1] + "px";
+    var left = offset[0] + "px";
+    $("#mapContainer").css("top", top);
+    $("#mapContainer").css("left", left);   
+    if (offset.length === 4) {
+      var height = offset[3] + "px";
+      var width = offset[2] + "px";
+      $("#mapContainer").css("height", height);
+      $("#mapContainer").css("width", width);   
+    }
+  }
+  
+  function getMapOffset() {
+    var top = parseInt($("#mapContainer").css("top"));
+    var left = parseInt($("#mapContainer").css("left"));
+    var height = parseInt($("#mapContainer").css("height"));
+    var width = parseInt($("#mapContainer").css("width"));   
+    return [ left, top, width, height ]
+  }
+  
+  //////// DATA //////////
+  
+  function getAll() {
+    var data = {};
+    data.objects = getObjects();
+    data.settings = getSettings();
+    return JSON.stringify(data);
+  }
+  function setAll(dataString) {
+    data = JSON.parse(dataString);
+    if (data.objects) { createObjects(data.objects); }
+    if (data.settings) { setSettings(data.settings); }
+  }
+  function getSettings() {
+    var data = {};
+    data.zoom = getZoom();
+    data.centerLatlng = getCenterLatlng();
+    return data;
+    //return JSON.stringify(data);
+  }
+  function setSettings(results) {
+    var data = Parse.JSON(results); 
+    setZoom(data.zoom);
+    setCenterLatlng(data.centerLatlng);
+  }
+  
   return {
     setupInterface: setupInterface,
     showMap: showMap,
@@ -265,10 +484,14 @@ Maps = (function() {
     getZoom: getZoom,
     setCenterLatlng: setCenterLatlng,
     getCenterLatlng: getCenterLatlng,
+    
     createMarker: createMarker,
     createMarkers: createMarkers,
+    getMarker: getMarker,
     getMarkers: getMarkers,
     deleteMarker: deleteMarker,
+    deleteMarkers: deleteMarkers,
+    
     setLat: setLat,
     setLng: setLng,
     setLatlng: setLatlng,
@@ -282,13 +505,41 @@ Maps = (function() {
     latlngToPatch: latlngToPatch,
     patchToLatlng: patchToLatlng,
     updateMap: updateMap,
+    
     createPath: createPath,
-    getPath: getVertices,
+    createPaths: createPaths,
+    deletePath: deletePath,
+    deletePaths: deletePaths,
+        
+    setPathColor: setPathColor,
+    getPathColor: getPathColor,
+    setPathVertices: setPathVertices,
+    getPathVertices: getPathVertices,
+    
     hidePath: hidePath,
     showPath: showPath,
-    deletePath: deletePath
     
-
+    bringToFront: bringToFront,
+    sendToBack: sendToBack,
+    setOpacity: setOpacity,
+    getOpacity: getOpacity,
+    setMapOffset: setMapOffset,
+    getMapOffset: getMapOffset,
+    
+    createObject: createObject,
+    createObjects: createObjects,
+    getObject: getObject,
+    getObjects: getObjects,
+    deleteObject: deleteObject,
+    deleteObjects: deleteObjects,
+    getObjectType: getObjectType,
+    objectExists: objectExists,
+    showObject: showObject,
+    hideObject: hideObject,
+    
+    setAll: setAll,
+    getAll: getAll,
+  
   };
  
 })();

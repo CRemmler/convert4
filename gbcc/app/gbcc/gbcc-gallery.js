@@ -94,7 +94,7 @@ Gallery = (function() {
           $(".gbcc-gallery li").removeClass("gray-border");
           galleryForeverButton = "on";
           socket.emit("request user broadcast data");
-          socket.emit("request user data");
+          //socket.emit("request user data");
         } else {
           //$(".netlogo-gallery-tab").addClass("selected");
           $(".netlogo-gallery-tab-content").addClass("selected");
@@ -124,7 +124,12 @@ Gallery = (function() {
       imageQuality = 0.75;
     }
     $("body").append("<canvas id=\"avatarCanvasView\" width=\"300\" height=\"300\" style=\"display:none\"></canvas>");
-
+    $(".netlogo-widget-container").append('<div style="position:absolute; top:-10px; left:210px" id="opacityWrapper"><input type="range" value="100" max="100" min="0" id="opacity" style="z-index: -1;"></div>')
+    $('.netlogo-widget-container').on("input","#opacity", function() { 
+      $("#graphContainer").css("opacity", $(this).val() / 100);
+      $("#mapContainer").css("opacity", $(this).val() / 100); 
+    });
+    $("#opacityWrapper").css("display", "none");
   }
 
   function selectAll() {
@@ -582,6 +587,16 @@ Gallery = (function() {
     return myUserId;
   }
   
+  function showPatches() {
+    drawPatches = true;
+    universe.repaint();
+  }
+  
+  function hidePatches() {
+    drawPatches = false;
+    universe.repaint();
+  }
+  
   return {
     displayCanvas: displayCanvas,
     broadcastView: broadcastView,
@@ -590,7 +605,9 @@ Gallery = (function() {
     broadcastAvatar: broadcastAvatar,
     clearBroadcast: clearBroadcast,
     setupGallery: setupGallery,
-    whoAmI: whoAmI
+    whoAmI: whoAmI,
+    showPatches: showPatches,
+    hidePatches: hidePatches
   };
 
 })();
