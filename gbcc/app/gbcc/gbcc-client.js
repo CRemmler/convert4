@@ -110,9 +110,29 @@ jQuery(document).ready(function() {
     } else if (data.type === "tabs") {
       (data.display) ? $(".netlogo-tab-area").css("display","block") : $(".netlogo-tab-area").css("display","none");
     } else if (data.type === "gallery") {
-      console.log(data.display);
-      //(data.display) ? $(".netlogo-widget-container .netlogo-button:not(.login)").css("display","block") : 
-      //  $(".netlogo-widget-container .netlogo-button").css("display","none");  
+      if (data.display) {
+        $(".netlogo-gallery-tab").css("display","block");
+        $(".netlogo-gallery-tab-content").css("display","block"); 
+        for (userId in foreverButtonCode) {
+          delete foreverButtonCode[userId];
+        }
+        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
+      } else {
+        var teacherId = data.teacherId;
+        $(".netlogo-gallery-tab").css("display","none"); 
+        $(".netlogo-gallery-tab-content").css("display","none");  
+        for (userId in foreverButtonCode) {
+          delete foreverButtonCode[userId];
+        }
+        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
+        userStreamData[data.teacherId] = {};
+        session.compileObserverCode("gbcc-forever-button-code-"+teacherId, "gbcc-on-go \""+teacherId+"\" \"teacher\"");
+  
+        if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
+        foreverButtonCode[teacherId] = "gbcc-forever-button-code-"+teacherId;
+        console.log(foreverButtonCode);
+      }
+      $(".gbcc-gallery li.selected").length
     }
   });
 
@@ -162,7 +182,7 @@ jQuery(document).ready(function() {
         userStreamData[data.userId][data.tag] = [];
       }
       userStreamData[data.userId][data.tag].push(data.value);
-      console.log(userStreamData[data.userId][data.tag]);
+      //console.log(userStreamData[data.userId][data.tag]);
     }
   });
 
@@ -195,7 +215,7 @@ jQuery(document).ready(function() {
       case "forever-select":
         userStreamData[data.userId] = {};
         //myStreamData[data.userId] = {};
-        console.log("clear userStreamData");
+        //console.log("clear userStreamData");
         if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[data.userId] = data.key;
         break;
@@ -204,7 +224,7 @@ jQuery(document).ready(function() {
 
   var myVar = "";
   function runForeverButtonCode() {
-    //console.log("run forever button code");
+    console.log("run forever button code");
     for (userId in foreverButtonCode) { 
       if (procedures.gbccOnGo != undefined) {
         session.runObserverCode(foreverButtonCode[userId]); 

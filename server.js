@@ -292,7 +292,7 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/html2canvas.min.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/html2canvas.min.js", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/image.js", "utf8").then(function(data) {
+        fs.readFileAsync("gbcc/app/gbcc/gbcc-image.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/image.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
@@ -331,11 +331,11 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a7.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a7.png", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a8.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a8.png", data);
+        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a22.png").then(function(data) {
+        	zip.file("app/gbcc/physics-ui/a22.png", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a9.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a9.png", data);
+        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a23.png").then(function(data) {
+        	zip.file("app/gbcc/physics-ui/a23.png", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a10.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a10.png", data);

@@ -44,6 +44,11 @@
   height: 159px;
 }
 
+.gbcc-gallery.large li {
+  width: 250px;
+  height: 250px;
+}
+
 .gbcc-gallery span {
   position: absolute;
   background-color: white;

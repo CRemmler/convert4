@@ -979,6 +979,7 @@ Physicsb2 = (function() {
       bodyId: bodyId,
       fillStyle: fillStyle,
       targetId: targetId,
+      //relativeCoords: getBodyObj(bodyId).GetLocalPoint(coords),
       snap: snap
     }
     
@@ -1102,7 +1103,7 @@ Physicsb2 = (function() {
   ///////// FORCES IN WORLD
   
   function applyForce(m) {
-    console.log("apply force", m);
+    //console.log("apply force", m);
     var amount = m.force * 40;
     var radians = degreesToRadians(m.angle);
     var targetId = m.targetId;
@@ -1332,6 +1333,7 @@ Physicsb2 = (function() {
           if (targetDragged) {
             targetDragged.coords.x = mouseX;
             targetDragged.coords.y = mouseY;
+            targetDragged.relativeCoords = getBodyObj(targetDragged.bodyId).GetLocalPoint(targetDragged.coords);
             targetDragged.snap = false;
           } else {
             if (bodyDragged != null) {
@@ -1347,7 +1349,7 @@ Physicsb2 = (function() {
       universe.repaint();
       world.DrawDebugData();
       redrawWorld();
-      redrawAllTargets();
+      //redrawAllTargets();
     }
     
     function dragFixtureByPoint() {
@@ -1494,8 +1496,10 @@ Physicsb2 = (function() {
       for (var t=0; t<targets.length; t++) {
         target = targetObj[targets[t]];
         //console.log(target);
-        target.coords = body.GetPosition(target.relativeCoords);
-        //console.log("translate",target.relativeCoords,"to",target.coords);
+        //target.coords = body.GetPosition(target.relativeCoords);
+        
+        target.coords = body.GetWorldPoint(target.relativeCoords);
+        //console.log("translate",target.relativeCoords,"to"s2221G,target.coords);
         //console.log(target.coords);
         //target.coords = {x: target.offset.x + mouseX, y: target.offset.y + mouseY };
       }
@@ -2214,6 +2218,7 @@ Physicsb2 = (function() {
     //if (target.snap) {
     //  target.coords = bodyObj[target.bodyId].GetWorldCenter();
     //}
+    //console.log(target);
     var strokeStyle = target.strokeStyle;
     var fillStyle = target.fillStyle;
     var center = target.coords;
@@ -2353,18 +2358,7 @@ Physicsb2 = (function() {
       selectedBody.SetAngle(newAngle);
       ctx.lineTo(pixelCoords.x, pixelCoords.y);
       ctx.stroke();
-      
-      /*
-      drawCircle({
-        "strokeStyle": "white",
-        "fillStyle": "black",
-        "lineWidth": 5,
-        "pointCoords": pointCoords,
-        "radius": 12,
-        "fill": true,
-        "stroke": true
-      });*/
-      
+
       ctx.beginPath();
       ctx.arc(pixelCoords.x, pixelCoords.y, 12, 0, Math.PI * 2, true); // Outer circle
       ctx.fillStyle = "black";

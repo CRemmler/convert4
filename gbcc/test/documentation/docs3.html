@@ -5,6 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/netlogo.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/style3.css" />
+    <style type="text/css">
+      .update {border: 1px solid red; background-color:yellow; }
+    </style>
   <body>    
     <h1>
       NetLogo GbCC 3.0 Dictionary
@@ -42,6 +45,8 @@
       <a href="#gbcc-patch-code">gbcc:compile-patch-code</a>
       <a href="#gbcc-patch-code">gbcc:run-patch-code</a>
       <a href="#gbcc-who-am-i">gbcc:who-am-i</a>
+      <a href="#gbcc-show-patches">gbcc:show-patches</a>
+      <a href="#gbcc-hide-patches">gbcc:hide-patches</a>
     <h3>
       GbCC Reserved Procedures
     </h3>
@@ -141,20 +146,23 @@ end
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:add-to-stream <i>key value</i></span></h4>
       <p>Creates a stream of data by appending values to a list, which is accessible by it's key. Empties list upon retrieval.
+        <span class="update">*** new ***</span>
       <pre>
 gbcc:add-to-stream "code" "fd 3"
       </pre>
     </div>
         
     <div class="dict_entry" id="gbcc-get-stream">
-      <h3> <a>gbcc:get-stream</a></h3>
+      <h3> <a>gbcc:get-stream</a> </h3>
       <img alt="Observer Command" src="images/observer.png">
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
+
       <h4><span class="prim_example">gbcc:get-stream <i>key</i></span></h4>
       <p>Returns a stream of data by getting a list of values, based on it's key. 
         Begins compiling list upon initialization of gbcc-on-go forever button.
         Empties list upon retrieval.
+        <span class="update">*** new ***</span>
       <pre>
 to gbcc-on-go [user-id]
   show gbcc:get-stream user-id "code"
@@ -163,13 +171,14 @@ end
     </div>
         
     <div class="dict_entry" id="gbcc-get-stream-from-user">
-      <h3><a>gbcc:get-stream-from-user</a></h3>
+      <h3><a>gbcc:get-stream-from-user</a> </h3>
       <img alt="Observer Command" src="images/observer.png">
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:get-stream-from-user <i>user-id key</i></span></h4>
       <p>Returns a stream of data by getting a list of values, based on it's user-id and key.
         Empties list upon retrieval.
+        <span class="update">*** new ***</span>
       <pre>
 to gbcc-on-go [user-id]
   show gbcc:get-stream-from-user user-id "code"
@@ -287,7 +296,35 @@ gbcc:compile-patch-code pxcor pycor "code" "set pcolor orange"
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:who-am-i</span></h4>
-      <p>Returns a user's user-id.
+      <p>Returns a user's user-id. <span class="update">*** new ***</span>
+      <pre>
+show gbcc:who-am-i
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-show-patches">
+      <h3><a>gbcc:show-patches</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      
+      <h4><span class="prim_example">gbcc:show-patches</span></h4>
+      <p>Patches are visible.
+        <span class="update">*** new ***</span>
+      <pre>
+show gbcc:who-am-i
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-hide-patches">
+      <h3><a>gbcc:hide-patches</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:hide-patches</span></h4>
+      <p>Each patch becomes white. Useful when adjusting opacity when viewing a graph or map.
+        <span class="update">*** new ***</span>
+
       <pre>
 show gbcc:who-am-i
       </pre>

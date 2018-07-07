@@ -74,7 +74,6 @@ function createJsonReport(data, settings) {
   return JSON.stringify(reportObj);
 }
 
-
 function sendResponse(htmlReport,jsonReport, zip, res, fileName) {
   zip.file("htmlReport.html", htmlReport);
   zip.file("jsonReport.json", jsonReport);
@@ -84,6 +83,10 @@ function sendResponse(htmlReport,jsonReport, zip, res, fileName) {
     res.download(fileName+".zip", function() {
     });
   });
+}
+
+function createGgbFile() {
+  console.log("create ggb file");
 }
 
 module.exports = {

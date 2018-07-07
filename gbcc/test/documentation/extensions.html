@@ -88,7 +88,7 @@
       img {border-radius: 0px;}
       .more, .less {cursor: default};
       .mediumImage {width: 200px;}
-      .update {border: 1px solid red; background-color:white;}
+      .update {border: 1px solid red; background-color:yellow;}
     </style>
   </head>
   <body>
@@ -144,20 +144,21 @@ GRAPH
 <pre>
 &#x2713; <span class='blue'>graph:show-graph</span>
 &#x2713; <span class='blue'>graph:hide-graph</span>
-&#x2713; <span class='blue'>graph:show-toolbar</span>
-&#x2713; <span class='blue'>graph:hide-toolbar</span>
-&#x2713; <span class='blue'>graph:bring-to-front</span>
-&#x2713; <span class='blue'>graph:send-to-back</span>
-&#x2713; <span class='blue'>graph:set-graph-offset</span><span class='red'> [ left top width height ] </span>
-&#x2713; <span class='blue'>show graph:get-graph-offset</span> <span class="gray">;; returns [ left top width height ]</span> 
-&#x2713; <span class='blue'>graph:set-opacity</span><span class='red'> 0.5 </span>
-&#x2713; <span class='blue'>show graph:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
-&#x2713; <span class='blue'>show graph:center-view</span> <span class='red'> [ x y ] </span>
+&#x2713; <span class='blue'>graph:show-toolbar</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:hide-toolbar</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:bring-to-front</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:send-to-back</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:set-graph-offset</span><span class='red'> [ left top width height ] </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show graph:get-graph-offset</span> <span class="gray">;; returns [ left top width height ]</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:set-opacity</span><span class='red'> 0.5 </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show graph:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show graph:center-view</span> <span class='red'> [ x y ] </span> <span class="update">*** new ***</span>
 
 </pre>
 <pre>
-&#x2713; <span class='blue'>graph:set-all</span><span class='red'> "long-string-of-xml" </span>
-&#x2713; <span class='blue'>show graph:get-all</span> <span class="gray">;; returns "long-string-of-xml"</span> 
+&#x2713; <span class='blue'>graph:set-all</span><span class='red'> "long-string-of-xml" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show graph:get-all</span> <span class="gray">;; returns "long-string-of-xml"</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:import-ggb</span> <span class="red">"filename.txt"</span>
 </pre>
 <!--<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show graph:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -174,7 +175,7 @@ POINTS
 <pre>
 &#x2713; <span class='blue'>graph:create-point</span> <span class='red'>"Point1" </span>[ <span class="red">0 0</span> ]
 &#x2713; <span class='blue'>graph:create-points </span> [ [ <span class='red'>"Point1" </span>[ <span class="red">0 2</span> ] ] [ <span class='red'>"point-2"</span> [ <span class="red">0 0</span> ] ] ]
-&#x2713; <span class='blue'>show graph:get-point "Point1" </span> <span class="gray">;; [ "Point1" [ 0 2 ] ]</span>
+&#x2713; <span class='blue'>show graph:get-point "Point1" </span> <span class="gray">;; [ "Point1" [ 0 2 ] ]</span> <span class="update">*** new ***</span>
 &#x2713; <span class='blue'>show graph:get-points </span> <span class="gray">;; [ [ "Point1" [ 0 2 ] ] [ "point-2" [ 0 0 ] ] ]</span>
 &#x2713; <span class='blue'>graph:delete-point</span> <span class='red'>"Point1" </span>
 &#x2713; <span class='blue'>graph:delete-points</span> 
@@ -213,10 +214,10 @@ OBJECTS (Including Points)
 &#x2713; <span class='blue'>show graph:get-object-type</span> <span class='red'> "MyTriangle1" </span> <span class="gray">;; returns type</span> 
 &#x2713; <span class='blue'>show graph:object-exists</span> <span class='red'> "MyTriangle1" </span> <span class="gray">;; returns boolean</span> 
 &#x2713; <span class='blue'>graph:rename-object</span> <span class='red'> "MyTriangle1" "MyTriangle2" </span>
-&#x2713; <span class='blue'>graph:show-object</span> <span class='red'> "MyTriangle1" </span>
-&#x2713; <span class='blue'>graph:hide-object</span> <span class='red'> "MyTriangle1" </span>
-&#x2713; <span class='blue'>graph:show-object-label</span> <span class='red'> "MyTriangle1" </span>
-&#x2713; <span class='blue'>graph:hide-object-label</span> <span class='red'> "MyTriangle1" </span>
+&#x2713; <span class='blue'>graph:show-object</span> <span class='red'> "MyTriangle1" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:hide-object</span> <span class='red'> "MyTriangle1" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:show-object-label</span> <span class='red'> "MyTriangle1" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:hide-object-label</span> <span class='red'> "MyTriangle1" </span> <span class="update">*** new ***</span>
 </pre>
 </td>ß
   </tr>
@@ -422,12 +423,12 @@ MAP
 <pre>
 &#x2713; <span class='blue'>maps:show-map</span>
 &#x2713; <span class='blue'>maps:hide-map</span>
-&#x2713; <span class='blue'>maps:bring-to-front</span>
-&#x2713; <span class='blue'>maps:send-to-back</span>
-&#x2713; <span class='blue'>maps:set-map-offset</span><span class='red'> [ left top width height ] </span>
-&#x2713; <span class='blue'>show maps:get-map-offset</span> <span class="gray">;; returns [ left top width height ]</span> 
-&#x2713; <span class='blue'>maps:set-opacity</span><span class='red'> 0.5 </span>
-&#x2713; <span class='blue'>show maps:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
+&#x2713; <span class='blue'>maps:bring-to-front</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:send-to-back</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:set-map-offset</span><span class='red'> [ left top width height ] </span><span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show maps:get-map-offset</span> <span class="gray">;; returns [ left top width height ]</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:set-opacity</span><span class='red'> 0.5 </span><span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show maps:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> <span class="update">*** new ***</span>
 </pre>
 <pre>
 &#x2713; <span class='blue'>maps:set-all</span><span class='red'> "long-string-of-json" </span>
@@ -494,14 +495,14 @@ MARKERS
 PATHS
 </pre>
 <pre>
-&#x2713; <span class='blue'>maps:create-path</span> <span class='red'>"path-1" </span>[ <span class="red">0 0</span> ]
-&#x2713; <span class='blue'>maps:create-paths </span> [ [ <span class='red'>"path-1" </span>[ <span class="red">0 0</span> ] ] [ <span class='red'>"marker-2"</span>[ <span class="red">0 0</span> ] ] ]
-&#x2713; <span class='blue'>maps:delete-path</span> <span class='red'>"path-1"</span>
-&#x2713; <span class='blue'>maps:delete-paths</span>
-&#x2713; <span class='blue'>maps:set-path-color</span><span class='red'> "path-1" "#555555" </span> 
-&#x2713; <span class='blue'>show maps:get-path-color</span> <span class='red'>"path-1"</span> <span class="gray">;; returns "#555555"</span> 
-&#x2713; <span class='blue'>maps:set-path-vertices</span><span class='red'> "path-1" [ [ 30 60 ] [ 31 59 ] [ 39 59 ] ] </span> 
-&#x2713; <span class='blue'>show maps:get-path-vertices</span> <span class='red'>"path-1"</span> <span class="gray">;; returns [ [ 30 60 ] [ 31 59 ] [ 39 59 ] ]</span> 
+&#x2713; <span class='blue'>maps:create-path</span> <span class='red'>"path-1" </span>[ <span class="red">0 0</span> ] <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:create-paths </span> [ [ <span class='red'>"path-1" </span>[ <span class="red">0 0</span> ] ] [ <span class='red'>"marker-2"</span>[ <span class="red">0 0</span> ] ] ] <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:delete-path</span> <span class='red'>"path-1"</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:delete-paths</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:set-path-color</span><span class='red'> "path-1" "#555555" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show maps:get-path-color</span> <span class='red'>"path-1"</span> <span class="gray">;; returns "#555555"</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:set-path-vertices</span><span class='red'> "path-1" [ [ 30 60 ] [ 31 59 ] [ 39 59 ] ] </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show maps:get-path-vertices</span> <span class='red'>"path-1"</span> <span class="gray">;; returns [ [ 30 60 ] [ 31 59 ] [ 39 59 ] ]</span> <span class="update">*** new ***</span>
 </pre>
 <!--<span class='blue'>maps:set-label</span><span class='red'> "point-1" "cat's marker-1"</span>-->
 <!--<span class='blue'>show maps:get-label</span><span class='red'> "marker-1"</span> <span class="gray">;; returns "cat's point-1"</span>-->
@@ -516,17 +517,17 @@ PATHS
 OBJECTS (Including Markers and Paths)
 </pre>
 <pre>
-&#x2713; <span class='blue'>maps:create-object</span> <span class='red'> [ "path-" "some-string"] </span>
-&#x2713; <span class='blue'>maps:create-objects</span> <span class='red'> [ [ "path-1" "some-string"] [ "MyPath2" "some-string"] ] </span>
-&#x2713; <span class='blue'>show maps:get-object</span> <span class='red'> "path-1" </span><span class="gray">;; returns a list with a name and definition</span> 
-&#x2713; <span class='blue'>show maps:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
-&#x2713; <span class='blue'>maps:delete-object</span>  <span class='red'>"path-1" </span>
-&#x2713; <span class='blue'>maps:delete-objects</span>
+&#x2713; <span class='blue'>maps:create-object</span> <span class='red'> [ "path-" "some-string"] </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:create-objects</span> <span class='red'> [ [ "path-1" "some-string"] [ "MyPath2" "some-string"] ] </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show maps:get-object</span> <span class='red'> "path-1" </span><span class="gray">;; returns a list with a name and definition</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show maps:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:delete-object</span>  <span class='red'>"path-1" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:delete-objects</span> <span class="update">*** new ***</span>
 </pre>
 <pre>
-&#x2713; <span class='blue'>show maps:object-exists</span> <span class='red'> "path-1" </span> <span class="gray">;; returns boolean</span> 
-&#x2713; <span class='blue'>maps:hide-object</span> <span class='red'> "path-1" </span>
-&#x2713; <span class='blue'>maps:show-object</span> <span class='red'> "path-1" </span> </pre>
+&#x2713; <span class='blue'>show maps:object-exists</span> <span class='red'> "path-1" </span> <span class="gray">;; returns boolean</span> <span class="update">*** new ***</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:hide-object</span> <span class='red'> "path-1" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>maps:show-object</span> <span class='red'> "path-1" </span> <span class="update">*** new ***</span> </pre>
     </td>
   </tr>
   
@@ -537,7 +538,7 @@ OBJECTS (Including Markers and Paths)
 TRANSLATION between Patch Coordinates and Latitude / Latitude
 &#x2713; <span class='blue'>show maps:latlng-to-patch </span><span class='red'>[ 30 -97 ]</span> <span class="gray">;; returns latitude and longitude</span>
 &#x2713; <span class='blue'>show maps:patch-to-latlng </span><span class='red'>[ 0 0 ]</span> <span class="gray">;; returns patch coordinates</span>
-&#x2713; <span class='blue'>maps:update-map</span> ;; upon changing center or zoom of map, sync lat-lng and patch coords
+&#x2713; <span class='blue'>maps:update-map</span> ;; upon changing center or zoom of map, sync lat-lng and patch coords <span class="update">*** new ***</span>
 </pre>
   </tr>
 </table>
@@ -634,8 +635,8 @@ WORLD
 <pre>
 &#x2713; <span class='blue'>physics:show-world</span>
 &#x2713; <span class='blue'>physics:hide-world</span>
-&#x2713; <span class='blue'>graph:show-toolbar</span>
-&#x2713; <span class='blue'>graph:hide-toolbar</span>
+&#x2713; <span class='blue'>graph:show-toolbar</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:hide-toolbar</span> <span class="update">*** new ***</span>
 </pre>
 <pre>
 <span class='blue'>physics:bring-to-front</span>
@@ -646,14 +647,14 @@ WORLD
 <span class='blue'>show physics:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
 </pre>
 <pre>
-&#x2713; <span class='blue'>physics:set-all</span><span class='red'> "long-string-of-json" </span>
-&#x2713; <span class='blue'>show physics:get-all</span> <span class="gray">;; returns "long-string-of-json"</span> 
+&#x2713; <span class='blue'>physics:set-all</span><span class='red'> "long-string-of-json" </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show physics:get-all</span> <span class="gray">;; returns "long-string-of-json"</span> <span class="update">*** new ***</span>
 </pre>
 <pre>
-<span class='blue'>physics:reset-ticks</span>
-&#x2713; <span class='blue'>physics:tick</span>
-&#x2713; <<span class='blue'>show physics:get-tick</span> <span class="gray">;; returns list of collisions since last tick</span> 
-&#x2713; <span class='blue'>physics:repaint</span>
+<span class='blue'>physics:reset-ticks</span> 
+&#x2713; <span class='blue'>physics:tick</span> <span class="update">*** new ***</span>
+&#x2713; <<span class='blue'>show physics:get-tick</span> <span class="gray">;; returns list of collisions since last tick</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>physics:repaint</span> <span class="update">*** new ***</span>
 </pre>
 <!--<span class='blue'>physics:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show physics:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -707,18 +708,18 @@ WORLD
 <pre>
 ;; RECTANGLES
 <img class="obj" id="rectangle-obj" src="./images/physics-rect-obj.png"> 
-<span class="rectangle-obj-info">&#x2713; <span class='blue'>physics:create-rectangle</span> <span class='red'>"rectangle-1" "body-1"</span> <span class="gray">;; create a rectangle attached to a body</span> <span class="update">*** new argument ***</span>
-&#x2713; <span class='blue'>physics:set-rectangle-relative-corners</span> <span class='red'>"rectangle-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
-&#x2713; <span class='blue'>physics:set-rectangle-corners</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
-&#x2713; <span class='blue'>show physics:get-rectangle-relative-corners</span> <span class='red'>"rectangle-1"</span>
-&#x2713; <span class='blue'>show physics:get-rectangle-corners</span> <span class='red'>"rectangle-1"</span>
-&#x2713; <span class='blue'>physics:set-rectangle-corners</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> 
-&#x2713; <span class='blue'>show physics:set-rectangle-patch</span> <span class='red'>"rectangle-1" [ 0 0 ] </span>
-&#x2713; <span class='blue'>show physics:get-rectangle-patch</span> <span class='red'>"rectangle-1"</span><span class="gray">;; name of rectangle, patch coords</span> </span></pre>
+<span class="rectangle-obj-info">&#x2713; <span class='blue'>physics:create-rectangle</span> <span class='red'>"rectangle-1" "body-1"</span> <span class="gray">;; create a rectangle attached to a body</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>physics:set-rectangle-relative-corners</span> <span class='red'>"rectangle-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>physics:set-rectangle-corners</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show physics:get-rectangle-relative-corners</span> <span class='red'>"rectangle-1"</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show physics:get-rectangle-corners</span> <span class='red'>"rectangle-1"</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>physics:set-rectangle-corners</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] ]</span> <span class="gray">;; name of rectangle, coords of corners of rectangle</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show physics:set-rectangle-patch</span> <span class='red'>"rectangle-1" [ 0 0 ] </span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show physics:get-rectangle-patch</span> <span class='red'>"rectangle-1"</span><span class="gray">;; name of rectangle, patch coords</span> <span class="update">*** new ***</span> </span></pre>
 <pre>
 ;; POLYGONS
 <img class="obj" id="polygon-obj" src="./images/physics-polygon-obj.png"> 
-<span class="polygon-obj-info">&#x2713; <span class='blue'>physics:create-polygon</span> <span class='red'>"polygon-1" "body-1"</span> <span class="gray">;; create a polygon attached to a body</span> <span class="update">*** new argument ***</span>
+<span class="polygon-obj-info">&#x2713; <span class='blue'>physics:create-polygon</span> <span class='red'>"polygon-1" "body-1"</span> <span class="gray">;; create a polygon attached to a body</span> <span class="update">*** new ***</span>
 &#x2713; <span class='blue'>physics:set-polygon-relative-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, coords of vertices for concave polygon, in clockwise order, relative to center of mass of body</span> 
 &#x2713; <span class='blue'>physics:set-polygon-vertices</span> <span class='red'>"polygon-1" [ [ 10 10 ] [ 5 5 ] [ 5 10 ] ]</span> <span class="gray">;; name of line, absolute coords of vertices for concave polygon, in clockwise order</span> 
 &#x2713; <span class='blue'>show physics:get-polygon-relative-vertices</span> <span class='red'>"polygon-1"</span>
@@ -768,8 +769,8 @@ WORLD
 &#x2713; <span class='blue'>physics:delete-object</span> <span class='red'>"object-1"</span> 
 &#x2713; <span class='blue'>physics:delete-objects</span>
 <span class='blue'>physics:object-exists</span>
-&#x2713; <span class='blue'>show physics:show-objects</span>
-&#x2713; <span class='blue'>show physics:hide-objects</span></span></pre>
+&#x2713; <span class='blue'>show physics:show-objects</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show physics:hide-objects</span> <span class="update">*** new ***</span></span></pre>
 <pre>
 ;; SHAPES AND BODIES
 <span id="shape-body-obj" class="obj"><img src="./images/physics-line-obj.png"> <img src="./images/physics-circle-obj.png"> <img src="./images/physics-polygon-obj.png"> <img src="./images/physics-body-obj.png"></span>

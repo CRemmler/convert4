@@ -27,7 +27,8 @@
 	    .selected#gray1 {border: 4px solid orange; }
 			.selected#brown1 {border: 4px solid orange; }
 			.selected#teal1 {border: 4px solid orange; }
-			.selected#yellowstar { border: 4px solid orang; }
+			.selected#yellowstar1 { border: 4px solid orange; }
+			.selected#pinkstar1 { border: 4px solid orange; }
 			table {text-align:center;}
 			#menu {padding-top:5px; padding-bottom:0px}
 			.spacer { height:72px;border:none;}
@@ -64,6 +65,7 @@
 			<img src="./images/teal-turtle.png" class="turtle" id="teal1">
 			
 			<img src="./images/yellow-star.png" class="turtle" id="yellowstar1">
+			<img src="./images/pink-star.png" class="turtle" id="pinkstar1">
 		</div>
 		<div class="container yellow1">
 			<h2>Hello World</h2>
@@ -486,53 +488,85 @@ to gbcc-on-deselect [ user-id role ]
 end
 </pre>
 </div>
-
 <div class="container yellowstar1">
-<h2>Most Recent Code 94/25/18</h2>
-<a href="./maps-demo.zip">maps-demo.zip</a>
-<br><a href="./gbcc-moose-2.zip">gbcc-moose-2.zip</a>
-<br><a href="./triangle-jun-28.zip">triangle-jun-28.zip</a>
-<h2>More info</h2>
-This has the latest GbCC code, including:
+	<div class="container yellowstar1" style="">
+	<h2>Most Recent Code 94/25/18</h2>
+	<a href="./maps-demo.zip">maps-demo.zip</a>
+	<br><a href="./gbcc-moose-2.zip">gbcc-moose-2.zip</a>
+	<br><a href="./triangle-jun-28.zip">triangle-jun-28.zip</a>
+	</div>
+</div>
+<div class="container pinkstar1">
+<h2>Shadows on a Map</h2>
+<img src="">
+<h2>NetLogo Code</h2>
 <pre>
--- MAPS --
-maps:show-map
-maps:set-opacity 0.5
-show maps:get-opacity
-maps:bring-to-front
-maps:send-to-back
-show maps:get-map-offset
-maps:set-map-offset [ 10 10 ]
+to setup
+  create-turtles 1 [
+    set turtle-number who
+    set marker-name word "marker-" who
+    set latlng maps:patch-to-latlng (list xcor ycor)
+    maps:create-marker marker-name latlng		
+    set shadow-length 3
+    set size shadow-length
+  ]
+end
 
--- GRAPH --
-graph:show-graph
-graph:set-opacity 0.5
-show graph:get-opacity
-graph:delete-points
-graph:delete-point "point0"
-graph:show-object-label "point0"
-graph:hide-object-label "point0"
-graph;show-toolbar
-graph:hide-toolbar
-graph:bring-to-front
-graph:send-to-back
-graph:set-all "some-long-string"
-show graph:get-all
-show graph:get-graph-offset
-graph:set-graph-offset [ 10 10 ]
-graph:delete-object
+to update-shadow [ turtle-number length-of-shadow ]
+  ask turtle turtle-number [
+    set shadow-length length-of-shadow 
+    set size shadow-length
+  ]
+end
 
--- PHYSICS --
-physics:show-toolbar
-physics:hide-toolbar
-physics:show-world
+to update-position [ turtle-number new-xcor new-ycor ]
+  ask turtle turtle-number [
+    setxy new-xcor new-ycor 
+    set latlng maps:patch-to-latlng (list xcor ycor)
+    maps:set-latlng marker-name latlng
+  ]
+end
 
--- GBCC --
-gbcc:show-patches 
-gbcc:hide-patches
+to share
+  set marker-shadow-list (list)
+  let data (list)
+  ask turtles [
+    set data (list marker-name (maps:get-latlng marker-name) shadow-length)
+    set marker-shadow-list lput data marker-shadow-list
+  ]
+  gbcc:set "marker-shadow-list" marker-shadow-list
+end
+
+to gbcc-on-select [ user-id role ]
+  set marker-shadow-list gbcc:get-from-user user-id "marker-shadow-list"
+  foreach marker-shadow-list [ x ->
+    create-turtles 1 [
+      set turtle-number who
+      set marker-name item 0 x
+      let latlng item 1 x 
+      let shadow-length item 2 x 
+      set patch-coords maps:latlng-to-patch latlng
+      setxy item 0 patch-coords item 1 patch-coords
+      maps:create-marker marker-name latlng
+      set size shadow-length
+    ]
+  ]
+end
+
+to gbcc-on-deselect [ user-id role ]
+  set marker-shadow-list gbcc:get-from-user user-id "marker-shadow-list"
+	foreach marker-shadow-list [ x ->
+    ask turtles with [ marker-name = item 0 x ] [
+      maps:delete-marker marker-name
+      die
+    ]
+  ]
+end
+
+;; click on the Export button, saves data from each student saved with gbcc:set 
+
+;; click on the Import button, import gbcc file and create canvases for each user, with all data from gbcc:get 
 </pre>
-<h2>Still to come</h2>
-Rethinking paths. Include attributes like path color.
 </div>
 
 	</body>

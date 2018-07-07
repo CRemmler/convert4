@@ -37,7 +37,7 @@ Gallery = (function() {
     }
     if (allowGalleryControls) {
       var galleryControlSpan = "<div class='gallery-controls'>";
-      galleryControlSpan += "<span class='gallery-right'>Size: <select id='canvasSize'><option>Small</option><option>Medium</option><option>Large</option></select>";
+      galleryControlSpan += "<span class='gallery-right'>Size: <select id='canvasSize'><option>Small</option><option>Medium</option><option>Large</option><option>Extra Large</option></select>";
       galleryControlSpan += "<input type='checkbox' checked id='galleryUpdates'> Listen</span>";
       if (allowMultipleSelections) {
         galleryControlSpan += "<span class='gallery-left'><button id='selectAll'>Select All</button> ";
@@ -115,7 +115,9 @@ Gallery = (function() {
     if (!allowGalleryControls) { $(".gallery-controls").css("display","none"); }
     if (!allowTeacherControls) { $(".teacher-controls").css("display","none"); }
     if (is_safari) {
-      $("body").append("<canvas id=\"miniSafariCanvasView\" width=\"200\" height=\"200\" style=\"display:none\"></canvas>");
+      //$("body").append("<canvas id=\"miniSafariCanvasView\" width=\"200\" height=\"200\" style=\"display:none\"></canvas>");
+      $("body").append("<canvas id=\"miniSafariCanvasView\" width=\"250\" height=\"250\" style=\"display:none\"></canvas>");
+
       canvasLength = 200; canvasWidth = 200;
       imageQuality = 0.5;
     } else {
@@ -130,6 +132,19 @@ Gallery = (function() {
       $("#mapContainer").css("opacity", $(this).val() / 100); 
     });
     $("#opacityWrapper").css("display", "none");
+    
+    $("body").append("<div class='hiddenfile'><input id='cats' type='file'></div>")
+    $("#cats").click(function() {
+      console.log($("#cats").val());
+      console.log("CLICKED");
+      console.log($("#cats")[0].files);
+    });
+    $("#cats").change(function() {
+      console.log($("#cats").val());
+      console.log("CHANGED");
+      console.log($("#cats")[0].files);
+    });
+    
   }
 
   function selectAll() {
@@ -254,6 +269,7 @@ Gallery = (function() {
   }
   
   function foreverClickHandler(thisSpan, userId, userType) {
+    if (!procedures.gbccOnGo) { return; }
     if ($(thisSpan).hasClass("selected")) {  
       $(thisSpan).removeClass("selected");
       socket.emit("request user action", {userId: userId, status: "forever-deselect", userType: userType});  

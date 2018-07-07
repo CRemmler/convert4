@@ -32,8 +32,15 @@ Graph = (function() {
     }
   }
   
+  function ggbOnInit(){
+    console.log("it loaded");
+  //  ggbApplet.registerAddListener("onAdd");
+  }
+  
   function appletOnLoadVisible() {
+    console.log("loaded");
     setTimeout(function(){ 
+      console.log("applet on visible");
       updateGraph(); 
       $("#graphContainer").css("display","inline-block");
       $(".netlogo-view-container").css("z-index","1");
@@ -150,14 +157,37 @@ Graph = (function() {
   }
   
   function hideGraph() {
+    
     $("#graphContainer").css("display","none");
     $(".netlogo-view-container").css("z-index","0");
     $(".netlogo-view-container").css("pointer-events","auto");
     $("#opacityWrapper").css("display", "none");
+    
+    /* IMPORT A FILE 
     drawPatches = true;
     world.triggerUpdate();
+    
+    var elem, listener;
+    listener = function(event) {
+      var reader;
+      reader = new FileReader;
+      reader.onload = function(e) {
+        console.log(e.target.result);
+        //return trueImport(e.target.result);
+      };
+      if (event.target.files.length > 0) {
+        reader.readAsText(event.target.files[0]);
+      }
+      return $("#cats").off();
+    };
+    $("#cats").one("change",listener);
+    $("#cats").click();
+    $("#cats").value = "";
+    console.log("hide world");*/
+    
+    
   }
-
+  
   ///////// GRAPH SETTINGS  ///////
   
   ///////// IMPORT GGB ///////

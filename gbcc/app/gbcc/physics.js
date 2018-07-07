@@ -560,7 +560,7 @@ Physics = (function() {
       var absoluteBox2dCoords = { x: offset.x - box2dCoords.x, y: offset.y - box2dCoords.y};
       var absoluteNlogoCoords = Physicsb2.box2dToPatch(absoluteBox2dCoords);
       var absoluteOffset = Physicsb2.box2dToPatch(offset);
-      center = [absoluteNlogoCoords[0] - absoluteOffset[0],absoluteNlogoCoords[0] - absoluteOffset[0] ];
+      center = [absoluteNlogoCoords[0] - absoluteOffset[0],absoluteNlogoCoords[1] - absoluteOffset[1] ];
     }
     return center;
   }
@@ -630,7 +630,7 @@ Physics = (function() {
         absoluteBox2dCoords = { x: offset.x - box2dCoords.x, y: offset.y - box2dCoords.y};
         absoluteNlogoCoords = Physicsb2.box2dToPatch(absoluteBox2dCoords);
         absoluteOffset = Physicsb2.box2dToPatch(offset);
-        relativeCenter = [absoluteNlogoCoords[0] - absoluteOffset[0],absoluteNlogoCoords[0] - absoluteOffset[0] ];
+        relativeCenter = [absoluteNlogoCoords[0] - absoluteOffset[0],absoluteNlogoCoords[1] - absoluteOffset[1] ];
         vertices.push(relativeCenter);
       }
     }
@@ -658,23 +658,25 @@ Physics = (function() {
     Physicsb2.refresh();
   }
   function setTargetRelativeXy(name, relativePatchCoords) {
-    if (Physicsb2.getTargetObj(name) && relativePatchCoords.length > 0) {
-      var bodyId = Physicsb2.getTargetObj(name).bodyId;    
+    //console.log(relativePatchCoords);
+    relativePatchCoords = [-relativePatchCoords[0], -relativePatchCoords[1]];
+    if (Physicsb2.getTargetObj(name)) {
+      var bodyId = Physicsb2.getTargetObj(name).bodyId;
       var offset = Physicsb2.getBodyObj(bodyId).GetPosition(); 
       var absolutePatchOffset = Physicsb2.box2dToPatch(offset); 
       var absoluteBox2dCoords = Physicsb2.patchToBox2d([ absolutePatchOffset[0] + relativePatchCoords[0], absolutePatchOffset[1] + relativePatchCoords[1]]);
-      Physicsb2.getTargetObj(name).coords = absoluteBox2dCoords;//Physicsb2.box2dToPatch(absoluteBox2dCoords);
-      Physicsb2.getTargetObj(name).relativeCoords = Physicsb2.getBodyObj(bodyId).GetLocalPoint(absoluteBox2dCoords);
-      Physicsb2.getTargetObj(name).snap = false;
+      var relativeCenter = {x: offset.x - absoluteBox2dCoords.x, y:offset.y - absoluteBox2dCoords.y};
+      Physicsb2.getTargetObj(name).relativeCoords = relativeCenter;
+      Physicsb2.getTargetObj(name).coords = Physicsb2.getBodyObj(bodyId).GetWorldPoint(relativeCenter);  
     }
     Physicsb2.refresh();
   }
   function setTargetXy(name, coords) {
     if (Physicsb2.getTargetObj(name)) {
       var bodyId = Physicsb2.getTargetObj(name).bodyId; 
+      var coords = patchToBox2d([ coords[0], coords[1] ]);
       Physicsb2.getTargetObj(name).coords = coords;
       Physicsb2.getTargetObj(name).relativeCoords = Physicsb2.getBodyObj(bodyId).GetLocalPoint(coords);
-      Physicsb2.getTargetObj(name).snap = false;
     }
   }
   function getTargetRelativeXy(name) {
@@ -682,17 +684,22 @@ Physics = (function() {
     if (Physicsb2.getTargetObj(name)) {
       var bodyId = Physicsb2.getTargetObj(name).bodyId;
       var offset = Physicsb2.getBodyObj(bodyId).GetPosition(); 
-      var box2dCoords = Physicsb2.getTargetObj(name).coords;
-      var absoluteOffset = { x: offset.x - box2dCoords.x, y: offset.y - box2dCoords.y};
-      absoluteOffset = Physicsb2.box2dToPatch(offset);
-      var absoluteNlogoCoords = Physicsb2.box2dToPatch(box2dCoords);
+      var box2dCoords = Physicsb2.getTargetObj(name).relativeCoords;
+      var absoluteBox2dCoords = { x: offset.x - box2dCoords.x, y: offset.y - box2dCoords.y};
+      var absoluteNlogoCoords = Physicsb2.box2dToPatch(absoluteBox2dCoords);
+      var absoluteOffset = Physicsb2.box2dToPatch(offset);
       center = [absoluteNlogoCoords[0] - absoluteOffset[0],absoluteNlogoCoords[1] - absoluteOffset[1] ];
+      center = [ -center[0], -center[1] ]
     }
     return center;
   }
   function getTargetXy(name) {
-    //console.log(Physicsb2.getTargetObj(name).coords);
-    return Physicsb2.getTargetObj(name) ? Physicsb2.getTargetObj(name).coords : [0, 0];
+    var center = [ 0, 0];
+    if (Physicsb2.getTargetObj(name)) {
+      var box2dCoords = Physicsb2.getTargetObj(name).coords;    
+      center = Physicsb2.box2dToPatch(box2dCoords);
+    }
+    return center;
   }
   
   ///////// OBJECT ////////

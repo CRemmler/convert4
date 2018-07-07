@@ -1,12 +1,12 @@
+var cat;
 var map;
-var markers;
 Maps = (function() {
 
   var zoom = 11;
   var center = [ 30.2672, -97.7431];
   //var map;
-  markers = {};
-  paths = {};
+  var markers = {};
+  var paths = {};
   var viewWidth;
   var viewHeight;
   var boundaries;
@@ -162,7 +162,8 @@ Maps = (function() {
     if (!markers[name]) { markers[name] = {}; }
     var newLatlng = L.latLng(settings[0], settings[1]);
     markers[name].latlng = newLatlng;
-    map ? markers[name].marker = L.marker(newLatlng).addTo(map) : null;
+    map ? markers[name].marker = L.marker(newLatlng, {draggable:'true'}).addTo(map) : null;
+    cat = markers[name].marker;
     //markers[name].marker = leafletMarker;
   }
   

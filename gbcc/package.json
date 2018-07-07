@@ -17,7 +17,6 @@
     "node-fs": "^0.1.7",
     "formidable": "^1.1.1",
     "markdown": "^0.5.0",
-    "formidable": "^1.1.1",
     "bluebird": "^3.0",
     "jszip": "^3.1.3"
   },
