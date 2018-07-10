@@ -3,6 +3,7 @@
 var fs = require("node-fs");
 var JSZip = require("jszip");
 var Promise = require("bluebird");
+
 Promise.promisifyAll(fs);
 
 function createHtmlReport(data, settings) {
@@ -75,13 +76,52 @@ function createJsonReport(data, settings) {
 }
 
 
-function sendResponse(htmlReport,jsonReport, zip, res, fileName) {
+function sendResponse(htmlReport,jsonReport, zip, res, filename) {
   zip.file("htmlReport.html", htmlReport);
   zip.file("jsonReport.json", jsonReport);
   zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
-  .pipe(fs.createWriteStream(fileName+".zip"))
+  .pipe(fs.createWriteStream(filename+".zip"))
   .on('finish', function () {
-    res.download(fileName+".zip", function() {
+    res.download(filename+".zip", function() {
+    });
+  });
+}
+
+function sendGgbResponse(xml, filename, zip, res) {
+  console.log(filename);
+  filename = (filename) ? filename : "geogebra-default.ggb";
+  zip.file("geogebra.xml", xml);
+  fs.readFileAsync("app/gbcc/geogebra_defaults2d.xml").then(function(data) {
+    zip.file("geogebra_defaults2d.xml", data);
+  }).then(function() {  
+  fs.readFileAsync("app/gbcc/geogebra_defaults3d.xml").then(function(data) {
+    zip.file("geogebra_defaults3d.xml", data);
+  }).then(function() {
+  fs.readFileAsync("app/gbcc/geogebra_javascript.js").then(function(data) {
+    zip.file("geogebra_javascript.js", data);
+  }).then(function() {
+  fs.readFileAsync("app/gbcc/geogebra_thumbnail.png").then(function(data) {
+    zip.file("geogebra_thumbnail.png", data);        
+  }).then(function() {
+    zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+    .pipe(fs.createWriteStream(filename))
+    .on('finish', function () {
+      res.download(filename, function() {
+        
+      });
+    });
+  }); }); }); });
+}
+
+function sendGbCCWorldResponse(worldReport, filename, zip, res) {
+  console.log("send gbcc world response");
+  console.log("filename",filename);
+  zip.file("gbccWorld.json", worldReport);
+  zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+  .pipe(fs.createWriteStream(filename))
+  .on('finish', function () {
+    res.download(filename, function() {
+      console.log("downloaded");
     });
   });
 }
@@ -96,7 +136,7 @@ module.exports = {
     settings.hour = d.getHours();
     settings.minute = d.getMinutes();
     settings.time = d.toString("hh:mm")
-    var fileName = settings.year+"-"+settings.month+"-"+settings.date+"-"+settings.hour+"-"+settings.minute;
+    var filename = settings.year+"-"+settings.month+"-"+settings.date+"-"+settings.hour+"-"+settings.minute;
     if (data != undefined) {
       for (var room in data) {
         for (var user in room.userData) {
@@ -105,6 +145,16 @@ module.exports = {
       }
     }
     //zip.file("world.json", JSON.stringify(data));
-    sendResponse(createHtmlReport(data, settings), createJsonReport(data, settings), zip, res, fileName);
+    sendResponse(createHtmlReport(data, settings), createJsonReport(data, settings), zip, res, filename);
+  },
+  
+  exportGgb: function (xml, filename, res) {
+    var zip = new JSZip();
+    sendGgbResponse(xml, filename, zip, res);
+  },
+  
+  exportGbccWorld: function (data, settings, filename, res) {
+    var zip = new JSZip();
+    sendGbCCWorldResponse(createJsonReport(data, settings), filename, zip, res);
   }
 };

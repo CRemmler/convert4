@@ -52,4 +52,5 @@ get-graph-offset,,,(list)
 set-graph-offset,(list),(offset),
 get-point,(string),(name),(list)
 center-view,(list),(center),
-
+export-ggb,(string),(filename),
+get-draggable,(string),(name),(boolean)

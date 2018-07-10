@@ -25,22 +25,53 @@ Graph = (function() {
       $("#graphContainer").css("top", $(".netlogo-view-container").css("top"));
       $("#graphContainer").css("display", "none");
       $(".netlogo-view-container").css("pointer-events","none");
-      //applet1 = new GGBApplet({filename: "geogebra-default.ggb", "appletOnLoad": appletOnLoadVisible}, true);
-      applet1 = new GGBApplet({filename: "geogebra-default.ggb"}, true);
+      
+      //importGgb("geogebra-default.ggb");
+      //hideGraph();
+      //applet1 = new GGBApplet({filename: "geogebra-default.ggb", "appletOnLoad": ggbOnInit}, true);
+      //applet1 = new GGBApplet({filename: "geogebra-default.ggb"}, true);
+      //applet1.inject('graphContainer');
+      //importGgb("geogebra-default.ggb");
+      //console.log("import some ggb file",filename);
+      applet1 = new GGBApplet({filename: "geogebra-default.ggb","showToolbar":true, "appletOnLoad": appletOnLoadHidden}, true);
       applet1.inject('graphContainer');
+      
+      
       setupEventListeners();
+      spanText = "<form action='exportggb' method='post' id='exportggb' enctype='multipart/form-data' style='display: none;'>";
+      spanText += "<input id='ggbxml' type='text' name='ggbxml' value='' style='display: none;'>";
+      spanText += "<input id='ggbfilename' type='text' name='ggbfilename' value='' style='display: none;'>";
+      spanText += "<button type='submit'></button></form>";
+      $("body").append(spanText);
     }
   }
   
-  function ggbOnInit(){
-    console.log("it loaded");
+  function appletOnLoadHidden(){
   //  ggbApplet.registerAddListener("onAdd");
+  //  applet1 = new GGBApplet({filename: "geogebra-default.ggb", "appletOnLoad": appletOnLoadVisible}, true);
+    //importGgb("geogebra-default.ggb");
+    setTimeout(function(){ 
+      showGraph();
+      //$(".netlogo-view-container").css("z-index","1");
+    //$("#graphContainer").css("display","none");
+      //$(".netlogo-view-container").css("pointer-events","none");
+      //$("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top") - 15) + "px");
+      //$("#opacityWrapper").css("left",$("#graphContainer").css("left"));
+    //  $("#opacityWrapper").css("display", "none");
+      //drawPatches = false;
+      updateGraph();
+      hideGraph();
+      //world.triggerUpdate();
+      //updateGraph(); 
+      //$("#graphContainer").css("display","inline-block");
+      //$(".netlogo-view-container").css("z-index","1");
+      ggbApplet.setErrorDialogsActive(false);  
+    }, 1000);
   }
   
   function appletOnLoadVisible() {
-    console.log("loaded");
     setTimeout(function(){ 
-      console.log("applet on visible");
+      showGraph();
       updateGraph(); 
       $("#graphContainer").css("display","inline-block");
       $(".netlogo-view-container").css("z-index","1");
@@ -136,16 +167,7 @@ Graph = (function() {
   ////// SHOW AND HIDE GRAPH //////
   
   function showGraph() {
-    if (!applet1) 
-    {
-      $("#graphContainer").css("display","none");
-      importGgb("geogebra-default.ggb");
-    } else { 
-      $("#graphContainer").css("display","inline-block");
-      $(".netlogo-view-container").css("z-index","1");
-      world.triggerUpdate();
-
-    }
+    $(".netlogo-view-container").css("z-index","1");
     $("#graphContainer").css("display","inline-block");
     $(".netlogo-view-container").css("pointer-events","none");
     $("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top") - 15) + "px");
@@ -157,54 +179,51 @@ Graph = (function() {
   }
   
   function hideGraph() {
-    
+    drawPatches = true;
+    world.triggerUpdate();
     $("#graphContainer").css("display","none");
     $(".netlogo-view-container").css("z-index","0");
     $(".netlogo-view-container").css("pointer-events","auto");
     $("#opacityWrapper").css("display", "none");
-    
-    /* IMPORT A FILE 
-    drawPatches = true;
-    world.triggerUpdate();
-    
-    var elem, listener;
-    listener = function(event) {
-      var reader;
-      reader = new FileReader;
-      reader.onload = function(e) {
-        console.log(e.target.result);
-        //return trueImport(e.target.result);
-      };
-      if (event.target.files.length > 0) {
-        reader.readAsText(event.target.files[0]);
-      }
-      return $("#cats").off();
-    };
-    $("#cats").one("change",listener);
-    $("#cats").click();
-    $("#cats").value = "";
-    console.log("hide world");*/
-    
-    
-  }
-  
-  ///////// GRAPH SETTINGS  ///////
-  
+  }  
+
+
   ///////// IMPORT GGB ///////
   
   function importGgb(filename) { 
-    //drawPatches = true;
-    //universe.repaint();
-    if ($("#graphContainer").css("display") === "none") { showGraph(); }
-    //$("#graphContainer").css("display","inline-block");
-    applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
-    applet1.inject('graphContainer');
+    if (filename != "") {
+      applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
+      applet1.inject('graphContainer');
+    } else {
+      var elem, listener;
+      listener = function(event) {
+        var reader;
+        reader = new FileReader();
+        reader.onload = function(e) {
+          applet1 = new GGBApplet({filename: event.target.files[0].name,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
+          applet1.inject('graphContainer');
+        };
+        if (event.target.files.length > 0) {
+          reader.readAsText(event.target.files[0]);
+        }
+        return $("#importggb").off();
+      };
+      $("#importggb").one("change",listener);
+      $("#importggb").click();
+      $("#importggb").value = "";
+    }
+  }
+  
+  function exportGgb(filename) {
+    $("#ggbxml").val(ggbApplet.getXML());
+    $("#ggbfilename").val(filename);
+    $("#exportggb").submit();
   }
   
   //////// POINTS /////////
   
   function createPoint(name, coords) {
-    console.log("create point",name,coords);
+    //console.log("create point",name,coords);
     var x = coords[0];
     var y = coords[1];
     ggbApplet.evalCommand(name + " = ("+x+", "+y+")");
@@ -316,14 +335,6 @@ Graph = (function() {
       
     if (result.command.indexOf("=") < 0) {
       result.command = name + " = " + result.command;
-      //console.log(name);
-      //console.log(ggbApplet.getObjectType(name));
-      //try {
-      //  result.xcoord = ggbApplet.getXcoord(name);
-      //  result.ycoord = ggbApplet.getYcoord(name);
-    //} catch {
-        
-      //}
     } 
     //console.log(name+" '"+ result.command + "'");
     result.color = ggbApplet.getColor(name); 
@@ -341,7 +352,6 @@ Graph = (function() {
   }
   
   function createObjects(objects) {
-    console.log("create objects")
     for (var i=0; i<objects.length; i++) {
       createObject(objects[i]);
     }
@@ -418,7 +428,6 @@ Graph = (function() {
   /////// GEOGEBRA EVAL ///////
   
   function evalCommand(cmdString) {
-    console.log("evalCommand '"+cmdString+"'");
     try {
         if (graphLoaded) { 
           ggbApplet.evalCommand(cmdString) 
@@ -552,7 +561,8 @@ Graph = (function() {
     deletePoints: deletePoints,
     deletePoint: deletePoint,
     getPoint: getPoint,
-    centerView: centerView
+    centerView: centerView,
+    exportGgb: exportGgb
   };
  
 })();

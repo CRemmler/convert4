@@ -438,8 +438,8 @@
     ImageLayer.prototype.repaint = function() {
       var img;
       img = document.getElementById("imageLayer");
-      if (img !== null) {
-        return this.view.ctx.drawImage(img, 0, 0, 858, 858);
+      if ($("#imageLayer").prop("src")) {
+        return this.view.ctx.drawImage(img, 0, 0, this.view.canvas.width, this.view.canvas.height);
       } else {
         return this.view.ctx.drawImage(this.canvas, 0, 0);
       }

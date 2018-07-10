@@ -10,7 +10,7 @@ Maps = (function() {
   var viewWidth;
   var viewHeight;
   var boundaries;
-  
+  var myLatlng = undefined;
   //NOTES 
   // show/hide using options.opacity 
   // title using options.title
@@ -162,9 +162,10 @@ Maps = (function() {
     if (!markers[name]) { markers[name] = {}; }
     var newLatlng = L.latLng(settings[0], settings[1]);
     markers[name].latlng = newLatlng;
-    map ? markers[name].marker = L.marker(newLatlng, {draggable:'true'}).addTo(map) : null;
-    cat = markers[name].marker;
-    //markers[name].marker = leafletMarker;
+    var draggable = false;
+    markers[name].draggable = draggable;
+    //L.marker(newLatlng, {draggable:draggable, icon: new L.DivIcon({ className: 'my-div-icon', html: '<span>carolyn</span>'})}).addTo(map);
+    map ? markers[name].marker = L.marker(newLatlng, {draggable:draggable}).addTo(map) : null;
   }
   
   function createMarkers(data) {
@@ -175,6 +176,17 @@ Maps = (function() {
   
   function getMarker(name) {
     return [name, getLatlng(name)];
+  }
+  
+  function setDraggable(name, draggable) {
+    map.removeLayer(markers[name].marker);  
+    var latlng = markers[name].latlng;  
+    markers[name].marker = L.marker(latlng, {draggable:draggable}).addTo(map);
+    map.addLayer(markers[name].marker);     
+  }
+  
+  function getDraggable(name) {
+    return (markers[name] && markers[name].draggable) ? true : false;
   }
   
   function getMarkers() {
@@ -236,6 +248,21 @@ Maps = (function() {
       return [ markers[name].marker.getLatLng().lat, markers[name].marker.getLatLng().lng];
     }
     return [0, 0];
+  }
+  function getMyLatlng() {
+    if (navigator.geolocation && myLatlng) {
+      return myLatlng;
+    }
+    return getCenterLatlng(); 
+  }
+  function updateMyLatlng() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        myLatlng = [ position.coords.latitude, position.coords.longitude ];
+      });
+    } else {
+      myLatlng = getCenterLatlng();
+    }
   }
   
     ///////// PATHS /////////
@@ -464,12 +491,10 @@ Maps = (function() {
     var data = {};
     data.objects = getObjects();
     data.settings = getSettings();
-    console.log(data);
     return JSON.stringify(data);
   }
   function setAll(dataString) {
     data = JSON.parse(dataString);
-    console.log(data);
     if (data.objects) { createObjects(data.objects); }
     if (data.settings) { setSettings(data.settings); }
   }
@@ -508,6 +533,8 @@ Maps = (function() {
     getLat: getLat,
     getLng: getLng,
     getLatlng: getLatlng,
+    setDraggable: setDraggable,
+    getDraggable: getDraggable,
     //importFile: importFile,
     //exportFile: exportFile,
     //setData: setData,
@@ -515,6 +542,8 @@ Maps = (function() {
     latlngToPatch: latlngToPatch,
     patchToLatlng: patchToLatlng,
     updateMap: updateMap,
+    getMyLatlng: getMyLatlng,
+    updateMyLatlng: updateMyLatlng,
     
     createPath: createPath,
     createPaths: createPaths,

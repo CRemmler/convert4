@@ -1,9 +1,3 @@
-'use strict';
-
-var fs = require("node-fs");
-var JSZip = require("jszip");
-var Promise = require("bluebird");
-Promise.promisifyAll(fs);
 
 function createHtmlReport(data, settings) {
   var webpage = "";
@@ -87,27 +81,17 @@ function sendResponse(htmlReport,jsonReport, zip, res, fileName) {
 
 function createGgbFile() {
   console.log("create ggb file");
+  
+  var zip = new JSZip();
+  zip.file("Hello.txt", "Hello World\n");
+  zip.file("app/gbcc/geogebra_defaults2d.xml").async("string").then(function (data) {
+  // data is "Hello World\n"
+  });
+
+  zip.generateAsync({type:"blob"})
+  .then(function(content) {
+      // see FileSaver.js
+      window.saveAs(content, "example.zip");
+  });
 }
 
-module.exports = {
-  exportData: function (data, settings, res) {
-    var zip = new JSZip();
-    var d = new Date();
-    settings.year = d.getFullYear();
-    settings.month = d.getMonth()+1;
-    settings.date = d.getDate();
-    settings.hour = d.getHours();
-    settings.minute = d.getMinutes();
-    settings.time = d.toString("hh:mm")
-    var fileName = settings.year+"-"+settings.month+"-"+settings.date+"-"+settings.hour+"-"+settings.minute;
-    if (data != undefined) {
-      for (var room in data) {
-        for (var user in room.userData) {
-          for (var key in room.userData[user] ) { if (key === "exists") { room.userData[user][key]=false; } }
-        }
-      }
-    }
-    //zip.file("world.json", JSON.stringify(data));
-    sendResponse(createHtmlReport(data, settings), createJsonReport(data, settings), zip, res, fileName);
-  }
-};

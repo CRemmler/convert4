@@ -790,7 +790,6 @@ Physics = (function() {
       case "circle":
         result.radius = getCircleRadius(name);
         result.center = getCircleCenter(name);
-        console.log(result.radius);
     }
     return JSON.stringify(result);
   }

@@ -2,7 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http, {path:'/socket.io'});
 var express = require('express');
-var config = require('./config.json');
+var config = require('./config-default.json');
 var exportworld = require('./app/gbcc/exportworld.js');
 var formidable = require('formidable');
 var fs = require("node-fs");
@@ -317,7 +317,7 @@ io.on('connection', function(socket){
     schools[school] = allRooms;
   });
 
-  app.post('/exportgbccworld', function(req,res){
+  app.post('/exportgbccreport', function(req,res){
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
       var myRoom = fields.roomname;
@@ -325,6 +325,27 @@ io.on('connection', function(socket){
       var allRooms = schools[mySchool];
       var settings = {schoolName: mySchool};
       exportworld.exportData(allRooms, settings, res);
+    });
+  });
+  
+  app.post('/exportggb', function(req,res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+      var xml = fields.ggbxml;
+      var filename = fields.ggbfilename;
+      exportworld.exportGgb(xml, filename, res);
+    });
+  });
+  
+  app.post('/exportgbccworld', function(req,res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+      var myRoom = fields.gbccroomname;
+      var mySchool = fields.gbccschoolname;
+      var allRooms = schools[mySchool];
+      var settings = {schoolName: mySchool};
+      var filename = fields.gbccworldfilename;
+      exportworld.exportGbccWorld(allRooms, settings, filename, res);
     });
   });
 
@@ -477,3 +498,4 @@ function getAdminData(allRooms, school) {
 	}
 	return displayData;
 }
+

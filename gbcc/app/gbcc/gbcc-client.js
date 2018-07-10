@@ -14,7 +14,7 @@ var drawPatches = true;
   
 jQuery(document).ready(function() {
   
-  $("body").append("<img id='imageLayer' style='display:none'>")
+  $("body").append("<img id='imageLayer' width='200px' height='200px' style='display:none'>")
 
   var userId;
   var userType;

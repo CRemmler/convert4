@@ -133,18 +133,14 @@ Gallery = (function() {
     });
     $("#opacityWrapper").css("display", "none");
     
-    $("body").append("<div class='hiddenfile'><input id='cats' type='file'></div>")
-    $("#cats").click(function() {
-      console.log($("#cats").val());
-      console.log("CLICKED");
-      console.log($("#cats")[0].files);
-    });
-    $("#cats").change(function() {
-      console.log($("#cats").val());
-      console.log("CHANGED");
-      console.log($("#cats")[0].files);
-    });
-    
+    $("body").append("<div class='hiddenfile'><input id='importggb' type='file'></div>");
+    $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file'></div>");
+    spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
+    spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
+    spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
+    spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
+    spanText += "<button type='submit'></button></form>";
+    $("body").append(spanText);
   }
 
   function selectAll() {
@@ -613,6 +609,60 @@ Gallery = (function() {
     universe.repaint();
   }
   
+  function importWorld(filename) {
+    console.log("import world");
+    console.log(filename);
+    //server emulates student entering, with all data 
+    var elem, listener, result;
+    listener = function(event) {
+      var reader;
+      reader = new FileReader();
+      reader.onload = function(e) {
+        console.log(JSON.parse(e.target.result));
+        result = e.target.result;
+        Physics.setAll(result.gbcc-physics-get-all);
+        Maps.setAll(result.gbcc-maps-get-all);
+        Graph.setAll(result.gbcc-graph-get-all);
+        //world.importstate(JSON.parse(result.gbcc-world-export-state));
+
+      };
+      if (event.target.files.length > 0) {
+        reader.readAsText(event.target.files[0]);
+      }
+      return $("#importgbccworld").off();
+    };
+    $("#importgbccworld").one("change",listener);
+    $("#importgbccworld").click();
+    $("#importgbccworld").value = "";
+  }
+  
+  function exportWorld(filename) {
+    console.log("export world");
+    //also save turtles and patches 
+    socket.emit('send reporter', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "gbcc-physics-get-all",
+      hubnetMessage: Physics.getAll()
+    });
+    socket.emit('send reporter', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "gbcc-maps-get-all",
+      hubnetMessage: Maps.getAll()
+    });
+    socket.emit('send reporter', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "gbcc-graph-get-all",
+      hubnetMessage: Graph.getAll()
+    });
+    socket.emit('send reporter', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "gbcc-world-export-state",
+      hubnetMessage: JSON.stringify(world.exportState())
+    });
+    $("#gbccworldfilename").val(filename);
+    $("#exportgbccworld").submit();
+  }
+  
   return {
     displayCanvas: displayCanvas,
     broadcastView: broadcastView,
@@ -623,7 +673,9 @@ Gallery = (function() {
     setupGallery: setupGallery,
     whoAmI: whoAmI,
     showPatches: showPatches,
-    hidePatches: hidePatches
+    hidePatches: hidePatches,
+    importWorld: importWorld,
+    exportWorld: exportWorld
   };
 
 })();
