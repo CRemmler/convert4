@@ -245,13 +245,23 @@ app.post('/fileupload',function(req,res){
         //var zip = new JSZip();
         zip.file("config.json", configFile);
         zip.file("index.html", indexFile);
-        
-        
-    
-    
-        
         fs.readFileAsync("gbcc/app/gbcc/exportworld.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/exportworld.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_defaults2d.xml", "utf8").then(function(data) {
+          zip.file("app/gbcc/geogebra_defaults2d.xml", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_defaults3d.xml", "utf8").then(function(data) {
+          zip.file("app/gbcc/geogebra_defaults3d.xml", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_javascript.js", "utf8").then(function(data) {
+          zip.file("app/gbcc/geogebra_javascript.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_thumbnail.png", "utf8").then(function(data) {
+          zip.file("app/gbcc/geogebra_thumbnail.png", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/font-awesome.min.css").then(function(data) {
+          zip.file("app/gbcc/fontawesome-min.css", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
         	zip.file("app/gbcc/fontawesome-webfont.eot", data);
@@ -293,7 +303,7 @@ app.post('/fileupload',function(req,res){
         	zip.file("app/gbcc/html2canvas.min.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-image.js", "utf8").then(function(data) {
-        	zip.file("app/gbcc/image.js", data);
+        	zip.file("app/gbcc/gbcc-image.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
         	zip.file("app/gbcc/fontawesome-webfont.eot", data);
@@ -337,32 +347,8 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a23.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a23.png", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a10.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a10.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a19.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a19.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a20.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a20.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a13.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a13.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a14.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a14.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a15.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a15.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a16.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a16.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a17.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a17.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a18.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a18.png", data);
+        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a8.png").then(function(data) {
+        	zip.file("app/gbcc/physics-ui/a8.png", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/physics.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/physics.js", data);
@@ -657,7 +643,7 @@ app.post('/fileupload',function(req,res){
           console.error(e.stack);
   
 
-        }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
+        }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
     
     
         
