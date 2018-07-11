@@ -133,8 +133,8 @@ Gallery = (function() {
     });
     $("#opacityWrapper").css("display", "none");
     
-    $("body").append("<div class='hiddenfile'><input id='importggb' type='file'></div>");
-    $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file'></div>");
+    $("body").append("<div class='hiddenfile'><input id='importggb' type='file' style='display:none'></div>");
+    $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file' style='display:none'></div>");
     spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
     spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
     spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
