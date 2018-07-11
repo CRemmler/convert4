@@ -562,7 +562,8 @@ Graph = (function() {
     deletePoint: deletePoint,
     getPoint: getPoint,
     centerView: centerView,
-    exportGgb: exportGgb
+    exportGgb: exportGgb,
+    createObject: createObject
   };
  
 })();
