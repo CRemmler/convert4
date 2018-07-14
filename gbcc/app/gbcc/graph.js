@@ -42,6 +42,12 @@ Graph = (function() {
       spanText += "<input id='ggbxml' type='text' name='ggbxml' value='' style='display: none;'>";
       spanText += "<input id='ggbfilename' type='text' name='ggbfilename' value='' style='display: none;'>";
       spanText += "<button type='submit'></button></form>";
+      
+      spanText = "<form action='importggbzip' method='post' id='importggbzip' enctype='multipart/form-data' style='display: none;'>";
+      spanText += "<input id='ggbzip' type='text' name='ggbzip' value='' style='display: none;'>";
+      spanText += "<input id='ggbzipfilename' type='text' name='ggbzipfilename' value='' style='display: none;'>";
+      spanText += "<button type='submit'></button></form>";
+      
       $("body").append(spanText);
     }
   }
@@ -80,9 +86,11 @@ Graph = (function() {
   
   function updateGraph() {
     if (ggbApplet) {
+      ggbApplet.setWidth(parseInt($("#graphContainer").css("width")) - 2);
+      ggbApplet.setHeight(parseInt($("#graphContainer").css("height")) - 2);//+ viewHeight + Math.random(1)); 
       
-      ggbApplet.setWidth(parseInt($("#graphContainer").css("width")) + Math.random(1));
-      ggbApplet.setHeight(parseInt($("#graphContainer").css("height")) + Math.random(1));//+ viewHeight + Math.random(1)); 
+      //ggbApplet.setWidth(parseInt($("#graphContainer").css("width")) + Math.random(1));
+      //ggbApplet.setHeight(parseInt($("#graphContainer").css("height")) + Math.random(1));//+ viewHeight + Math.random(1)); 
       $("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top")) - 18 + "px");
       $("#opacityWrapper").css("left",$("#graphContainer").css("left"));
       var properties = JSON.parse(ggbApplet.getViewProperties());
@@ -184,18 +192,22 @@ Graph = (function() {
   ///////// IMPORT GGB ///////
   
   function importGgb(filename) { 
+    console.log("import ggb");
     if (filename != "") {
+      console.log("is a filename");
       applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
       applet1.inject('graphContainer');
     } else {
+      console.log("is not a filename");
       var elem, listener;
       listener = function(event) {
         var reader;
         reader = new FileReader();
         reader.onload = function(e) {
-          var b = btoa(unescape(encodeURIComponent(e.target.result)));
-          applet1 = new GGBApplet({ggbbase64: b,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
-          applet1.inject('graphContainer');
+          console.log("reader is loaded");
+          $("#ggbzipfilename").val(event.target.files[0].name);
+          $("#ggbzip").val(e.target.result);
+          $("#importggbzip").submit();
         };
         if (event.target.files.length > 0) {
           reader.readAsText(event.target.files[0]);
@@ -204,6 +216,7 @@ Graph = (function() {
       };
       $("#importggb").one("change",listener);
       $("#importggb").click();
+      console.log("importggb is clicked");
       $("#importggb").value = "";
     }
   }
@@ -339,7 +352,7 @@ Graph = (function() {
     result.visible = ggbApplet.getVisible(name);
     result.filling = ggbApplet.getFilling(name);
     result.labelVisible = ggbApplet.getLabelVisible(name);
-
+    result.draggable = ggbApplet.isMoveable(name);
     if (objectType === "numeric" || objectType === "boolean" || objectType === "text") { result.visible = false; }
     var resultString = JSON.stringify(result);
     return [ name, resultString ];  
@@ -374,6 +387,7 @@ Graph = (function() {
     ggbApplet.setVisible(name, result.visible);
     ggbApplet.setFilling(name, result.filling);
     ggbApplet.setLabelVisible(name, result.labelVisible);
+    ggbApplet.setDraggable(name, result.draggable);
     //if (result.xcoord && result.ycoord) { 
     //  ggbApplet.setCoords(name, result.xcoord, result.ycoord, 0); 
     //}
@@ -452,6 +466,7 @@ Graph = (function() {
   
   function hideToolbar() {
     ggbApplet.showToolBar(false);
+    updateGraph();
   }
   
   function bringToFront() {
@@ -485,8 +500,8 @@ Graph = (function() {
     $("#graphContainer").css("top", top);
     $("#graphContainer").css("left", left);   
     if (offset.length === 4) {
-      ggbApplet.setWidth(width);
-      ggbApplet.setHeight(height);
+      ggbApplet.setWidth(width - 2);
+      ggbApplet.setHeight(height - 2);
       var height = offset[3] + "px";
       var width = offset[2] + "px";
       $("#graphContainer").css("height", height);
@@ -506,6 +521,19 @@ Graph = (function() {
     var x = center[0];
     var y = center[1];
     ggbApplet.evalCommand("CenterView(( " + x + ", " + y + " ))");
+  }
+  
+  function setDraggable(name, draggable) {
+    if (draggable) {
+      ggbApplet.setFixed(name, false, true);
+    } else {
+      ggbApplet.setFixed(name, true, false);      
+    }
+  }
+  
+  function getDraggable(name) {
+    var draggable = false;
+    return exists(name) ? ggbApplet.isMoveable(name) : false;
   }
   
   return {
@@ -557,7 +585,9 @@ Graph = (function() {
     getPoint: getPoint,
     centerView: centerView,
     exportGgb: exportGgb,
-    createObject: createObject
+    createObject: createObject,
+    setDraggable: setDraggable,
+    getDraggable: getDraggable
   };
  
 })();

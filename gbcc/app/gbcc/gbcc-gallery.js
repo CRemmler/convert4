@@ -638,7 +638,7 @@ Gallery = (function() {
   }
   
   function exportWorld(filename) {
-    console.log("export world");
+    //console.log("export world");
     //also save turtles and patches 
     socket.emit('send reporter', {
       hubnetMessageSource: "server",

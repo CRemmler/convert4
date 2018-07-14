@@ -88,7 +88,7 @@ function sendResponse(htmlReport,jsonReport, zip, res, filename) {
 }
 
 function sendGgbResponse(xml, filename, zip, res) {
-  console.log(filename);
+  //console.log(filename);
   filename = (filename) ? filename : "geogebra-default.ggb";
   zip.file("geogebra.xml", xml);
   fs.readFileAsync("app/gbcc/geogebra_defaults2d.xml").then(function(data) {
@@ -114,14 +114,11 @@ function sendGgbResponse(xml, filename, zip, res) {
 }
 
 function sendGbCCWorldResponse(worldReport, filename, zip, res) {
-  console.log("send gbcc world response");
-  console.log("filename",filename);
   zip.file("gbccWorld.json", worldReport);
   zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
   .pipe(fs.createWriteStream(filename))
   .on('finish', function () {
     res.download(filename, function() {
-      console.log("downloaded");
     });
   });
 }
@@ -151,6 +148,26 @@ module.exports = {
   exportGgb: function (xml, filename, res) {
     var zip = new JSZip();
     sendGgbResponse(xml, filename, zip, res);
+  },
+  
+  importGgb: function (data, filename, res) {
+    console.log("import ggb " + filename);
+    //fs.writefile
+    /*let writeStream = fs.createWriteStream(filename);
+    writeStream.write(data);
+    writeStream.on('finish', () => {  
+        console.log('wrote all data to file');
+    });
+    writeStream.end(); 
+    */
+    /*fs.writeFile(filename, data, (err) => {
+      if (err) throw err;
+      console.log('The file has been saved!');
+    });*/
+    fs.writeFile(filename, data, "binary", (err) => {
+      if (err) throw err;
+      console.log('The file has been saved!');
+    });
   },
   
   exportGbccWorld: function (data, settings, filename, res) {

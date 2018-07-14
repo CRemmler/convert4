@@ -16,7 +16,7 @@ delete-points,,,
 set-x,(string; number), (name; xcor),
 set-y,(string; number), (name; ycor),
 set-xy,(string; list), (name; center),
-set-draggable,(boolean),(draggable),
+set-draggable,(string; boolean),(name; draggable),
 get-x,(string),(name),(number)
 get-y,(string),(name),(number)
 get-xy,(string),(name),(list)
@@ -54,3 +54,5 @@ get-point,(string),(name),(list)
 center-view,(list),(center),
 export-ggb,(string),(filename),
 get-draggable,(string),(name),(boolean)
+get-ggb-list,,,
+upload-ggb,,,

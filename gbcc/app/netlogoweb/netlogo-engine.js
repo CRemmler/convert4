@@ -18509,7 +18509,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportFile, exportGgb, exportWorld, getAll, getData, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importFile, importGgb, importWorld, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph;
+      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportFile, exportGgb, exportWorld, getAll, getData, getDraggable, getGgbList, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importFile, importGgb, importWorld, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph, uploadGgb;
       hideGraph = function() {
         return Graph.hideGraph();
       };
@@ -18561,8 +18561,8 @@ function hasOwnProperty(obj, prop) {
       setXy = function(name, center) {
         return Graph.setXy(name, center);
       };
-      setDraggable = function(draggable) {
-        return Graph.setDraggable(draggable);
+      setDraggable = function(name, draggable) {
+        return Graph.setDraggable(name, draggable);
       };
       getX = function(name) {
         return Graph.getX(name);
@@ -18672,6 +18672,15 @@ function hasOwnProperty(obj, prop) {
       exportGgb = function(filename) {
         return Graph.exportGgb(filename);
       };
+      getDraggable = function(name) {
+        return Graph.getDraggable(name);
+      };
+      getGgbList = function() {
+        return Graph.getGgbList();
+      };
+      uploadGgb = function() {
+        return Graph.uploadGgb();
+      };
       return {
         name: "graph",
         prims: {
@@ -18728,7 +18737,10 @@ function hasOwnProperty(obj, prop) {
           "SET-GRAPH-OFFSET": setGraphOffset,
           "GET-POINT": getPoint,
           "CENTER-VIEW": centerView,
-          "EXPORT-GGB": exportGgb
+          "EXPORT-GGB": exportGgb,
+          "GET-DRAGGABLE": getDraggable,
+          "GET-GGB-LIST": getGgbList,
+          "UPLOAD-GGB": uploadGgb
         }
       };
     }
