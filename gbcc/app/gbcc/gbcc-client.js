@@ -130,7 +130,7 @@ jQuery(document).ready(function() {
   
         if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[teacherId] = "gbcc-forever-button-code-"+teacherId;
-        console.log(foreverButtonCode);
+        //console.log(foreverButtonCode);
       }
       $(".gbcc-gallery li.selected").length
     }
@@ -224,7 +224,7 @@ jQuery(document).ready(function() {
 
   var myVar = "";
   function runForeverButtonCode() {
-    console.log("run forever button code");
+    //console.log("run forever button code");
     for (userId in foreverButtonCode) { 
       if (procedures.gbccOnGo != undefined) {
         session.runObserverCode(foreverButtonCode[userId]); 

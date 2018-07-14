@@ -1,8 +1,8 @@
 import csv
 
-ifile  = open('map-input.csv', "rb")
+ifile  = open('maps-input.csv', "rb")
 reader = csv.DictReader(ifile)
-ofile  = open('map-output-json.csv', "wb")
+ofile  = open('maps-output-json.csv', "wb")
 writer = csv.writer(ofile)
 for row in reader:
 	ofile.write("}, {")

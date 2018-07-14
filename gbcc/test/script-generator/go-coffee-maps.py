@@ -14,9 +14,9 @@ def camel(x):
 	        final += item
     return final
 
-ifile  = open('map-input.csv', "rb")
+ifile  = open('maps-input.csv', "rb")
 reader = csv.DictReader(ifile)
-ofile  = open('map-output-coffee.csv', "wb")
+ofile  = open('maps-output-coffee.csv', "wb")
 writer = csv.writer(ofile)
 
 ofile.write("# (C) Uri Wilensky. https://github.com/NetLogo/Tortoise\n")

@@ -64,12 +64,19 @@ Maps = (function() {
 
 
   ////// COORDINATE CONVERSION //////
-  
+
   function patchToLatlng(coords) {
     var xcor = coords[0];
     var ycor = coords[1];
-    var pixelX = universe.view.xPcorToCanvas(xcor);
-    var pixelY = universe.view.yPcorToCanvas(ycor);
+    var pixelX = universe.view.xPcorToPix(xcor);
+    var pixelY = universe.view.yPcorToPix(ycor);
+    console.log(pixelX, pixelY);
+    var newLatlng = map.containerPointToLatLng({x: pixelX, y: pixelY});
+    var markerX = newLatlng.lat;
+    var markerY = newLatlng.lng;
+    return ([roundDecimal(markerX, 15), roundDecimal(markerY, 15)]);
+    /*
+    return ([roundDecimal(markerX, 15), roundDecimal(markerY, 15)]);
     var pixelPercentY = (pixelX / (viewWidth * 2));
     var pixelPercentX = 1 - (pixelY / (viewHeight * 2));
     var boundaryMinX = boundaries.xmin;
@@ -79,10 +86,21 @@ Maps = (function() {
     //console.log(boundaries);
     var markerX = (pixelPercentX * (boundaryMaxX - boundaryMinX)) + boundaryMinX;
     var markerY = (pixelPercentY * (boundaryMaxY - boundaryMinY)) + boundaryMinY;
-    return ([markerX, markerY]);
+    return ([roundDecimal(markerX, 15), roundDecimal(markerY, 15)]);
+    */
   }
   
   function latlngToPatch(coords) {
+    
+    var newLatlng = L.latLng(coords[0], coords[1]);
+    var pixel = map.latLngToContainerPoint(newLatlng);
+    console.log(pixel);
+    var patchXcor = universe.view.xPixToPcor(pixel.x);
+    var patchYcor = universe.view.yPixToPcor(pixel.y);
+    console.log(patchXcor,patchYcor);
+    return ([roundDecimal(patchXcor, 15), roundDecimal(patchYcor, 15)]);
+    
+    /*
     var markerPositionX = coords[0];
     var markerPositionY = coords[1];
     var boundaryMinX = boundaries.xmin;
@@ -102,7 +120,12 @@ Maps = (function() {
     var pixelY = markerPercentY * viewHeight;
     var patchXcor = universe.view.xPixToPcor(pixelX);
     var patchYcor = universe.view.yPixToPcor(pixelY);
-    return ([patchXcor, patchYcor]);
+    return ([roundDecimal(patchXcor, 15), roundDecimal(patchYcor, 15)]);
+    */
+  }
+
+  function roundDecimal(number, decimalPlaces) {
+    return parseFloat(parseFloat(number).toFixed(decimalPlaces));
   }
 
   ////// SHOW AND HIDE MAP //////

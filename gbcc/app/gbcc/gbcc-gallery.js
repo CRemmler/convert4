@@ -19,7 +19,7 @@ Gallery = (function() {
   var galleryForeverButton = "on";
   
   var plotsObject = {};
-  var canvasLength, canvasWidth, imageQuality;
+  var canvasHeight, canvasWidth, imageQuality;
 
   function setupGallery(data) {
     var settings = data.settings;
@@ -37,7 +37,7 @@ Gallery = (function() {
     }
     if (allowGalleryControls) {
       var galleryControlSpan = "<div class='gallery-controls'>";
-      galleryControlSpan += "<span class='gallery-right'>Size: <select id='canvasSize'><option>Small</option><option>Medium</option><option>Large</option><option>Extra Large</option></select>";
+      galleryControlSpan += "<span class='gallery-right'>Size: <select id='canvasSize'><option value='small'>Small</option><option value='medium'>Medium</option><option value='large'>Large</option><option value='extra-large'>Extra Large</option></select>";
       galleryControlSpan += "<input type='checkbox' checked id='galleryUpdates'> Listen</span>";
       if (allowMultipleSelections) {
         galleryControlSpan += "<span class='gallery-left'><button id='selectAll'>Select All</button> ";
@@ -85,7 +85,8 @@ Gallery = (function() {
         if ($(".gbcc-gallery").hasClass("small")) { $(".gbcc-gallery").removeClass("small"); }
         if ($(".gbcc-gallery").hasClass("medium")) { $(".gbcc-gallery").removeClass("medium") }
         if ($(".gbcc-gallery").hasClass("large")) { $(".gbcc-gallery").removeClass("large") }
-        $(".gbcc-gallery").addClass($(this).val().toLowerCase());
+        if ($(".gbcc-gallery").hasClass("extra-large")) { $(".gbcc-gallery").removeClass("extra-large") }
+        $(".gbcc-gallery").addClass($(this).val());
       });
       $("#galleryUpdates").on("click",function() {
         if ($(this).is(":checked")) {
@@ -118,11 +119,11 @@ Gallery = (function() {
       //$("body").append("<canvas id=\"miniSafariCanvasView\" width=\"200\" height=\"200\" style=\"display:none\"></canvas>");
       $("body").append("<canvas id=\"miniSafariCanvasView\" width=\"250\" height=\"250\" style=\"display:none\"></canvas>");
 
-      canvasLength = 200; canvasWidth = 200;
+      canvasHeight = 250; canvasWidth = 250;
       imageQuality = 0.5;
     } else {
       $("body").append("<canvas id=\"miniCanvasView\" width=\"500\" height=\"500\" style=\"display:none\"></canvas>");
-      canvasLength = 500; canvasWidth = 500;
+      canvasHeight = 500; canvasWidth = 500;
       imageQuality = 0.75;
     }
     $("body").append("<canvas id=\"avatarCanvasView\" width=\"300\" height=\"300\" style=\"display:none\"></canvas>");
@@ -309,7 +310,7 @@ Gallery = (function() {
     var label = $(".gbcc-gallery li").length;
     if ($(".gbcc-gallery").length === 0) { 
       $(".netlogo-gallery-tab-content").append("<div class='gbcc-gallery'><ul></ul></div>"); 
-      $(".canvasSize").val("Small");
+      $(".canvasSize").val("small");
       $(".gbcc-gallery").addClass("small");
     }
     //var newLiHtml = "<li id='gallery-item-"+data.userId+"' usertype='"+data.userType+"' userid='"+data.userId+"'>";
@@ -474,7 +475,7 @@ Gallery = (function() {
           var miniCanvas = document.getElementById(miniCanvasId);
           var miniCtx = miniCanvas.getContext('2d');
           miniCtx.fillStyle="#ffffff";
-          miniCtx.fillRect(0,0,canvasWidth,canvasWidth);
+          miniCtx.fillRect(0,0,canvasWidth,canvasHeight);
           miniCtx.fillStyle="#000000";
           miniCtx.fillRect(0,((canvasWidth - height) / 2),width,height + 2);
           miniCtx.drawImage(canvas, 1, ((canvasWidth - height) / 2) + 1, width - 2, height);
@@ -502,7 +503,7 @@ Gallery = (function() {
       miniCtx.fillRect(0,((canvasWidth - height) / 2),width,height + 2);
       miniCtx.drawImage(document.getElementsByClassName("netlogo-canvas")[0], 1, ((canvasWidth - height) / 2) + 1, width - 2, height);
       message = document.getElementById(miniCanvasId).toDataURL("image/jpeg", imageQuality); 
-      console.log(message);
+      //console.log(message);
       
       //$("#miniSafariCanvasView").css("display","inline-block");
       socket.emit("send reporter", {
@@ -610,8 +611,8 @@ Gallery = (function() {
   }
   
   function importWorld(filename) {
-    console.log("import world");
-    console.log(filename);
+    //console.log("import world");
+    //console.log(filename);
     //server emulates student entering, with all data 
     var elem, listener, result;
     listener = function(event) {

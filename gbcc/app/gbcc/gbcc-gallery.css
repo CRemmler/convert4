@@ -44,7 +44,7 @@
   height: 159px;
 }
 
-.gbcc-gallery.large li {
+.gbcc-gallery.extra-large li {
   width: 250px;
   height: 250px;
 }
@@ -102,6 +102,12 @@
   height: 25px;
 }
 
+.gbcc-gallery.extra-large .arrow {
+  top:45%;
+  width: 25px;
+  height: 25px;
+}
+
 .gbcc-gallery.small .arrow-right {
   left:60px;
 }
@@ -112,6 +118,10 @@
 
 .gbcc-gallery.large .arrow-right {
   left:135px;
+}
+
+.gbcc-gallery.extra-large .arrow-right {
+  left:155px;
 }
 
 .gbcc-gallery .arrow-left {
