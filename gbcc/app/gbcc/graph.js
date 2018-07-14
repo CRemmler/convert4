@@ -47,37 +47,30 @@ Graph = (function() {
   }
   
   function appletOnLoadHidden(){
-  //  ggbApplet.registerAddListener("onAdd");
-  //  applet1 = new GGBApplet({filename: "geogebra-default.ggb", "appletOnLoad": appletOnLoadVisible}, true);
-    //importGgb("geogebra-default.ggb");
-    setTimeout(function(){ 
+    //console.log("HIDDEN");
+//    setTimeout(function(){ 
       showGraph();
-      //$(".netlogo-view-container").css("z-index","1");
-    //$("#graphContainer").css("display","none");
-      //$(".netlogo-view-container").css("pointer-events","none");
-      //$("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top") - 15) + "px");
-      //$("#opacityWrapper").css("left",$("#graphContainer").css("left"));
-    //  $("#opacityWrapper").css("display", "none");
-      //drawPatches = false;
       updateGraph();
       hideGraph();
-      //world.triggerUpdate();
-      //updateGraph(); 
-      //$("#graphContainer").css("display","inline-block");
-      //$(".netlogo-view-container").css("z-index","1");
       ggbApplet.setErrorDialogsActive(false);  
-    }, 1000);
+  //  }, 1000);
   }
   
   function appletOnLoadVisible() {
-    setTimeout(function(){ 
+    //console.log("VISIBLE");
+  //  setTimeout(function(){ 
       showGraph();
       updateGraph(); 
       $("#graphContainer").css("display","inline-block");
       $(".netlogo-view-container").css("z-index","1");
       ggbApplet.setErrorDialogsActive(false);  
-    }, 1000);
+  //  }, 1000);
   }
+  
+  //window.ggbOnInit = function ggbOnInit(){
+    //console.log("WASSUP");
+  // }
+
   
   function setupEventListeners() {
     $(".netlogo-view-container").css("background-color","transparent");   
@@ -200,7 +193,8 @@ Graph = (function() {
         var reader;
         reader = new FileReader();
         reader.onload = function(e) {
-          applet1 = new GGBApplet({filename: event.target.files[0].name,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
+          var b = btoa(unescape(encodeURIComponent(e.target.result)));
+          applet1 = new GGBApplet({ggbbase64: b,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
           applet1.inject('graphContainer');
         };
         if (event.target.files.length > 0) {

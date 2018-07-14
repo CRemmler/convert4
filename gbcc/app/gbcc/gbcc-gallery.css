@@ -71,7 +71,7 @@
 
 .gbcc-gallery .card-text {
   height: 99%;
-  width: 92.5%;
+  width: 95%;
   padding:0px 5px 0px 5px;
   font-size: 18px;
   border:1px solid black;
@@ -104,8 +104,8 @@
 
 .gbcc-gallery.extra-large .arrow {
   top:45%;
-  width: 25px;
-  height: 25px;
+  width: 35px;
+  height: 35px;
 }
 
 .gbcc-gallery.small .arrow-right {
@@ -121,7 +121,7 @@
 }
 
 .gbcc-gallery.extra-large .arrow-right {
-  left:155px;
+  left:214px;
 }
 
 .gbcc-gallery .arrow-left {
