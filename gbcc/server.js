@@ -329,6 +329,7 @@ io.on('connection', function(socket){
   });
   
   app.post('/exportggb', function(req,res){
+    console.log("export ggb");
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
       var xml = fields.ggbxml;
@@ -337,15 +338,17 @@ io.on('connection', function(socket){
     });
   });
   
-  app.post('/importggbzip', function(req,res){
-    console.log("import ggb zip");
-    var form = new formidable.IncomingForm();
-    form.parse(req, function(err, fields, files) {
-      var zip = fields.ggbzip;
-      var filename = fields.ggbzipfilename;
-      console.log(filename);
-      exportworld.importGgb(zip, filename, res);
-    });
+  app.post('/uploadggb', function(req,res){
+    var filename;
+    new formidable.IncomingForm().parse(req)
+      .on('file', function(name, file) {
+        filename = file.name;
+          fs.rename(file.path, file.name, function() {
+          });
+      })
+      .on('end', function() {
+        res.end('success '+filename);
+      });
   });
   
   app.post('/exportgbccworld', function(req,res){

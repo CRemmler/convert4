@@ -39,14 +39,14 @@ Graph = (function() {
       
       setupEventListeners();
       spanText = "<form action='exportggb' method='post' id='exportggb' enctype='multipart/form-data' style='display: none;'>";
-      spanText += "<input id='ggbxml' type='text' name='ggbxml' value='' style='display: none;'>";
+      spanText += "<input id='ggbxml' type='text' name='ggbxml' value=''>";//" style='display: none;'>";
       spanText += "<input id='ggbfilename' type='text' name='ggbfilename' value='' style='display: none;'>";
-      spanText += "<button type='submit'></button></form>";
+      spanText += "<button type='submit' id='exportggbbutton' ></button></form>";
       
-      spanText = "<form action='importggbzip' method='post' id='importggbzip' enctype='multipart/form-data'>";//" style='display: none;'>";
+      spanText += "<form action='importggbzip' method='post' id='importggbzip' enctype='multipart/form-data' style='display: none;'>";
       spanText += "<input id='ggbzip' type='file' name='ggbzip' value=''>";//" style='display: none;'>";
       //spanText += "<input id='ggbzipfilename' type='text' name='ggbzipfilename' value=''>";//" style='display: none;'>";
-      spanText += "<button type='submit' id='btnSubmit'></button></form>";
+      spanText += "<button type='submit' id='importggbzipbutton'></button></form>";
       
       $("body").append(spanText);
     }
@@ -223,8 +223,8 @@ Graph = (function() {
   }
  
   function exportGgb(filename) {
-    $("#ggbxml").val(ggbApplet.getXML());
     $("#ggbfilename").val(filename);
+    $("#ggbxml").val(ggbApplet.getXML());
     $("#exportggb").submit();
   }
   
