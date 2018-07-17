@@ -107,7 +107,7 @@ function sendGgbResponse(xml, filename, zip, res) {
     .pipe(fs.createWriteStream(filename))
     .on('finish', function () {
       res.download(filename, function() {
-        
+
       });
     });
   }); }); }); });
@@ -148,26 +148,6 @@ module.exports = {
   exportGgb: function (xml, filename, res) {
     var zip = new JSZip();
     sendGgbResponse(xml, filename, zip, res);
-  },
-  
-  importGgb: function (data, filename, res) {
-    console.log("import ggb " + filename);
-    //fs.writefile
-    /*let writeStream = fs.createWriteStream(filename);
-    writeStream.write(data);
-    writeStream.on('finish', () => {  
-        console.log('wrote all data to file');
-    });
-    writeStream.end(); 
-    */
-    /*fs.writeFile(filename, data, (err) => {
-      if (err) throw err;
-      console.log('The file has been saved!');
-    });*/
-    fs.writeFile(filename, data, "binary", (err) => {
-      if (err) throw err;
-      console.log('The file has been saved!');
-    });
   },
   
   exportGbccWorld: function (data, settings, filename, res) {

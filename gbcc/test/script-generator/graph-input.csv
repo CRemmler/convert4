@@ -1,5 +1,5 @@
 prim-name,input-type,input-name,output-type
-hide-graph, , ,
+hide-graph,,,
 show-graph,,,
 set-data,(string),(data),
 import-ggb,(string),(filename),
@@ -47,12 +47,15 @@ hide-toolbar,,,
 bring-to-front,,,
 send-to-back,,,
 set-all,(string),(data),
-get-all, , ,(string)
+get-all,,,(string)
 get-graph-offset,,,(list)
 set-graph-offset,(list),(offset),
 get-point,(string),(name),(list)
 center-view,(list),(center),
 export-ggb,(string),(filename),
 get-draggable,(string),(name),(boolean)
-get-ggb-list,,,
+mouse-on,,,
+mouse-off,,,
+get-command-string,(string),(name),(string)
 upload-ggb,,,
+get-ggb-list,,,(list)

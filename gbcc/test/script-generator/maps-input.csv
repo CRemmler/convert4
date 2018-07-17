@@ -53,3 +53,5 @@ set-draggable,(string; boolean),(name; draggable),
 get-draggable,(string),(name),(boolean)
 get-my-latlng,,,(list)
 update-my-latlng,,,
+mouse-on,,,
+mouse-off,,,

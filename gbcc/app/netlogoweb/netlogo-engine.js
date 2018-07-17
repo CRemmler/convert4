@@ -18509,7 +18509,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportFile, exportGgb, exportWorld, getAll, getData, getDraggable, getGgbList, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importFile, importGgb, importWorld, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph, uploadGgb;
+      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportFile, exportGgb, exportWorld, getAll, getCommandString, getData, getDraggable, getGgbList, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importFile, importGgb, importWorld, mouseOff, mouseOn, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph, uploadGgb;
       hideGraph = function() {
         return Graph.hideGraph();
       };
@@ -18675,11 +18675,20 @@ function hasOwnProperty(obj, prop) {
       getDraggable = function(name) {
         return Graph.getDraggable(name);
       };
-      getGgbList = function() {
-        return Graph.getGgbList();
+      mouseOn = function() {
+        return Graph.mouseOn();
+      };
+      mouseOff = function() {
+        return Graph.mouseOff();
+      };
+      getCommandString = function(name) {
+        return Graph.getCommandString(name);
       };
       uploadGgb = function() {
         return Graph.uploadGgb();
+      };
+      getGgbList = function() {
+        return Graph.getGgbList();
       };
       return {
         name: "graph",
@@ -18739,8 +18748,11 @@ function hasOwnProperty(obj, prop) {
           "CENTER-VIEW": centerView,
           "EXPORT-GGB": exportGgb,
           "GET-DRAGGABLE": getDraggable,
-          "GET-GGB-LIST": getGgbList,
-          "UPLOAD-GGB": uploadGgb
+          "MOUSE-ON": mouseOn,
+          "MOUSE-OFF": mouseOff,
+          "GET-COMMAND-STRING": getCommandString,
+          "UPLOAD-GGB": uploadGgb,
+          "GET-GGB-LIST": getGgbList
         }
       };
     }
@@ -18898,7 +18910,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var bringToFront, createMarker, createMarkers, createObject, createObjects, createPath, deleteMarker, deleteMarkers, deleteObject, deleteObjects, deletePath, deletePaths, exportFile, getAll, getCenterLatlng, getDraggable, getLat, getLatlng, getLng, getMapOffset, getMarker, getMarkers, getMyLatlng, getObject, getObjectType, getObjects, getOpacity, getPathColor, getPathVertices, getZoom, hideMap, hideObject, importFile, latlngToPatch, objectExists, patchToLatlng, sendToBack, setAll, setCenterLatlng, setDraggable, setLat, setLatlng, setLng, setMapOffset, setOpacity, setPathColor, setPathVertices, setZoom, showMap, showObject, updateMap, updateMyLatlng;
+      var bringToFront, createMarker, createMarkers, createObject, createObjects, createPath, deleteMarker, deleteMarkers, deleteObject, deleteObjects, deletePath, deletePaths, exportFile, getAll, getCenterLatlng, getDraggable, getLat, getLatlng, getLng, getMapOffset, getMarker, getMarkers, getMyLatlng, getObject, getObjectType, getObjects, getOpacity, getPathColor, getPathVertices, getZoom, hideMap, hideObject, importFile, latlngToPatch, mouseOff, mouseOn, objectExists, patchToLatlng, sendToBack, setAll, setCenterLatlng, setDraggable, setLat, setLatlng, setLng, setMapOffset, setOpacity, setPathColor, setPathVertices, setZoom, showMap, showObject, updateMap, updateMyLatlng;
       hideMap = function() {
         return Maps.hideMap();
       };
@@ -19061,6 +19073,12 @@ function hasOwnProperty(obj, prop) {
       updateMyLatlng = function() {
         return Maps.updateMyLatlng();
       };
+      mouseOn = function() {
+        return Maps.mouseOn();
+      };
+      mouseOff = function() {
+        return Maps.mouseOff();
+      };
       return {
         name: "maps",
         prims: {
@@ -19117,7 +19135,9 @@ function hasOwnProperty(obj, prop) {
           "SET-DRAGGABLE": setDraggable,
           "GET-DRAGGABLE": getDraggable,
           "GET-MY-LATLNG": getMyLatlng,
-          "UPDATE-MY-LATLNG": updateMyLatlng
+          "UPDATE-MY-LATLNG": updateMyLatlng,
+          "MOUSE-ON": mouseOn,
+          "MOUSE-OFF": mouseOff
         }
       };
     }

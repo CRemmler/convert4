@@ -611,9 +611,6 @@ Gallery = (function() {
   }
   
   function importWorld(filename) {
-    //console.log("import world");
-    //console.log(filename);
-    //server emulates student entering, with all data 
     var elem, listener, result;
     listener = function(event) {
       var reader;
@@ -624,8 +621,6 @@ Gallery = (function() {
         Physics.setAll(result.gbcc-physics-get-all);
         Maps.setAll(result.gbcc-maps-get-all);
         Graph.setAll(result.gbcc-graph-get-all);
-        //world.importstate(JSON.parse(result.gbcc-world-export-state));
-
       };
       if (event.target.files.length > 0) {
         reader.readAsText(event.target.files[0]);

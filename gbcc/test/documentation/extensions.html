@@ -153,14 +153,16 @@ GRAPH
 &#x2713; <span class='blue'>graph:set-opacity</span><span class='red'> 0.5 </span> 
 &#x2713; <span class='blue'>show graph:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
 &#x2713; <span class='blue'>show graph:center-view</span> <span class='red'> [ x y ] </span> 
-
+&#x2713; <span class='blue'>show graph:mouse-on</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show graph:mouse-off</span> <span class="update">*** new ***</span>
 </pre>
 <pre>
 &#x2713; <span class='blue'>graph:set-all</span><span class='red'> "long-string-of-xml" </span> 
 &#x2713; <span class='blue'>show graph:get-all</span> <span class="gray">;; returns "long-string-of-xml"</span> 
 &#x2713; <span class='blue'>graph:import-ggb</span> <span class="red">"filename.txt"</span>
-<span class='blue'>graph:import-ggb</span> <span class="red">""</span><span class="gray">;; opens prompt to select a .ggb file</span> 
 &#x2713; <span class='blue'>graph:export-ggb</span> <span class="red">"filename.txt"</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:upload-ggb</span> <span class="update">*** new ***</span>
+<span class='blue'>graph:get-ggb-list</span> <span class="gray">;; returns list of ggb filenames</span> <span class="update">*** new ***</span>
 </pre>
 <!--<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show graph:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -219,9 +221,12 @@ OBJECTS (Including Points)
 &#x2713; <span class='blue'>graph:show-object</span> <span class='red'> "MyTriangle1" </span> 
 &#x2713; <span class='blue'>graph:hide-object</span> <span class='red'> "MyTriangle1" </span> 
 &#x2713; <span class='blue'>graph:show-object-label</span> <span class='red'> "MyTriangle1" </span> 
-&#x2713; <span class='blue'>graph:hide-object-label</span> <span class='red'> "MyTriangle1" </span> 
+&#x2713; <span class='blue'>graph:hide-object-label</span> <span class='red'> "MyTriangle1" </span>
+&#x2713; <span class='blue'>graph:set-draggable</span> <span class='red'>"Point1" </span><span class='purple'>true</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show graph:get-draggable</span> <span class='red'>"Point1" </span><span class="gray">;; returns true</span> <span class="update">*** new ***</span> 
+&#x2713; <span class='blue'>show graph:get-command-string</span> <span class='red'> "MyTriangle1" </span> <span class="gray">;; returns command string like Polygon(A, B, C)</span> 
 </pre>
-</td>ß
+</td>
   </tr>
 <!--  
 <span class='blue'>graph:create-object</span> <span class='red'> [ "my-point" "(0, 0)"]</span>
@@ -431,6 +436,8 @@ MAP
 &#x2713; <span class='blue'>show maps:get-map-offset</span> <span class="gray">;; returns [ left top width height ]</span> 
 &#x2713; <span class='blue'>maps:set-opacity</span><span class='red'> 0.5 </span>
 &#x2713; <span class='blue'>show maps:get-opacity</span> <span class="gray">;; returns any number between 0 and 1</span> 
+&#x2713; <span class='blue'>show maps:mouse-on</span> <span class="update">*** new ***</span>
+&#x2713; <span class='blue'>show maps:mouse-off</span> <span class="update">*** new ***</span>
 </pre>
 <pre>
 &#x2713; <span class='blue'>maps:set-all</span><span class='red'> "long-string-of-json" </span>
@@ -927,15 +934,15 @@ extensions [ image ]
 <b>image:import-pcolors</b> <i>"cats.png"</i> <span class='blue'>;; unimplemented</span>
 -->
 <pre>
-&#x2713; <span class="blue">image:clear</span>
+<span class="blue">image:clear</span>
 
 &#x2713; <span class="blue">image:zoom</span> <span class="red">3</span> <span class='gray'>;; zooms so that there are 3 patches from an edge to the center patch</span>
 
 &#x2713; <span class="blue">image:reset-zoom</span>
 
-&#x2713; <span class="blue">image:import</span> <span class="red">"cats.png"</span><span class='gray'>;; imports an image file, local to the app</span>
+<span class="blue">image:import</span> <span class="red">"cats.png"</span><span class='gray'>;; imports an image file, local to the app</span>
 
-&#x2713; <span class="blue">image:import-from-user</span> <span class="red">user-id</span><span class='gray'>;; imports the topmost view, plot or avatar displayed on a user's canvas</span>
+<span class="blue">image:import-from-user</span> <span class="red">user-id</span><span class='gray'>;; imports the topmost view, plot or avatar displayed on a user's canvas</span>
 </pre>
 <!--
 <h2>Additional GbCC Commands</h2>  
