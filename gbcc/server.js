@@ -112,7 +112,10 @@ io.on('connection', function(socket){
         rooms = [];
         for (var key in allRooms) { rooms.push(key); }
         socket.to("login").emit("display interface", {userType: "login", rooms: rooms, components: config.interfaceJs.loginComponents, activityType: activityType});
-        if (activityType === "hubnet") { allRooms[myRoom].settings.displayView = true;}
+        if (activityType === "hubnet") { 
+          allRooms[myRoom].settings.displayView = false;
+          allRooms[myRoom].settings.mirrorView = false;
+        }
       } else {
         if (activityStyle === "flat") {
           socket.emit("display interface", {userType: "flat student", room: myRoom, components: config.interfaceJs.teacherComponents});
@@ -123,12 +126,13 @@ io.on('connection', function(socket){
             socket.emit("display interface", {userType: "hierarchy gbcc student", room: myRoom, components: config.interfaceJs.studentComponents, gallery: config.galleryJs});          
           }
         }
-        if (activityStyle === "hubnet") {
+        if (activityType === "hubnet") {
           // send student a student interface
           //socket.emit("display interface", {userType: "hubnet student", room: myRoom, components: config.interfaceJs.studentComponents, gallery: config.galleryJs});
           // send teacher a hubnet-enter-message
           socket.to(school+"-"+myRoom+"-teacher").emit("execute command", {hubnetMessageSource: myUserId, hubnetMessageTag: "hubnet-enter-message", hubnetMessage: ""});
           //socket.emit("display my view", {"display":allRooms[myRoom].settings.displayView});
+          socket.emit("student accepts UI change", {"display":allRooms[myRoom].settings.mirrorView, "type":"mirror"});
           socket.emit("student accepts UI change", {"display":allRooms[myRoom].settings.displayView, "type":"view"});
         } else {
           // it's gbcc, so send student a teacher interface
@@ -425,6 +429,7 @@ io.on('connection', function(socket){
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
     if (data.type === "view") { allRooms[myRoom].settings.displayView = data.display; }
+    if (data.type === "mirror") { allRooms[myRoom].settings.mirrorView = data.display; }
     socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {"display":data.display, "type":data.type});
     schools[school] = allRooms;
   });
