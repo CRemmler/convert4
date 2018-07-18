@@ -329,7 +329,6 @@ io.on('connection', function(socket){
   });
   
   app.post('/exportggb', function(req,res){
-    console.log("export ggb");
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
       var xml = fields.ggbxml;

@@ -10,14 +10,14 @@ var foreverButtonCode = new Object();
 var myUserType;
 var activityType = undefined;
 var drawPatches = true;
-
+var mirroringEnabled = false;
   
 jQuery(document).ready(function() {
   
   $("body").append("<img id='imageLayer' width='200px' height='200px' style='display:none'>")
 
   var userId;
-  var userType;
+  //var userType;
   var turtleDict = {};
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
   // save student settings
   socket.on("save settings", function(data) {
     userId = data.userId;
-    userType = data.userType;
+    myUserType = data.userType;
     $(".netlogo-canvas").attr("id","netlogoCanvas"); 
     Gallery.setupGallery({settings: data.gallerySettings, userId: userId});
     Physics.setupInterface();
@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
     $(".roomNameInput").val(data.myRoom);
     $(".schoolNameInput").val(data.school);
     var secondView = data.gallerySettings.secondViewString;
-    if (userType === "student" && typeof secondView === "object" && secondView.length === 4) {
+    if (myUserType === "student" && typeof secondView === "object" && secondView.length === 4) {
       $(".netlogo-view-container").css("left", secondView[0]);
       $(".netlogo-view-container").css("top", secondView[1]);
       $(".netlogo-view-container").css("width", secondView[2] - secondView[0]);
@@ -105,7 +105,9 @@ jQuery(document).ready(function() {
 
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
-    if (data.type === "view") {
+    if (data.type === "mirror") {
+      mirroringEnabled = data.display;
+    } else if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
       (data.display) ? $(".netlogo-tab-area").css("display","block") : $(".netlogo-tab-area").css("display","none");
@@ -195,8 +197,6 @@ jQuery(document).ready(function() {
   });
 
   socket.on("accept user action", function(data) {
-    var userType = data.userType;
-    //console.log(data.userId+" "+userId+" "+userType);
     switch (data.status) {
       case "select":
         if (procedures.gbccOnSelect) {

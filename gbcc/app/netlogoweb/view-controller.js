@@ -132,7 +132,7 @@
         u = updates[k];
         
         <!-- GBCC -->
-        if (socket && activityType === "hubnet") {
+        if (socket && activityType === "hubnet" && mirroringEnabled && myUserType === "teacher") {
           socket.emit("update", {turtles: modelUpdate[k].turtles}); 
           socket.emit("update", {patches: modelUpdate[k].patches});
         }

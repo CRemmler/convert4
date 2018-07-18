@@ -29,7 +29,7 @@ app.post('/fileupload',function(req,res){
            fields["allowMultipleSelections"] = undefined;
            fields["allowCanvasForeverButtons"] = undefined;
            fields["allowGalleryControls"] = undefined;
-           fields["allowTeacherControls"] = undefined;
+           fields["allowTeacherControls"] = true;
          }
          break;
        case "gbccFlat": 
@@ -78,6 +78,7 @@ app.post('/fileupload',function(req,res){
           var newWidget = false;
           var lastWidgetType = "";
           var label;
+          var widgetList = [];
           for(i in array) {
             // buttons on the client need a client-procedure, to avoid a console error
             if (arrayIndex === 0 && array[i] === "@#$#@#$#@") { nlogoFile = nlogoFile + "\n\nto client-procedure\nend\n"; }

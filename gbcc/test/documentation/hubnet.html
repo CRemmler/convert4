@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      GbCC 3.0 Hubnet
+    </title>
+    <link rel="stylesheet" href="css/netlogo.css" type="text/css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style3.css">
+    <script>
+      jQuery(document).ready(function() {
+
+      });
+    </script>
+    <style>
+      th, td {padding: 5px; text-align:left; border-bottom:1px solid gray}
+      td { vertical-align: top;}
+      td:first-child {font-weight: bold;}
+      table {font-size: 14px;}
+      p {font-size:14px;}
+      .green {color: limegreen; border:0px;}
+      .red {color: red; border:0px;}
+      .blue { color: blue; border:0px; }
+      .gray { color: gray; border:0px; }
+      .black { color: black; border:0px; }
+      .purple { color: purple; border: 0px;}
+      img {border-radius: 0px;}
+    
+    </style>
+  </head>
+  <body>
+    <h1>
+      Classic Hubnet to GbCC Conversion 
+    </h1>
+
+    <h2>Gridlock</h2>
+    <h3>Open Gridlock in NetLogo</h3>
+    <img src="images/hubnet-0.png">
+    <h3>Save Gridlock to a NetLogo file</h3> 
+    <img src="images/hubnet-1.png">
+    <h3>Use the Conversion Tool</h3>
+    <img src="images/hubnet-2.png">
+    <h3>Run Gridlock as GbCC</h3> 
+    <p>Follow the instructions in the Conversion Tool, and go to the url for your model.</p>
+    <h3>Debug</h3>
+    <p>Comment out the global variable phase, because there is already a global widget called phase.</p>
+    <img src="images/hubnet-3.png">
+    <p>Comment out primitives that don't exist in NetLogo Web.</p>
+    <br><img src="images/hubnet-4.png">
+    <h3>Notes</h3>
+    <p>The Gridlock from the Models Library does not act upon input from 
+      students. However, you can tell that the teacher is receiving input 
+      from students, if you add "show" messages in the "listen" loop.</p>
+    <p>Check out similar Gridlock, here: https://gridlock-hubnet.herokuapp.com/
+    that was adapted based on how the author wanted it to work
+    in the classroom. Not necessarily because of Hubnet communication in a GbCC environment.</p>
+    <h2>Disease</h2>
+    <h2>Other</h2>
+    <h2>View Extensions</h2>
+Bird Breeders	Novak & Wilensky 2011	N	 
+Bug Hunters Adaptations	Novak & Wilensky 2006	N	      view clicks
+Bug Hunters Camoflage	Novak & Wilensky 2006	N	        view clicks
+Critter Designers	Stonedahl, Novak & Wilensky, 2011	N	input box
+Dice Stalagmite	Abrahamson & Wilensky, 2004	N	client  no view
+Disease	Wilensky & Stroup 1999	N	 
+Disease Doctors	Wilensky 2006	N	 
+Fish Spotters	Novak & Wilensky 2012	N	                view clicks
+Gridlock	Wilensky & Stroup 1999	N	 
+Investments	Wilensky 2004	 	 
+Memory	Wilensky 2009	N	                               view clicks
+Minority Game	Wilensky 2004	N	 
+PANDA BEAR	Unterman & Wilensky 2007	 	 
+Polling	Wilensky & Stroup 2000	N	                     client no view
+Prisoners Dilemma	Wilensky 2003	 	 
+Predator Prey Game	Wilensky 2002	 	 
+Public Good	Wilensky 2003	 	 
+Root Beer Game	Wilensky & Stroup 2003	N	 
+Restaurants	Wilensky 2004	 	 
+Tragedy of the Commons	Wilensky 2002	N	 
+Oil Cartel	Maroulis & Wilensky 2004	N	              client no view
+  </body>
+</html>

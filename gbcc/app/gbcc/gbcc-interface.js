@@ -213,21 +213,18 @@ Interface = (function() {
     var viewHeight = parseFloat($(".netlogo-canvas").css("height"));
     var spanText;
     if (activityType === "hubnet") {
-      $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' checked type='checkbox'>Enable Mirroring</span>");
+      $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' type='checkbox'>Enable Mirroring</span>");
+      $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 112 + "px");
     } else {
       spanText = "<span class='teacher-controls hidden' style='float:right'>Enable:";
       spanText += "<input id='enableView' checked type='checkbox'>View";
       spanText += "<input id='enableTabs' checked type='checkbox'>Tabs";
       spanText += "<input id='enableGallery' checked type='checkbox'>Gallery</span>";
-      
       $(".netlogo-widget-container").append(spanText);
+      $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 200 + "px");
     }
     $(".teacher-controls").css("position","absolute");
-    $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 200 + "px");
-    //$(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 140 + "px");
-    
     $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-canvas").css("height")) + "px");
-
     $(".netlogo-view-container").css("width", $(".netlogo-view-container canvas").css("width"));
     $("#enableView").click(function() {
       socket.emit('teacher requests UI change', {'display': $(this).prop("checked"), 'type': 'view'});
@@ -240,6 +237,7 @@ Interface = (function() {
     });
     $("#enableMirroring").click(function() {
       mirroringEnabled = $(this).prop("checked") ? true : false;
+      socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'type': 'mirror'});
       socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'type': 'view'});
     });
   }
