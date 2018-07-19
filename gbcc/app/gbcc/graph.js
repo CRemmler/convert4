@@ -338,9 +338,10 @@ Graph = (function() {
     var valueTypes = [ "numeric", "text", "boolean" ];
     var commandTypes = [  ];
     var valueString = ggbApplet.getValueString(name);
+    result.valueString = valueString;
     var commandString = ggbApplet.getCommandString(name);
-      result.command = commandString ? commandString : valueString; 
-      
+    result.command = commandString ? commandString : valueString; 
+    result.commandString = commandString;
     if (result.command.indexOf("=") < 0) {
       result.command = name + " = " + result.command;
     } 
@@ -436,6 +437,10 @@ Graph = (function() {
   
   function getCommandString(name) {
     return (exists(name)) ? ggbApplet.getCommandString(name) : "undefined";
+  }
+  
+  function getValueString(name) {
+    return (exists(name)) ? ggbApplet.getValueString(name) : "undefined";
   }
   
   function setDraggable(name, draggable) {
@@ -546,12 +551,12 @@ Graph = (function() {
   
   function mouseOn() {
     $(".netlogo-view-container").css("pointer-events","none"); //show graph
-    if ($("#graphContainer").hasClass("grayscale")) { $("#graphContainer").removeClass("grayscale"); }
+    //if ($("#graphContainer").hasClass("grayscale")) { $("#graphContainer").removeClass("grayscale"); }
   }
   
   function mouseOff() {
     $(".netlogo-view-container").css("pointer-events","auto"); // hide graph, grayscale?
-    $("#graphContainer").addClass("grayscale");
+    //$("#graphContainer").addClass("grayscale");
   }
   
   
@@ -613,7 +618,8 @@ Graph = (function() {
     createObject: createObject,
     setDraggable: setDraggable,
     getDraggable: getDraggable,
-    getCommandString: getCommandString
+    getCommandString: getCommandString,
+    getValueString: getValueString
   };
  
 })();

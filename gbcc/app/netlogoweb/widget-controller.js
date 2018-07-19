@@ -205,7 +205,7 @@
             if (isntValidValue) {
               return 'N/A';
             } else {
-              if (widget.precision != null) {
+              if (widget.precision != null && typeof value === "number") {
                 return NLMath.precision(value, widget.precision);
               } else {
                 return value;

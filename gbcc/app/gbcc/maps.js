@@ -1,4 +1,3 @@
-var cat;
 var map;
 Maps = (function() {
 
@@ -538,12 +537,12 @@ Maps = (function() {
   
   function mouseOn() {
     $(".netlogo-view-container").css("pointer-events","none"); //show graph
-    if ($("#mapContainer").hasClass("grayscale")) { $("#mapContainer").removeClass("grayscale"); }
+    //if ($("#mapContainer").hasClass("grayscale")) { $("#mapContainer").removeClass("grayscale"); }
   }
   
   function mouseOff() {
     $(".netlogo-view-container").css("pointer-events","auto"); // hide graph, grayscale?
-    $("#mapContainer").addClass("grayscale");
+    //$("#mapContainer").addClass("grayscale");
   }
 
   
