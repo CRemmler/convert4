@@ -214,7 +214,8 @@ Interface = (function() {
     var spanText;
     if (activityType === "hubnet") {
       $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' type='checkbox'>Enable Mirroring</span>");
-      $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 112 + "px");
+      $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-view-container").css("height")) - 0 + "px");
+      $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-view-container").css("width")) - 112 + "px");
     } else {
       spanText = "<span class='teacher-controls hidden' style='float:right'>Enable:";
       spanText += "<input id='enableView' checked type='checkbox'>View";
