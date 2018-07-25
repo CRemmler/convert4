@@ -30,7 +30,7 @@ Maps = (function() {
     if (L) {
       map = L.map('mapContainer').setView([ 30.2672, -97.7431], 11);      
       if (map) { 
-        L.tileLayer('http://{s}.tile.openstreamap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
         updateMap();
