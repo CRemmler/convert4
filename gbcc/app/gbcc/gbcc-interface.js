@@ -147,7 +147,7 @@ Interface = (function() {
   function clickHandler(thisElement, e, widget) {
     var value;
     var id = $(thisElement).attr("id");
-    var label = $("#"+id+" .netlogo-label").text();
+    var label = $("#"+id+" .netlogo-label").text().toLowerCase();
     if (widget === "view") {
       label = "view";
       position = [ e.clientX, e.clientY ];
