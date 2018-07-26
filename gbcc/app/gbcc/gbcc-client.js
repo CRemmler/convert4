@@ -44,6 +44,12 @@ jQuery(document).ready(function() {
       $(".netlogo-view-container").css("width", secondView[2] - secondView[0]);
       $(".netlogo-view-container").css("height", secondView[3] - secondView[1]);    
     }
+    //if (data.gallerySettings.legacyHubnet && myUserType === "student") {
+    //  $(".netlogo-view-container:not(.hidden)").on("click", function(e){
+    //    var value = [ xpixToPcor(e.clientX), ypixToPcor(e.clientY) ]
+    //    socket.emit("send command", {hubnetMessageTag: "view", hubnetMessage:value});
+    //  });
+    //}
   });
 
   // display teacher or student interface
@@ -148,9 +154,10 @@ jQuery(document).ready(function() {
           return x.type === "monitor" && x.display === data.hubnetMessageTag; 
         });
         if (matchingMonitors.length > 0) {
-          matchingMonitors[0].compiledSource = data.hubnetMessage;
-          matchingMonitors[0].reporter       = function() { return data.hubnetMessage; };
-        }
+          for (var i=0; i<matchingMonitors.length; i++) {
+            matchingMonitors[i].compiledSource = data.hubnetMessage;
+            matchingMonitors[i].reporter       = function() { return data.hubnetMessage; };
+          }        }
         else if (activityType === "hubnet") {
           world.observer.setGlobal(data.hubnetMessageTag.toLowerCase(),data.hubnetMessage);
         } else {

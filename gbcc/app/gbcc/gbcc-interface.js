@@ -147,7 +147,7 @@ Interface = (function() {
   function clickHandler(thisElement, e, widget) {
     var value;
     var id = $(thisElement).attr("id");
-    var label = $("#"+id+" .netlogo-label").text().toLowerCase();
+    var label = $("#"+id+" .netlogo-label").text();
     if (widget === "view") {
       label = "view";
       position = [ e.clientX, e.clientY ];
@@ -161,7 +161,7 @@ Interface = (function() {
     } else if (widget === "button" ) {
       value = "";
     } else {
-      value = world.observer.getGlobal(label);
+      value = world.observer.getGlobal(label.toLowerCase());
       socket.emit("send reporter", {hubnetMessageSource: "server", hubnetMessageTag: label, hubnetMessage:value});
     }
     socket.emit("send command", {hubnetMessageTag: label, hubnetMessage:value});
