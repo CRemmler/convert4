@@ -389,7 +389,7 @@ Graph = (function() {
     ggbApplet.setVisible(name, result.visible);
     ggbApplet.setFilling(name, result.filling);
     ggbApplet.setLabelVisible(name, result.labelVisible);
-    ggbApplet.setDraggable(name, result.draggable);
+    setDraggable(name, result.draggable);
     //if (result.xcoord && result.ycoord) { 
     //  ggbApplet.setCoords(name, result.xcoord, result.ycoord, 0); 
     //}
