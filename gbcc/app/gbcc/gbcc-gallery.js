@@ -90,14 +90,11 @@ Gallery = (function() {
       });
       $("#galleryUpdates").on("click",function() {
         if ($(this).is(":checked")) {
-          //$(".netlogo-gallery-tab").removeClass("selected");
           $(".netlogo-gallery-tab-content").removeClass("selected");
           $(".gbcc-gallery li").removeClass("gray-border");
           galleryForeverButton = "on";
           socket.emit("request user broadcast data");
-          //socket.emit("request user data");
         } else {
-          //$(".netlogo-gallery-tab").addClass("selected");
           $(".netlogo-gallery-tab-content").addClass("selected");
           $(".gbcc-gallery li").addClass("gray-border");
           galleryForeverButton = "off"; 
@@ -145,22 +142,20 @@ Gallery = (function() {
   }
 
   function selectAll() {
-    $("li").each(function() {
-      myId = $(this).attr("id")
+    $(".gbcc-gallery li").each(function() {
+      myId = $(this).attr("id");
       $elt = $("#"+myId+" .card.card-image");
       if (!$elt.parent().hasClass("selected")) {
-        //$elt.parent().click(); 
         cardClickHandler($elt);
         $("#"+myId+" .forever-icon:not(.selected)").css("display","none");     
       }
     });
   }
   function deselectAll() {
-    $("li").each(function() {
-      myId = $(this).attr("id")
+    $(".gbcc-gallery li").each(function() {
+      myId = $(this).attr("id");
       $elt = $("#"+myId+" .card.card-image");
       if ($elt.parent().hasClass("selected")) {
-        //$elt.click(); 
         cardClickHandler($elt);
         $("#"+myId+" .forever-icon:not(.selected)").css("display","none");     
       }
@@ -213,8 +208,8 @@ Gallery = (function() {
   }
   
   function cardClickHandler(thisElt) {
-    //console.log("add click handler",thisElt);
     var userId = $(thisElt).parent().attr("userid");
+    if (!userId) { return; }
     var userType = $(thisElt).parent().attr("usertype");
     //console.log(userType);
     if (procedures.gbccOnGo != undefined) {
@@ -230,7 +225,7 @@ Gallery = (function() {
       socket.emit("request user action", {userId: userId, status: "deselect", userType: userType}); 
     } else { 
       if (allowMultipleSelections) {
-        $(thisElt).parent().addClass("selected"); 
+        $(thisElt).parent().addClass("selected");
         socket.emit("request user action", {userId: userId, status: "select", userType: userType});
         if ($(this).children(".forever-icon").hasClass("selected")) {
           $(this).children(".forever-icon").removeClass("selected").css("display","none");
@@ -239,7 +234,6 @@ Gallery = (function() {
       } else {
         $(".selected").each(function() {
           if ($(this).attr("id") && $(this).attr("id").includes("gallery-item-")) {
-            //thisUserId = $(this).attr("id").replace("gallery-item-","");
             thisUserId = $(this).attr("userid");
             socket.emit("request user action", {userId: thisUserId, status: "deselect", userType: userType}); 
             $(this).removeClass("selected");
@@ -256,7 +250,6 @@ Gallery = (function() {
   }
 
   function arrowClickHandler(thisSpan) {
-    //console.log("arrow clicked");
     var direction = $(thisSpan).hasClass("arrow-left") ? "left" : "right";
     var cards = [];
     $(thisSpan).parent().children().each(function() {
@@ -303,7 +296,6 @@ Gallery = (function() {
   }
   
   function createCanvas(data) {
-    //console.log(data.userType);
     var canvasImg = new Image();
     canvasImg.id = data.id;
     canvasImg.userId = data.userId;
@@ -313,7 +305,6 @@ Gallery = (function() {
       $(".canvasSize").val("small");
       $(".gbcc-gallery").addClass("small");
     }
-    //var newLiHtml = "<li id='gallery-item-"+data.userId+"' usertype='"+data.userType+"' userid='"+data.userId+"'>";
     var newLiHtml = "<li id='gallery-item-"+data.userId+"' usertype='"+data.userType+"' userid='"+data.userId+"' ";
     newLiHtml += (myUserId === data.userId) ? "myUser=\"true\">" : "myUser=\"false\">";
     newLiHtml += (myUserId === data.userId) ? "<span class=\"label z20 selected\">"+label+"</span>" : "<span class=\"label z20\">"+label+"</span>";
@@ -332,7 +323,6 @@ Gallery = (function() {
     $("#gallery-item-"+data.userId+" .forever-icon").click(function() { foreverClickHandler(this, data.userId, data.userType) });
     $("#gallery-item-"+data.userId).mouseover(function() { itemMouseoverHandler(this); });
     $("#gallery-item-"+data.userId).mouseout(function() { itemMouseoutHandler(this); });
-    //$("#"+myUserId+" .arrow").css("display","none");
   }
   
   function createImageCard(data) {
@@ -402,23 +392,6 @@ Gallery = (function() {
       } 
     }
   }
-
-  /*
-  function broadcastToGallery(key, value) {
-    if (key === "view") {
-      drawView(value.replace(" ","-"));
-    } else if (key === "plot") {
-      drawPlot(value);
-    } else if (key === "text") {
-      drawText(value);
-    } else if (key === "clear") {
-      drawClear();
-    } else if (key === "avatar") {
-      drawAvatar(value);
-    }
-  }
-  */
-  
   
   function clearBroadcast() {
     var message = "gallery-clear";
@@ -439,7 +412,7 @@ Gallery = (function() {
   }
   
   function drawHoverText(text) {
-    console.log("draw hover text",text);
+    //console.log("draw hover text",text);
   }
   
   function scaleCanvas(sourceWidth, sourceHeight) {
@@ -503,8 +476,6 @@ Gallery = (function() {
       miniCtx.fillRect(0,((canvasWidth - height) / 2),width,height + 2);
       miniCtx.drawImage(document.getElementsByClassName("netlogo-canvas")[0], 1, ((canvasWidth - height) / 2) + 1, width - 2, height);
       message = document.getElementById(miniCanvasId).toDataURL("image/jpeg", imageQuality); 
-      //console.log(message);
-      
       //$("#miniSafariCanvasView").css("display","inline-block");
       socket.emit("send reporter", {
         hubnetMessageSource: "all-users", 
@@ -617,6 +588,7 @@ Gallery = (function() {
       reader = new FileReader();
       reader.onload = function(e) {
         console.log(JSON.parse(e.target.result));
+        
         result = e.target.result;
         Physics.setAll(result.gbcc-physics-get-all);
         Maps.setAll(result.gbcc-maps-get-all);

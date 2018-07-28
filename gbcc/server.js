@@ -373,9 +373,7 @@ io.on('connection', function(socket){
     var userType = data.userType;
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData != undefined) {
-        var userData = allRooms[myRoom].userData[data.userId];
-        var key = (data.status === "forever-select") ? "gbcc-forever-button-code-"+data.userId : undefined;
-        socket.emit("accept user action", {userId: data.userId, status: data.status, userData: userData, key: key, userType: userType});
+        socket.emit("accept user action", {userId: data.userId, status: data.status, userType: userType});
       }
     }
   });

@@ -58,7 +58,7 @@ for row in reader:
 	ofile.write("\n\n")
 
 ifile.close()
-ifile = open('map-input.csv',"rb")
+ifile = open('maps-input.csv',"rb")
 reader = csv.DictReader(ifile)
 
 ofile.write("    {\n")

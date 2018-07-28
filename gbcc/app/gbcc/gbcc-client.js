@@ -32,7 +32,6 @@ jQuery(document).ready(function() {
     Physics.setupInterface();
     Maps.setupInterface();
     Graph.setupInterface();
-    //$(".netlogo-canvas").attr("id","netlogoCanvas"); 
     allowMultipleButtonsSelected = data.gallerySettings.allowMultipleSelections; 
     allowGalleryForeverButton = data.gallerySettings.allowGalleryControls;
     $(".roomNameInput").val(data.myRoom);
@@ -88,11 +87,27 @@ jQuery(document).ready(function() {
     if (procedures.gbccOnEnter) {
       session.run('gbcc-on-enter "'+data.userId+'" "'+data.userType+'"');
     }
+    if (data.userId === myUserId) {
+      //console.log("compile stuff");
+      if (procedures.gbccOnSelect) {
+        session.compileObserverCode("gbcc-select-button-code-"+data.userId, "gbcc-on-select \""+data.userId+"\" \""+data.userType+"\"");
+      }
+      if (procedures.gbccOnDeselect) {
+        session.compileObserverCode("gbcc-deselect-button-code-"+data.userId, "gbcc-on-deselect \""+data.userId+"\" \""+data.userType+"\"");
+      }
+      if (procedures.gbccOnExit) {
+        session.compileObserverCode("gbcc-exit-button-code-"+data.userId, "gbcc-on-exit \""+data.userId+"\" \""+data.userType+"\"");
+      }
+      if (procedures.gbccOnGo) {
+        session.compileObserverCode("gbcc-forever-button-code-"+data.userId, "gbcc-on-go \""+data.userId+"\" \""+data.userType+"\"");
+      }
+      console.log("finish compiling stuff");
+    }
   });
   
   socket.on("gbcc user exits", function(data) {
     if (procedures.gbccOnExit) {
-      session.run('gbcc-on-exit "'+data.userId+'" "'+data.userType+'"');
+      session.runCode(userData[data.userId]["gbcc-exit-button-code-"+data.userId]); 
     }
   });
 
@@ -134,11 +149,8 @@ jQuery(document).ready(function() {
         }
         if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
         userStreamData[data.teacherId] = {};
-        session.compileObserverCode("gbcc-forever-button-code-"+teacherId, "gbcc-on-go \""+teacherId+"\" \"teacher\"");
-  
         if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[teacherId] = "gbcc-forever-button-code-"+teacherId;
-        //console.log(foreverButtonCode);
       }
       $(".gbcc-gallery li.selected").length
     }
@@ -191,10 +203,8 @@ jQuery(document).ready(function() {
         userStreamData[data.userId][data.tag] = [];
       }
       userStreamData[data.userId][data.tag].push(data.value);
-      //console.log(userStreamData[data.userId][data.tag]);
     }
   });
-
   
   socket.on("accept all user data", function(data) {
     //console.log("accept ALL user data");
@@ -207,12 +217,12 @@ jQuery(document).ready(function() {
     switch (data.status) {
       case "select":
         if (procedures.gbccOnSelect) {
-          session.run('gbcc-on-select "'+data.userId+'" "'+data.userType+'"');
+          session.runCode(userData[data.userId]["gbcc-select-button-code-"+data.userId]); 
         }
         break;
       case "deselect":
         if (procedures.gbccOnDeselect) {
-          session.run('gbcc-on-deselect "'+data.userId+'" "'+data.userType+'"');
+          session.runCode(userData[data.userId]["gbcc-deselect-button-code-"+data.userId]); 
         }
         break;
       case "forever-deselect":
@@ -221,20 +231,17 @@ jQuery(document).ready(function() {
         break;
       case "forever-select":
         userStreamData[data.userId] = {};
-        //myStreamData[data.userId] = {};
-        //console.log("clear userStreamData");
         if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
-        foreverButtonCode[data.userId] = data.key;
+        foreverButtonCode[data.userId] = "gbcc-forever-button-code-"+data.userId;
         break;
     }
   });
 
   var myVar = "";
   function runForeverButtonCode() {
-    //console.log("run forever button code");
     for (userId in foreverButtonCode) { 
       if (procedures.gbccOnGo != undefined) {
-        session.runObserverCode(foreverButtonCode[userId]); 
+        session.runCode(userData[userId]["gbcc-forever-button-code-"+userId]); 
       }
     }
   }
