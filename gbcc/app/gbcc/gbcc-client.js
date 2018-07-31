@@ -11,6 +11,7 @@ var myUserType;
 var activityType = undefined;
 var drawPatches = true;
 var mirroringEnabled = false;
+var setupRecompileGbCC;
   
 jQuery(document).ready(function() {
   
@@ -81,28 +82,22 @@ jQuery(document).ready(function() {
   });
 
   socket.on("gbcc user enters", function(data) {
+    var uId = data.userId;
+    var uType = data.userType;
     if (data.userData) {
-      userData[data.userId] = data.userData;
+      userData[uId] = data.userData;
     }
-    if (procedures.gbccOnEnter) {
-      session.run('gbcc-on-enter "'+data.userId+'" "'+data.userType+'"');
-    }
-    if (data.userId === myUserId) {
-      //console.log("compile stuff");
-      if (procedures.gbccOnSelect) {
-        session.compileObserverCode("gbcc-select-button-code-"+data.userId, "gbcc-on-select \""+data.userId+"\" \""+data.userType+"\"");
-      }
-      if (procedures.gbccOnDeselect) {
-        session.compileObserverCode("gbcc-deselect-button-code-"+data.userId, "gbcc-on-deselect \""+data.userId+"\" \""+data.userType+"\"");
-      }
-      if (procedures.gbccOnExit) {
-        session.compileObserverCode("gbcc-exit-button-code-"+data.userId, "gbcc-on-exit \""+data.userId+"\" \""+data.userType+"\"");
-      }
-      if (procedures.gbccOnGo) {
-        session.compileObserverCode("gbcc-forever-button-code-"+data.userId, "gbcc-on-go \""+data.userId+"\" \""+data.userType+"\"");
-      }
-      console.log("finish compiling stuff");
-    }
+    if (userData[uId] === undefined) {
+      userData[uId] = {};
+    }    
+    userData[uId]["gbcc-user-type"] = uType;
+    if (uId === myUserId) {
+      if (procedures.gbccOnEnter) { session.compileObserverCode("gbcc-enter-button-code-"+uId, "gbcc-on-enter \""+uId+"\" \""+uType+"\""); }
+      if (procedures.gbccOnSelect) { session.compileObserverCode("gbcc-select-button-code-"+uId, "gbcc-on-select \""+uId+"\" \""+uType+"\""); }
+      if (procedures.gbccOnDeselect) { session.compileObserverCode("gbcc-deselect-button-code-"+uId, "gbcc-on-deselect \""+uId+"\" \""+uType+"\""); }
+      if (procedures.gbccOnExit) { session.compileObserverCode("gbcc-exit-button-code-"+uId, "gbcc-on-exit \""+uId+"\" \""+uType+"\""); }
+      if (procedures.gbccOnGo) { session.compileObserverCode("gbcc-forever-button-code-"+uId, "gbcc-on-go \""+uId+"\" \""+uType+"\""); }
+    } 
   });
   
   socket.on("gbcc user exits", function(data) {

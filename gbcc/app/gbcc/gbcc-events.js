@@ -41,5 +41,33 @@ jQuery(document).ready(function() {
   $("#importDrawingFileElem").change(function(event) {
     Interface.importImageFile();
   });
+  
+  // trigger recompile of reserved gbcc procedures
+  setupRecompileGbCC = function() {
+    //console.log("recompile");
+    var uType;
+    var countStudentCompilations = 0;
+    var fId;
+    for (var uId in userData) {
+      uType = userData[uId]["gbcc-user-type"];
+      if (uType === "teacher" || countStudentCompilations === 0) {
+        if (procedures.gbccOnEnter) { session.compileObserverCode("gbcc-enter-button-code-"+uId, "gbcc-on-enter \""+uId+"\" \""+uType+"\""); }
+        if (procedures.gbccOnSelect) { session.compileObserverCode("gbcc-select-button-code-"+uId, "gbcc-on-select \""+uId+"\" \""+uType+"\""); }
+        if (procedures.gbccOnDeselect) { session.compileObserverCode("gbcc-deselect-button-code-"+uId, "gbcc-on-deselect \""+uId+"\" \""+uType+"\""); }
+        if (procedures.gbccOnExit) { session.compileObserverCode("gbcc-exit-button-code-"+uId, "gbcc-on-exit \""+uId+"\" \""+uType+"\""); }
+        if (procedures.gbccOnGo) { session.compileObserverCode("gbcc-forever-button-code-"+uId, "gbcc-on-go \""+uId+"\" \""+uType+"\""); }
+        if (uType === "student") {
+          countStudentCompilations++;
+          fId = uId;
+        }
+      } else {
+        if (procedures.gbccOnEnter) { userData[uId]["gbcc-enter-button-code-"+uId] = userData[fId]["gbcc-enter-button-code-"+fId]; }
+        if (procedures.gbccOnSelect) { userData[uId]["gbcc-select-button-code-"+uId] = userData[fId]["gbcc-select-button-code-"+fId]; }
+        if (procedures.gbccOnDeselect) { userData[uId]["gbcc-deselect-button-code-"+uId] = userData[fId]["gbcc-deselect-button-code-"+fId]; }
+        if (procedures.gbccOnExit) { userData[uId]["gbcc-exit-button-code-"+uId] = userData[fId]["gbcc-exit-button-code-"+fId]; }
+        if (procedures.gbccOnGo) { userData[uId]["gbcc-forever-button-code-"+uId] = userData[fId]["gbcc-forever-button-code-"+fId]; }
+      }
+    }
+  }
 
 });

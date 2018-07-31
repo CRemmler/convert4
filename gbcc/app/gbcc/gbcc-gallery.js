@@ -266,7 +266,6 @@ Gallery = (function() {
     } else {
       $(thisSpan).addClass("selected");
       $(thisSpan).parent().addClass("selected");
-      session.compileObserverCode("gbcc-forever-button-code-"+userId, "gbcc-on-go \""+userId+"\" \""+userType+"\"");
       socket.emit("request user action", {userId: userId, status: "forever-select", userType: userType})  
     }      
   }
