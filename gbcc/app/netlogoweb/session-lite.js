@@ -221,11 +221,6 @@
     };
 
     SessionLite.prototype.recompile = function(successCallback) {
-      
-      /// GBCC ///
-      setupRecompileGbCC();
-      /// END GBCC ///
-      
       var code, oldWidgets, onCompile;
       if (successCallback == null) {
         successCallback = (function() {});

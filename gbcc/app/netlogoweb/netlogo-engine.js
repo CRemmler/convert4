@@ -18456,7 +18456,7 @@ function hasOwnProperty(obj, prop) {
         if (myStreamData[messageTag] != null) {
           return myStreamData[messageTag];
         } else {
-          return void 0;
+          return [];
         }
       };
       getStreamFromUser = function(messageSource, messageTag) {
@@ -18466,7 +18466,7 @@ function hasOwnProperty(obj, prop) {
           userStreamData[messageSource][messageTag] = [];
           return stream;
         } else {
-          return void 0;
+          return [];
         }
       };
       showPatches = function() {

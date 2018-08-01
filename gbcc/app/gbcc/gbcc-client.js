@@ -11,7 +11,6 @@ var myUserType;
 var activityType = undefined;
 var drawPatches = true;
 var mirroringEnabled = false;
-var setupRecompileGbCC;
   
 jQuery(document).ready(function() {
   
@@ -91,13 +90,15 @@ jQuery(document).ready(function() {
       userData[uId] = {};
     }    
     userData[uId]["gbcc-user-type"] = uType;
-    if (uId === myUserId) {
-      if (procedures.gbccOnEnter) { session.compileObserverCode("gbcc-enter-button-code-"+uId, "gbcc-on-enter \""+uId+"\" \""+uType+"\""); }
-      if (procedures.gbccOnSelect) { session.compileObserverCode("gbcc-select-button-code-"+uId, "gbcc-on-select \""+uId+"\" \""+uType+"\""); }
-      if (procedures.gbccOnDeselect) { session.compileObserverCode("gbcc-deselect-button-code-"+uId, "gbcc-on-deselect \""+uId+"\" \""+uType+"\""); }
-      if (procedures.gbccOnExit) { session.compileObserverCode("gbcc-exit-button-code-"+uId, "gbcc-on-exit \""+uId+"\" \""+uType+"\""); }
-      if (procedures.gbccOnGo) { session.compileObserverCode("gbcc-forever-button-code-"+uId, "gbcc-on-go \""+uId+"\" \""+uType+"\""); }
-    } 
+    var compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON"]("'+uId+'","'+uType+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'
+    if (procedures.gbccOnEnter) { 
+      userData[uId]["gbcc-enter-button-code-"+uId] = compileString.replace("GBCC-ON","GBCC-ON-ENTER"); 
+      session.runCode(userData[data.userId]["gbcc-enter-button-code-"+data.userId]); 
+    }
+    if (procedures.gbccOnExit) { userData[uId]["gbcc-exit-button-code-"+uId] = compileString.replace("GBCC-ON","GBCC-ON-EXIT"); }
+    if (procedures.gbccOnSelect) { userData[uId]["gbcc-select-button-code-"+uId] = compileString.replace("GBCC-ON","GBCC-ON-SELECT"); }
+    if (procedures.gbccOnDeselect) { userData[uId]["gbcc-deselect-button-code-"+uId] = compileString.replace("GBCC-ON","GBCC-ON-DESELECT"); }
+    if (procedures.gbccOnGo) { userData[uId]["gbcc-forever-button-code-"+uId] = compileString.replace("GBCC-ON","GBCC-ON-GO"); }
   });
   
   socket.on("gbcc user exits", function(data) {
@@ -198,6 +199,7 @@ jQuery(document).ready(function() {
         userStreamData[data.userId][data.tag] = [];
       }
       userStreamData[data.userId][data.tag].push(data.value);
+      userData[data.userId][data.tag] = data.value;
     }
   });
   
