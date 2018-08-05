@@ -10,6 +10,7 @@ var markdown = require("markdown").markdown;
 const PORT = process.env.PORT || 3000;
 var myTimer;
 var schools = {};
+var socketDictionary = {};
  
 app.use(express.static(__dirname));
 
@@ -90,7 +91,8 @@ io.on('connection', function(socket){
       socket.myUserType = (countUsers(myRoom, school) === 0) ? "teacher" : "student";
       myUserType = socket.myUserType;
       // declare myUserId
-      myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');;
+      myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+      socketDictionary[myUserId] = socket.id;
       allRooms[myRoom].userData[myUserId] = {};
       allRooms[myRoom].userStreamData[myUserId] = {};
       allRooms[myRoom].userData[myUserId].exists = true;
@@ -313,7 +315,7 @@ io.on('connection', function(socket){
             socket.to(school+"-"+myRoom+"-student").emit("display reporter", dataObject);
             socket.emit("display reporter", dataObject);
           } else {
-            io.to(destination).emit("display reporter", dataObject);
+            io.to(socketDictionary[destination]).emit("display reporter", dataObject);
           }
         }
       }
@@ -439,6 +441,7 @@ io.on('connection', function(socket){
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
     var myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    delete socketDictionary[myUserId];
     var myUserType = socket.userType;
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData[myUserId] != undefined) {
