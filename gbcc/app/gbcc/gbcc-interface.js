@@ -116,12 +116,13 @@ Interface = (function() {
     $(".admin-body").css("display","none");
     $(".teacher-controls").css("display","none");
     if (activityType === "hubnet") {
+      $(".netlogo-view-container").css("pointer-events","auto");
       $(".netlogo-button:not(.hidden)").click(function(e){clickHandler(this, e, "button");});
       $(".netlogo-slider:not(.hidden)").click(function(e){clickHandler(this, e, "slider");});
       $(".netlogo-switcher:not(.hidden)").click(function(e){clickHandler(this, e, "switcher");});
       $(".netlogo-chooser:not(.hidden)").click(function(e){clickHandler(this, e, "chooser");});
       $(".netlogo-input-box:not(.hidden)").click(function(e){clickHandler(this, e, "inputBox");});
-      $(".netlogo-view-container:not(.hidden)").click(function(e){clickHandler(this, e, "view");});
+      $(".netlogo-view-container").click(function(e){clickHandler(this, e, "view");});
     } else {
       $(".netlogo-tab-area").removeClass("hidden");
     }
@@ -150,14 +151,8 @@ Interface = (function() {
     var label = $("#"+id+" .netlogo-label").text();
     if (widget === "view") {
       label = "view";
-      position = [ e.clientX, e.clientY ];
       offset = $(thisElement).offset();
-      offset = [ offset.left, offset.top ];
-      pixelDimensions = [ parseFloat($(thisElement).css("width")), parseFloat($(thisElement).css("height")) ];
-      percent = [ ((position[0] - offset[0]) / pixelDimensions[0]), ((position[1] - offset[1]) / pixelDimensions[1]) ];
-      patchDimensions = [ universe.model.world.worldwidth, universe.model.world.worldheight ];
-      value = [ (percent[0] * patchDimensions[0]) +  universe.model.world.minpxcor,
-      universe.model.world.maxpycor - (percent[1] * patchDimensions[1]) ]
+      value = [ universe.view.xPixToPcor(e.clientX - offset.left), universe.view.yPixToPcor(e.clientY - offset.top) ];
     } else if (widget === "button" ) {
       value = "";
     } else {

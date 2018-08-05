@@ -24,8 +24,6 @@ Graph = (function() {
       $("#graphContainer").css("left", $(".netlogo-view-container").css("left"));
       $("#graphContainer").css("top", $(".netlogo-view-container").css("top"));
       $("#graphContainer").css("display", "none");
-      $(".netlogo-view-container").css("pointer-events","none");
-      
       //importGgb("geogebra-default.ggb");
       //hideGraph();
       //applet1 = new GGBApplet({filename: "geogebra-default.ggb", "appletOnLoad": ggbOnInit}, true);

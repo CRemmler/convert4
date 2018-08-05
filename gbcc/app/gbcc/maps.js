@@ -40,7 +40,6 @@ Maps = (function() {
     //hideMap();
     //sendToBack();
     $("#mapContainer").css("display","none");
-    $(".netlogo-view-container").css("pointer-events","none");
   }
 
   function setupEventListeners() {
