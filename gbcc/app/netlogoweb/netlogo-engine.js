@@ -18232,6 +18232,35 @@ function hasOwnProperty(obj, prop) {
                   worldState = csvToWorldState(singularToPlural, pluralToSingular)(csvText);
                   return world.importState(worldState);
                 };
+                /// GBCC ///
+                world.importWorldFromCSV = function(csvText) {
+                  var breedNamePairs, functionify, pluralToSingular, ptsObject, singularToPlural, stpObject, worldState;
+                  functionify = function(obj) {
+                    return function(x) {
+                      var msg;
+                      msg = "Cannot find corresponding breed name for " + x + "!";
+                      return fold(function() {
+                        throw new Error(msg);
+                      })(id)(lookup(x)(obj));
+                    };
+                  };
+                  breedNamePairs = values(breedManager.breeds()).map(function(arg) {
+                    var name, singular;
+                    name = arg.name, singular = arg.singular;
+                    return [name, singular];
+                  });
+                  ptsObject = toObject(breedNamePairs);
+                  stpObject = toObject(breedNamePairs.map(function(arg) {
+                    var p, s;
+                    p = arg[0], s = arg[1];
+                    return [s, p];
+                  }));
+                  pluralToSingular = functionify(ptsObject);
+                  singularToPlural = functionify(stpObject);
+                  worldState = csvToWorldState(singularToPlural, pluralToSingular)(csvText);
+                  return world.importState(worldState);
+                };
+                /// END GBCC ///
                 importExportPrims = new ImportExportPrims(importExportConfig, (function() {
                   return world.exportCSV();
                 }), (function() {
@@ -18259,7 +18288,8 @@ function hasOwnProperty(obj, prop) {
                   typechecker: typechecker,
                   updater: updater,
                   userDialogPrims: userDialogPrims,
-                  world: world
+                  world: world,
+                  importWorldFromCSV: importWorldFromCSV
                 };
               };
             };

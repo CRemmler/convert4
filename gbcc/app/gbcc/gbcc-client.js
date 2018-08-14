@@ -4,7 +4,9 @@ var commandQueue = [];
 var userData = {};
 var myData = {};
 var userStreamData = {};
+var myWorld;
 var myStreamData = {};
+
 //var repaintPatches = true;
 var foreverButtonCode = new Object();
 var myUserType;
@@ -21,7 +23,16 @@ jQuery(document).ready(function() {
   var turtleDict = {};
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
+  
   socket = io();
+  
+  var userMirrorStreamData = {};
+  userMirrorStreamData.turtles = [];
+  userMirrorStreamData.patches = [];
+  userMirrorStreamData.links = [];
+  userMirrorStreamData.drawingEvents = [];
+  var myForeverButtonVar = "";
+  var myMirrorVar = "";
 
   // save student settings
   socket.on("save settings", function(data) {
@@ -106,19 +117,12 @@ jQuery(document).ready(function() {
     Interface.showAdmin(data.roomData);
   });
 
-  // student repaints most recent changes to world (hubnet, not gbcc)
-  socket.on("send update", function(data) {
-    if (mirroringEnabled) {
-      universe.applyUpdate({turtles: data.turtles, patches: data.patches});
-      universe.repaint();
-    }
-  });
-
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
-    if (data.type === "mirror") {
-      mirroringEnabled = data.display;
-    } else if (data.type === "view") {
+    //if (data.type === "mirror") {
+    //  mirroringEnabled = data.display;
+    //  toggleMirroringEnabledCheckbox(mirroringEnabled);
+    if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
       (data.display) ? $(".netlogo-tab-area").css("display","block") : $(".netlogo-tab-area").css("display","none");
@@ -129,7 +133,7 @@ jQuery(document).ready(function() {
         for (userId in foreverButtonCode) {
           delete foreverButtonCode[userId];
         }
-        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
+        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myForeverButtonVar); }
       } else {
         var teacherId = data.teacherId;
         $(".netlogo-gallery-tab").css("display","none"); 
@@ -137,12 +141,12 @@ jQuery(document).ready(function() {
         for (userId in foreverButtonCode) {
           delete foreverButtonCode[userId];
         }
-        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
+        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myForeverButtonVar); }
         userStreamData[data.teacherId] = {};
-        if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
+        if ($.isEmptyObject(foreverButtonCode)) { myForeverButtonVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[teacherId] = "gbcc-forever-button-code-"+teacherId;
       }
-      $(".gbcc-gallery li.selected").length
+      //$(".gbcc-gallery li.selected").length
     }
   });
 
@@ -184,16 +188,28 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept user stream data", function(data) {
-    //console.log("accept user stream data", data);
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
       if (userStreamData[data.userId] === undefined) {
         userStreamData[data.userId] = {};
       }
-      if (userStreamData[data.userId][data.tag] === undefined) {
-        userStreamData[data.userId][data.tag] = [];
-      }
       userStreamData[data.userId][data.tag].push(data.value);
       userData[data.userId][data.tag] = data.value;
+    }
+  });
+  
+  socket.on("accept user mirror stream data", function(data) {
+    console.log('accept user mirror stream data', data);
+    var turtles = data.value.turtles;
+    var patches = data.value.patches;
+    var links = data.value.links;
+    var drawingEvents = data.value.drawingEvents;
+    var globals = data.value.globals;
+    if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
+      if (turtles != {}) { userMirrorStreamData.turtles.push(turtles); }
+      if (patches != {}) { userMirrorStreamData.patches.push(patches); }
+      if (links != {}) { userMirrorStreamData.links.push(links); }
+      if (drawingEvents != {}) { userMirrorStreamData.drawingEvents.push(drawingEvents); }
+      if (globals != {}) { userMirrorStreamData.drawingEvents.push(globals); }
     }
   });
   
@@ -218,23 +234,78 @@ jQuery(document).ready(function() {
         break;
       case "forever-deselect":
         delete foreverButtonCode[data.userId];
-        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myVar); }
+        if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myForeverButtonVar); }
         break;
       case "forever-select":
         userStreamData[data.userId] = {};
-        if ($.isEmptyObject(foreverButtonCode)) { myVar = setInterval(runForeverButtonCode, 200); }
+        if ($.isEmptyObject(foreverButtonCode)) { myForeverButtonVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[data.userId] = "gbcc-forever-button-code-"+data.userId;
         break;
     }
   });
-
-  var myVar = "";
+  
   function runForeverButtonCode() {
     for (userId in foreverButtonCode) { 
       if (procedures.gbccOnGo != undefined) {
         session.runCode(userData[userId]["gbcc-forever-button-code-"+userId]); 
       }
     }
+  }
+  
+  // show or hide student view or gallery
+  socket.on("student accepts mirror change", function(data) {
+    if (data.type === "mirror") {
+      mirroringEnabled = data.display;
+    }
+    userMirrorStreamData = {};
+    userMirrorStreamData.turtles = [];
+    userMirrorStreamData.patches = [];
+    userMirrorStreamData.links = [];
+    userMirrorStreamData.drawingEvents = [];
+    userMirrorStreamData.globals = [];
+    if (mirroringEnabled) {
+      myWorld = world.exportState();
+      world.importWorldFromCSV(data.state);
+      myMirrorVar = setInterval(runMirrorCode, 200);
+    } else {
+      clearInterval(myMirrorVar);
+      if (myWorld) { 
+        world.importState(myWorld);
+      }
+    }
+  });
+  
+  function runMirrorCode() {
+    
+    userMirrorStreamData.turtles.forEach(function(x) {
+      universe.applyUpdate({ turtles: x }); 
+    //  world.triggerUpdate();
+    });
+    userMirrorStreamData.patches.forEach(function(x) {
+      universe.applyUpdate({ patches: x }); 
+    //  world.triggerUpdate();
+    });
+    userMirrorStreamData.links.forEach(function(x) {
+      universe.applyUpdate({ links: x }); 
+    //  world.triggerUpdate();
+    });
+    userMirrorStreamData.drawingEvents.forEach(function(x) {
+      universe.applyUpdate({ drawingEvents: x }); 
+    //  world.triggerUpdate();
+    });
+    if (userMirrorStreamData.turtles.length > 0 ||
+      userMirrorStreamData.patches.length > 0 ||
+      userMirrorStreamData.links.length > 0 ||
+      userMirrorStreamData.drawingEvents.length > 0 ) {
+      world.triggerUpdate();
+    
+      userMirrorStreamData.turtles = [];
+      userMirrorStreamData.patches = [];
+      userMirrorStreamData.links = [];
+      userMirrorStreamData.drawingEvents = [];
+      userMirrorStreamData.globals = [];
+    }
+    
   }
 
   socket.on("execute command", function(data) {

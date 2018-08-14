@@ -88,20 +88,22 @@ function sendResponse(htmlReport,jsonReport, zip, res, filename) {
 }
 
 function sendGgbResponse(xml, filename, zip, res) {
-  //console.log(filename);
+  console.log(xml);
+  console.log(filename);
   filename = (filename) ? filename : "geogebra-default.ggb";
-  zip.file("geogebra.xml", xml);
-  fs.readFileAsync("app/gbcc/geogebra_defaults2d.xml").then(function(data) {
-    zip.file("geogebra_defaults2d.xml", data);
+  //zip.file("geogebra.xml", xml, 'binary');
+  /*fs.readFileAsync("app/gbcc/geogebra.xml", "utf8").then(function(data) {
+    zip.file("geogebra.xml", data, 'binary');
+  }).then(function() {   
+     
+  fs.readFileAsync("app/gbcc/geogebra_defaults2d.xml", "utf8").then(function(data) {
+    zip.file("geogebra_defaults2d.xml", data, 'binary');
   }).then(function() {  
-  fs.readFileAsync("app/gbcc/geogebra_defaults3d.xml").then(function(data) {
-    zip.file("geogebra_defaults3d.xml", data);
+  fs.readFileAsync("app/gbcc/geogebra_defaults3d.xml", "utf8").then(function(data) {
+    zip.file("geogebra_defaults3d.xml", data, 'binary');
   }).then(function() {
-  fs.readFileAsync("app/gbcc/geogebra_javascript.js").then(function(data) {
-    zip.file("geogebra_javascript.js", data);
-  }).then(function() {
-  fs.readFileAsync("app/gbcc/geogebra_thumbnail.png").then(function(data) {
-    zip.file("geogebra_thumbnail.png", data);        
+  fs.readFileAsync("app/gbcc/geogebra_javascript.js", "utf8").then(function(data) {
+    zip.file("geogebra_javascript.js", data, 'binary');
   }).then(function() {
     zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
     .pipe(fs.createWriteStream(filename))
@@ -110,7 +112,23 @@ function sendGgbResponse(xml, filename, zip, res) {
 
       });
     });
-  }); }); }); });
+  }); }); }); });*/
+  
+  zip.file("geogebra.xml", xml, 'binary');
+  zip.file("app/gbcc/geogebra_defaults2d.xml").async("string").then(function (data) {
+  }).then(function() {
+  zip.file("app/gbcc/geogebra_defaults3d.xml").async("string").then(function (data) {
+  }).then(function() {
+  zip.file("app/gbcc/geogebra_javascript.js").async("string").then(function (data) {
+  }).then(function() {
+    zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+    .pipe(fs.createWriteStream(filename))
+    .on('finish', function () {
+      res.download(filename, function() {
+
+      });
+    });
+  }); }); }); 
 }
 
 function sendGbCCWorldResponse(worldReport, filename, zip, res) {

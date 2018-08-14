@@ -394,7 +394,7 @@ Gallery = (function() {
   
   function clearBroadcast() {
     var message = "gallery-clear";
-    socket.emit("send reporter", {
+    socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
       hubnetMessageTag: "canvas-clear", 
       hubnetMessage: message
@@ -403,7 +403,7 @@ Gallery = (function() {
   
   function broadcastText(text) {
     var message = "gallery-text"+text;
-    socket.emit("send reporter", {
+    socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
       hubnetMessageTag: "canvas-text", 
       hubnetMessage: message
@@ -455,7 +455,7 @@ Gallery = (function() {
             miniCtx.drawImage(document.getElementsByClassName("netlogo-canvas")[0], 1, ((canvasWidth - height) / 2) + 1, width - 2, height);
           }
           message = document.getElementById(miniCanvasId).toDataURL("image/jpeg", imageQuality); 
-          socket.emit("send reporter", {
+          socket.emit("send canvas reporter", {
             hubnetMessageSource: "all-users", 
             hubnetMessageTag: "canvas-view-"+key, 
             hubnetMessage: message
@@ -476,7 +476,7 @@ Gallery = (function() {
       miniCtx.drawImage(document.getElementsByClassName("netlogo-canvas")[0], 1, ((canvasWidth - height) / 2) + 1, width - 2, height);
       message = document.getElementById(miniCanvasId).toDataURL("image/jpeg", imageQuality); 
       //$("#miniSafariCanvasView").css("display","inline-block");
-      socket.emit("send reporter", {
+      socket.emit("send canvas reporter", {
         hubnetMessageSource: "all-users", 
         hubnetMessageTag: "canvas-view-"+key, 
         hubnetMessage: message
@@ -500,7 +500,7 @@ Gallery = (function() {
     universe.turtleDrawer.turtleShapeDrawer.drawAvatar(miniCtx, color, shape, 20);
     message = document.getElementById(avatarCanvasId).toDataURL("image/jpeg", imageQuality); 
     //console.log(message);
-    socket.emit("send reporter", {
+    socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
       hubnetMessageTag: "canvas-avatar", 
       hubnetMessage: message
@@ -557,7 +557,7 @@ Gallery = (function() {
           this.getAttribute("width") - 2, 
           this.getAttribute("height")
         );
-        socket.emit("send reporter", {
+        socket.emit("send canvas reporter", {
           hubnetMessageSource: "all-users", 
           hubnetMessageTag: "canvas-plot-"+this.getAttribute("plotName"), 
           hubnetMessage: document.getElementById(this.getAttribute("miniCanvasId")).toDataURL("image/jpeg", imageQuality)

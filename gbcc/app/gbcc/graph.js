@@ -37,7 +37,7 @@ Graph = (function() {
       
       setupEventListeners();
       spanText = "<form action='exportggb' method='post' id='exportggb' enctype='multipart/form-data' style='display: none;'>";
-      spanText += "<input id='ggbxml' type='text' name='ggbxml' value=''>";//" style='display: none;'>";
+      spanText += "<textarea cols='50' id='ggbxml' type='text' wrap='hard' name='ggbxml' value=''></textarea>";//" style='display: none;'>";
       spanText += "<input id='ggbfilename' type='text' name='ggbfilename' value='' style='display: none;'>";
       spanText += "<button type='submit' id='exportggbbutton' ></button></form>";
       

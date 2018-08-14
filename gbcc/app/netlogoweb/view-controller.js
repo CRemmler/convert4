@@ -132,9 +132,13 @@
         u = updates[k];
         
         <!-- GBCC -->
-        if (socket && activityType === "hubnet" && mirroringEnabled && myUserType === "teacher") {
-          socket.emit("update", {turtles: modelUpdate[k].turtles}); 
-          socket.emit("update", {patches: modelUpdate[k].patches});
+        //if (socket && activityType === "hubnet" && mirroringEnabled && myUserType === "teacher") {
+        if (socket && activityType === "hubnet" && myUserType === "teacher") {
+          socket.emit('send mirror stream reporter', {
+            hubnetMessageSource: "server",
+            hubnetMessageTag: "",
+            hubnetMessage: modelUpdate[k]
+          });
         }
         universe = this;
         <!-- END GBCC -->
@@ -461,6 +465,7 @@
       this.canvas = document.createElement('canvas');
       this.canvas.id = 'dlayer';
       this.ctx = this.canvas.getContext('2d');
+
     }
 
     DrawingLayer.prototype.resizeCanvas = function() {
@@ -595,6 +600,9 @@
             _this.ctx.beginPath();
             _this.ctx.moveTo(x1, y1);
             _this.ctx.lineTo(x2, y2);
+            
+                  
+                  
             _this.view.withCompositing(_this.compositingOperation(penMode), _this.ctx)(function() {
               return _this.ctx.stroke();
             });
@@ -605,7 +613,14 @@
     };
 
     DrawingLayer.prototype.draw = function() {
+      //console.log(this.events);
+      console.log('draw on the  drawing layer');
+            
+      if (universe && universe.model && universe.model.drawingEvents) {
+        universe.model.drawingEvents.push(this.events);
+      }
       return this.events.forEach((function(_this) {
+        
         return function(event) {
           switch (event.type) {
             case 'clear-drawing':
@@ -636,6 +651,24 @@
         this.resizeCanvas();
       }
       this.draw();
+      
+      
+            console.log("append  image");
+            //var canvas = document.getElementById('canvas');
+            //var canvas = document.getElementById('dlayer');
+            this.canvas.toBlob(function(blob) {
+              var newImg = document.createElement('img'),
+                  url = URL.createObjectURL(blob);
+
+              newImg.onload = function() {
+                // no longer need to read the blob so it's revoked
+                URL.revokeObjectURL(url);
+              };
+
+              newImg.src = url;
+              document.body.appendChild(newImg);
+            });
+      
       return this.view.ctx.drawImage(this.canvas, 0, 0);
     };
 
@@ -913,14 +946,18 @@
       var patches, world;
       world = model.world;
       patches = model.patches;
-      if (world.patchesallblack) {
+      <!-- GBCC -->
+      if (mirroringEnabled) {
+        this.colorPatches(patches);
+      } else if (world.patchesallblack) {
         this.clearPatches();
       } else {
-        this.colorPatches(patches);
+        this.colorPatches(patches);        
       }
-      if (world.patcheswithlabels) {
+      if (world.patcheswithlabels || mirroringEnabled) {
         return this.labelPatches(patches);
       }
+      <!-- END GBCC -->
     };
 
     return PatchDrawer;
