@@ -1,5 +1,5 @@
 (function() {
-  var Drawer, DrawingLayer, FOLLOW, ImageLayer, OBSERVE, PatchDrawer, RIDE, SpotlightDrawer, TurtleDrawer, View, WATCH,
+  var Drawer, DrawingLayer, FOLLOW, OBSERVE, PatchDrawer, RIDE, SpotlightDrawer, TurtleDrawer, View, WATCH,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty,
@@ -12,7 +12,6 @@
       this.mouseXcor = bind(this.mouseXcor, this);
       this.view = new View(fontSize);
       this.turtleDrawer = new TurtleDrawer(this.view);
-      this.imageLayer = new ImageLayer(this.view);
       this.drawingLayer = new DrawingLayer(this.view, this.turtleDrawer);
       this.patchDrawer = new PatchDrawer(this.view);
       this.spotlightDrawer = new SpotlightDrawer(this.view);
@@ -112,9 +111,6 @@
         this.patchDrawer.repaint(this.model);
       }
       <!-- END GBCC -->
-
-      //this.patchDrawer.repaint(this.model);
-      this.imageLayer.repaint();
       this.drawingLayer.repaint(this.model);
       this.turtleDrawer.repaint(this.model);
       this.spotlightDrawer.repaint(this.model);
@@ -429,30 +425,6 @@
   { type: "reset-zoom" }
    */
 
-  ImageLayer = (function(superClass) {
-    extend(ImageLayer, superClass);
-
-    function ImageLayer(view) {
-      this.view = view;
-      this.canvas = document.createElement('canvas');
-      this.canvas.id = 'ilayer';
-      this.ctx = this.canvas.getContext('2d');
-    }
-
-    ImageLayer.prototype.repaint = function() {
-      var img;
-      img = document.getElementById("imageLayer");
-      if ($("#imageLayer").prop("src")) {
-        return this.view.ctx.drawImage(img, 0, 0, this.view.canvas.width, this.view.canvas.height);
-      } else {
-        return this.view.ctx.drawImage(this.canvas, 0, 0);
-      }
-    };
-
-    return ImageLayer;
-
-  })(Drawer);
-
   DrawingLayer = (function(superClass) {
     extend(DrawingLayer, superClass);
 
@@ -465,7 +437,6 @@
       this.canvas = document.createElement('canvas');
       this.canvas.id = 'dlayer';
       this.ctx = this.canvas.getContext('2d');
-
     }
 
     DrawingLayer.prototype.resizeCanvas = function() {
@@ -613,14 +584,10 @@
     };
 
     DrawingLayer.prototype.draw = function() {
-      //console.log(this.events);
-      console.log('draw on the  drawing layer');
-            
       if (universe && universe.model && universe.model.drawingEvents) {
         universe.model.drawingEvents.push(this.events);
       }
       return this.events.forEach((function(_this) {
-        
         return function(event) {
           switch (event.type) {
             case 'clear-drawing':
@@ -651,24 +618,6 @@
         this.resizeCanvas();
       }
       this.draw();
-      
-      
-            console.log("append  image");
-            //var canvas = document.getElementById('canvas');
-            //var canvas = document.getElementById('dlayer');
-            this.canvas.toBlob(function(blob) {
-              var newImg = document.createElement('img'),
-                  url = URL.createObjectURL(blob);
-
-              newImg.onload = function() {
-                // no longer need to read the blob so it's revoked
-                URL.revokeObjectURL(url);
-              };
-
-              newImg.src = url;
-              document.body.appendChild(newImg);
-            });
-      
       return this.view.ctx.drawImage(this.canvas, 0, 0);
     };
 

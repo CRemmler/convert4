@@ -6,7 +6,6 @@ var myData = {};
 var userStreamData = {};
 var myWorld;
 var myStreamData = {};
-
 //var repaintPatches = true;
 var foreverButtonCode = new Object();
 var myUserType;
@@ -119,9 +118,6 @@ jQuery(document).ready(function() {
 
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
-    //if (data.type === "mirror") {
-    //  mirroringEnabled = data.display;
-    //  toggleMirroringEnabledCheckbox(mirroringEnabled);
     if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
@@ -146,8 +142,36 @@ jQuery(document).ready(function() {
         if ($.isEmptyObject(foreverButtonCode)) { myForeverButtonVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[teacherId] = "gbcc-forever-button-code-"+teacherId;
       }
-      //$(".gbcc-gallery li.selected").length
     }
+      //$(".gbcc-gallery li.selected").length
+    if (data.type === "mirror") {
+      mirroringEnabled = data.display;
+      userMirrorStreamData = {};
+      userMirrorStreamData.turtles = [];
+      userMirrorStreamData.patches = [];
+      userMirrorStreamData.links = [];
+      userMirrorStreamData.drawingEvents = [];
+      userMirrorStreamData.globals = [];
+      if (data.state) {
+        if (mirroringEnabled) {
+          myWorld = data.state;
+          world.miniWorkspace.importCSV(data.state);
+        } else {
+          if (myWorld) { 
+            world.importState(myWorld);
+          }
+        }
+      } /*else {
+        if (mirroringEnabled) {
+          socket.emit("new entry requests UI change", {"userId": myUserId});
+        }
+      }*/
+    }
+  });
+
+  socket.on("teacher accepts new entry request", function(data) {
+    state = world.exportCSV();
+    socket.emit("teacher requests UI change new entry", {"userId": data.userId, "state": state});
   });
 
   // students display reporters
@@ -198,18 +222,33 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept user mirror stream data", function(data) {
-    console.log('accept user mirror stream data', data);
     var turtles = data.value.turtles;
     var patches = data.value.patches;
     var links = data.value.links;
     var drawingEvents = data.value.drawingEvents;
     var globals = data.value.globals;
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
-      if (turtles != {}) { userMirrorStreamData.turtles.push(turtles); }
-      if (patches != {}) { userMirrorStreamData.patches.push(patches); }
-      if (links != {}) { userMirrorStreamData.links.push(links); }
-      if (drawingEvents != {}) { userMirrorStreamData.drawingEvents.push(drawingEvents); }
-      if (globals != {}) { userMirrorStreamData.drawingEvents.push(globals); }
+      if (turtles != {}) { 
+        universe.applyUpdate({ turtles: turtles }); 
+      }
+      if (patches != {}) { 
+        universe.applyUpdate({ patches: patches }); 
+      }
+      if (links != {}) { 
+        //userMirrorStreamData.links.push(links); 
+        universe.applyUpdate({ links: links }); 
+      }
+      if (drawingEvents != {}) { 
+        userMirrorStreamData.drawingEvents.push(drawingEvents); 
+        universe.applyUpdate({ drawingEvents: drawingEvents }); 
+      }
+      if (userMirrorStreamData.turtles.length > 0 ||
+        userMirrorStreamData.patches.length > 0 ||
+        userMirrorStreamData.links.length > 0 ||
+        userMirrorStreamData.drawingEvents.length > 0 ) {
+        world.triggerUpdate();
+      }
+      //if (globals != {}) { userMirrorStreamData.drawingEvents.push(globals); }
     }
   });
   
@@ -263,50 +302,15 @@ jQuery(document).ready(function() {
     userMirrorStreamData.links = [];
     userMirrorStreamData.drawingEvents = [];
     userMirrorStreamData.globals = [];
-    if (mirroringEnabled) {
-      myWorld = world.exportState();
-      world.importWorldFromCSV(data.state);
-      myMirrorVar = setInterval(runMirrorCode, 200);
+    if (mirroringEnabled && data.type === "mirror") {
+      myWorld = data.state;
+      world.miniWorkspace.importCSV(data.state);
     } else {
-      clearInterval(myMirrorVar);
       if (myWorld) { 
         world.importState(myWorld);
       }
     }
   });
-  
-  function runMirrorCode() {
-    
-    userMirrorStreamData.turtles.forEach(function(x) {
-      universe.applyUpdate({ turtles: x }); 
-    //  world.triggerUpdate();
-    });
-    userMirrorStreamData.patches.forEach(function(x) {
-      universe.applyUpdate({ patches: x }); 
-    //  world.triggerUpdate();
-    });
-    userMirrorStreamData.links.forEach(function(x) {
-      universe.applyUpdate({ links: x }); 
-    //  world.triggerUpdate();
-    });
-    userMirrorStreamData.drawingEvents.forEach(function(x) {
-      universe.applyUpdate({ drawingEvents: x }); 
-    //  world.triggerUpdate();
-    });
-    if (userMirrorStreamData.turtles.length > 0 ||
-      userMirrorStreamData.patches.length > 0 ||
-      userMirrorStreamData.links.length > 0 ||
-      userMirrorStreamData.drawingEvents.length > 0 ) {
-      world.triggerUpdate();
-    
-      userMirrorStreamData.turtles = [];
-      userMirrorStreamData.patches = [];
-      userMirrorStreamData.links = [];
-      userMirrorStreamData.drawingEvents = [];
-      userMirrorStreamData.globals = [];
-    }
-    
-  }
 
   socket.on("execute command", function(data) {
     var commandObject = {};

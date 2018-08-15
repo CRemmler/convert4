@@ -7544,7 +7544,7 @@ function hasOwnProperty(obj, prop) {
     };
 
     AbstractAgentSet.prototype.agentAll = function(f) {
-      return this.iterator().all(this._world.selfManager.askAgent(f));
+      return this._unsafeIterator().all(this._world.selfManager.askAgent(f));
     };
 
     AbstractAgentSet.prototype.ask = function(f, shouldShuffle) {
@@ -7572,7 +7572,7 @@ function hasOwnProperty(obj, prop) {
     };
 
     AbstractAgentSet.prototype.contains = function(item) {
-      return this.iterator().contains(item);
+      return this._unsafeIterator().contains(item);
     };
 
     AbstractAgentSet.prototype.copyWithNewAgents = function(agents) {
@@ -7580,11 +7580,11 @@ function hasOwnProperty(obj, prop) {
     };
 
     AbstractAgentSet.prototype.exists = function(pred) {
-      return this.iterator().exists(pred);
+      return this._unsafeIterator().exists(pred);
     };
 
     AbstractAgentSet.prototype.filter = function(pred) {
-      return this._generateFrom(this.iterator().filter(pred));
+      return this._generateFrom(this._unsafeIterator().filter(pred));
     };
 
     AbstractAgentSet.prototype.forEach = function(f) {
@@ -7600,6 +7600,10 @@ function hasOwnProperty(obj, prop) {
     };
 
     AbstractAgentSet.prototype.iterator = function() {
+      return new Iterator(this._agentArr.slice(0));
+    };
+
+    AbstractAgentSet.prototype._unsafeIterator = function() {
       return new Iterator(this._agentArr);
     };
 
@@ -7659,6 +7663,18 @@ function hasOwnProperty(obj, prop) {
       return this.shufflerator().map(this._world.selfManager.askAgent(f));
     };
 
+    AbstractAgentSet.prototype.randomAgent = function() {
+      var choice, count, iter;
+      iter = this._unsafeIterator();
+      count = iter.size();
+      if (count === 0) {
+        return Nobody;
+      } else {
+        choice = this._world.rng.nextInt(count);
+        return iter.nthItem(choice);
+      }
+    };
+
     AbstractAgentSet.prototype.shuffled = function() {
       return this.copyWithNewAgents(this.shufflerator().toArray());
     };
@@ -7670,14 +7686,14 @@ function hasOwnProperty(obj, prop) {
     };
 
     AbstractAgentSet.prototype.size = function() {
-      return this.toArray().length;
+      return this._unsafeIterator().size();
     };
 
     AbstractAgentSet.prototype.sort = function() {
       if (this.isEmpty()) {
         return this.toArray();
       } else {
-        return stableSort(this.toArray())(function(x, y) {
+        return stableSort(this._unsafeIterator().toArray())(function(x, y) {
           return x.compare(y).toInt;
         });
       }
@@ -7688,7 +7704,7 @@ function hasOwnProperty(obj, prop) {
     };
 
     AbstractAgentSet.prototype.toArray = function() {
-      this._agentArr = this.iterator().toArray();
+      this._agentArr = this._unsafeIterator().toArray();
       return this._agentArr.slice(0);
     };
 
@@ -7766,7 +7782,7 @@ function hasOwnProperty(obj, prop) {
           }
         };
       })(this);
-      ref1 = foldl(foldFunc)([worstPossible, []])(this.toArray()), ref1[0], winners = ref1[1];
+      ref1 = foldl(foldFunc)([worstPossible, []])(this._unsafeIterator().toArray()), ref1[0], winners = ref1[1];
       return winners;
     };
 
@@ -7790,14 +7806,13 @@ function hasOwnProperty(obj, prop) {
       var filterer, self;
       self = this._world.selfManager.self();
       filterer = function(x) {
-        var y;
         if (x !== self) {
-          return y = Iterator.boolOrError(x, x.projectionBy(f));
+          return Iterator.boolOrError(x, x.projectionBy(f));
         } else {
           return false;
         }
       };
-      return this.copyWithNewAgents(this.iterator().filter(filterer));
+      return this.copyWithNewAgents(this._unsafeIterator().filter(filterer));
     };
 
     AbstractAgentSet.prototype._optimalOneOfWith = function(f) {
@@ -7813,18 +7828,22 @@ function hasOwnProperty(obj, prop) {
       return this.exists(this._world.selfManager.askAgent(f));
     };
 
+    AbstractAgentSet.prototype._optimalAnyOtherWith = function(f) {
+      var checker, self;
+      self = this._world.selfManager.self();
+      checker = function(x) {
+        return x !== self && Iterator.boolOrError(x, x.projectionBy(f));
+      };
+      return this.exists(checker);
+    };
+
     AbstractAgentSet.prototype._optimalCountOtherWith = function(f) {
       var filterer, self;
       self = this._world.selfManager.self();
       filterer = function(x) {
-        var y;
-        if (x !== self) {
-          return y = Iterator.boolOrError(x, x.projectionBy(f));
-        } else {
-          return false;
-        }
+        return x !== self && Iterator.boolOrError(x, x.projectionBy(f));
       };
-      return this.iterator().filter(filterer).length;
+      return this._unsafeIterator().filter(filterer).length;
     };
 
     return AbstractAgentSet;
@@ -8566,14 +8585,20 @@ function hasOwnProperty(obj, prop) {
     }
 
     LinkSet.prototype.iterator = function() {
-      return new DeadSkippingIterator(this._unwrap(this._agents));
+      return new DeadSkippingIterator(this._unwrap(this._agents, true));
     };
 
-    LinkSet.prototype._unwrap = function(agents) {
+    LinkSet.prototype._unsafeIterator = function() {
+      return new DeadSkippingIterator(this._unwrap(this._agents, false));
+    };
+
+    LinkSet.prototype._unwrap = function(agents, copy) {
       if (JSType(agents).isFunction()) {
         return agents();
-      } else {
+      } else if (copy) {
         return agents.slice(0);
+      } else {
+        return agents;
       }
     };
 
@@ -8774,9 +8799,13 @@ function hasOwnProperty(obj, prop) {
 
     Link.prototype.ask = function(f) {
       var base;
-      this.world.selfManager.askAgent(f)(this);
-      if (typeof (base = this.world.selfManager.self()).isDead === "function" ? base.isDead() : void 0) {
-        throw new Death;
+      if (!this.isDead()) {
+        this.world.selfManager.askAgent(f)(this);
+        if (typeof (base = this.world.selfManager.self()).isDead === "function" ? base.isDead() : void 0) {
+          throw new Death;
+        }
+      } else {
+        throw new Error("That " + (this.getBreedNameSingular()) + " is dead.");
       }
     };
 
@@ -9246,6 +9275,12 @@ function hasOwnProperty(obj, prop) {
       return this.world.topology.distanceXY(this.pxcor, this.pycor, x, y);
     };
 
+    Patch.prototype.towards = function(agent) {
+      var ref3, x, y;
+      ref3 = agent.getCoords(), x = ref3[0], y = ref3[1];
+      return this.towardsXY(x, y);
+    };
+
     Patch.prototype.towardsXY = function(x, y) {
       return this.world.topology.towards(this.pxcor, this.pycor, x, y);
     };
@@ -9513,10 +9548,10 @@ function hasOwnProperty(obj, prop) {
     }
 
     DeadSkippingIterator.prototype.all = function(f) {
-      var i, len, ref, x;
+      var j, len, ref, x;
       ref = this._items;
-      for (i = 0, len = ref.length; i < len; i++) {
-        x = ref[i];
+      for (j = 0, len = ref.length; j < len; j++) {
+        x = ref[j];
         if (!x.isDead()) {
           if (!f(x)) {
             return false;
@@ -9527,10 +9562,10 @@ function hasOwnProperty(obj, prop) {
     };
 
     DeadSkippingIterator.prototype.contains = function(x) {
-      var i, len, ref, y;
+      var j, len, ref, y;
       ref = this._items;
-      for (i = 0, len = ref.length; i < len; i++) {
-        y = ref[i];
+      for (j = 0, len = ref.length; j < len; j++) {
+        y = ref[j];
         if (!x.isDead()) {
           if (x === y) {
             return true;
@@ -9541,10 +9576,10 @@ function hasOwnProperty(obj, prop) {
     };
 
     DeadSkippingIterator.prototype.exists = function(f) {
-      var i, len, ref, x;
+      var j, len, ref, x;
       ref = this._items;
-      for (i = 0, len = ref.length; i < len; i++) {
-        x = ref[i];
+      for (j = 0, len = ref.length; j < len; j++) {
+        x = ref[j];
         if (!x.isDead()) {
           if (f(x)) {
             return true;
@@ -9555,11 +9590,11 @@ function hasOwnProperty(obj, prop) {
     };
 
     DeadSkippingIterator.prototype.filter = function(f) {
-      var i, len, ref, results, x;
+      var j, len, ref, results, x;
       ref = this._items;
       results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        x = ref[i];
+      for (j = 0, len = ref.length; j < len; j++) {
+        x = ref[j];
         if ((!x.isDead()) && f(x)) {
           results.push(x);
         }
@@ -9580,6 +9615,24 @@ function hasOwnProperty(obj, prop) {
       while (this._hasNext()) {
         f(this._next());
       }
+    };
+
+    DeadSkippingIterator.prototype.nthItem = function(n) {
+      var i;
+      i = 0;
+      while (i <= n) {
+        if (this._items[i].isDead()) {
+          n++;
+        }
+        i++;
+      }
+      return this._items[n];
+    };
+
+    DeadSkippingIterator.prototype.size = function() {
+      return this._items.reduce(function(acc, item) {
+        return acc + (item.isDead() ? 0 : 1);
+      }, 0);
     };
 
     DeadSkippingIterator.prototype.toArray = function() {
@@ -11812,6 +11865,10 @@ function hasOwnProperty(obj, prop) {
     }
 
     TurtleSet.prototype.iterator = function() {
+      return new DeadSkippingIterator(this._agents.slice(0));
+    };
+
+    TurtleSet.prototype._unsafeIterator = function() {
       return new DeadSkippingIterator(this._agents);
     };
 
@@ -12030,9 +12087,13 @@ function hasOwnProperty(obj, prop) {
 
     Turtle.prototype.ask = function(f) {
       var base;
-      this.world.selfManager.askAgent(f)(this);
-      if (typeof (base = this.world.selfManager.self()).isDead === "function" ? base.isDead() : void 0) {
-        throw new Death;
+      if (!this.isDead()) {
+        this.world.selfManager.askAgent(f)(this);
+        if (typeof (base = this.world.selfManager.self()).isDead === "function" ? base.isDead() : void 0) {
+          throw new Death;
+        }
+      } else {
+        throw new Error("That " + (this.getBreedNameSingular()) + " is dead.");
       }
     };
 
@@ -12928,7 +12989,10 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this);
 
-},{}],"engine/core/world/idmanager":[function(require,module,exports){
+
+},{"../observer":"engine/core/observer","../structure/builtins":"engine/core/structure/builtins","../typechecker":"engine/core/typechecker","brazierjs/array":"brazier/array","brazierjs/function":"brazier/function","brazierjs/maybe":"brazier/maybe","engine/plot/pen":"engine/plot/pen","meta":"meta","serialize/exportstructures":"serialize/exportstructures"}],"engine/core/world/hubnetmanager":[function(require,module,exports){
+arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
+},{"dup":"engine/core/hubnetmanager"}],"engine/core/world/idmanager":[function(require,module,exports){
 (function() {
   var IDManager;
 
@@ -13833,6 +13897,7 @@ function hasOwnProperty(obj, prop) {
       this._thisWrapY = bind(this._thisWrapY, this);
       this._thisWrapX = bind(this._thisWrapX, this);
       this.zoom = bind(this.zoom, this);
+      this.miniWorkspace = miniWorkspace;
       this.getPatchAt = bind(this.getPatchAt, this);
       this.patches = bind(this.patches, this);
       this.selfManager = miniWorkspace.selfManager, this._updater = miniWorkspace.updater, this.rng = miniWorkspace.rng, this.breedManager = miniWorkspace.breedManager, this._plotManager = miniWorkspace.plotManager;
@@ -15549,7 +15614,7 @@ function hasOwnProperty(obj, prop) {
   var ImportExportConfig, ImportExportPrims;
 
   module.exports.Config = ImportExportConfig = (function() {
-    function ImportExportConfig(exportAllPlots1, exportFile1, exportOutput, exportPlot1, exportView, exportWorld1, importWorld1) {
+    function ImportExportConfig(exportAllPlots1, exportFile1, exportOutput, exportPlot1, exportView, exportWorld1, importDrawing1, importWorld1) {
       this.exportAllPlots = exportAllPlots1 != null ? exportAllPlots1 : (function() {
         return function() {};
       });
@@ -15564,6 +15629,9 @@ function hasOwnProperty(obj, prop) {
       this.exportWorld = exportWorld1 != null ? exportWorld1 : (function() {
         return function() {};
       });
+      this.importDrawing = importDrawing1 != null ? importDrawing1 : (function() {
+        return function() {};
+      });
       this.importWorld = importWorld1 != null ? importWorld1 : (function() {
         return function() {};
       });
@@ -15574,9 +15642,9 @@ function hasOwnProperty(obj, prop) {
   })();
 
   module.exports.Prims = ImportExportPrims = (function() {
-    function ImportExportPrims(arg, trueExportWorld, trueExportAllPlots, trueExportPlot, trueImportWorld) {
-      var exportAllPlots, exportFile, exportPlot, exportWorld, importWorld;
-      exportAllPlots = arg.exportAllPlots, exportFile = arg.exportFile, this.exportOutput = arg.exportOutput, exportPlot = arg.exportPlot, this.exportView = arg.exportView, exportWorld = arg.exportWorld, importWorld = arg.importWorld;
+    function ImportExportPrims(arg, trueExportWorld, trueExportAllPlots, trueExportPlot, trueImportDrawing, trueImportWorld) {
+      var exportAllPlots, exportFile, exportPlot, exportWorld, importDrawing, importWorld;
+      exportAllPlots = arg.exportAllPlots, exportFile = arg.exportFile, this.exportOutput = arg.exportOutput, exportPlot = arg.exportPlot, this.exportView = arg.exportView, exportWorld = arg.exportWorld, importDrawing = arg.importDrawing, importWorld = arg.importWorld;
       this.exportWorld = function(filename) {
         return exportFile(trueExportWorld())(filename);
       };
@@ -15586,12 +15654,49 @@ function hasOwnProperty(obj, prop) {
       this.exportPlot = function(plot, filename) {
         return exportFile(trueExportPlot(plot))(filename);
       };
+      this.importDrawing = function(filename) {
+        return importDrawing(trueImportDrawing)(filename);
+      };
       this.importWorld = function(filename) {
         return importWorld(trueImportWorld)(filename);
       };
     }
 
     return ImportExportPrims;
+
+  })();
+
+}).call(this);
+
+},{}],"engine/prim/inspectionprims":[function(require,module,exports){
+(function() {
+  var InspectionConfig, InspectionPrims;
+
+  module.exports.Config = InspectionConfig = (function() {
+    function InspectionConfig(inspect1, stopInspecting, clearDead) {
+      this.inspect = inspect1 != null ? inspect1 : (function() {});
+      this.stopInspecting = stopInspecting != null ? stopInspecting : (function() {});
+      this.clearDead = clearDead != null ? clearDead : (function() {});
+    }
+
+    return InspectionConfig;
+
+  })();
+
+  module.exports.Prims = InspectionPrims = (function() {
+    function InspectionPrims(arg) {
+      var inspect;
+      inspect = arg.inspect, this.stopInspecting = arg.stopInspecting, this.clearDead = arg.clearDead;
+      this.inspect = function(agent) {
+        if (!agent.isDead()) {
+          return inspect(agent);
+        } else {
+          throw new Error("That " + (agent.getBreedNameSingular()) + " is dead.");
+        }
+      };
+    }
+
+    return InspectionPrims;
 
   })();
 
@@ -16141,7 +16246,7 @@ function hasOwnProperty(obj, prop) {
     };
 
     ListPrims.prototype.item = function(n, xs) {
-      return xs[n];
+      return xs[NLMath.floor(n)];
     };
 
     ListPrims.prototype.last = function(xs) {
@@ -16274,13 +16379,16 @@ function hasOwnProperty(obj, prop) {
     };
 
     ListPrims.prototype.oneOf = function(agentsOrList) {
-      var arr, type;
+      var type;
       type = NLType(agentsOrList);
-      arr = type.isAgentSet() ? agentsOrList.iterator().toArray() : agentsOrList;
-      if (arr.length === 0) {
-        return Nobody;
+      if (type.isAgentSet()) {
+        return agentsOrList.randomAgent();
       } else {
-        return arr[this._nextInt(arr.length)];
+        if (agentsOrList.length === 0) {
+          return Nobody;
+        } else {
+          return agentsOrList[this._nextInt(agentsOrList.length)];
+        }
       }
     };
 
@@ -18074,7 +18182,7 @@ function hasOwnProperty(obj, prop) {
 
 },{"./core/link":"engine/core/link","./core/observer":"engine/core/observer","./core/patch":"engine/core/patch","./core/turtle":"engine/core/turtle","./core/world":"engine/core/world"}],"engine/workspace":[function(require,module,exports){
 (function() {
-  var BreedManager, Dump, EvalPrims, Hasher, ImportExportConfig, ImportExportPrims, LayoutManager, LinkPrims, ListPrims, Meta, MiniWorkspace, MouseConfig, MousePrims, NLType, OutputConfig, OutputPrims, PlotManager, Prims, PrintConfig, PrintPrims, RNG, SelfManager, SelfPrims, Timer, Updater, UserDialogConfig, UserDialogPrims, World, WorldConfig, csvToWorldState, fold, id, lookup, ref, ref1, ref2, ref3, ref4, ref5, toObject, values,
+  var BreedManager, Dump, EvalPrims, Hasher, ImportExportConfig, ImportExportPrims, InspectionConfig, InspectionPrims, LayoutManager, LinkPrims, ListPrims, Meta, MiniWorkspace, MouseConfig, MousePrims, NLType, OutputConfig, OutputPrims, PlotManager, Prims, PrintConfig, PrintPrims, RNG, SelfManager, SelfPrims, Timer, Updater, UserDialogConfig, UserDialogPrims, World, WorldConfig, csvToWorldState, fold, id, lookup, ref, ref1, ref2, ref3, ref4, ref5, ref6, toObject, values,
     slice = [].slice;
 
   WorldConfig = (function() {
@@ -18128,25 +18236,28 @@ function hasOwnProperty(obj, prop) {
 
   ref = require('brazier/object'), lookup = ref.lookup, values = ref.values;
 
-  ref1 = require('./prim/importexportprims'), ImportExportConfig = ref1.Config, ImportExportPrims = ref1.Prims;
+  ref1 = require('./prim/inspectionprims'), InspectionConfig = ref1.Config, InspectionPrims = ref1.Prims;
 
-  ref2 = require('./prim/mouseprims'), MouseConfig = ref2.Config, MousePrims = ref2.Prims;
+  ref2 = require('./prim/importexportprims'), ImportExportConfig = ref2.Config, ImportExportPrims = ref2.Prims;
 
-  ref3 = require('./prim/outputprims'), OutputConfig = ref3.Config, OutputPrims = ref3.Prims;
+  ref3 = require('./prim/mouseprims'), MouseConfig = ref3.Config, MousePrims = ref3.Prims;
 
-  ref4 = require('./prim/printprims'), PrintConfig = ref4.Config, PrintPrims = ref4.Prims;
+  ref4 = require('./prim/outputprims'), OutputConfig = ref4.Config, OutputPrims = ref4.Prims;
 
-  ref5 = require('./prim/userdialogprims'), UserDialogConfig = ref5.Config, UserDialogPrims = ref5.Prims;
+  ref5 = require('./prim/printprims'), PrintConfig = ref5.Config, PrintPrims = ref5.Prims;
+
+  ref6 = require('./prim/userdialogprims'), UserDialogConfig = ref6.Config, UserDialogPrims = ref6.Prims;
 
   Meta = require('meta');
 
   MiniWorkspace = (function() {
-    function MiniWorkspace(selfManager1, updater1, breedManager1, rng1, plotManager1) {
+    function MiniWorkspace(selfManager1, updater1, breedManager1, rng1, plotManager1, csvToWorldState) {
       this.selfManager = selfManager1;
       this.updater = updater1;
       this.breedManager = breedManager1;
       this.rng = rng1;
       this.plotManager = plotManager1;
+      this.importCSV = csvToWorldState;
     }
 
     return MiniWorkspace;
@@ -18160,16 +18271,17 @@ function hasOwnProperty(obj, prop) {
           return function(widgets) {
             return function(extensionDumpers) {
               return function() {
-                var breedManager, dialogConfig, dump, evalPrims, importExportConfig, importExportPrims, importWorldFromCSV, layoutManager, linkPrims, listPrims, mouseConfig, mousePrims, outputConfig, outputPrims, outputStore, plotManager, plots, prims, printConfig, printPrims, ref10, ref11, ref12, ref13, ref6, ref7, ref8, ref9, rng, selfManager, selfPrims, timer, typechecker, updater, userDialogPrims, world, worldArgs, worldConfig;
+                var breedManager, dialogConfig, dump, evalPrims, importExportConfig, importExportPrims, importWorldFromCSV, inspectionConfig, inspectionPrims, layoutManager, linkPrims, listPrims, mouseConfig, mousePrims, outputConfig, outputPrims, outputStore, plotManager, plots, prims, printConfig, printPrims, ref10, ref11, ref12, ref13, ref14, ref15, ref7, ref8, ref9, rng, selfManager, selfPrims, timer, typechecker, updater, userDialogPrims, world, worldArgs, worldConfig;
                 worldArgs = arguments;
-                dialogConfig = (ref6 = modelConfig != null ? modelConfig.dialog : void 0) != null ? ref6 : new UserDialogConfig;
-                importExportConfig = (ref7 = modelConfig != null ? modelConfig.importExport : void 0) != null ? ref7 : new ImportExportConfig;
-                mouseConfig = (ref8 = modelConfig != null ? modelConfig.mouse : void 0) != null ? ref8 : new MouseConfig;
-                outputConfig = (ref9 = modelConfig != null ? modelConfig.output : void 0) != null ? ref9 : new OutputConfig;
-                plots = (ref10 = modelConfig != null ? modelConfig.plots : void 0) != null ? ref10 : [];
-                printConfig = (ref11 = modelConfig != null ? modelConfig.print : void 0) != null ? ref11 : new PrintConfig;
-                worldConfig = (ref12 = modelConfig != null ? modelConfig.world : void 0) != null ? ref12 : new WorldConfig;
-                Meta.version = (ref13 = modelConfig != null ? modelConfig.version : void 0) != null ? ref13 : Meta.version;
+                dialogConfig = (ref7 = modelConfig != null ? modelConfig.dialog : void 0) != null ? ref7 : new UserDialogConfig;
+                importExportConfig = (ref8 = modelConfig != null ? modelConfig.importExport : void 0) != null ? ref8 : new ImportExportConfig;
+                inspectionConfig = (ref9 = modelConfig != null ? modelConfig.inspection : void 0) != null ? ref9 : new InspectionConfig;
+                mouseConfig = (ref10 = modelConfig != null ? modelConfig.mouse : void 0) != null ? ref10 : new MouseConfig;
+                outputConfig = (ref11 = modelConfig != null ? modelConfig.output : void 0) != null ? ref11 : new OutputConfig;
+                plots = (ref12 = modelConfig != null ? modelConfig.plots : void 0) != null ? ref12 : [];
+                printConfig = (ref13 = modelConfig != null ? modelConfig.print : void 0) != null ? ref13 : new PrintConfig;
+                worldConfig = (ref14 = modelConfig != null ? modelConfig.world : void 0) != null ? ref14 : new WorldConfig;
+                Meta.version = (ref15 = modelConfig != null ? modelConfig.version : void 0) != null ? ref15 : Meta.version;
                 dump = Dump(extensionDumpers);
                 rng = new RNG;
                 typechecker = NLType;
@@ -18179,32 +18291,6 @@ function hasOwnProperty(obj, prop) {
                 plotManager = new PlotManager(plots);
                 timer = new Timer;
                 updater = new Updater(dump);
-                world = (function(func, args, ctor) {
-                  ctor.prototype = func.prototype;
-                  var child = new ctor, result = func.apply(child, args);
-                  return Object(result) === result ? result : child;
-                })(World, [new MiniWorkspace(selfManager, updater, breedManager, rng, plotManager), worldConfig, (function() {
-                  outputConfig.clear();
-                  return outputStore = "";
-                }), (function() {
-                  return outputStore;
-                }), (function(text) {
-                  return outputStore = text;
-                }), dump].concat(slice.call(worldArgs)), function(){});
-                layoutManager = new LayoutManager(world, rng.nextDouble);
-                evalPrims = new EvalPrims(code, widgets);
-                prims = new Prims(dump, Hasher, rng, world, evalPrims);
-                selfPrims = new SelfPrims(selfManager.self);
-                linkPrims = new LinkPrims(world);
-                listPrims = new ListPrims(dump, Hasher, prims.equality.bind(prims), rng.nextInt);
-                mousePrims = new MousePrims(mouseConfig);
-                outputPrims = new OutputPrims(outputConfig, (function(x) {
-                  return outputStore += x;
-                }), (function() {
-                  return outputStore = "";
-                }), dump);
-                printPrims = new PrintPrims(printConfig, dump);
-                userDialogPrims = new UserDialogPrims(dialogConfig);
                 importWorldFromCSV = function(csvText) {
                   var breedNamePairs, functionify, pluralToSingular, ptsObject, singularToPlural, stpObject, worldState;
                   functionify = function(obj) {
@@ -18232,8 +18318,35 @@ function hasOwnProperty(obj, prop) {
                   worldState = csvToWorldState(singularToPlural, pluralToSingular)(csvText);
                   return world.importState(worldState);
                 };
-                /// GBCC ///
-                world.importWorldFromCSV = function(csvText) {
+                world = (function(func, args, ctor) {
+                  ctor.prototype = func.prototype;
+                  var child = new ctor, result = func.apply(child, args);
+                  return Object(result) === result ? result : child;
+                })(World, [new MiniWorkspace(selfManager, updater, breedManager, rng, plotManager, importWorldFromCSV), worldConfig, (function() {
+                  outputConfig.clear();
+                  return outputStore = "";
+                }), (function() {
+                  return outputStore;
+                }), (function(text) {
+                  return outputStore = text;
+                }), dump].concat(slice.call(worldArgs)), function(){});
+                layoutManager = new LayoutManager(world, rng.nextDouble);
+                evalPrims = new EvalPrims(code, widgets);
+                prims = new Prims(dump, Hasher, rng, world, evalPrims);
+                selfPrims = new SelfPrims(selfManager.self);
+                linkPrims = new LinkPrims(world);
+                listPrims = new ListPrims(dump, Hasher, prims.equality.bind(prims), rng.nextInt);
+                inspectionPrims = new InspectionPrims(inspectionConfig);
+                mousePrims = new MousePrims(mouseConfig);
+                outputPrims = new OutputPrims(outputConfig, (function(x) {
+                  return outputStore += x;
+                }), (function() {
+                  return outputStore = "";
+                }), dump);
+                printPrims = new PrintPrims(printConfig, dump);
+                userDialogPrims = new UserDialogPrims(dialogConfig);
+                
+                importWorldFromCSV = function(csvText) {
                   var breedNamePairs, functionify, pluralToSingular, ptsObject, singularToPlural, stpObject, worldState;
                   functionify = function(obj) {
                     return function(x) {
@@ -18260,19 +18373,24 @@ function hasOwnProperty(obj, prop) {
                   worldState = csvToWorldState(singularToPlural, pluralToSingular)(csvText);
                   return world.importState(worldState);
                 };
-                /// END GBCC ///
+
+
+
                 importExportPrims = new ImportExportPrims(importExportConfig, (function() {
                   return world.exportCSV();
                 }), (function() {
                   return world.exportAllPlotsCSV();
                 }), (function(plot) {
                   return world.exportPlotCSV(plot);
+                }), (function(path) {
+                  return world.importDrawing(path);
                 }), importWorldFromCSV);
                 return {
                   selfManager: selfManager,
                   breedManager: breedManager,
                   dump: dump,
                   importExportPrims: importExportPrims,
+                  inspectionPrims: inspectionPrims,
                   layoutManager: layoutManager,
                   linkPrims: linkPrims,
                   listPrims: listPrims,
@@ -18288,8 +18406,7 @@ function hasOwnProperty(obj, prop) {
                   typechecker: typechecker,
                   updater: updater,
                   userDialogPrims: userDialogPrims,
-                  world: world,
-                  importWorldFromCSV: importWorldFromCSV
+                  world: world
                 };
               };
             };
@@ -18301,7 +18418,7 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this);
 
-},{"./core/breedmanager":"engine/core/breedmanager","./core/structure/selfmanager":"engine/core/structure/selfmanager","./core/typechecker":"engine/core/typechecker","./core/world":"engine/core/world","./dump":"engine/dump","./hasher":"engine/hasher","./plot/plotmanager":"engine/plot/plotmanager","./prim/evalprims":"engine/prim/evalprims","./prim/importexportprims":"engine/prim/importexportprims","./prim/layoutmanager":"engine/prim/layoutmanager","./prim/linkprims":"engine/prim/linkprims","./prim/listprims":"engine/prim/listprims","./prim/mouseprims":"engine/prim/mouseprims","./prim/outputprims":"engine/prim/outputprims","./prim/prims":"engine/prim/prims","./prim/printprims":"engine/prim/printprims","./prim/selfprims":"engine/prim/selfprims","./prim/userdialogprims":"engine/prim/userdialogprims","./updater":"engine/updater","brazier/array":"brazier/array","brazier/function":"brazier/function","brazier/maybe":"brazier/maybe","brazier/object":"brazier/object","meta":"meta","serialize/importcsv":"serialize/importcsv","util/rng":"util/rng","util/timer":"util/timer"}],"extensions/all":[function(require,module,exports){
+},{"./core/breedmanager":"engine/core/breedmanager","./core/structure/selfmanager":"engine/core/structure/selfmanager","./core/typechecker":"engine/core/typechecker","./core/world":"engine/core/world","./dump":"engine/dump","./hasher":"engine/hasher","./plot/plotmanager":"engine/plot/plotmanager","./prim/evalprims":"engine/prim/evalprims","./prim/importexportprims":"engine/prim/importexportprims","./prim/inspectionprims":"engine/prim/inspectionprims","./prim/layoutmanager":"engine/prim/layoutmanager","./prim/linkprims":"engine/prim/linkprims","./prim/listprims":"engine/prim/listprims","./prim/mouseprims":"engine/prim/mouseprims","./prim/outputprims":"engine/prim/outputprims","./prim/prims":"engine/prim/prims","./prim/printprims":"engine/prim/printprims","./prim/selfprims":"engine/prim/selfprims","./prim/userdialogprims":"engine/prim/userdialogprims","./updater":"engine/updater","brazier/array":"brazier/array","brazier/function":"brazier/function","brazier/maybe":"brazier/maybe","brazier/object":"brazier/object","meta":"meta","serialize/importcsv":"serialize/importcsv","util/rng":"util/rng","util/timer":"util/timer"}],"extensions/all":[function(require,module,exports){
 (function() {
   var dumpers, extensionPaths;
 
@@ -22196,8 +22313,8 @@ aa.MersenneTwisterFast=function(){for(var a=new S,b=arguments.length|0,c=0,d=[];
   module.exports = Iterator = (function() {
     Iterator.prototype._items = void 0;
 
-    function Iterator(items) {
-      this._items = items.slice(0);
+    function Iterator(_items) {
+      this._items = _items;
     }
 
     Iterator.prototype.all = function(f) {
@@ -22265,12 +22382,20 @@ aa.MersenneTwisterFast=function(){for(var a=new S,b=arguments.length|0,c=0,d=[];
       }
     };
 
+    Iterator.prototype.nthItem = function(n) {
+      return this._items[n];
+    };
+
     Iterator.prototype.map = function(f) {
       return this._items.map(f);
     };
 
     Iterator.prototype.forEach = function(f) {
       this._items.forEach(f);
+    };
+
+    Iterator.prototype.size = function() {
+      return this._items.length;
     };
 
     Iterator.prototype.toArray = function() {

@@ -207,13 +207,15 @@ Interface = (function() {
     var viewWidth = parseFloat($(".netlogo-canvas").css("width"));
     var viewHeight = parseFloat($(".netlogo-canvas").css("height"));
     var spanText;
-    $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' type='checkbox'>Enable: Mirroring</span>");
-
     if (activityType === "hubnet") {
+      $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' checked type='checkbox'>Enable: Mirroring</span>");
+      
       //$(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' type='checkbox'>Enable Mirroring</span>");
       $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-view-container").css("height")) - 0 + "px");
       $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-view-container").css("width")) - 128 + "px");
     } else {
+      $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'>");
+    
       //spanText = "<span class='teacher-controls hidden' style='float:right'>Enable:";
       spanText += "<input id='enableView' checked type='checkbox'>View";
       spanText += "<input id='enableTabs' checked type='checkbox'>Tabs";
@@ -244,6 +246,8 @@ Interface = (function() {
       socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'type': 'view'});
     });
   }
+
+
 
   function showItems(min, max) {
     $(".netlogo-widget").addClass("hidden");
