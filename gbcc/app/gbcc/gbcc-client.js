@@ -11,7 +11,8 @@ var foreverButtonCode = new Object();
 var myUserType;
 var activityType = undefined;
 var drawPatches = true;
-var mirroringEnabled = false;
+var mirroringEnabled = true;
+var myCanvas;
   
 jQuery(document).ready(function() {
   
@@ -152,6 +153,7 @@ jQuery(document).ready(function() {
       userMirrorStreamData.links = [];
       userMirrorStreamData.drawingEvents = [];
       userMirrorStreamData.globals = [];
+
       if (data.state) {
         if (mirroringEnabled) {
           myWorld = data.state;
@@ -161,17 +163,17 @@ jQuery(document).ready(function() {
             world.importState(myWorld);
           }
         }
-      } /*else {
-        if (mirroringEnabled) {
-          socket.emit("new entry requests UI change", {"userId": myUserId});
-        }
-      }*/
+      } 
+      if (data.image && mirroringEnabled) {
+        universe.applyUpdate({ drawingEvents: [{type: "import-drawing", sourcePath: data.image}] });
+      }
     }
   });
-
+            //"teacher accepts new entry request"
   socket.on("teacher accepts new entry request", function(data) {
-    state = world.exportCSV();
-    socket.emit("teacher requests UI change new entry", {"userId": data.userId, "state": state});
+    var state = world.exportCSV();
+    blob = myCanvas.toDataURL("image/jpeg", 0.5); 
+    socket.emit('teacher requests UI change new entry', {'userId':  data.userId, 'state': state, 'image': blob});
   });
 
   // students display reporters

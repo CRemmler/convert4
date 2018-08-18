@@ -62,7 +62,7 @@
     partials: {
       helpAuthoringEditWidget: keyTable([[["enter"], "submit form"], [["escape"], "close form and ignore any changes made"]]),
       helpAuthoringStandard: keyTable([[[platformCtrlHtml, "shift", "l"], "switch to interactive mode"], [[platformCtrlHtml, "shift", "h"], "toggle resizer visibility"], [["escape"], "close context menu if it is open, or deselect any selected widget"], [[platformCtrlHtml], "hold to ignore \"snap to grid\" while moving or resizing the selected widget"], [["&uarr;", "&darr;", "&larr;", "&rarr;"], "move widget, irrespective of the grid"]].concat(!isMac ? [[["delete"], "delete the selected widget"]] : [])),
-      helpInteractive: keyTable([[[platformCtrlHtml, "shift", "l"], "switch to authoring mode"]]),
+      helpInteractive: keyTable([[[platformCtrlHtml, "shift", "l"], "switch to authoring mode"], [[platformCtrlHtml, "u"], "find all usages of selected text (when in NetLogo Code editor)"]]),
       helpText: "<table>\n  {{# stateName === 'interactive' }}\n    {{>helpInteractive}}\n  {{elseif stateName === 'authoring - plain' }}\n    {{>helpAuthoringStandard}}\n  {{elseif stateName === 'authoring - editing widget' }}\n    {{>helpAuthoringEditWidget}}\n  {{else}}\n    Invalid help state.\n  {{/}}\n</table>"
     }
   });

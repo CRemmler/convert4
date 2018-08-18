@@ -165,13 +165,12 @@
 }
 
 .netlogo-code-container {
-    display: flex;
-    flex-flow: column;
     background-color: white;
     margin-top: 0;
 }
 
 .netlogo-ugly-button {
+  color:      black;
   text-align: center;
   background-color: rgb(240, 240, 240);
   border-color: rgb(238, 238, 238);
@@ -183,6 +182,63 @@
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.netlogo-procedurenames-dropdown {
+  width: 30%;
+  margin: 12px auto;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.netlogo-codetab-widget-list {
+  padding: 0;
+  margin: 12px 12px;
+  display: inline;
+}
+
+.netlogo-codetab-widget-listitem {
+  display: inline;
+  padding: 6px;
+}
+
+.netlogo-autocomplete-label {
+  font-size: 16px;
+}
+
+.netlogo-autocomplete-checkbox {
+  width: 14px;
+  height: 14px;
+}
+
+.netlogo-codeusage-popup {
+  position:absolute;
+  z-index: 10;
+  border:1px solid #B2B2B2;    
+  background: white;
+  box-shadow: 3px 3px 2px #E9E9E9;
+  border-radius:4px;
+  max-height: 15em;
+  overflow-y: auto;
+}
+
+.netlogo-codeusage-list {
+  list-style:none;
+  margin-top:1px;
+  padding: 1px;
+  font-size:90%;
+  font-family: monospace;
+}
+
+.netlogo-codeusage-item {
+  padding: 1px;
+}
+
+.netlogo-codeusage-item:hover {
+  color: white;
+  background:#284570;
+  border-radius:2px;
 }
 
 .netlogo-info-editor {
@@ -279,7 +335,8 @@
 }
 
 .netlogo-button {
-    border: inherit;
+    border:  inherit;
+    color:   black;
     display: flex;
     justify-content: space-around;
     align-items: center;

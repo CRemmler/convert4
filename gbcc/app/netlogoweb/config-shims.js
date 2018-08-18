@@ -1,5 +1,5 @@
 (function() {
-  var genDialogConfig, genImportExportConfig, genMouseConfig, genOutputConfig, genPlotOps, genWorldConfig;
+  var genDialogConfig, genImportExportConfig, genInspectionConfig, genMouseConfig, genOutputConfig, genPlotOps, genWorldConfig;
 
   genDialogConfig = function(viewController) {
     var clearMouse;
@@ -50,6 +50,26 @@
         anchor.setAttribute("download", filename);
         anchor.click();
       },
+      importDrawing: function(trueImport) {
+        return function(path) {
+          var elem, listener;
+          listener = function(event) {
+            var reader;
+            reader = new FileReader;
+            reader.onload = function(e) {
+              return trueImport(e.target.result);
+            };
+            if (event.target.files.length > 0) {
+              reader.readAsDataURL(event.target.files[0]);
+            }
+            return elem.removeEventListener('change', listener);
+          };
+          elem = ractive.find('#import-drawing-input');
+          elem.addEventListener('change', listener);
+          elem.click();
+          elem.value = "";
+        };
+      },
       importWorld: function(trueImport) {
         return function() {
           var elem, listener;
@@ -70,6 +90,20 @@
           elem.value = "";
         };
       }
+    };
+  };
+
+  genInspectionConfig = function() {
+    var clearDead, inspect, stopInspecting;
+    inspect = (function(agent) {
+      return window.alert("Agent inspection is not yet implemented");
+    });
+    stopInspecting = (function(agent) {});
+    clearDead = (function() {});
+    return {
+      inspect: inspect,
+      stopInspecting: stopInspecting,
+      clearDead: clearDead
     };
   };
 
@@ -145,6 +179,7 @@
     return {
       dialog: genDialogConfig(viewController),
       importExport: genImportExportConfig(ractive, viewController),
+      inspection: genInspectionConfig(),
       mouse: genMouseConfig(viewController),
       output: genOutputConfig(ractive, appendToConsole),
       print: {

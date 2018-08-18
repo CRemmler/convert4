@@ -105,7 +105,7 @@
         };
         message = err.message;
         if (contains(message, "Couldn't find corresponding reader") || contains(message, "Models must have 12 sections")) {
-          return message + " (see <a href='https://netlogoweb.org/info#model-format-error'>here</a> for more information)";
+          return message + " (see <a href='https://netlogoweb.org/docs/faq#model-format-error'>here</a> for more information)";
         } else {
           return message;
         }

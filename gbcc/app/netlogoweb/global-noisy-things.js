@@ -56,7 +56,7 @@
       } catch (error) {
         ex = error;
         if (!(ex instanceof Exception.HaltInterrupt)) {
-          message = !(ex instanceof TypeError) ? ex.message : "A type error has occurred in the simulation engine.\nMore information about these sorts of errors can be found\n<a href=\"https://netlogoweb.org/info#type-errors\">here</a>.<br><br>\nAdvanced users might find the generated error helpful, which is as follows:<br><br>\n<b>" + ex.message + "</b><br><br>";
+          message = !(ex instanceof TypeError) ? ex.message : "A type error has occurred in the simulation engine.\nMore information about these sorts of errors can be found\n<a href=\"https://netlogoweb.org/docs/faq#type-errors\">here</a>.<br><br>\nAdvanced users might find the generated error helpful, which is as follows:<br><br>\n<b>" + ex.message + "</b><br><br>";
           window.showErrors([message]);
           throw new Exception.HaltInterrupt;
         } else {

@@ -169,7 +169,7 @@
 
     WidgetController.prototype.setCode = function(code) {
       this.ractive.set('code', code);
-      this.ractive.findComponent('editor').setCode(code);
+      this.ractive.findComponent('codePane').setCode(code);
       this.ractive.fire('controller.recompile');
     };
 
@@ -192,7 +192,7 @@
   })();
 
   updateWidget = function(widget) {
-    var desiredHeight, desiredWidth, err, isntValidValue, maxPxcor, maxPycor, maxValue, minPxcor, minPycor, minValue, patchSize, ref, stepValue, value;
+    var desiredHeight, desiredWidth, err, isNum, isntValidValue, maxPxcor, maxPycor, maxValue, minPxcor, minPycor, minValue, patchSize, ref, stepValue, value;
     if (widget.currentValue != null) {
       widget.currentValue = (function() {
         var error;
@@ -201,11 +201,12 @@
         } else if (widget.reporter != null) {
           try {
             value = widget.reporter();
-            isntValidValue = !((value != null) && ((typeof value !== "number") || isFinite(value)));
+            isNum = typeof value === "number";
+            isntValidValue = !((value != null) && (!isNum || isFinite(value)));
             if (isntValidValue) {
               return 'N/A';
             } else {
-              if (widget.precision != null && typeof value === "number") {
+              if ((widget.precision != null) && isNum) {
                 return NLMath.precision(value, widget.precision);
               } else {
                 return value;

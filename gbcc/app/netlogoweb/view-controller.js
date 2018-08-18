@@ -12,7 +12,11 @@
       this.mouseXcor = bind(this.mouseXcor, this);
       this.view = new View(fontSize);
       this.turtleDrawer = new TurtleDrawer(this.view);
-      this.drawingLayer = new DrawingLayer(this.view, this.turtleDrawer);
+      this.drawingLayer = new DrawingLayer(this.view, this.turtleDrawer, (function(_this) {
+        return function() {
+          return _this.repaint();
+        };
+      })(this));
       this.patchDrawer = new PatchDrawer(this.view);
       this.spotlightDrawer = new SpotlightDrawer(this.view);
       this.container.appendChild(this.view.visibleCanvas);
@@ -118,6 +122,7 @@
     };
 
     ViewController.prototype.applyUpdate = function(modelUpdate) {
+      console.log("apply update", modelUpdate);
       return this.model.update(modelUpdate);
     };
 
@@ -418,8 +423,6 @@
     }
   }
   
-  { type: "import-drawing", sourcePath }
-  
   { type: "zoom", scale }
   
   { type: "reset-zoom" }
@@ -437,6 +440,7 @@
       this.canvas = document.createElement('canvas');
       this.canvas.id = 'dlayer';
       this.ctx = this.canvas.getContext('2d');
+      myCanvas = this.canvas;
     }
 
     DrawingLayer.prototype.resizeCanvas = function() {
@@ -567,7 +571,8 @@
           return function() {
             _this.ctx.save();
             _this.ctx.strokeStyle = _this._rgbToCss(penColor);
-            _this.ctx.lineWidth = _this.view.onePixel;
+            _this.ctx.lineWidth = size * _this.view.onePixel;
+	          _this.ctx.lineCap = 'round';
             _this.ctx.beginPath();
             _this.ctx.moveTo(x1, y1);
             _this.ctx.lineTo(x2, y2);
@@ -584,9 +589,6 @@
     };
 
     DrawingLayer.prototype.draw = function() {
-      if (universe && universe.model && universe.model.drawingEvents) {
-        universe.model.drawingEvents.push(this.events);
-      }
       return this.events.forEach((function(_this) {
         return function(event) {
           switch (event.type) {

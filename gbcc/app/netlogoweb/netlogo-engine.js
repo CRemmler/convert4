@@ -15655,7 +15655,11 @@ arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
         return exportFile(trueExportPlot(plot))(filename);
       };
       this.importDrawing = function(filename) {
-        return importDrawing(trueImportDrawing)(filename);
+        /// GBCC ///
+        world.importDrawing(filename);
+        //return importDrawing(trueImportDrawing)(filename);
+        // undo this 
+        /// END GBCC ///
       };
       this.importWorld = function(filename) {
         return importWorld(trueImportWorld)(filename);

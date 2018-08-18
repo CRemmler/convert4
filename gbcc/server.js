@@ -112,10 +112,6 @@ io.on('connection', function(socket){
         rooms = [];
         for (var key in allRooms) { rooms.push(key); }
         socket.to("login").emit("display interface", {userType: "login", rooms: rooms, components: config.interfaceJs.loginComponents, activityType: activityType});
-        if (activityType === "hubnet") { 
-          allRooms[myRoom].settings.view = false;
-          allRooms[myRoom].settings.mirror = false;
-        }
       } else {
         if (activityStyle === "flat") {
           socket.emit("display interface", {userType: "flat student", room: myRoom, components: config.interfaceJs.teacherComponents});
@@ -132,11 +128,8 @@ io.on('connection', function(socket){
           // it's gbcc, so send student a teacher interface
           var dataObject;
           if (allRooms[myRoom].userData != {}) {
-            //console.log("user enters "+myUserId);
             for (var user in allRooms[myRoom].userData) {
-              //console.log("loop through "+user);
               if (user != myUserId) {
-                //console.log("user enters!!!");
                 socket.emit("gbcc user enters", {userId: user, userData: allRooms[myRoom].userData[user], userType: allRooms[myRoom].userData[user]["userType"] });
               }
             }
@@ -427,7 +420,7 @@ io.on('connection', function(socket){
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
     allRooms[myRoom].settings[data.type] = data.display; 
-    socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {"display":data.display, "type":data.type, "state": data.state});      
+    socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {"display":data.display, "type":data.type, "state": data.state, "image": data.image});      
     schools[school] = allRooms;
   });
   
@@ -436,7 +429,7 @@ io.on('connection', function(socket){
     socket.to(school+"-"+myRoom+"-teacher").emit("teacher accepts new entry request", {"userId": data.userId });
   }*/
   socket.on("teacher requests UI change new entry", function(data) {
-    io.to(socketDictionary[data.userId]).emit("student accepts UI change", {"display": true, "type": "mirror", "state": data.state});
+    io.to(socketDictionary[data.userId]).emit("student accepts UI change", {"display": true, "type": "mirror", "state": data.state, "image": data.image});
   });
 	
   // user exits

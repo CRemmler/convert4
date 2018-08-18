@@ -74,6 +74,15 @@
           }
         }
       };
+    },
+    highlightProcedure: function(procedureName, index) {
+      var end, start;
+      end = this._editor.posFromIndex(index);
+      start = CodeMirror.Pos(end.line, end.ch - procedureName.length);
+      this._editor.setSelection(start, end);
+    },
+    getEditor: function() {
+      return this._editor;
     }
   });
 

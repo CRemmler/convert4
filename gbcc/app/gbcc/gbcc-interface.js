@@ -238,16 +238,15 @@ Interface = (function() {
     $("#enableMirroring").click(function() {
       mirroringEnabled = $(this).prop("checked") ? true : false;
       if (mirroringEnabled) {
-        state = world.exportCSV();
-        socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'state': state, 'type': 'mirror'});
+        var state = world.exportCSV();
+        var blob = myCanvas.toDataURL("image/jpeg", 0.5); 
+        socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'state': state, 'type': 'mirror', 'image': blob});
       } else {
         socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'state': "", 'type': 'mirror' });        
       }
       socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'type': 'view'});
     });
   }
-
-
 
   function showItems(min, max) {
     $(".netlogo-widget").addClass("hidden");
