@@ -29,6 +29,9 @@
       this.model = new AgentModel();
       this.model.world.turtleshapelist = defaultShapes;
       this.repaint();
+      <!-- GBCC -->
+      universe = this;
+      <!-- END GBCC -->
     }
 
     ViewController.prototype.mouseXcor = function() {
@@ -133,7 +136,6 @@
         u = updates[k];
         
         <!-- GBCC -->
-        //if (socket && activityType === "hubnet" && mirroringEnabled && myUserType === "teacher") {
         if (socket && activityType === "hubnet" && myUserType === "teacher") {
           socket.emit('send mirror stream reporter', {
             hubnetMessageSource: "server",
@@ -141,7 +143,7 @@
             hubnetMessage: modelUpdate[k]
           });
         }
-        universe = this;
+        //universe = this;
         <!-- END GBCC -->
 
         this.applyUpdate(u);

@@ -93,7 +93,6 @@ Interface = (function() {
       ($("#tips").css("display") === "none") ? $("#tips").css("display","inline-block") : $("#tips").css("display","none"); 
     });
     $("#exportHtmlButton").css("display","none");
-    setupExtensions();
   }
 
   function displayTeacherInterface(room, components) {
