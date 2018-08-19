@@ -262,7 +262,7 @@ app.post('/fileupload',function(req,res){
           zip.file("app/gbcc/geogebra_thumbnail.png", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/font-awesome.min.css").then(function(data) {
-          zip.file("app/gbcc/fontawesome-min.css", data);
+          zip.file("app/gbcc/font-awesome.min.css", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
         	zip.file("app/gbcc/fontawesome-webfont.eot", data);
@@ -624,27 +624,21 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/readme.md", "utf8").then(function(data) {
         	zip.file("readme.md", data);
         }).then(function() {
-          
-          fs.readFileAsync("app/netlogoweb/chosen.jquery.js", "utf8").then(function(data) {
-            zip.file("app/netlogoweb/chosen.jquery.js", data);
-          }).then(function() {
-            
-            fs.readFileAsync("app/netlogoweb/show-hint.js", "utf8").then(function(data) {
-              zip.file("app/netlogoweb/show-hint.js", data);
-            }).then(function() {
-              
-              fs.readFileAsync("app/netlogoweb/show-hint.css", "utf8").then(function(data) {
-                zip.file("app/netlogoweb/show-hint.css", data);
-              }).then(function() {
-                
-                fs.readFileAsync("app/netlogoweb/chosen.css", "utf8").then(function(data) {
-                  zip.file("app/netlogoweb/chosen.css", data);
-                }).then(function() {
-                  
+        fs.readFileAsync("gbcc/app/netlogoweb/chosen.jquery.js", "utf8").then(function(data) {
+          zip.file("app/netlogoweb/chosen.jquery.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/show-hint.js", "utf8").then(function(data) {
+          zip.file("app/netlogoweb/show-hint.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/show-hint.css", "utf8").then(function(data) {
+          zip.file("app/netlogoweb/show-hint.css", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/chosen.css", "utf8").then(function(data) {
+          zip.file("app/netlogoweb/chosen.css", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/server.js", "utf8").then(function(data) {
         	zip.file("server.js", data);
         }).then(function() {
-          
           zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
           .pipe(fs.createWriteStream(filename+'.zip'))
           .on('finish', function () {
