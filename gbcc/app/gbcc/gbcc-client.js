@@ -6,7 +6,6 @@ var myData = {};
 var userStreamData = {};
 var myWorld;
 var myStreamData = {};
-//var repaintPatches = true;
 var foreverButtonCode = new Object();
 var myUserType;
 var activityType = undefined;
@@ -15,11 +14,8 @@ var mirroringEnabled = true;
 var myCanvas;
   
 jQuery(document).ready(function() {
-  
-  $("body").append("<img id='imageLayer' width='200px' height='200px' style='display:none'>")
 
   var userId;
-  //var userType;
   var turtleDict = {};
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
@@ -144,7 +140,7 @@ jQuery(document).ready(function() {
         foreverButtonCode[teacherId] = "gbcc-forever-button-code-"+teacherId;
       }
     }
-      //$(".gbcc-gallery li.selected").length
+    //$(".gbcc-gallery li.selected").length
     if (data.type === "mirror") {
       mirroringEnabled = data.display;
       userMirrorStreamData = {};
@@ -169,7 +165,8 @@ jQuery(document).ready(function() {
       }
     }
   });
-            //"teacher accepts new entry request"
+  
+  //"teacher accepts new entry request"
   socket.on("teacher accepts new entry request", function(data) {
     var state = world.exportCSV();
     blob = myCanvas.toDataURL("image/jpeg", 0.5); 
