@@ -254,99 +254,13 @@ Interface = (function() {
     }
   }
   
-  function setupExtensions() {
-    Graph.setupInterface();
-  }
-  
-  function importImageFile() {
-    var fileInput = document.getElementById("importDrawingFileElem");
-    var xmin = $("#importDrawingFileElem").attr("xmin");
-    var ymin = $("#importDrawingFileElem").attr("ymin");
-    var width = $("#importDrawingFileElem").attr("width");
-    var height = $("#importDrawingFileElem").attr("height");
-    //var files = fileInput.files;
-    var file = fileInput.files[0];
-    var filename = file.name;
-    var src = (window.URL || window.webkitURL).createObjectURL(file);
-    if ($("#"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height).length > 0) {
-      $("#"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height).attr("src",src);
-    } else {
-      $("body").append("<img class='uploadImage' id='"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height+"' xmin=\""+xmin+"\" ymin=\""+ymin+"\" width=\""+width+"\" height=\""+height+"\" src='"+src+"' style='display:none'>");
-    }
-    universe.repaint();
-  }
-  
-  //gbcc:import-drawing ["img-from-webpage" "https://www.google.com" 0 0 200 200]
-  //gbcc:import-drawing ["img-from-file-upload" "" 0 0 200 200 ]
-  //gbcc:import-drawing ["img-from-file" "glacier.jpg" 0 0 200 200]
-  //gbcc:import-drawing ["img-remove" "" 0 0 0 0]
-  function importDrawing(data) {
-    var action = data[0];
-    var filename = data[1];
-    var xmin = data[2];
-    var ymin = data[3];
-    var width = data[4];
-    var height = data[5];
-    if (action === "img-remove") {
-      repaintPatches = true;
-      $(".uploadImage").remove();
-      universe.repaint();
-    } else {
-      repaintPatches = false;
-      if (action === "img-from-webpage") {
-        // Code from: https://shkspr.mobi/blog/2015/11/google-secret-screenshot-api/
-        site = filename;
-        filename = "screenshot-from-url-"+$(".uploadImage").length;
-        $.ajax({
-          url: 'https://www.googleapis.com/pagespeedonline/v1/runPagespeed?url=' + site + '&screenshot=true',
-          context: this,
-          type: 'GET',
-          dataType: 'json',
-          success: function(allData) {
-            imgData = allData.screenshot.data.replace(/_/g, '/').replace(/-/g, '+');
-            imgData = 'data:image/jpeg;base64,' + imgData;
-            if ($("#"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height).length > 0) {
-              $("#"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height).attr("src",imgData);
-            } else {
-              $("body").append("<img class='uploadImage' id='"+filename+"-"+xmin+"-"+ymin+"-"+width+"-"+height+"' xmin=\""+xmin+"\" ymin=\""+ymin+"\" width=\""+width+"\" height=\""+height+"\" src='"+imgData+"' style='display:none'>");
-            }
-            universe.repaint();
-          }
-        });
-      } else if (action === "img-from-file-upload") {
-        $("#importDrawingFileElem").attr("xmin",xmin);
-        $("#importDrawingFileElem").attr("ymin",ymin);
-        $("#importDrawingFileElem").attr("width",width);
-        $("#importDrawingFileElem").attr("height",height);
-        $("#importDrawingFileElem").click();
-      } else if (action === "img-from-file") {
-        $.get("images/"+filename)
-        .done(function() { 
-          // Do something now you know the image exists.
-          if ($("#"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height).length > 0) {
-            $("#"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height).attr("src","images/"+filename);
-          } else {
-            $("body").append("<img class='uploadImage' id='"+filename.replace(".","")+"-"+xmin+"-"+ymin+"-"+width+"-"+height+"' xmin=\""+xmin+"\" ymin=\""+ymin+"\" width=\""+width+"\" height=\""+height+"\" src='images/"+filename+"' style='display:none'>");
-          }
-          universe.repaint();
-        }).fail(function() { 
-        // Image doesn't exist - do something else.
-        });
-        
-        
-      }
-    }
-  }
-
   return {
     showLogin: displayLoginInterface,
     showTeacher: displayTeacherInterface,
     showStudent: displayStudentInterface,
     showDisconnected: displayDisconnectedInterface,
     showAdmin: displayAdminInterface,
-    clearRoom: clearRoom,
-    importDrawing: importDrawing,
-    importImageFile: importImageFile
+    clearRoom: clearRoom
   };
  
 })();
