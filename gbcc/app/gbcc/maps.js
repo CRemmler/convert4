@@ -95,7 +95,9 @@ Maps = (function() {
     if (map) { map.invalidateSize(); }
     $("#mapContainer").css("display","inline-block");
     $("#mapContainer").css("z-index","0");
-    $(".netlogo-view-container").css("pointer-events","none");
+    if (!mirroringEnabled) {
+      $(".netlogo-view-container").css("pointer-events","none");
+    }
     $(".netlogo-view-container").css("z-index","1");
     $("#opacityWrapper").css("top",parseInt($("#mapContainer").css("top") - 15) + "px");
     $("#opacityWrapper").css("left",$("#mapContainer").css("left"));
@@ -496,7 +498,9 @@ Maps = (function() {
   }
   
   function mouseOn() {
-    $(".netlogo-view-container").css("pointer-events","none"); //show graph
+    if (!mirroringEnabled) {
+      $(".netlogo-view-container").css("pointer-events","none"); //show graph
+    }
     //if ($("#mapContainer").hasClass("grayscale")) { $("#mapContainer").removeClass("grayscale"); }
   }
   

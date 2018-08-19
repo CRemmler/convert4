@@ -34,7 +34,7 @@
       Classic Hubnet to GbCC Conversion 
     </h1>
 
-    <h2>Gridlock</h2>
+    <h2>&#x2713; Gridlock</h2>
     <h3>Open Gridlock in NetLogo</h3>
     <img src="images/hubnet-0.png">
     <h3>Save Gridlock to a NetLogo file</h3> 
@@ -44,40 +44,439 @@
     <h3>Run Gridlock as GbCC</h3> 
     <p>Follow the instructions in the Conversion Tool, and go to the url for your model.</p>
     <h3>Debug</h3>
-    <p>Comment out the global variable phase, because there is already a global widget called phase.</p>
     <img src="images/hubnet-3.png">
-    <p>Comment out primitives that don't exist in NetLogo Web.</p>
-    <br><img src="images/hubnet-4.png">
+    <p>Comment out <b>phase</b>. 
+    Since <b>phase</b> is a widget on the student's screen, then it is treated as a global variable.</p>
+    <hr>
+    <img src="images/hubnet-4.png">
+    <p>Comment out primitives that begin with underscores.</p>
     <h3>Notes</h3>
-    <p>The Gridlock from the Models Library does not act upon input from 
-      students. However, you can tell that the teacher is receiving input 
-      from students, if you add "show" messages in the "listen" loop.</p>
-    <p>Check out similar Gridlock, here: https://gridlock-hubnet.herokuapp.com/
-    that was adapted based on how the author wanted it to work
-    in the classroom. Not necessarily because of Hubnet communication in a GbCC environment.</p>
-    <h2>Disease</h2>
-    <h2>Other</h2>
-    <h2>View Extensions</h2>
+    <p>Check out similar Gridlock, here: 
+    <a href = "https://gridlock-hubnet.herokuapp.com/">https://gridlock-hubnet.herokuapp.com/</a>
+    
+    <h2>&#x2713; Disease</h2>
+    <h3>Convert Disease</h3>
+    <p>See the first four steps for converting Gridlock.</p>
+    <h3>Debug</h3>
+    <img src="images/hubnet-5.png">
+    <p>Comment out the turtle variable <b>step-size</b>, because is shows up as that student's global widget called <b>step-size</b>.</p>
+    <p>Since turtles need a variable for <b>step-size</b>, rename all instances of <b>step-size</b>
+    as something else like <b>turtle-step-size</b>
+    <hr>
+    <img src="images/hubnet-6.png">
+    <p>This error occurs because you can't find the nth item of a list, when n is a decimal, in NetLogo Web.
+    This situation will not throw an error in Desktop NetLogo.
+    </p>
+    <img src="images/hubnet-22.png">
+    <p>Here is one solution.</p>
+    <img src="images/hubnet-23.png">
+    <hr>
+    <p>Comment out <b>display</b> because it gives a console error.</p>
+    <img src="images/hubnet-7.png">
+
+    <hr>
+    <p>This isn't necessary, on every <b>listen</b> loop. It calls <b>hubnet-send</b>, each time.</p>
+    <img src="images/hubnet-8.png">
+
+    <h3>Notes</h3>
+    <p>Check out similar Disease, here: 
+    <a href="https://disease-hubnet.herokuapp.com/">https://disease-hubnet.herokuapp.com/</a>
+
+    <h2>&#x2713; Dice Stalagmite</h2>
+    <h3>Debug</h3>
+    <p>Comment out <b>display</b> because it gives a console error.</p>
+    <img src="images/hubnet-11.png">
+    
+    <h2>&#x2713;  Minority Game</h2>
+    <h3>Debug</h3>
+    <p>Comment out <b>display</b> because it gives a console error.</p>
+    <img src="images/hubnet-11.png">
+    <hr>
+    <img src="images/hubnet-6.png">
+    <p>This error occurs because you can't find the nth item of a list, when n is a decimal, in NetLogo Web.
+    This situation will not throw an error in Desktop NetLogo.
+    </p>
+    <img src="images/hubnet-22.png">
+    <p>Here is one solution.</p>
+    <img src="images/hubnet-23.png">
+
+    <h2>&#x2713; Polling</h2>
+    <h3>Debug</h3>
+    <p>In <b>startup</b>, do not call <b>setup</b>, because you should not trigger hubnet communication during <b>startup</b>.</p>
+    <img src="images/hubnet-13.png">
+    
+    <h2>&#x2713; Root Beer Game</h2>
+    <h3>Notes</h3>
+    <p>No debugging necessary.</p>
+    
+    <h2>&#x2713; Tragedy of the Commons</h2>
+    <h3>Debug</h3>
+    <img src="images/hubnet-9.png">
+    <p>Comment out the turtle variable <b>num-goats-to-buy</b>, because it shows up as that student's global widget called <b>num-goats-to-buy</b>.</p>
+    <p>Since farmers need a variable for <b>num-goats-to-buy</b> values, rename all instances of <b>num-goats-to-buy</b>
+    as something else like <b>number-of-goats-to-buy</b>
+    <hr>
+    <p>In <b>startup</b>, do not call <b>setup</b>, because you should not trigger hubnet communication during startup.
+    Move non-hubnet communication from <b>startup</b> to <b>setup</b>.</p>
+    <img src="images/hubnet-10.png">
+    
+    <h2>&#x2713; Oil Cartel</h2>
+    <h3>Debug</h3>
+    <img src="images/hubnet-15.png">
+    <p>Comment out the turtle variable <b>strategy</b>, because it shows up as that student's global widget called <b>strategy</b>.</p>
+    
+    <p>Since sellers need a variable for <b>strategy</b>, rename all instances of <b>strategy</b>
+    as something else like <b>strategy-of-seller</b>
+    
+    <p>Repeat process for <b>extra-output</b> and <b>reduced-output</b></p>
+
+    <hr>
+    <img src="images/hubnet-17.png">
+    <p>Comment out hubnet primitives that begin with underscores.</p>
+    <hr>
+    <img src="images/hubnet-18.png">
+    <p>Remove client's mirrored plot.</p>
+    <img src="images/hubnet-19.png">
+    
+    <h3>Notes</h3>
+    <p>Mirrored plots are not supported.</p>
+    <!--
+    <h2>Needs hubnet-broadcast</h2>
+    <p><b>I am currently implementing hubnet-broadcast.</b>
+    <br>Polling
+    <br>Root Beer Game 
+    <br>Critter Designers
+    <br>Fish Spotters
+    <br>Tragedy of the Commons 
+    <br>Oil cartel</p>
+  -->
+    <h2>Memory</h2>
+    <p>
+      <h3>Debug</h3>
+      <img src="images/hubnet-31.png">
+      <p>Comment out primitives that begin with underscores.</p>
+      <hr>
+      <p>In <b>startup</b>, do not call <b>setup</b>, because you should not trigger hubnet communication during <b>startup</b>.</p>
+      <img src="images/hubnet-33.png">
+    </p>
+    
+    
+    <h2>Bug Hunters Adaptations</h2>
+    <p>
+      <h3>Debug</h3>
+      <img src="images/hubnet-24.png">
+      <p>Comment out primitives for the <b>bitmap</b> extension.</p>
+      <hr>
+      <img src="images/hubnet-25.png">
+      <p>Comment out <b>user-file</b>.</p>
+      <hr>
+      <img src="images/hubnet-26.png">
+      <p>Comment out <b>file-delete</b>.</p>
+      <hr>
+      <p>In <b>startup</b>, do not call <b>setup-clear</b>, because you should not trigger hubnet communication during <b>startup</b>.</p>
+      <img src="images/hubnet-34.png">      
+      <hr>
+      <img src="images/hubnet-29.png">
+      <p>Add image files to your folder.</p>
+      
+    <h2>To Be Converted</h2>
+    <p>
+    Bug Hunters Camoflage	Novak & Wilensky 2006	
+    <br>Fish Spotters
+    </p>
+    
+    <h2>Not in Models Library</h2>
+    <p>
+    Investments	Wilensky 2004
+    <br>PANDA BEAR	Unterman & Wilensky 200 
+    <br>Prisoners Dilemma	Wilensky 2003	
+    <br>Predator Prey Game	Wilensky 2002	
+    <br>Public Good	Wilensky 2003	
+    <br>Restaurants	Wilensky 2004	 </p>
+    <!--
+    <h2>Other HubNet Models</h2>
 Bird Breeders	Novak & Wilensky 2011	N	 
-Bug Hunters Adaptations	Novak & Wilensky 2006	N	      view clicks
-Bug Hunters Camoflage	Novak & Wilensky 2006	N	        view clicks
-Critter Designers	Stonedahl, Novak & Wilensky, 2011	N	input box
-Dice Stalagmite	Abrahamson & Wilensky, 2004	N	client  no view
-Disease	Wilensky & Stroup 1999	N	 
-Disease Doctors	Wilensky 2006	N	 
-Fish Spotters	Novak & Wilensky 2012	N	                view clicks
-Gridlock	Wilensky & Stroup 1999	N	 
-Investments	Wilensky 2004	 	 
-Memory	Wilensky 2009	N	                               view clicks
-Minority Game	Wilensky 2004	N	 
-PANDA BEAR	Unterman & Wilensky 2007	 	 
-Polling	Wilensky & Stroup 2000	N	                     client no view
-Prisoners Dilemma	Wilensky 2003	 	 
-Predator Prey Game	Wilensky 2002	 	 
-Public Good	Wilensky 2003	 	 
-Root Beer Game	Wilensky & Stroup 2003	N	 
-Restaurants	Wilensky 2004	 	 
-Tragedy of the Commons	Wilensky 2002	N	 
-Oil Cartel	Maroulis & Wilensky 2004	N	              client no view
+<br>Bug Hunters Adaptations	Novak & Wilensky 2006	N	       (import-drawing)
+<br>Bug Hunters Camoflage	Novak & Wilensky 2006	N	         (import-drawing)
+<br>Critter Designers	Stonedahl, Novak & Wilensky, 2011	N	 (hubnet-broadcast, override)
+<br>Dice Stalagmite	Abrahamson & Wilensky, 2004	N	client   TO DO
+<br>Disease	Wilensky & Stroup 1999	N	                     DONE
+<br>Disease Doctors	Wilensky 2006	N	                       TO DO
+<br>Fish Spotters	Novak & Wilensky 2012	N	                 (hubnet-broadcast)
+<br>Gridlock	Wilensky & Stroup 1999	N	                   DONE
+<br>Investments	Wilensky 2004	 	 
+<br>Memory	Wilensky 2009	N	                               TO DO
+<br>Minority Game	Wilensky 2004	N	                         TO DO
+<br>PANDA BEAR	Unterman & Wilensky 2007	 	              
+<br>Polling	Wilensky & Stroup 2000	N	                     (hubnet-broadcast)
+<br>Prisoners Dilemma	Wilensky 2003	 	 
+<br>Predator Prey Game	Wilensky 2002	 	 
+<br>Public Good	Wilensky 2003	 	 
+<br>Root Beer Game	Wilensky & Stroup 2003	N	             (hubnet-broadcast)
+<br>Restaurants	Wilensky 2004	 	 
+<br>Tragedy of the Commons	Wilensky 2002	N	               (hubnet-broadcast)
+<br>Oil Cartel	Maroulis & Wilensky 2004	N	               (hubnet-broadcast)
+-->
+
+  <h1>
+    How It Works
+  </h1>
+      <h2>Hubnet Communication</h2>
+      <h3>Student Enters the Room</h3>
+      <p>When a student enters a room, an <b>"execute command" message</b> is sent from the server to the teacher.
+        <br>The <b>hubnet-message-source</b> is that user's user-id. 
+        <br>The <b>hubnet-message-tag</b> is "hubnet-enter-message". 
+        <br>The <b>hubnet-message</b> is an empty string.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+        
+      <p>The teacher catches the message in the <b>"execute command" socket</b>. 
+        The message is added to the <b>commandQueue</b>.
+      The <b>hubnet-message-waiting?</b> variable is set to true.
+      When the teacher runs the <b>hubnet-fetch-message</b> command, then the next item in commandQueue is analyzed.
+        The teacher will notice that <b>hubnet-enter-message?</b> is set to true.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>
+      
+      <h3>Student Exits the Room</h3>
+      <p>When a student exits a room, an <b>"execute command" message</b> is sent from the server to the teacher.
+        <br>The <b>hubnet-message-source</b> is that user's user-id. 
+        <br>The <b>hubnet-message-tag</b> is "hubnet-exit-message". 
+        <br>The <b>hubnet-message</b> is an empty string.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+        
+      <p>The teacher catches the message in the <b>"execute command" socket</b>. 
+        The message is added to the <b>commandQueue</b>.
+      The <b>hubnet-message-waiting?</b> variable is set to true.
+      When the teacher runs the <b>hubnet-fetch-message</b> command, then the next item in commandQueue is analyzed.
+      The teacher will notice that <b>hubnet-exit-message?</b> is set to true.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>          
+
+      <h3>Student Interacts with a Widget</h3>
+      <p>
+      <p><b>Widgets</b> include the view-container, buttons, sliders, switghes, choosers, and input boxes.
+      Students' widgets have <b>clickHandlers</b>.
+      When widgets are clicked, they send a <b>"send command" message</b> to the server.
+      <br>The <b>hubnet-message-tag</b> is the name of the widget. 
+      <br>The <b>hubnet-message</b> is either an empty string (for button widgets), 
+      the location of the click (for view widget) or the widget's value (for other widgets).
+      <a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js</a>
+      </p>
+      
+      <p>The server catches the message in the <b>"send command" socket</b> and sends an <b>"execute command" message</b> 
+        to the teacher.
+        <br>The <b>hubnet-message-source</b> is that user's user-id. 
+        <br>The <b>hubnet-message-tag</b> and <b>hubnet-message</b> are passed through from the student to the teacher.
+      <a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+      
+      <p>The teacher catches the message in the <b>"execute command" socket</b>. 
+        The message is added to the <b>commandQueue</b>.
+      The <b>hubnet-message-waiting?</b> variable is set to true.
+      When the teacher runs the <b>hubnet-fetch-message</b> command, then the next item in commandQueue is analyzed.
+      The teacher will notice the new 
+      <b>hubnet-message-source</b>, <b>hubnet-message-tag</b> and <b>hubnet-message</b>.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>         
+
+      <h3>Teacher sends HubNet Command</h3>
+      <p>The following commands are HubNet commands.
+      <br><b>hubnet-send</b> <i>hubnet-message-source hubnet-message-tag hubnet-message</i>
+      <br><b>hubnet-broadcast</b>  <i>hubnet-message-tag hubnet-message</i> </p>        
+      <p>When a teacher runs a HubNet command, a <b>"send reporter" message</b> to the server. This happens in the HubnetManager.
+        <br><a href="https://github.com/CRemmler/Tortoise/blob/gbcc-extensions/engine/src/main/coffee/engine/core/world/hubnetmanager.coffee">
+          https://github.com/CRemmler/Tortoise/blob/gbcc-extensions/engine/src/main/coffee/engine/core/world/hubnetmanager.coffee</a>
+      </p>
+      <p>
+        The server catches the message in the <b>"send reporter" socket</b>.
+        The server saves the message in <b>dataObject</b> and sends the <b>"display reporter" message</b> to the specific student or all students.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+      <p>
+        The student catches the message in the <b>"display reporter" socket</b>. If the <b>hubnet-message-tag</b> is the name 
+        of a monitor widget, then the monitor displays the value of <b>hubnet-message</b>. If the <b>hubnet-message-tag</b>
+        is another kind of widget, then it is interpreted as a student's global variable, which is then set to the 
+        value of <b>hubnet-message</b>.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>
+      
+      <h2>Hubnet Mirroring</h2>  
+      <h3>Mirroring the Teacher's View</h3>
+      <p>
+      <img src="images/hubnet-36.png">
+      <br> When mirroring is enabled, the students' views look like 
+      the teacher's view. Updates to mirroring occur in real time. 
+      </p>
+      <p>
+      <img src="images/hubnet-35.png">
+      <br>The teacher enables mirroring of their view, by checking the "Mirroring" checkbox, located
+        below the lower right corner of the view.      
+      </p>
+      <h3>Begin Mirroring</h3>
+      <p>When a teacher checks the "Mirroring" checkbox, there is a click event on $("#enableMirroring").
+      Then the teacher sends a <b>"teacher requests UI change" message</b>
+      to the server saying the mirror should be displayed, and it also includes the exportCSV() state of their world 
+      and an image of their view.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js</a>
+      </p>
+      
+      <p>The server catches the message in the <b>"teacher requests UI change" socket</b>.
+      The server sends all students a <b>"student accepts UI change" message</b> with the state of the teacher's world and the image of their view.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+      
+      <p>The student catches the message in the <b>"student accepts UI change" socket</b>.
+      Streams of the latests updates are cleared.
+      The student loads the teacher's world using importCSV().
+      The student displays the image from the teacher's view.
+      <br>Another message is received saying that view should be visible.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>
+      
+      <p>
+
+      <b><span style="background:yellow">Note to CCL:</span></b> I made importCSV() visible from the world level by using code from importWorldFromCSV().
+      Will CCL implement importCSV(), at the world level, in NetLogo Web?
+      <br><a href="https://github.com/NetLogo/Tortoise/blob/master/engine/src/main/coffee/engine/workspace.coffee">
+         https://github.com/NetLogo/Tortoise/blob/master/engine/src/main/coffee/engine/workspace.coffee </a>
+      <br><img src="images/hubnet-37.png">
+       </p>
+      
+      <h3>Continue Mirroring</h3>
+      <p>If the teacher has view updates in HubNet, then ViewController Update sends a <b>"send mirror stream reporter" message</b>
+        with the modelUpdate.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/netlogoweb/view-controller.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/app/netlogoweb/view-controller.js</a>
+      </p>
+      
+      <p>The server catches the message in the <b>"send mirror stream reporter" socket</b>.
+        The server sends all students a <b>"accept user mirror stream data" message</b> 
+        containing the modelUpdate.
+      <a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+      
+      <p>The student catches the message in the <b>"accept user mirror stream data" socket</b>.
+        The student applies updates to their instance of the view, called <b>universe</b>
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>          
+      <p>The instance of the student's view, <b>universe</b>, is defined in the view controller.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/netlogoweb/view-controller.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/app/netlogoweb/view-controller.js</a>
+      </p>
+      
+      <h3>End Mirroring</h3>
+      <p>When a teacher unchecks the "Mirroring" checkbox, there is a click event on $("#enableMirroring").
+      Since mirroring is false, then the teacher sends a <b>"teacher requests UI change" message</b>
+      to the server saying mirroring is disabled.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js</a>
+      </p>
+      
+      <p>The server catches the message in the <b>"teacher requests UI change" socket</b>.
+      The server sends all students a <b>"student accepts UI change" message</b> saying mirroring is disabled.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+      
+      <p>The student catches the message in the <b>"student accepts UI change" socket</b>.
+      Mirroring is disabled. 
+      
+      <br>Another message is received saying that the view should be hidden.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>
+      
+      <h3>Student Enters during Mirroring</h3>
+      <p>Whan a student enters the room that is being mirrored, that student sends a <b>"teacher accepts new entry request" message</b>
+        to the teacher,  with their userId.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>
+      
+      <p>The teacher catches the message in the <b>"teacher accepts new entry request" socket</b>
+        and sends a <b>"teacher requests UI change new entry" message</b> to the server
+        that includes the exportCSV() state of their world and an image of their view, and the userId of the student
+        that requested it.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>
+      
+      <p>The server catches the message in the <b>"teacher requests UI change new entry" socket</b>
+        and sends a <b>"student accepts UI change" message</b> to the student with the state of the 
+        teacher's world and an image of their view.
+        <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
+          https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
+      </p>    
+      
+      <p>The student catches the message in the <b>"student accepts UI change" socket</b>.
+      The student loads the teacher's world using importCSV().
+      The student displays the image from the teacher's view.
+      <br>Another message is received saying that view should be visible.
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
+        https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
+      </p>
+      
+
+      <h2>View-Override Proof-of-concept</h2>
+      
+      <h3>1. Students Accept Mirroring Messages upon each Update</h3>
+      <p>This is currently implemented. It is described in the "Continue Mirroring" section, above.</p>
+            
+      <h3>2. Teacher Sends hubnet-view-override Command</h3>
+      <p>hubnet-view-override primitives are not currently implemented. 
+        Other HubNet primitives exist, and are described in the HubNet Communication 
+        section, above. Other HubNet primitives do not act on agentsets. 
+        hubnet-view-override 
+        primitives will have to be able to act on agentsets. 
+      </p><p>
+        <b>*** Possibly problematic. Further investigation is required. ***</b>
+      </p>
+            
+      <h3>3. Teacher Creates Filter for Messages</h3>
+      <p>Each instance of a hubnet-view-override can be added to a view-override filter describing 
+        which students will get which messages overwritten, and with what. The
+        filter data can be stored in the server.
+            
+      <h3>4. Apply Message through Filter</h3>
+      <p>Each time the server sends a view update, to a student, 
+        that view update will have to be filtered through the view-override filter.
+      </p> 
+      
+      <h3>5. View-Override with Zoom</h3>
+      <p>
+        I added zoom in an image extension.
+      <b>image:zoom</b> <i>value</i>, because <b>zoom</b> is not implemented.
+      A view override could trigger a student to zoom in a specified amount.
+      </p>
+      <p>
+      <b><span style="background:yellow">Note to CCL:</span></b> Will CCL implement <b>zoom</b> in NetLogo Web?
+    </p>
+      
+      <h3>6. View-Override with Follow</h3>
+      <p><b>watch</b> is implemented. It requires an agent. 
+        In HubNet, student's don't control turtles, they just repaint the teacher's turtles.
+        Since a student doesn't have turtles they can act on, watch cannot be implemented as written. 
+      </p>
+      <p>
+        <b>*** Very problematic. Further investigation is required. ***</b>
+      </p>
+        
+                  
   </body>
 </html>

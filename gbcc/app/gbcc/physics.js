@@ -302,7 +302,9 @@ Physics = (function() {
       $("#physicsPlay").removeClass("inactive");  
       $("#physicsPause").addClass("inactive");  
     }
-    $(".netlogo-view-container").css("pointer-events","none");
+    if (!mirroringEnabled) {
+      $(".netlogo-view-container").css("pointer-events","none");
+    }
     $(".netlogo-view-container").css("cursor","auto");
     Physicsb2.unBindElements();
     universe.repaint();

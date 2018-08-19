@@ -168,7 +168,9 @@ Graph = (function() {
   function showGraph() {
     $(".netlogo-view-container").css("z-index","1");
     $("#graphContainer").css("display","inline-block");
-    $(".netlogo-view-container").css("pointer-events","none");
+    if (!mirroringEnabled) {
+      $(".netlogo-view-container").css("pointer-events","none"); 
+    }
     $("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top") - 15) + "px");
     $("#opacityWrapper").css("left",$("#graphContainer").css("left"));
     $("#opacityWrapper").css("display", "inline-block");
@@ -548,8 +550,10 @@ Graph = (function() {
   }
   
   function mouseOn() {
-    $(".netlogo-view-container").css("pointer-events","none"); //show graph
-    //if ($("#graphContainer").hasClass("grayscale")) { $("#graphContainer").removeClass("grayscale"); }
+    if (!mirroringEnabled) {
+      $(".netlogo-view-container").css("pointer-events","none");//show graph
+    }
+      //if ($("#graphContainer").hasClass("grayscale")) { $("#graphContainer").removeClass("grayscale"); }
   }
   
   function mouseOff() {

@@ -22,11 +22,6 @@ jQuery(document).ready(function() {
   
   socket = io();
   
-  var userMirrorStreamData = {};
-  userMirrorStreamData.turtles = [];
-  userMirrorStreamData.patches = [];
-  userMirrorStreamData.links = [];
-  userMirrorStreamData.drawingEvents = [];
   var myForeverButtonVar = "";
   var myMirrorVar = "";
 
@@ -140,16 +135,8 @@ jQuery(document).ready(function() {
         foreverButtonCode[teacherId] = "gbcc-forever-button-code-"+teacherId;
       }
     }
-    //$(".gbcc-gallery li.selected").length
     if (data.type === "mirror") {
       mirroringEnabled = data.display;
-      userMirrorStreamData = {};
-      userMirrorStreamData.turtles = [];
-      userMirrorStreamData.patches = [];
-      userMirrorStreamData.links = [];
-      userMirrorStreamData.drawingEvents = [];
-      userMirrorStreamData.globals = [];
-
       if (data.state) {
         if (mirroringEnabled) {
           myWorld = data.state;
@@ -234,20 +221,12 @@ jQuery(document).ready(function() {
         universe.applyUpdate({ patches: patches }); 
       }
       if (links != {}) { 
-        //userMirrorStreamData.links.push(links); 
         universe.applyUpdate({ links: links }); 
       }
       if (drawingEvents != {}) { 
-        userMirrorStreamData.drawingEvents.push(drawingEvents); 
         universe.applyUpdate({ drawingEvents: drawingEvents }); 
       }
-      if (userMirrorStreamData.turtles.length > 0 ||
-        userMirrorStreamData.patches.length > 0 ||
-        userMirrorStreamData.links.length > 0 ||
-        userMirrorStreamData.drawingEvents.length > 0 ) {
-        world.triggerUpdate();
-      }
-      //if (globals != {}) { userMirrorStreamData.drawingEvents.push(globals); }
+      world.triggerUpdate();
     }
   });
   
@@ -295,12 +274,6 @@ jQuery(document).ready(function() {
     if (data.type === "mirror") {
       mirroringEnabled = data.display;
     }
-    userMirrorStreamData = {};
-    userMirrorStreamData.turtles = [];
-    userMirrorStreamData.patches = [];
-    userMirrorStreamData.links = [];
-    userMirrorStreamData.drawingEvents = [];
-    userMirrorStreamData.globals = [];
     if (mirroringEnabled && data.type === "mirror") {
       myWorld = data.state;
       world.miniWorkspace.importCSV(data.state);
