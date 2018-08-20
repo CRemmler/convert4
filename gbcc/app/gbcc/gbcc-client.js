@@ -207,7 +207,7 @@ jQuery(document).ready(function() {
     }
   });
   
-  socket.on("accept user mirror stream data", function(data) {
+  socket.on("accept user mirror data", function(data) {
     var turtles = data.value.turtles;
     var patches = data.value.patches;
     var links = data.value.links;

@@ -137,7 +137,7 @@
         
         <!-- GBCC -->
         if (socket && activityType === "hubnet" && myUserType === "teacher") {
-          socket.emit('send mirror stream reporter', {
+          socket.emit('send mirror reporter', {
             hubnetMessageSource: "server",
             hubnetMessageTag: "",
             hubnetMessage: modelUpdate[k]

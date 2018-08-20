@@ -219,7 +219,7 @@ io.on('connection', function(socket){
    });
    
    // pass stream of data from server to student
-   socket.on("send mirror stream reporter", function(data) {
+   socket.on("send mirror reporter", function(data) {
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
@@ -230,7 +230,7 @@ io.on('connection', function(socket){
        if (allRooms[myRoom].userData[myUserId]) {
          if (destination === "server") {
            allRooms[myRoom].userStreamData[myUserId][data.hubnetMessageTag] = data.hubnetMessage;
-           socket.to(school+"-"+myRoom+"-student").emit("accept user mirror stream data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+           socket.to(school+"-"+myRoom+"-student").emit("accept user mirror data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
          } 
        }
      }
