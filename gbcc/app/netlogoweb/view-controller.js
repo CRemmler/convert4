@@ -29,9 +29,9 @@
       this.model = new AgentModel();
       this.model.world.turtleshapelist = defaultShapes;
       this.repaint();
-      <!-- GBCC -->
+      // <!-- GBCC -->
       universe = this;
-      <!-- END GBCC -->
+      // <!-- END GBCC -->
     }
 
     ViewController.prototype.mouseXcor = function() {
@@ -113,11 +113,11 @@
 
     ViewController.prototype.repaint = function() {
       this.view.transformToWorld(this.model.world);
-      <!-- GBCC -->
+      // <!-- GBCC -->
       if (drawPatches) {
         this.patchDrawer.repaint(this.model);
       }
-      <!-- END GBCC -->
+      // <!-- END GBCC -->
       this.drawingLayer.repaint(this.model);
       this.turtleDrawer.repaint(this.model);
       this.spotlightDrawer.repaint(this.model);
@@ -135,7 +135,7 @@
       for (k = 0, len = updates.length; k < len; k++) {
         u = updates[k];
         
-        <!-- GBCC -->
+        // <!-- GBCC -->
         if (socket && activityType === "hubnet" && myUserType === "teacher") {
           socket.emit('send mirror reporter', {
             hubnetMessageSource: "server",
@@ -144,7 +144,7 @@
           });
         }
         //universe = this;
-        <!-- END GBCC -->
+        // <!-- END GBCC -->
 
         this.applyUpdate(u);
       }
@@ -899,18 +899,18 @@
       var patches, world;
       world = model.world;
       patches = model.patches;
-      <!-- GBCC -->
+      // <!-- GBCC -->
       if (mirroringEnabled) {
         this.colorPatches(patches);
       } else if (world.patchesallblack) {
         this.clearPatches();
-      } else {
+        } else {
         this.colorPatches(patches);        
       }
       if (world.patcheswithlabels || mirroringEnabled) {
         return this.labelPatches(patches);
       }
-      <!-- END GBCC -->
+      // <!-- END GBCC -->
     };
 
     return PatchDrawer;

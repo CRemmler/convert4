@@ -212,18 +212,17 @@ jQuery(document).ready(function() {
     var patches = data.value.patches;
     var links = data.value.links;
     var drawingEvents = data.value.drawingEvents;
-    var globals = data.value.globals;
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
-      if (turtles != {}) { 
+      if (turtles) { 
         universe.applyUpdate({ turtles: turtles }); 
       }
-      if (patches != {}) { 
+      if (patches) { 
         universe.applyUpdate({ patches: patches }); 
       }
-      if (links != {}) { 
+      if (links) { 
         universe.applyUpdate({ links: links }); 
       }
-      if (drawingEvents != {}) { 
+      if (drawingEvents) { 
         universe.applyUpdate({ drawingEvents: drawingEvents }); 
       }
       world.triggerUpdate();
