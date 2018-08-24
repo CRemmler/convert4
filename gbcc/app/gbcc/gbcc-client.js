@@ -137,6 +137,9 @@ jQuery(document).ready(function() {
     }
     if (data.type === "mirror") {
       mirroringEnabled = data.display;
+      if (data.image && mirroringEnabled) {
+        universe.model.drawingEvents.push({type: "import-drawing", sourcePath: data.image});
+      }
       if (data.state) {
         if (mirroringEnabled) {
           myWorld = data.state;
@@ -147,16 +150,14 @@ jQuery(document).ready(function() {
           }
         }
       } 
-      if (data.image && mirroringEnabled) {
-        universe.applyUpdate({ drawingEvents: [{type: "import-drawing", sourcePath: data.image}] });
-      }
+
     }
   });
   
   //"teacher accepts new entry request"
   socket.on("teacher accepts new entry request", function(data) {
     var state = world.exportCSV();
-    blob = myCanvas.toDataURL("image/jpeg", 0.5); 
+    var blob = myCanvas.toDataURL("image/png", 0.5);
     socket.emit('teacher requests UI change new entry', {'userId':  data.userId, 'state': state, 'image': blob});
   });
 
@@ -208,23 +209,8 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept user mirror data", function(data) {
-    var turtles = data.value.turtles;
-    var patches = data.value.patches;
-    var links = data.value.links;
-    var drawingEvents = data.value.drawingEvents;
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
-      if (turtles) { 
-        universe.applyUpdate({ turtles: turtles }); 
-      }
-      if (patches) { 
-        universe.applyUpdate({ patches: patches }); 
-      }
-      if (links) { 
-        universe.applyUpdate({ links: links }); 
-      }
-      if (drawingEvents) { 
-        universe.applyUpdate({ drawingEvents: drawingEvents }); 
-      }
+      universe.applyUpdate( data.value );
       world.triggerUpdate();
     }
   });
@@ -267,21 +253,6 @@ jQuery(document).ready(function() {
       }
     }
   }
-  
-  // show or hide student view or gallery
-  socket.on("student accepts mirror change", function(data) {
-    if (data.type === "mirror") {
-      mirroringEnabled = data.display;
-    }
-    if (mirroringEnabled && data.type === "mirror") {
-      myWorld = data.state;
-      world.miniWorkspace.importCSV(data.state);
-    } else {
-      if (myWorld) { 
-        world.importState(myWorld);
-      }
-    }
-  });
 
   socket.on("execute command", function(data) {
     var commandObject = {};

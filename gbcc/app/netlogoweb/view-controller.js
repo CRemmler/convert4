@@ -134,7 +134,6 @@
       updates = Array.isArray(modelUpdate) ? modelUpdate : [modelUpdate];
       for (k = 0, len = updates.length; k < len; k++) {
         u = updates[k];
-        
         // <!-- GBCC -->
         if (socket && activityType === "hubnet" && myUserType === "teacher") {
           socket.emit('send mirror reporter', {
@@ -899,18 +898,14 @@
       var patches, world;
       world = model.world;
       patches = model.patches;
-      // <!-- GBCC -->
-      if (mirroringEnabled) {
-        this.colorPatches(patches);
-      } else if (world.patchesallblack) {
+      if (world.patchesallblack) {
         this.clearPatches();
-        } else {
-        this.colorPatches(patches);        
+      } else {
+        this.colorPatches(patches);
       }
-      if (world.patcheswithlabels || mirroringEnabled) {
+      if (world.patcheswithlabels) {
         return this.labelPatches(patches);
       }
-      // <!-- END GBCC -->
     };
 
     return PatchDrawer;

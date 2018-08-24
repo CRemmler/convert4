@@ -235,7 +235,8 @@ Interface = (function() {
       mirroringEnabled = $(this).prop("checked") ? true : false;
       if (mirroringEnabled) {
         var state = world.exportCSV();
-        var blob = myCanvas.toDataURL("image/jpeg", 0.5); 
+        var blob = myCanvas.toDataURL("image/png", 0.5); 
+
         socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'state': state, 'type': 'mirror', 'image': blob});
       } else {
         socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'state': "", 'type': 'mirror' });        
