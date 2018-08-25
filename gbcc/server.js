@@ -220,6 +220,7 @@ io.on('connection', function(socket){
    
    // pass stream of data from server to student
    socket.on("send mirror reporter", function(data) {
+     //console.log("send mirror reporter?");
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
@@ -235,6 +236,33 @@ io.on('connection', function(socket){
        }
      }
      schools[school] = allRooms;
+   });
+
+   socket.on("send message reporter", function(data) {
+     var school = socket.school;
+     var allRooms = schools[school];
+     var myRoom = socket.myRoom;
+     var myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+     var myUserType = socket.myUserType;
+     var destination = data.hubnetMessageSource;
+     if (allRooms[myRoom] != undefined) {
+       if (allRooms[myRoom].userData[myUserId]) {
+         var dataObject = {
+           hubnetMessageSource: myUserId,
+           hubnetMessageTag: data.hubnetMessageTag,
+           hubnetMessage: data.hubnetMessage,
+           userType: myUserType
+         };
+         if (destination === "all-users") {
+           dataObject.hubnetMessage = data.hubnetMessage;
+           socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user message", dataObject);
+           socket.to(school+"-"+myRoom+"-student").emit("gbcc user message", dataObject);
+           socket.emit("gbcc user message", dataObject);
+         } else {
+           io.to(socketDictionary[destination]).emit("gbcc user message", dataObject);
+         }
+       }
+     }
    });
 
   // pass reporter from server to student
@@ -416,6 +444,7 @@ io.on('connection', function(socket){
   });
   
   socket.on("teacher requests UI change", function(data) {
+    //console.log("teacher requests ui  change"+data.type+" display "+data.display);
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
@@ -429,7 +458,13 @@ io.on('connection', function(socket){
     socket.to(school+"-"+myRoom+"-teacher").emit("teacher accepts new entry request", {"userId": data.userId });
   }*/
   socket.on("teacher requests UI change new entry", function(data) {
-    io.to(socketDictionary[data.userId]).emit("student accepts UI change", {"display": true, "type": "mirror", "state": data.state, "image": data.image});
+    //console.log("teacher requests UI change new entry");
+    var school = socket.school;
+    var allRooms = schools[school];
+    var myRoom = socket.myRoom;
+    allRooms[myRoom].settings[data.type] = data.display; 
+
+    io.to(socketDictionary[data.userId]).emit("student accepts UI change", {"display": allRooms[myRoom].settings["mirror"], "type": "mirror", "state": data.state, "image": data.image});
   });
 	
   // user exits

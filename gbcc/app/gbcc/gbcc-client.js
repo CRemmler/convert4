@@ -102,6 +102,17 @@ jQuery(document).ready(function() {
       session.runCode(userData[data.userId]["gbcc-exit-button-code-"+data.userId]); 
     }
   });
+  
+  socket.on("gbcc user message", function(data) {
+    if (procedures.gbccOnMessage) {
+      var tag = data.hubnetMessageTag;
+      var message = data.hubnetMessage;
+      var uId = data.hubnetMessageSource;
+      var uType = data.userType;
+      var compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MESSAGE"]("'+uId+'","'+uType+'","'+message+'","'+tag+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'
+      session.runCode(compileString); 
+    }
+  });
 
   // display admin interface
   socket.on("display admin", function(data) {

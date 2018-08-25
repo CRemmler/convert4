@@ -12930,58 +12930,72 @@ function hasOwnProperty(obj, prop) {
 
 },{"../observer":"engine/core/observer","../structure/builtins":"engine/core/structure/builtins","../typechecker":"engine/core/typechecker","brazierjs/array":"brazier/array","brazierjs/function":"brazier/function","brazierjs/maybe":"brazier/maybe","engine/plot/pen":"engine/plot/pen","meta":"meta","serialize/exportstructures":"serialize/exportstructures"}],"engine/core/world/hubnetmanager":[function(require,module,exports){
 (function() {
-  var HubnetManager,
+  var HubnetManager, TurtleSet,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-    
-      module.exports = HubnetManager = (function() {
-        function HubnetManager() {
-          this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
-          this.hubnetSend = bind(this.hubnetSend, this);
-          this.hubnetFetchMessage = bind(this.hubnetFetchMessage, this);
-          this.hubnetMessageWaiting = false;
-          this.hubnetEnterMessage = false;
-          this.hubnetExitMessage = false;
-          this.hubnetMessage = "";
-          this.hubnetMessageSource = "";
-          this.hubnetMessageTag = "";
-        }
 
-        HubnetManager.prototype.hubnetFetchMessage = function() {
-          this.processCommand(commandQueue.shift());
-        };
+  TurtleSet = require('../turtleset');
 
-        HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
-          socket.emit('send reporter', {
-            hubnetMessageSource: messageSource,
-            hubnetMessageTag: messageTag,
-            hubnetMessage: message
-          });
-        };
+  module.exports = HubnetManager = (function() {
+    function HubnetManager() {
+      this.hubnetResetPerspective = bind(this.hubnetResetPerspective, this);
+      this.hubnetSendWatch = bind(this.hubnetSendWatch, this);
+      this.hubnetClearOverrides = bind(this.hubnetClearOverrides, this);
+      this.hubnetClearOverride = bind(this.hubnetClearOverride, this);
+      this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
+      this.hubnetSend = bind(this.hubnetSend, this);
+      this.hubnetFetchMessage = bind(this.hubnetFetchMessage, this);
+      this.hubnetMessageWaiting = false;
+      this.hubnetEnterMessage = false;
+      this.hubnetExitMessage = false;
+      this.hubnetMessage = "";
+      this.hubnetMessageSource = "";
+      this.hubnetMessageTag = "";
+    }
 
-        HubnetManager.prototype.hubnetBroadcast = function(messageTag, message) {
-          socket.emit('send reporter', {
-            hubnetMessageSource: "all-users",
-            hubnetMessageTag: messageTag,
-            hubnetMessage: message
-          });
-        };
+    HubnetManager.prototype.hubnetFetchMessage = function() {
+      this.processCommand(commandQueue.shift());
+    };
 
-        HubnetManager.prototype.processCommand = function(m) {
-          if (commandQueue.length === 0) {
-            world.hubnetManager.hubnetMessageWaiting = false;
-          }
-          world.hubnetManager.hubnetEnterMessage = false;
-          world.hubnetManager.hubnetExitMessage = false;
-          world.hubnetManager.hubnetMessageSource = m.messageSource;
-          world.hubnetManager.hubnetMessageTag = m.messageTag;
-          world.hubnetManager.hubnetMessage = m.message;
-          if (m.messageTag === 'hubnet-enter-message') {
-            world.hubnetManager.hubnetEnterMessage = true;
-          }
-          if (m.messageTag === 'hubnet-exit-message') {
-            world.hubnetManager.hubnetExitMessage = true;
-          }
-        };
+    HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
+      socket.emit('send reporter', {
+        hubnetMessageSource: messageSource,
+        hubnetMessageTag: messageTag,
+        hubnetMessage: message
+      });
+    };
+
+    HubnetManager.prototype.hubnetBroadcast = function(messageTag, message) {
+      socket.emit('send reporter', {
+        hubnetMessageSource: "all-users",
+        hubnetMessageTag: messageTag,
+        hubnetMessage: message
+      });
+    };
+
+    HubnetManager.prototype.hubnetClearOverride = function(messageSource, agentOrSet, messageTag) {};
+
+    HubnetManager.prototype.hubnetClearOverrides = function(messageSource) {};
+
+    HubnetManager.prototype.hubnetSendWatch = function(messageSource, agent) {};
+
+    HubnetManager.prototype.hubnetResetPerspective = function(messageTag) {};
+
+    HubnetManager.prototype.processCommand = function(m) {
+      if (commandQueue.length === 0) {
+        world.hubnetManager.hubnetMessageWaiting = false;
+      }
+      world.hubnetManager.hubnetEnterMessage = false;
+      world.hubnetManager.hubnetExitMessage = false;
+      world.hubnetManager.hubnetMessageSource = m.messageSource;
+      world.hubnetManager.hubnetMessageTag = m.messageTag;
+      world.hubnetManager.hubnetMessage = m.message;
+      if (m.messageTag === 'hubnet-enter-message') {
+        world.hubnetManager.hubnetEnterMessage = true;
+      }
+      if (m.messageTag === 'hubnet-exit-message') {
+        world.hubnetManager.hubnetExitMessage = true;
+      }
+    };
 
     return HubnetManager;
 
@@ -12989,10 +13003,7 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this);
 
-
-},{"../observer":"engine/core/observer","../structure/builtins":"engine/core/structure/builtins","../typechecker":"engine/core/typechecker","brazierjs/array":"brazier/array","brazierjs/function":"brazier/function","brazierjs/maybe":"brazier/maybe","engine/plot/pen":"engine/plot/pen","meta":"meta","serialize/exportstructures":"serialize/exportstructures"}],"engine/core/world/hubnetmanager":[function(require,module,exports){
-arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
-},{"dup":"engine/core/hubnetmanager"}],"engine/core/world/idmanager":[function(require,module,exports){
+},{"../turtleset":"engine/core/turtleset"}],"engine/core/world/idmanager":[function(require,module,exports){
 (function() {
   var IDManager;
 
@@ -18349,7 +18360,6 @@ arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
                 }), dump);
                 printPrims = new PrintPrims(printConfig, dump);
                 userDialogPrims = new UserDialogPrims(dialogConfig);
-                
                 importWorldFromCSV = function(csvText) {
                   var breedNamePairs, functionify, pluralToSingular, ptsObject, singularToPlural, stpObject, worldState;
                   functionify = function(obj) {
@@ -18377,9 +18387,6 @@ arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
                   worldState = csvToWorldState(singularToPlural, pluralToSingular)(csvText);
                   return world.importState(worldState);
                 };
-
-
-
                 importExportPrims = new ImportExportPrims(importExportConfig, (function() {
                   return world.exportCSV();
                 }), (function() {
@@ -18498,7 +18505,7 @@ arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var addToStream, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, exportWorld, get, getFromUser, getStream, getStreamFromUser, hidePatches, importWorld, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, set, showPatches, storeGlobals, whoAmI;
+      var addToStream, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, exportWorld, get, getFromUser, getStream, getStreamFromUser, hidePatches, importWorld, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, whoAmI;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
@@ -18632,6 +18639,20 @@ arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
       exportWorld = function(filename) {
         return Gallery.exportWorld(filename);
       };
+      send = function(messageSource, messageTag, message) {
+        socket.emit('send message reporter', {
+          hubnetMessageSource: messageSource,
+          hubnetMessageTag: messageTag,
+          hubnetMessage: message
+        });
+      };
+      broadcast = function(messageTag, message) {
+        socket.emit('send message reporter', {
+          hubnetMessageSource: 'all-users',
+          hubnetMessageTag: messageTag,
+          hubnetMessage: message
+        });
+      };
       return {
         name: "gbcc",
         prims: {
@@ -18659,7 +18680,9 @@ arguments[4]["engine/core/hubnetmanager"][0].apply(exports,arguments)
           "SHOW-PATCHES": showPatches,
           "HIDE-PATCHES": hidePatches,
           "IMPORT-WORLD": importWorld,
-          "EXPORT-WORLD": exportWorld
+          "EXPORT-WORLD": exportWorld,
+          "SEND": send,
+          "BROADCAST": broadcast
         }
       };
     }
