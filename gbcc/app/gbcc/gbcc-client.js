@@ -10,7 +10,7 @@ var foreverButtonCode = new Object();
 var myUserType;
 var activityType = undefined;
 var drawPatches = true;
-var mirroringEnabled = true;
+var mirroringEnabled;
 var myCanvas;
   
 jQuery(document).ready(function() {
@@ -27,6 +27,7 @@ jQuery(document).ready(function() {
 
   // save student settings
   socket.on("save settings", function(data) {
+    
     userId = data.userId;
     myUserType = data.userType;
     $(".netlogo-canvas").attr("id","netlogoCanvas"); 
@@ -49,7 +50,10 @@ jQuery(document).ready(function() {
 
   // display teacher or student interface
   socket.on("display interface", function(data) {
-    if (activityType === undefined) { activityType = data.activityType; }
+    if (activityType === undefined) { 
+      activityType = data.activityType; 
+      mirroringEnabled = (activityType === "gbcc") ? false : true;
+    }
     switch (data.userType) {
       case "teacher": //as teacher, show teacher interface
         Interface.showTeacher(data.room, data.components);

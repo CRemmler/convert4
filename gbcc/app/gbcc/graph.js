@@ -166,10 +166,11 @@ Graph = (function() {
   ////// SHOW AND HIDE GRAPH //////
   
   function showGraph() {
-    $(".netlogo-view-container").css("z-index","1");
+    //$(".netlogo-view-container").css("z-index","0");
     $("#graphContainer").css("display","inline-block");
     if (!mirroringEnabled) {
       $(".netlogo-view-container").css("pointer-events","none"); 
+      $(".netlogo-view-container").css("z-index","0");
     }
     $("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top") - 15) + "px");
     $("#opacityWrapper").css("left",$("#graphContainer").css("left"));
