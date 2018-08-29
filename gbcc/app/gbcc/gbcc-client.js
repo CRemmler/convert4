@@ -19,7 +19,7 @@ jQuery(document).ready(function() {
   var turtleDict = {};
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
-  
+  var filter = {};
   socket = io();
   
   var myForeverButtonVar = "";
@@ -228,8 +228,30 @@ jQuery(document).ready(function() {
     }
   });
   
+  function saveTurtleUpdate(data) {
+    if (data != {}) {
+      for (var i in data) {
+        console.log(i);
+        for (var j in data[i]) {
+          console.log(j + "=" + data[i][j]);
+        }
+      }
+    }
+  }
+  function saveWorldUpdate(data) {
+
+  }
+  
+  function filterUpdate(data) {
+    return data;
+  }
+  
   socket.on("accept user mirror data", function(data) {
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
+      console.log(data.value);
+      saveTurtleUpdate(data.value.turtles);
+      saveWorldUpdate(data.value.world);
+      console.log(filterUpdate(data.value));
       universe.applyUpdate( data.value );
       world.triggerUpdate();
     }
@@ -239,6 +261,18 @@ jQuery(document).ready(function() {
     //console.log("accept ALL user data");
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
       userData = data.userData;
+    }
+  });
+  
+  socket.on("accept user override", function(data) {
+    console.log("accept user override (add data to filter)");
+    console.log(data);
+    if (myUserType === "student") {
+      var messageType = data.messageType;
+      var agentIds = data.agentIds;
+      var source = data.source;
+      var tag = data.tag;
+      var message = data.message;
     }
   });
 

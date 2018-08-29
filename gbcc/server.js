@@ -82,6 +82,8 @@ io.on('connection', function(socket){
       allRooms[myRoom].userStreamData[myUserId] = {};
       allRooms[myRoom].userData[myUserId].exists = true;
       allRooms[myRoom].userData[myUserId]["userType"] = myUserType;
+      allRooms[myRoom].userData[myUserId].reserved = {};
+      allRooms[myRoom].userData[myUserId].reserved.overrides = {};
       // send settings to client
       if (activityType === "hubnet") {
           if (allRooms[myRoom].settings.mirror && myUserType === "student") { 
@@ -230,7 +232,6 @@ io.on('connection', function(socket){
      if (allRooms[myRoom] != undefined) {
        if (allRooms[myRoom].userData[myUserId]) {
          if (destination === "server") {
-           allRooms[myRoom].userStreamData[myUserId][data.hubnetMessageTag] = data.hubnetMessage;
            socket.to(school+"-"+myRoom+"-student").emit("accept user mirror data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
          } 
        }
@@ -340,6 +341,32 @@ io.on('connection', function(socket){
       }
     }
     schools[school] = allRooms;
+  });
+  
+  socket.on("send override", function(data) {
+    var school = socket.school;
+    var allRooms = schools[school];
+    var myRoom = socket.myRoom;
+    var myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    var myUserType = socket.myUserType;
+    if (allRooms[myRoom] != undefined) {
+      if (allRooms[myRoom].userData[myUserId]) {
+        var destination = data.hubnetMessageSource;
+        var dataObject = {
+          messageType: data.hubnetMessageType,
+          agentIds: data.hubnetAgentOrSet,
+          source: destination,
+          tag: data.hubnetMessageTag,
+          message: data.hubnetMessage
+        }
+        console.log(dataObject);
+        if (data.MessageType === "reset-perspective") {
+          socket.to(school+"-"+myRoom+"-student").emit("accept user override", dataObject);
+        } else {
+          io.to(socketDictionary[destination]).emit("accept user override", dataObject);
+        }
+      }
+    }
   });
 
   app.post('/exportgbccreport', function(req,res){

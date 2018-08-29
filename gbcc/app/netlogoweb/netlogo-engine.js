@@ -8372,58 +8372,134 @@ function hasOwnProperty(obj, prop) {
 (function() {
   var HubnetManager,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  module.exports = HubnetManager = (function() {
-    function HubnetManager() {
-      this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
-      this.hubnetSend = bind(this.hubnetSend, this);
-      this.hubnetFetchMessage = bind(this.hubnetFetchMessage, this);
-      this.hubnetMessageWaiting = false;
-      this.hubnetEnterMessage = false;
-      this.hubnetExitMessage = false;
-      this.hubnetMessage = "";
-      this.hubnetMessageSource = "";
-      this.hubnetMessageTag = "";
-    }
-
-    HubnetManager.prototype.hubnetFetchMessage = function() {
-      this.processCommand(commandQueue.shift());
-    };
-
-    HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
-      socket.emit('send reporter', {
-        hubnetMessageSource: messageSource,
-        hubnetMessageTag: messageTag,
-        hubnetMessage: message
-      });
-    };
-
-    HubnetManager.prototype.hubnetBroadcast = function(messageTag, message) {
-      socket.emit('send reporter', {
-        hubnetMessageSource: "all-users",
-        hubnetMessageTag: messageTag,
-        hubnetMessage: message
-      });
-    };
-
-    HubnetManager.prototype.processCommand = function(m) {
-      if (commandQueue.length === 0) {
-        world.hubnetManager.hubnetMessageWaiting = false;
+    
+    module.exports = HubnetManager = (function() {
+      function HubnetManager() {
+        this.hubnetSendFollow = bind(this.hubnetSendFollow, this);
+        this.hubnetResetPerspective = bind(this.hubnetResetPerspective, this);
+        this.hubnetSendWatch = bind(this.hubnetSendWatch, this);
+        this.hubnetSendOverride = bind(this.hubnetSendOverride, this);
+        this.hubnetClearOverrides = bind(this.hubnetClearOverrides, this);
+        this.hubnetClearOverride = bind(this.hubnetClearOverride, this);
+        this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
+        this.hubnetSend = bind(this.hubnetSend, this);
+        this.hubnetFetchMessage = bind(this.hubnetFetchMessage, this);
+        this.hubnetMessageWaiting = false;
+        this.hubnetEnterMessage = false;
+        this.hubnetExitMessage = false;
+        this.hubnetMessage = "";
+        this.hubnetMessageSource = "";
+        this.hubnetMessageTag = "";
       }
-      world.hubnetManager.hubnetEnterMessage = false;
-      world.hubnetManager.hubnetExitMessage = false;
-      world.hubnetManager.hubnetMessageSource = m.messageSource;
-      world.hubnetManager.hubnetMessageTag = m.messageTag;
-      world.hubnetManager.hubnetMessage = m.message;
-      if (m.messageTag === 'hubnet-enter-message') {
-        world.hubnetManager.hubnetEnterMessage = true;
-      }
-      if (m.messageTag === 'hubnet-exit-message') {
-        world.hubnetManager.hubnetExitMessage = true;
-      }
-    };
 
-    return HubnetManager;
+      HubnetManager.prototype.hubnetFetchMessage = function() {
+        this.processCommand(commandQueue.shift());
+      };
+
+      HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
+        socket.emit('send reporter', {
+          hubnetMessageSource: messageSource,
+          hubnetMessageTag: messageTag,
+          hubnetMessage: message
+        });
+      };
+
+      HubnetManager.prototype.hubnetBroadcast = function(messageTag, message) {
+        socket.emit('send reporter', {
+          hubnetMessageSource: "all-users",
+          hubnetMessageTag: messageTag,
+          hubnetMessage: message
+        });
+      };
+
+      HubnetManager.prototype.hubnetClearOverride = function(messageSource, agentOrSet, messageTag) {
+        socket.emit('send override', {
+          hubnetMessageType: "clear-override",
+          hubnetAgentOrSet: this.getAgentIds(agentOrSet),
+          hubnetMessageSource: messageSource,
+          hubnetMessageTag: messageTag
+        });
+      };
+
+      HubnetManager.prototype.hubnetClearOverrides = function(messageSource) {
+        socket.emit('send override', {
+          hubnetMessageType: "clear-overrides",
+          hubnetMessageSource: messageSource
+        });
+      };
+
+      HubnetManager.prototype.hubnetSendOverride = function(messageSource, agentOrSet, messageTag, message) {
+        console.log("a");
+        socket.emit('send override', {
+          hubnetMessageType: "send-override",
+          hubnetAgentOrSet: this.getAgentIds(agentOrSet),
+          hubnetMessageSource: messageSource,
+          hubnetMessageTag: messageTag,
+          hubnetMessage: message
+        });
+      };
+
+      HubnetManager.prototype.hubnetSendWatch = function(messageSource, agent) {
+        socket.emit('send override', {
+          hubnetMessageType: "send-watch",
+          hubnetAgentOrSet: this.getAgentIds(agent),
+          hubnetMessageSource: messageSource
+        });
+      };
+
+      HubnetManager.prototype.hubnetResetPerspective = function(messageTag) {
+        socket.emit('send override', {
+          hubnetMessageType: "reset-perspective",
+          hubnetMessageTag: messageTag
+        });
+      };
+
+      HubnetManager.prototype.hubnetSendFollow = function(messageSource, agent, radius) {
+        console.log("b");
+        socket.emit('send override', {
+          hubnetMessageType: "send-follow",
+          hubnetAgentOrSet: this.getAgentIds(agent),
+          hubnetMessageSource: messageSource,
+          hubnetMessage: radius
+        });
+      };
+
+      HubnetManager.prototype.getAgentIds = function(agents) {
+        var a, agentObj, agentType, i, ids, len;
+        ids = [];
+        agentType = agents.constructor.name;
+        if (agentType === "Turtle") {
+          ids.push(agents.id);
+        } else {
+          if (agentType === "TurtleSet") {
+            agentObj = agents._agents;
+            for (i = 0, len = agentObj.length; i < len; i++) {
+              a = agentObj[i];
+              ids.push(agentObj[a].id);
+            }
+          }
+        }
+        return ids;
+      };
+
+      HubnetManager.prototype.processCommand = function(m) {
+        if (commandQueue.length === 0) {
+          world.hubnetManager.hubnetMessageWaiting = false;
+        }
+        world.hubnetManager.hubnetEnterMessage = false;
+        world.hubnetManager.hubnetExitMessage = false;
+        world.hubnetManager.hubnetMessageSource = m.messageSource;
+        world.hubnetManager.hubnetMessageTag = m.messageTag;
+        world.hubnetManager.hubnetMessage = m.message;
+        if (m.messageTag === 'hubnet-enter-message') {
+          world.hubnetManager.hubnetEnterMessage = true;
+        }
+        if (m.messageTag === 'hubnet-exit-message') {
+          world.hubnetManager.hubnetExitMessage = true;
+        }
+      };
+          
+      return HubnetManager;
 
   })();
 
@@ -12937,8 +13013,10 @@ function hasOwnProperty(obj, prop) {
 
   module.exports = HubnetManager = (function() {
     function HubnetManager() {
+      this.hubnetSendFollow = bind(this.hubnetSendFollow, this);
       this.hubnetResetPerspective = bind(this.hubnetResetPerspective, this);
       this.hubnetSendWatch = bind(this.hubnetSendWatch, this);
+      this.hubnetSendOverride = bind(this.hubnetSendOverride, this);
       this.hubnetClearOverrides = bind(this.hubnetClearOverrides, this);
       this.hubnetClearOverride = bind(this.hubnetClearOverride, this);
       this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
@@ -12972,13 +13050,75 @@ function hasOwnProperty(obj, prop) {
       });
     };
 
-    HubnetManager.prototype.hubnetClearOverride = function(messageSource, agentOrSet, messageTag) {};
+    HubnetManager.prototype.hubnetClearOverride = function(messageSource, agentOrSet, messageTag) {
+      console.log("d");
+      socket.emit('send override', {
+        hubnetMessageType: "clear-override",
+        hubnetAgentOrSet: this.getAgentIds(agentOrSet),
+        hubnetMessageSource: messageSource,
+        hubnetMessageTag: messageTag
+      });
+    };
 
-    HubnetManager.prototype.hubnetClearOverrides = function(messageSource) {};
+    HubnetManager.prototype.hubnetClearOverrides = function(messageSource) {
+      socket.emit('send override', {
+        hubnetMessageType: "clear-overrides",
+        hubnetMessageSource: messageSource
+      });
+    };
 
-    HubnetManager.prototype.hubnetSendWatch = function(messageSource, agent) {};
+    HubnetManager.prototype.hubnetSendOverride = function(messageSource, agentOrSet, messageTag, message) {
+      socket.emit('send override', {
+        hubnetMessageType: "send-override",
+        hubnetAgentOrSet: this.getAgentIds(agentOrSet),
+        hubnetMessageSource: messageSource,
+        hubnetMessageTag: messageTag,
+        hubnetMessage: message
+      });
+    };
 
-    HubnetManager.prototype.hubnetResetPerspective = function(messageTag) {};
+    HubnetManager.prototype.hubnetSendWatch = function(messageSource, agent) {
+      socket.emit('send override', {
+        hubnetMessageType: "send-watch",
+        hubnetAgentOrSet: this.getAgentIds(agent),
+        hubnetMessageSource: messageSource
+      });
+    };
+
+    HubnetManager.prototype.hubnetResetPerspective = function(messageTag) {
+      socket.emit('send override', {
+        hubnetMessageType: "reset-perspective",
+        hubnetMessageTag: messageTag
+      });
+    };
+
+    HubnetManager.prototype.hubnetSendFollow = function(messageSource, agent, radius) {
+      console.log("h2");
+      socket.emit('send override', {
+        hubnetMessageType: "send-follow",
+        hubnetAgentOrSet: this.getAgentIds(agent),
+        hubnetMessageSource: messageSource,
+        hubnetMessage: radius
+      });
+    };
+
+    HubnetManager.prototype.getAgentIds = function(agents) {
+      var a, agentObj, agentType, i, ids, len;
+      ids = [];
+      agentType = agents.constructor.name;
+      if (agentType === "Turtle") {
+        ids.push(agents.id);
+      } else {
+        if (agentType === "TurtleSet") {
+          agentObj = agents._agents;
+          for (i = 0, len = agentObj.length; i < len; i++) {
+            a = agentObj[i];
+            ids.push(a.id);
+          }
+        }
+      }
+      return ids;
+    };
 
     HubnetManager.prototype.processCommand = function(m) {
       if (commandQueue.length === 0) {

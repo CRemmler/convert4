@@ -125,7 +125,7 @@
     };
 
     ViewController.prototype.applyUpdate = function(modelUpdate) {
-      //console.log("apply update", modelUpdate);
+      console.log("apply update", modelUpdate);
       return this.model.update(modelUpdate);
     };
 
