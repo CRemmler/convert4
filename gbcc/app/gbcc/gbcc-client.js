@@ -10,7 +10,7 @@ var foreverButtonCode = new Object();
 var myUserType;
 var activityType = undefined;
 var drawPatches = true;
-var mirroringEnabled = true;
+var mirroringEnabled;
 var myCanvas;
   
 jQuery(document).ready(function() {
@@ -19,6 +19,9 @@ jQuery(document).ready(function() {
   var turtleDict = {};
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
+  var teacherId;
+  var filter = {};
+  var teacherId;
   var filter = {};
   socket = io();
   
@@ -27,8 +30,10 @@ jQuery(document).ready(function() {
 
   // save student settings
   socket.on("save settings", function(data) {
+    
     userId = data.userId;
     myUserType = data.userType;
+    teacherId = data.teacherId;
     $(".netlogo-canvas").attr("id","netlogoCanvas"); 
     Gallery.setupGallery({settings: data.gallerySettings, userId: userId});
     Physics.setupInterface();
@@ -49,7 +54,10 @@ jQuery(document).ready(function() {
 
   // display teacher or student interface
   socket.on("display interface", function(data) {
-    if (activityType === undefined) { activityType = data.activityType; }
+    if (activityType === undefined) { 
+      activityType = data.activityType; 
+      mirroringEnabled = (activityType === "gbcc") ? false : true;
+    }
     switch (data.userType) {
       case "teacher": //as teacher, show teacher interface
         Interface.showTeacher(data.room, data.components);
@@ -130,9 +138,11 @@ jQuery(document).ready(function() {
 
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
+    console.log("student gets ui change or init", data);
     if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
+      console.log("tabs",data.display);
       (data.display) ? $(".netlogo-tab-area").css("display","block") : $(".netlogo-tab-area").css("display","none");
     } else if (data.type === "gallery") {
       if (data.display) {
@@ -143,7 +153,6 @@ jQuery(document).ready(function() {
         }
         if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myForeverButtonVar); }
       } else {
-        var teacherId = data.teacherId;
         $(".netlogo-gallery-tab").css("display","none"); 
         $(".netlogo-gallery-tab-content").css("display","none");  
         for (userId in foreverButtonCode) {
@@ -163,7 +172,8 @@ jQuery(document).ready(function() {
       if (data.state) {
         if (mirroringEnabled) {
           myWorld = data.state;
-          world.miniWorkspace.importCSV(data.state);
+          workspace.importExportPrims.importWorldRaw(data.state);
+          //world.miniWorkspace.importCSV(data.state);
         } else {
           if (myWorld) { 
             world.importState(myWorld);

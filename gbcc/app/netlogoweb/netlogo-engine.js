@@ -8372,134 +8372,58 @@ function hasOwnProperty(obj, prop) {
 (function() {
   var HubnetManager,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-    
-    module.exports = HubnetManager = (function() {
-      function HubnetManager() {
-        this.hubnetSendFollow = bind(this.hubnetSendFollow, this);
-        this.hubnetResetPerspective = bind(this.hubnetResetPerspective, this);
-        this.hubnetSendWatch = bind(this.hubnetSendWatch, this);
-        this.hubnetSendOverride = bind(this.hubnetSendOverride, this);
-        this.hubnetClearOverrides = bind(this.hubnetClearOverrides, this);
-        this.hubnetClearOverride = bind(this.hubnetClearOverride, this);
-        this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
-        this.hubnetSend = bind(this.hubnetSend, this);
-        this.hubnetFetchMessage = bind(this.hubnetFetchMessage, this);
-        this.hubnetMessageWaiting = false;
-        this.hubnetEnterMessage = false;
-        this.hubnetExitMessage = false;
-        this.hubnetMessage = "";
-        this.hubnetMessageSource = "";
-        this.hubnetMessageTag = "";
+
+  module.exports = HubnetManager = (function() {
+    function HubnetManager() {
+      this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
+      this.hubnetSend = bind(this.hubnetSend, this);
+      this.hubnetFetchMessage = bind(this.hubnetFetchMessage, this);
+      this.hubnetMessageWaiting = false;
+      this.hubnetEnterMessage = false;
+      this.hubnetExitMessage = false;
+      this.hubnetMessage = "";
+      this.hubnetMessageSource = "";
+      this.hubnetMessageTag = "";
+    }
+
+    HubnetManager.prototype.hubnetFetchMessage = function() {
+      this.processCommand(commandQueue.shift());
+    };
+
+    HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
+      socket.emit('send reporter', {
+        hubnetMessageSource: messageSource,
+        hubnetMessageTag: messageTag,
+        hubnetMessage: message
+      });
+    };
+
+    HubnetManager.prototype.hubnetBroadcast = function(messageTag, message) {
+      socket.emit('send reporter', {
+        hubnetMessageSource: "all-users",
+        hubnetMessageTag: messageTag,
+        hubnetMessage: message
+      });
+    };
+
+    HubnetManager.prototype.processCommand = function(m) {
+      if (commandQueue.length === 0) {
+        world.hubnetManager.hubnetMessageWaiting = false;
       }
+      world.hubnetManager.hubnetEnterMessage = false;
+      world.hubnetManager.hubnetExitMessage = false;
+      world.hubnetManager.hubnetMessageSource = m.messageSource;
+      world.hubnetManager.hubnetMessageTag = m.messageTag;
+      world.hubnetManager.hubnetMessage = m.message;
+      if (m.messageTag === 'hubnet-enter-message') {
+        world.hubnetManager.hubnetEnterMessage = true;
+      }
+      if (m.messageTag === 'hubnet-exit-message') {
+        world.hubnetManager.hubnetExitMessage = true;
+      }
+    };
 
-      HubnetManager.prototype.hubnetFetchMessage = function() {
-        this.processCommand(commandQueue.shift());
-      };
-
-      HubnetManager.prototype.hubnetSend = function(messageSource, messageTag, message) {
-        socket.emit('send reporter', {
-          hubnetMessageSource: messageSource,
-          hubnetMessageTag: messageTag,
-          hubnetMessage: message
-        });
-      };
-
-      HubnetManager.prototype.hubnetBroadcast = function(messageTag, message) {
-        socket.emit('send reporter', {
-          hubnetMessageSource: "all-users",
-          hubnetMessageTag: messageTag,
-          hubnetMessage: message
-        });
-      };
-
-      HubnetManager.prototype.hubnetClearOverride = function(messageSource, agentOrSet, messageTag) {
-        socket.emit('send override', {
-          hubnetMessageType: "clear-override",
-          hubnetAgentOrSet: this.getAgentIds(agentOrSet),
-          hubnetMessageSource: messageSource,
-          hubnetMessageTag: messageTag
-        });
-      };
-
-      HubnetManager.prototype.hubnetClearOverrides = function(messageSource) {
-        socket.emit('send override', {
-          hubnetMessageType: "clear-overrides",
-          hubnetMessageSource: messageSource
-        });
-      };
-
-      HubnetManager.prototype.hubnetSendOverride = function(messageSource, agentOrSet, messageTag, message) {
-        console.log("a");
-        socket.emit('send override', {
-          hubnetMessageType: "send-override",
-          hubnetAgentOrSet: this.getAgentIds(agentOrSet),
-          hubnetMessageSource: messageSource,
-          hubnetMessageTag: messageTag,
-          hubnetMessage: message
-        });
-      };
-
-      HubnetManager.prototype.hubnetSendWatch = function(messageSource, agent) {
-        socket.emit('send override', {
-          hubnetMessageType: "send-watch",
-          hubnetAgentOrSet: this.getAgentIds(agent),
-          hubnetMessageSource: messageSource
-        });
-      };
-
-      HubnetManager.prototype.hubnetResetPerspective = function(messageTag) {
-        socket.emit('send override', {
-          hubnetMessageType: "reset-perspective",
-          hubnetMessageTag: messageTag
-        });
-      };
-
-      HubnetManager.prototype.hubnetSendFollow = function(messageSource, agent, radius) {
-        console.log("b");
-        socket.emit('send override', {
-          hubnetMessageType: "send-follow",
-          hubnetAgentOrSet: this.getAgentIds(agent),
-          hubnetMessageSource: messageSource,
-          hubnetMessage: radius
-        });
-      };
-
-      HubnetManager.prototype.getAgentIds = function(agents) {
-        var a, agentObj, agentType, i, ids, len;
-        ids = [];
-        agentType = agents.constructor.name;
-        if (agentType === "Turtle") {
-          ids.push(agents.id);
-        } else {
-          if (agentType === "TurtleSet") {
-            agentObj = agents._agents;
-            for (i = 0, len = agentObj.length; i < len; i++) {
-              a = agentObj[i];
-              ids.push(agentObj[a].id);
-            }
-          }
-        }
-        return ids;
-      };
-
-      HubnetManager.prototype.processCommand = function(m) {
-        if (commandQueue.length === 0) {
-          world.hubnetManager.hubnetMessageWaiting = false;
-        }
-        world.hubnetManager.hubnetEnterMessage = false;
-        world.hubnetManager.hubnetExitMessage = false;
-        world.hubnetManager.hubnetMessageSource = m.messageSource;
-        world.hubnetManager.hubnetMessageTag = m.messageTag;
-        world.hubnetManager.hubnetMessage = m.message;
-        if (m.messageTag === 'hubnet-enter-message') {
-          world.hubnetManager.hubnetEnterMessage = true;
-        }
-        if (m.messageTag === 'hubnet-exit-message') {
-          world.hubnetManager.hubnetExitMessage = true;
-        }
-      };
-          
-      return HubnetManager;
+    return HubnetManager;
 
   })();
 
@@ -13013,10 +12937,10 @@ function hasOwnProperty(obj, prop) {
 
   module.exports = HubnetManager = (function() {
     function HubnetManager() {
+      this.hubnetSendOverride = bind(this.hubnetSendOverride, this);
       this.hubnetSendFollow = bind(this.hubnetSendFollow, this);
       this.hubnetResetPerspective = bind(this.hubnetResetPerspective, this);
       this.hubnetSendWatch = bind(this.hubnetSendWatch, this);
-      this.hubnetSendOverride = bind(this.hubnetSendOverride, this);
       this.hubnetClearOverrides = bind(this.hubnetClearOverrides, this);
       this.hubnetClearOverride = bind(this.hubnetClearOverride, this);
       this.hubnetBroadcast = bind(this.hubnetBroadcast, this);
@@ -13051,7 +12975,6 @@ function hasOwnProperty(obj, prop) {
     };
 
     HubnetManager.prototype.hubnetClearOverride = function(messageSource, agentOrSet, messageTag) {
-      console.log("d");
       socket.emit('send override', {
         hubnetMessageType: "clear-override",
         hubnetAgentOrSet: this.getAgentIds(agentOrSet),
@@ -13064,16 +12987,6 @@ function hasOwnProperty(obj, prop) {
       socket.emit('send override', {
         hubnetMessageType: "clear-overrides",
         hubnetMessageSource: messageSource
-      });
-    };
-
-    HubnetManager.prototype.hubnetSendOverride = function(messageSource, agentOrSet, messageTag, message) {
-      socket.emit('send override', {
-        hubnetMessageType: "send-override",
-        hubnetAgentOrSet: this.getAgentIds(agentOrSet),
-        hubnetMessageSource: messageSource,
-        hubnetMessageTag: messageTag,
-        hubnetMessage: message
       });
     };
 
@@ -13093,12 +13006,22 @@ function hasOwnProperty(obj, prop) {
     };
 
     HubnetManager.prototype.hubnetSendFollow = function(messageSource, agent, radius) {
-      console.log("h2");
       socket.emit('send override', {
         hubnetMessageType: "send-follow",
         hubnetAgentOrSet: this.getAgentIds(agent),
         hubnetMessageSource: messageSource,
         hubnetMessage: radius
+      });
+    };
+
+    HubnetManager.prototype.hubnetSendOverride = function(messageSource, agentOrSet, messageTag, message) {
+      console.log(message);
+      socket.emit('send override', {
+        hubnetMessageType: "send-override",
+        hubnetAgentOrSet: this.getAgentIds(agentOrSet),
+        hubnetMessageSource: messageSource,
+        hubnetMessageTag: messageTag,
+        hubnetMessage: message
       });
     };
 
@@ -14048,7 +13971,6 @@ function hasOwnProperty(obj, prop) {
       this._thisWrapY = bind(this._thisWrapY, this);
       this._thisWrapX = bind(this._thisWrapX, this);
       this.zoom = bind(this.zoom, this);
-      this.miniWorkspace = miniWorkspace;
       this.getPatchAt = bind(this.getPatchAt, this);
       this.patches = bind(this.patches, this);
       this.selfManager = miniWorkspace.selfManager, this._updater = miniWorkspace.updater, this.rng = miniWorkspace.rng, this.breedManager = miniWorkspace.breedManager, this._plotManager = miniWorkspace.plotManager;
@@ -15806,11 +15728,7 @@ function hasOwnProperty(obj, prop) {
         return exportFile(trueExportPlot(plot))(filename);
       };
       this.importDrawing = function(filename) {
-        /// GBCC ///
-        world.importDrawing(filename);
-        //return importDrawing(trueImportDrawing)(filename);
-        // undo this 
-        /// END GBCC ///
+        return importDrawing(trueImportDrawing)(filename);
       };
       this.importWorld = function(filename) {
         return importWorld(trueImportWorld)(filename);
@@ -18406,13 +18324,12 @@ function hasOwnProperty(obj, prop) {
   Meta = require('meta');
 
   MiniWorkspace = (function() {
-    function MiniWorkspace(selfManager1, updater1, breedManager1, rng1, plotManager1, csvToWorldState) {
+    function MiniWorkspace(selfManager1, updater1, breedManager1, rng1, plotManager1) {
       this.selfManager = selfManager1;
       this.updater = updater1;
       this.breedManager = breedManager1;
       this.rng = rng1;
       this.plotManager = plotManager1;
-      this.importCSV = csvToWorldState;
     }
 
     return MiniWorkspace;
@@ -18446,38 +18363,11 @@ function hasOwnProperty(obj, prop) {
                 plotManager = new PlotManager(plots);
                 timer = new Timer;
                 updater = new Updater(dump);
-                importWorldFromCSV = function(csvText) {
-                  var breedNamePairs, functionify, pluralToSingular, ptsObject, singularToPlural, stpObject, worldState;
-                  functionify = function(obj) {
-                    return function(x) {
-                      var msg;
-                      msg = "Cannot find corresponding breed name for " + x + "!";
-                      return fold(function() {
-                        throw new Error(msg);
-                      })(id)(lookup(x)(obj));
-                    };
-                  };
-                  breedNamePairs = values(breedManager.breeds()).map(function(arg) {
-                    var name, singular;
-                    name = arg.name, singular = arg.singular;
-                    return [name, singular];
-                  });
-                  ptsObject = toObject(breedNamePairs);
-                  stpObject = toObject(breedNamePairs.map(function(arg) {
-                    var p, s;
-                    p = arg[0], s = arg[1];
-                    return [s, p];
-                  }));
-                  pluralToSingular = functionify(ptsObject);
-                  singularToPlural = functionify(stpObject);
-                  worldState = csvToWorldState(singularToPlural, pluralToSingular)(csvText);
-                  return world.importState(worldState);
-                };
                 world = (function(func, args, ctor) {
                   ctor.prototype = func.prototype;
                   var child = new ctor, result = func.apply(child, args);
                   return Object(result) === result ? result : child;
-                })(World, [new MiniWorkspace(selfManager, updater, breedManager, rng, plotManager, importWorldFromCSV), worldConfig, (function() {
+                })(World, [new MiniWorkspace(selfManager, updater, breedManager, rng, plotManager), worldConfig, (function() {
                   outputConfig.clear();
                   return outputStore = "";
                 }), (function() {

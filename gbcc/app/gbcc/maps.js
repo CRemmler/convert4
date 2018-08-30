@@ -94,9 +94,10 @@ Maps = (function() {
     updateMap();
     if (map) { map.invalidateSize(); }
     $("#mapContainer").css("display","inline-block");
-    $("#mapContainer").css("z-index","0");
+    //$("#mapContainer").css("z-index","0");
     if (!mirroringEnabled) {
       $(".netlogo-view-container").css("pointer-events","none");
+      $(".netlogo-view-container").css("z-index","0");
     }
     $(".netlogo-view-container").css("z-index","1");
     $("#opacityWrapper").css("top",parseInt($("#mapContainer").css("top") - 15) + "px");
@@ -111,7 +112,7 @@ Maps = (function() {
   
   function hideMap() {
     $("#mapContainer").css("display","none");
-    $("#mapContainer").css("z-index","1");
+    //$("#mapContainer").css("z-index","1");
     $(".netlogo-view-container").css("pointer-events","auto");
     $(".netlogo-view-container").css("z-index","0");
     $("#opacityWrapper").css("display", "none");

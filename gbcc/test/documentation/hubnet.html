@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>
-      GbCC 3.0 Hubnet
+      GbCC 3.0 HubNet
     </title>
     <link rel="stylesheet" href="css/netlogo.css" type="text/css">
     <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -31,7 +31,7 @@
   </head>
   <body>
     <h1>
-      Classic Hubnet to GbCC Conversion 
+      Classic HubNet to GbCC Conversion 
     </h1>
 
     <h2>&#x2713; Gridlock</h2>
@@ -219,12 +219,12 @@ Bird Breeders	Novak & Wilensky 2011	N
 -->
 
   <h1>
-    How It Works
+    How HubNet Works
   </h1>
-      <h2>Hubnet Communication</h2>
+      <h2>HubNet Communication</h2>
       <h3>Student Enters the Room</h3>
       <p>When a student enters a room, an <b>"execute command" message</b> is sent from the server to the teacher.
-        <br>The <b>hubnet-message-source</b> is that user's user-id. 
+        <br>The <b>hubnet-message-source</b> is that student's user-id. 
         <br>The <b>hubnet-message-tag</b> is "hubnet-enter-message". 
         <br>The <b>hubnet-message</b> is an empty string.
         <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
@@ -233,8 +233,8 @@ Bird Breeders	Novak & Wilensky 2011	N
         
       <p>The teacher catches the message in the <b>"execute command" socket</b>. 
         The message is added to the <b>commandQueue</b>.
-      The <b>hubnet-message-waiting?</b> variable is set to true.
-      When the teacher runs the <b>hubnet-fetch-message</b> command, then the next item in commandQueue is analyzed.
+        The <b>hubnet-message-waiting?</b> variable is set to true.
+        When the teacher runs the <b>hubnet-fetch-message</b> command, then the next item in commandQueue is analyzed.
         The teacher will notice that <b>hubnet-enter-message?</b> is set to true.
         <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
           https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
@@ -242,7 +242,7 @@ Bird Breeders	Novak & Wilensky 2011	N
       
       <h3>Student Exits the Room</h3>
       <p>When a student exits a room, an <b>"execute command" message</b> is sent from the server to the teacher.
-        <br>The <b>hubnet-message-source</b> is that user's user-id. 
+        <br>The <b>hubnet-message-source</b> is that student's user-id. 
         <br>The <b>hubnet-message-tag</b> is "hubnet-exit-message". 
         <br>The <b>hubnet-message</b> is an empty string.
         <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
@@ -260,20 +260,20 @@ Bird Breeders	Novak & Wilensky 2011	N
 
       <h3>Student Interacts with a Widget</h3>
       <p>
-      <p><b>Widgets</b> include the view-container, buttons, sliders, switghes, choosers, and input boxes.
-      Students' widgets have <b>clickHandlers</b>.
+      <p><b>Widgets</b> include the view-container, buttons, sliders, switches, choosers, and input boxes.
+      <!--Students' widgets have <b>clickHandlers</b>.-->
       When widgets are clicked, they send a <b>"send command" message</b> to the server.
       <br>The <b>hubnet-message-tag</b> is the name of the widget. 
       <br>The <b>hubnet-message</b> is either an empty string (for button widgets), 
       the location of the click (for view widget) or the widget's value (for other widgets).
-      <a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js">
+      <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js</a>
       </p>
       
       <p>The server catches the message in the <b>"send command" socket</b> and sends an <b>"execute command" message</b> 
-        to the teacher.
-        <br>The <b>hubnet-message-source</b> is that user's user-id. 
-        <br>The <b>hubnet-message-tag</b> and <b>hubnet-message</b> are passed through from the student to the teacher.
+        to the teacher. The message includes:
+        <br>The <b>hubnet-message-source</b> is that student's user-id. 
+        <br>The <b>hubnet-message-tag</b> and <b>hubnet-message</b>.
       <a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
       </p>
@@ -292,13 +292,15 @@ Bird Breeders	Novak & Wilensky 2011	N
       <p>The following commands are HubNet commands.
       <br><b>hubnet-send</b> <i>hubnet-message-source hubnet-message-tag hubnet-message</i>
       <br><b>hubnet-broadcast</b>  <i>hubnet-message-tag hubnet-message</i> </p>        
-      <p>When a teacher runs a HubNet command, a <b>"send reporter" message</b> to the server. This happens in the HubnetManager.
+      <p>When a teacher runs a HubNet command, a <b>"send reporter" message</b> is sent to the server. 
+        This happens in the HubnetManager.
         <br><a href="https://github.com/CRemmler/Tortoise/blob/gbcc-extensions/engine/src/main/coffee/engine/core/world/hubnetmanager.coffee">
           https://github.com/CRemmler/Tortoise/blob/gbcc-extensions/engine/src/main/coffee/engine/core/world/hubnetmanager.coffee</a>
       </p>
       <p>
         The server catches the message in the <b>"send reporter" socket</b>.
-        The server saves the message in <b>dataObject</b> and sends the <b>"display reporter" message</b> to the specific student or all students.
+        The server sends the <b>"display reporter" message</b> 
+        to the specific student or all students.
         <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
           https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
       </p>
@@ -311,12 +313,14 @@ Bird Breeders	Novak & Wilensky 2011	N
           https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
       </p>
       
-      <h2>Hubnet Mirroring</h2>  
+      <h2>HubNet Mirroring</h2>  
       <h3>Mirroring the Teacher's View</h3>
       <p>
       <img src="images/hubnet-36.png">
       <br> When mirroring is enabled, the students' views look like 
-      the teacher's view. Updates to mirroring occur in real time. 
+      the teacher's view. Updates to mirroring occur in real time.
+      View updates include the appearance of patches, turtles, links and drawings.
+      Drawings include pendown tracks, turtles stamps and imported drawings. 
       </p>
       <p>
       <img src="images/hubnet-35.png">
@@ -324,8 +328,7 @@ Bird Breeders	Novak & Wilensky 2011	N
         below the lower right corner of the view.      
       </p>
       <h3>Begin Mirroring</h3>
-      <p>When a teacher checks the "Mirroring" checkbox, there is a click event on $("#enableMirroring").
-      Then the teacher sends a <b>"teacher requests UI change" message</b>
+      <p>When a teacher checks the "Mirroring" checkbox, the teacher sends a <b>"teacher requests UI change" message</b>
       to the server saying the mirror should be displayed, and it also includes the exportCSV() state of their world 
       and an image of their view.
       <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js">
@@ -333,23 +336,23 @@ Bird Breeders	Novak & Wilensky 2011	N
       </p>
       
       <p>The server catches the message in the <b>"teacher requests UI change" socket</b>.
-      The server sends all students a <b>"student accepts UI change" message</b> with the state of the teacher's world and the image of their view.
+      The server sends all students a <b>"student accepts UI change" message</b> with the state of the teacher's world
+       and the image of their view.
       <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
       </p>
       
       <p>The student catches the message in the <b>"student accepts UI change" socket</b>.
-      Streams of the latests updates are cleared.
-      The student loads the teacher's world using importCSV().
+      The student loads the teacher's world using <span style="background:yellow">importCSV()</span>
       The student displays the image from the teacher's view.
-      <br>Another message is received saying that view should be visible.
+      Another message is received saying that view should be visible.
       <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
       </p>
       
       <p>
 
-      <b><span style="background:yellow">Note to CCL:</span></b> I made importCSV() visible from the world level by using code from importWorldFromCSV().
+      <b><span style="background:yellow">Note to CCL:</span></b> I made <span style="background:yellow">importCSV()</span> visible from the world level by using code from importWorldFromCSV().
       Will CCL implement importCSV(), at the world level, in NetLogo Web?
       <br><a href="https://github.com/NetLogo/Tortoise/blob/master/engine/src/main/coffee/engine/workspace.coffee">
          https://github.com/NetLogo/Tortoise/blob/master/engine/src/main/coffee/engine/workspace.coffee </a>
@@ -357,21 +360,22 @@ Bird Breeders	Novak & Wilensky 2011	N
        </p>
       
       <h3>Continue Mirroring</h3>
-      <p>If the teacher has view updates in HubNet, then ViewController Update sends a <b>"send mirror stream reporter" message</b>
+      <p>If the teacher has view updates in HubNet, then ViewController Update sends a 
+        <b>"send mirror reporter" message</b>
         with the modelUpdate.
       <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/netlogoweb/view-controller.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/app/netlogoweb/view-controller.js</a>
       </p>
       
-      <p>The server catches the message in the <b>"send mirror stream reporter" socket</b>.
-        The server sends all students a <b>"accept user mirror stream data" message</b> 
+      <p>The server catches the message in the <b>"send mirror reporter" socket</b>.
+        The server sends all students a <b>"accept user mirror data" message</b> 
         containing the modelUpdate.
       <a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
       </p>
       
-      <p>The student catches the message in the <b>"accept user mirror stream data" socket</b>.
-        The student applies updates to their instance of the view, called <b>universe</b>
+      <p>The student catches the message in the <b>"accept user mirror data" socket</b>.
+        The student applies updates to their instance of the view, called <b>universe</b>.
         <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
           https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
       </p>          
@@ -381,8 +385,7 @@ Bird Breeders	Novak & Wilensky 2011	N
       </p>
       
       <h3>End Mirroring</h3>
-      <p>When a teacher unchecks the "Mirroring" checkbox, there is a click event on $("#enableMirroring").
-      Since mirroring is false, then the teacher sends a <b>"teacher requests UI change" message</b>
+      <p>When a teacher unchecks the "Mirroring" checkbox, the teacher sends a <b>"teacher requests UI change" message</b>
       to the server saying mirroring is disabled.
       <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-interface.js</a>
@@ -397,13 +400,13 @@ Bird Breeders	Novak & Wilensky 2011	N
       <p>The student catches the message in the <b>"student accepts UI change" socket</b>.
       Mirroring is disabled. 
       
-      <br>Another message is received saying that the view should be hidden.
+      Another message is received saying that the view should be hidden.
       <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
       </p>
       
       <h3>Student Enters during Mirroring</h3>
-      <p>Whan a student enters the room that is being mirrored, that student sends a <b>"teacher accepts new entry request" message</b>
+      <p>Whan a student enters the room that is being mirrored, that server sends a <b>"teacher accepts new entry request" message</b>
         to the teacher,  with their userId.
         <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/server.js">
           https://github.com/CRemmler/convert4/blob/master/gbcc/server.js</a>
@@ -425,9 +428,9 @@ Bird Breeders	Novak & Wilensky 2011	N
       </p>    
       
       <p>The student catches the message in the <b>"student accepts UI change" socket</b>.
-      The student loads the teacher's world using importCSV().
+      The student loads the teacher's world using <span style="background:yellow">importCSV()</span>.
       The student displays the image from the teacher's view.
-      <br>Another message is received saying that view should be visible.
+      Another message is received saying that view should be visible.
       <br><a href="https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js">
         https://github.com/CRemmler/convert4/blob/master/gbcc/app/gbcc/gbcc-client.js</a>
       </p>
@@ -440,9 +443,11 @@ Bird Breeders	Novak & Wilensky 2011	N
             
       <h3>2. Teacher Sends hubnet-view-override Command</h3>
       <p>hubnet-view-override primitives are not currently implemented. 
-        Other HubNet primitives exist, and are described in the HubNet Communication 
-        section, above. Other HubNet primitives do not act on agentsets. 
+        
+        hubnet-send and hubnet-broadcast primitives exist, and are described in the HubNet Communication 
+        section, above. hubnet-send and hubnet-broadcast do not act on agentsets. 
         hubnet-view-override 
+        
         primitives will have to be able to act on agentsets. 
       </p><p>
         <b>*** Possibly problematic. Further investigation is required. ***</b>
