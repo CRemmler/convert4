@@ -19,6 +19,7 @@ jQuery(document).ready(function() {
   var turtleDict = {};
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
+  var teacherId;
   
   socket = io();
   
@@ -30,6 +31,7 @@ jQuery(document).ready(function() {
     
     userId = data.userId;
     myUserType = data.userType;
+    teacherId = data.teacherId;
     $(".netlogo-canvas").attr("id","netlogoCanvas"); 
     Gallery.setupGallery({settings: data.gallerySettings, userId: userId});
     Physics.setupInterface();
@@ -147,7 +149,6 @@ jQuery(document).ready(function() {
         }
         if ($.isEmptyObject(foreverButtonCode)) { clearInterval(myForeverButtonVar); }
       } else {
-        var teacherId = data.teacherId;
         $(".netlogo-gallery-tab").css("display","none"); 
         $(".netlogo-gallery-tab-content").css("display","none");  
         for (userId in foreverButtonCode) {

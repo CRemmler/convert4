@@ -51,7 +51,7 @@ io.on('connection', function(socket){
   socket.on("enter room", function(data) {
     var school = socket.school;
     var allRooms = schools[school];
-    var myUserType, myUserId;
+    var myUserType, myUserId, teacherId;
     socket.leave("login");
     if (data.room === "admin") {
       socket.emit("display admin", {roomData: getAdminData(allRooms, school)});
@@ -71,32 +71,35 @@ io.on('connection', function(socket){
         allRooms[myRoom].settings.gallery = true;
         allRooms[myRoom].settings.tabs = true;
         allRooms[myRoom].settings.mirror = true;
+        allRooms[myRoom].settings.teacherId = "";
       }
       // declare myUserType, first user in is a teacher, rest are students
       socket.myUserType = (countUsers(myRoom, school) === 0) ? "teacher" : "student";
       myUserType = socket.myUserType;
       // declare myUserId
       myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+      if (myUserType === "teacher") { allRooms[myRoom].settings.teacherId = myUserId; }
+      teacherId = allRooms[myRoom].settings.teacherId;
       socketDictionary[myUserId] = socket.id;
       allRooms[myRoom].userData[myUserId] = {};
       allRooms[myRoom].userStreamData[myUserId] = {};
       allRooms[myRoom].userData[myUserId].exists = true;
       allRooms[myRoom].userData[myUserId]["userType"] = myUserType;
       // send settings to client
+
+      socket.emit("save settings", {userType: myUserType, userId: myUserId, gallerySettings: config.galleryJs, myRoom: myRoom, school: school, teacherId: teacherId});
+
       if (activityType === "hubnet") {
           if (allRooms[myRoom].settings.mirror && myUserType === "student") { 
             socket.to(school+"-"+myRoom+"-teacher").emit("teacher accepts new entry request", {"userId": myUserId }); 
           }
-          socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {userId: myUserId, tag: 'view', value: allRooms[myRoom].settings.view });
-
-        //}
+          socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {userId: myUserId, type: 'view', display: allRooms[myRoom].settings.view });
       } else if (activityType === "gbcc") {
-          socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {userId: myUserId, tag: 'tabs', value: allRooms[myRoom].settings.tabs });
-          socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {userId: myUserId, tag: 'gallery', value: allRooms[myRoom].settings.gallery });
-          socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {userId: myUserId, tag: 'view', value: allRooms[myRoom].settings.view });
+          socket.emit("student accepts UI change", {userId: myUserId, type: 'tabs', display: allRooms[myRoom].settings.tabs });
+          socket.emit("student accepts UI change", {userId: myUserId, type: 'gallery', display: allRooms[myRoom].settings.gallery });
+          socket.emit("student accepts UI change", {userId: myUserId, type: 'view', display: allRooms[myRoom].settings.view });
       }
-      
-      socket.emit("save settings", {userType: myUserType, userId: myUserId, gallerySettings: config.galleryJs, myRoom: myRoom, school: school});
+    
       if (activityType != "hubnet") { 
         socket.emit("gbcc user enters", {userId: myUserId, userType: myUserType});
         socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
@@ -230,7 +233,6 @@ io.on('connection', function(socket){
      if (allRooms[myRoom] != undefined) {
        if (allRooms[myRoom].userData[myUserId]) {
          if (destination === "server") {
-           allRooms[myRoom].userStreamData[myUserId][data.hubnetMessageTag] = data.hubnetMessage;
            socket.to(school+"-"+myRoom+"-student").emit("accept user mirror data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
          } 
        }
