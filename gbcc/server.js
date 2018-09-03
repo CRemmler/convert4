@@ -225,7 +225,6 @@ io.on('connection', function(socket){
    
    // pass stream of data from server to student
    socket.on("send mirror reporter", function(data) {
-     //console.log("send mirror reporter?");
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
@@ -357,12 +356,11 @@ io.on('connection', function(socket){
         var destination = data.hubnetMessageSource;
         var dataObject = {
           messageType: data.hubnetMessageType,
-          agentIds: data.hubnetAgentOrSet,
+          agents: data.hubnetAgentOrSet,
           source: destination,
           tag: data.hubnetMessageTag,
           message: data.hubnetMessage
         }
-        console.log(dataObject);
         if (data.MessageType === "reset-perspective") {
           socket.to(school+"-"+myRoom+"-student").emit("accept user override", dataObject);
         } else {
@@ -511,7 +509,7 @@ io.on('connection', function(socket){
         allRooms[myRoom].userData[myUserId].exists = false;
       }
     }
-    if (activityStyle === "hierarchy") { 
+    if (activityType != "hubnet") { 
       socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user exits", {userId: myUserId, userType: myUserType});
     }
     if (socket.myUserType === "teacher") {

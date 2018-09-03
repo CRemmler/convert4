@@ -424,6 +424,8 @@
     }
   }
   
+  { type: "import-drawing", sourcePath }
+  
   { type: "zoom", scale }
   
   { type: "reset-zoom" }
@@ -573,13 +575,10 @@
             _this.ctx.save();
             _this.ctx.strokeStyle = _this._rgbToCss(penColor);
             _this.ctx.lineWidth = size * _this.view.onePixel;
-	          _this.ctx.lineCap = 'round';
+            _this.ctx.lineCap = 'round';
             _this.ctx.beginPath();
             _this.ctx.moveTo(x1, y1);
             _this.ctx.lineTo(x2, y2);
-            
-                  
-                  
             _this.view.withCompositing(_this.compositingOperation(penMode), _this.ctx)(function() {
               return _this.ctx.stroke();
             });

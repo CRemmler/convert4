@@ -20,11 +20,14 @@ jQuery(document).ready(function() {
   var allowMultipleButtonsSelected = true;
   var allowGalleryForeverButton = true;
   var teacherId;
-  var filter = {};
-  var teacherId;
-  var filter = {};
+  var viewOverride = {};
+  viewOverride.turtles = {};
+  viewOverride.patches = {};
+  viewOverride.links = {};
+  viewOverride.observer = {};
+  viewOverride.drawingEvents = {};
+  var viewState = undefined;
   socket = io();
-  
   var myForeverButtonVar = "";
   var myMirrorVar = "";
 
@@ -138,11 +141,9 @@ jQuery(document).ready(function() {
 
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
-    console.log("student gets ui change or init", data);
     if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
-      console.log("tabs",data.display);
       (data.display) ? $(".netlogo-tab-area").css("display","block") : $(".netlogo-tab-area").css("display","none");
     } else if (data.type === "gallery") {
       if (data.display) {
@@ -172,15 +173,13 @@ jQuery(document).ready(function() {
       if (data.state) {
         if (mirroringEnabled) {
           myWorld = data.state;
-          workspace.importExportPrims.importWorldRaw(data.state);
-          //world.miniWorkspace.importCSV(data.state);
+          ImportExportPrims.importWorldRaw(data.state);
         } else {
           if (myWorld) { 
             world.importState(myWorld);
           }
         }
       } 
-
     }
   });
   
@@ -238,51 +237,193 @@ jQuery(document).ready(function() {
     }
   });
   
-  function saveTurtleUpdate(data) {
-    if (data != {}) {
-      for (var i in data) {
-        console.log(i);
-        for (var j in data[i]) {
-          console.log(j + "=" + data[i][j]);
-        }
+  function saveUpdate(updates, agentType) {
+    var agents = updates[agentType];
+    for (var agent in agents) {
+      if (!viewState[agentType][agent]) { viewState[agentType][agent] = {}; }
+      for (var tag in agents[agent]) { 
+        viewState[agentType][agent][tag] = agents[agent][tag]; 
       }
     }
   }
-  function saveWorldUpdate(data) {
-
+  
+  function overrideUpdate(updates, agentType) {
+    var agents = updates[agentType];
+    var agent;
+    var tag;
+    if (viewOverride[agentType] && agents) {
+      for (var agent in viewOverride[agentType]) {
+        for (var tag in viewOverride[agentType][agent]) {
+          if (updates[agentType][agent] && updates[agentType][agent][tag] != undefined) {
+            delete updates[agentType][agent][tag];
+          }
+        }
+      }
+    }
+    updates[agentType] = agents;
+    return updates;
   }
   
-  function filterUpdate(data) {
-    return data;
+  function applyOverride(agentIds, agentType, tag, message) {
+    var updates = {};
+    updates[agentType] = {};
+    var agent;
+    for (var a in agentIds) {
+      agent = agentIds[a];
+      if (!updates[agentType][agent]) { updates[agentType][agent] = {}; }
+      updates[agentType][agent][tag] = message; 
+      if (!viewOverride[agentType][agent]) { viewOverride[agentType][agent] = {}; }
+      viewOverride[agentType][agent][tag] = message;
+    }
+    return updates;
+  }
+  
+  function removeOverride(agents, tag) {
+    var agentIds = agents.ids;
+    var agentType = agents.agentType;
+    var updates = {};
+    var agent;
+    updates[agentType] = {};
+    for (a in agentIds) {
+      agent = agentIds[a];
+      updates[agentType][agent] = {};
+      if ((viewState[agentType][agent][tag.toLowerCase()] != undefined) || (viewState[agentType][agent][tag.toUpperCase()] != undefined)) {
+        updates[agentType][agent][tag] =  (viewState[agentType][agent][tag.toUpperCase()] != undefined) ? viewState[agentType][agent][tag.toUpperCase()] : viewState[agentType][agent][tag.toLowerCase()];        
+      }
+      if (viewOverride[agentType][agent] && ((viewOverride[agentType][agent][tag.toLowerCase()] != undefined) || viewOverride[agentType][agent][tag.toUpperCase()] != undefined)) {
+        if (viewOverride[agentType][agent][tag.toUpperCase()] != undefined) {
+          delete viewOverride[agentType][agent][tag.toUpperCase()];
+        } else {
+          delete viewOverride[agentType][agent][tag.toLowerCase()];        
+        }
+      }
+    } 
+    return updates;
+  }
+  
+  function removeOverrides() {
+    var updates = {};
+    var agentTypes = ["turtles", "patches", "links"];
+    var agentType;
+    for (var a in agentTypes) {
+      agentType = agentTypes[a];
+      updates[agentType] = {};
+      for (var agent in viewOverride[agentType]) { 
+        for (var tag in viewOverride[agentType][agent]) { 
+          updates[agentType][agent] = {};
+          if ((viewState[agentType][agent][tag.toLowerCase()] != undefined) || (viewState[agentType][agent][tag.toUpperCase()] != undefined)) {
+            updates[agentType][agent][tag] =  (viewState[agentType][agent][tag.toUpperCase()] != undefined) ? viewState[agentType][agent][tag.toUpperCase()] : viewState[agentType][agent][tag.toLowerCase()];        
+          }
+          if (viewOverride[agentType][agent] && ((viewOverride[agentType][agent][tag.toLowerCase()] != undefined) || viewOverride[agentType][agent][tag.toUpperCase()] != undefined)) {
+            if (viewOverride[agentType][agent][tag.toUpperCase()] != undefined) {
+              delete viewOverride[agentType][agent][tag.toUpperCase()];
+            } else {
+              delete viewOverride[agentType][agent][tag.toLowerCase()];        
+            }
+          }
+        }
+      }
+      if (Object.keys(updates[agentType]).length === 0) {delete updates[agentType]; };
+    }
+    return updates;
   }
   
   socket.on("accept user mirror data", function(data) {
+    if (!viewState) {
+      viewState = {};
+      viewState.turtles = JSON.parse(JSON.stringify(universe.model.turtles));
+      viewState.patches = JSON.parse(JSON.stringify(universe.model.patches));
+      viewState.links = JSON.parse(JSON.stringify(universe.model.links));
+      viewState.drawingEvents = {};
+      viewState.observer = {};
+    }
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
-      console.log(data.value);
-      saveTurtleUpdate(data.value.turtles);
-      saveWorldUpdate(data.value.world);
-      console.log(filterUpdate(data.value));
-      universe.applyUpdate( data.value );
+      var updates = data.value;
+      saveUpdate(updates, "turtles");
+      saveUpdate(updates, "patches");
+      saveUpdate(updates, "links");
+      saveUpdate(updates, "observer");
+      updates = overrideUpdate(updates, "turtles");
+      updates = overrideUpdate(updates, "patches");
+      updates = overrideUpdate(updates, "links");
+      updates = overrideUpdate(updates, "observer");
+      universe.applyUpdate( updates );
+      world.triggerUpdate();
+    }
+  });
+  
+  function combineUpdates(updates) {
+    var update = {};
+    for (var u in updates) {
+      for (var agentType in updates[u]) {
+        if (!update[agentType]) { update[agentType] = {}; }
+        for (var agent in updates[u][agentType]) {
+          if (!update[agentType][agent]) { update[agentType][agent] = {};}
+          for (var tag in updates[u][agentType][agent]) {
+            update[agentType][agent][tag] = updates[u][agentType][agent][tag];
+          }
+        }
+      }
+    }
+    if (update["drawingEvents"]) {
+      var drawingEventObj = update["drawingEvents"][0];
+      update["drawingEvents"] = [];
+      update["drawingEvents"].push(drawingEventObj); 
+    }
+    return update;
+  }
+  
+  socket.on("accept user override", function(data) {
+    var updates = [];
+    if (!viewState) {
+      viewState = {};
+      viewState.turtles = JSON.parse(JSON.stringify(universe.model.turtles));
+      viewState.patches = JSON.parse(JSON.stringify(universe.model.patches));
+      viewState.links = JSON.parse(JSON.stringify(universe.model.links));
+      viewState.drawingEvents = {};
+      viewState.observer = {};
+    }
+    if (myUserType === "student") {
+      var messageType = data.messageType;
+      var agents = data.agents;
+      var source = data.source;
+      var tag = data.tag;
+      var message = data.message;
+      var updates = [];
+      switch (messageType) {
+        case "send-override": // hubnet-send-override string agent string reporter
+          updates.push(applyOverride(agents.ids, agents.agentType, tag.toUpperCase(), message));
+          break;           
+        case "send-follow": // hubnet-send-follow client-name agent radius 
+          updates.push(applyOverride([0], "observer", "perspective", 2));
+          updates.push(applyOverride([0], "observer", "targetAgent", [1, agents.ids[0]]));
+          updates.push(applyOverride([0], "drawingEvents", "type", "zoom"));
+          updates.push(applyOverride([0], "drawingEvents", "scale", message));
+          break;
+        case "send-watch": // hubnet-send-watch client-name agent
+          updates.push(applyOverride([0], "observer", "perspective", 3));
+          updates.push(applyOverride([0], "observer", "targetAgent", [1, agents.ids[0]]));
+          break;
+        case "clear-override": // hubnet-clear-override client agent-or-set variable-name
+          updates.push(removeOverride(agents, tag.toUpperCase()));          
+          break;
+        case "clear-overrides": // hubnet-clear-overrides client
+          updates.push(removeOverrides());
+        case "reset-perspective": // hubnet-reset-perspective client-name
+          updates.push(applyOverride([0], "observer", "perspective", 0));
+          updates.push(applyOverride([0], "observer", "targetAgent", undefined));
+          updates.push(applyOverride([0], "drawingEvents", "type", "reset-zoom"));
+          break;
+      }
+      var update = combineUpdates(updates);
+      universe.applyUpdate(update);
       world.triggerUpdate();
     }
   });
   
   socket.on("accept all user data", function(data) {
-    //console.log("accept ALL user data");
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
       userData = data.userData;
-    }
-  });
-  
-  socket.on("accept user override", function(data) {
-    console.log("accept user override (add data to filter)");
-    console.log(data);
-    if (myUserType === "student") {
-      var messageType = data.messageType;
-      var agentIds = data.agentIds;
-      var source = data.source;
-      var tag = data.tag;
-      var message = data.message;
     }
   });
 
