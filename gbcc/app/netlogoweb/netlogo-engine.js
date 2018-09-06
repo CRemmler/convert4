@@ -13566,10 +13566,10 @@ function hasOwnProperty(obj, prop) {
       });
     };
 
-    HubnetManager.prototype.hubnetResetPerspective = function(messageTag) {
+    HubnetManager.prototype.hubnetResetPerspective = function(messageSource) {
       socket.emit('send override', {
         hubnetMessageType: "reset-perspective",
-        hubnetMessageTag: messageTag
+        hubnetMessageSource: messageSource,
       });
     };
 
@@ -13598,7 +13598,6 @@ function hasOwnProperty(obj, prop) {
       agentType = agents.constructor.name;
       if (agentType === "Turtle" || agentType === "Patch" || agentType === "Link") {
         ids.push(agents.id);
-        agentType = agentType + "s";
       } else {
         agentObj = agents._agentArr;
         for (i = 0, len = agentObj.length; i < len; i++) {
@@ -13606,8 +13605,11 @@ function hasOwnProperty(obj, prop) {
           ids.push(a.id);
         }
       }
+      if (agentType.indexOf("Turtle") > -1) { agentType = "turtles" }
+      if (agentType.indexOf("Patch") > -1) { agentType = "patches" }
+      if (agentType.indexOf("Link") > -1) { agentType = "links" }
       return {
-        agentType: agentType.toLowerCase(),
+        agentType: agentType,
         ids: ids
       };
     };

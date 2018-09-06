@@ -361,11 +361,7 @@ io.on('connection', function(socket){
           tag: data.hubnetMessageTag,
           message: data.hubnetMessage
         }
-        if (data.MessageType === "reset-perspective") {
-          socket.to(school+"-"+myRoom+"-student").emit("accept user override", dataObject);
-        } else {
-          io.to(socketDictionary[destination]).emit("accept user override", dataObject);
-        }
+        io.to(socketDictionary[destination]).emit("accept user override", dataObject);
       }
     }
   });

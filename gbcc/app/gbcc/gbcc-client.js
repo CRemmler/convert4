@@ -27,6 +27,13 @@ jQuery(document).ready(function() {
   viewOverride.observer = {};
   viewOverride.drawingEvents = {};
   var viewState = undefined;
+  /*
+  viewState.turtles = {};
+  viewState.patches = {};
+  viewState.links = {};
+  viewState.observer = {};
+  viewState.drawingEvents = {};
+  */
   socket = io();
   var myForeverButtonVar = "";
   var myMirrorVar = "";
@@ -312,7 +319,11 @@ jQuery(document).ready(function() {
         for (var tag in viewOverride[agentType][agent]) { 
           updates[agentType][agent] = {};
           if ((viewState[agentType][agent][tag.toLowerCase()] != undefined) || (viewState[agentType][agent][tag.toUpperCase()] != undefined)) {
-            updates[agentType][agent][tag] =  (viewState[agentType][agent][tag.toUpperCase()] != undefined) ? viewState[agentType][agent][tag.toUpperCase()] : viewState[agentType][agent][tag.toLowerCase()];        
+            if (viewState[agentType][agent][tag.toUpperCase()] != undefined) {
+              updates[agentType][agent][tag] = viewState[agentType][agent][tag.toUpperCase()];
+            } else {
+              updates[agentType][agent][tag] = viewState[agentType][agent][tag.toLowerCase()];        
+            }
           }
           if (viewOverride[agentType][agent] && ((viewOverride[agentType][agent][tag.toLowerCase()] != undefined) || viewOverride[agentType][agent][tag.toUpperCase()] != undefined)) {
             if (viewOverride[agentType][agent][tag.toUpperCase()] != undefined) {
