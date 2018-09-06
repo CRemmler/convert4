@@ -13569,7 +13569,7 @@ function hasOwnProperty(obj, prop) {
     HubnetManager.prototype.hubnetResetPerspective = function(messageSource) {
       socket.emit('send override', {
         hubnetMessageType: "reset-perspective",
-        hubnetMessageSource: messageSource,
+        hubnetMessageSource: messageSource
       });
     };
 
@@ -13605,9 +13605,15 @@ function hasOwnProperty(obj, prop) {
           ids.push(a.id);
         }
       }
-      if (agentType.indexOf("Turtle") > -1) { agentType = "turtles" }
-      if (agentType.indexOf("Patch") > -1) { agentType = "patches" }
-      if (agentType.indexOf("Link") > -1) { agentType = "links" }
+      if (agentType.indexOf("Turtle") > -1) {
+        agentType = "turtles";
+      }
+      if (agentType.indexOf("Patch") > -1) {
+        agentType = "patches";
+      }
+      if (agentType.indexOf("Link") > -1) {
+        agentType = "links";
+      }
       return {
         agentType: agentType,
         ids: ids
@@ -16286,11 +16292,11 @@ function hasOwnProperty(obj, prop) {
   })();
 
   module.exports.Prims = ImportExportPrims = (function() {
-    function ImportExportPrims(arg, exportWorldRaw, exportAllPlotsRaw, exportPlotRaw, importDrawingRaw1, importWorldRaw1) {
+    function ImportExportPrims(arg, exportWorldRaw, exportAllPlotsRaw, exportPlotRaw, importDrawingRaw, importWorldRaw) {
       var exportAllPlots, exportFile, exportPlot, exportWorld, importDrawing, importWorld;
       exportAllPlots = arg.exportAllPlots, exportFile = arg.exportFile, this.exportOutput = arg.exportOutput, exportPlot = arg.exportPlot, this.exportView = arg.exportView, exportWorld = arg.exportWorld, importDrawing = arg.importDrawing, importWorld = arg.importWorld;
-      this.importDrawingRaw = importDrawingRaw1;
-      this.importWorldRaw = importWorldRaw1;
+      this.importDrawingRaw = importDrawingRaw;
+      this.importWorldRaw = importWorldRaw;
       this.exportWorld = function(filename) {
         return exportFile(exportWorldRaw())(filename);
       };
@@ -16301,10 +16307,10 @@ function hasOwnProperty(obj, prop) {
         return exportFile(exportPlotRaw(plot))(filename);
       };
       this.importDrawing = function(filename) {
-        return importDrawing(importDrawingRaw)(filename);
+        return importDrawing(this.importDrawingRaw)(filename);
       };
       this.importWorld = function(filename) {
-        return importWorld(importWorldRaw)(filename);
+        return importWorld(this.importWorldRaw)(filename);
       };
     }
 
