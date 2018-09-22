@@ -131,13 +131,17 @@ Gallery = (function() {
     });
     $("#opacityWrapper").css("display", "none");
     
-    $("body").append("<div class='hiddenfile'><input id='importggb' type='file' style='display:none'></div>");
+    //$("body").append("<div class='hiddenfile'><input id='importggb' type='file' style='display:none'></div>");
     $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file' style='display:none'></div>");
     spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
     spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
     spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
     spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
     spanText += "<button type='submit'></button></form>";
+    
+    spanText += "<form action='importgbccuniverse' method='post' id='importggbcuniverse' enctype='multipart/form-data' name='wassup' style='display: none;'>";
+    spanText += "<input id='gbccuniverse' type='file' name='ggbccuniverse' value=''>";//" style='display: none;'>";
+    spanText += "<button type='submit' id='importgbccuniversebutton'></button></form>";
     $("body").append(spanText);
   }
 
@@ -298,6 +302,7 @@ Gallery = (function() {
     var canvasImg = new Image();
     canvasImg.id = data.id;
     canvasImg.userId = data.userId;
+    claimed = data.claimed;
     var label = $(".gbcc-gallery li").length;
     if ($(".gbcc-gallery").length === 0) { 
       $(".netlogo-gallery-tab-content").append("<div class='gbcc-gallery'><ul></ul></div>"); 
@@ -305,7 +310,8 @@ Gallery = (function() {
       $(".gbcc-gallery").addClass("small");
     }
     var newLiHtml = "<li id='gallery-item-"+data.userId+"' usertype='"+data.userType+"' userid='"+data.userId+"' ";
-    newLiHtml += (myUserId === data.userId) ? "myUser=\"true\">" : "myUser=\"false\">";
+    newLiHtml += (claimed) ? "claimed=\"true\"" : "claimed=\"false\"";
+    newLiHtml += (myUserId === data.userId) ? " myUser=\"true\">" : " myUser=\"false\">";
     newLiHtml += (myUserId === data.userId) ? "<span class=\"label z20 selected\">"+label+"</span>" : "<span class=\"label z20\">"+label+"</span>";
     newLiHtml += "<span class=\"arrow arrow-left z20\" style=\"display:none\"></span>";//"<i class='fa fa-chevron-left' aria-hidden='true'></i></span>";
     newLiHtml += "<span class=\"arrow arrow-right z20\" style=\"display:none\"></span>";//"<i class='fa fa-chevron-right' aria-hidden='true'></i></span>";
@@ -365,7 +371,8 @@ Gallery = (function() {
             id : data.tag + "-" + data.source,
             src : data.message,
             userId : data.source,
-            userType: data.userType
+            userType: data.userType,
+            claimed: data.claimed
           }
     if ($("#gallery-item-"+data.source).length === 0 ) { createCanvas(canvasData); } 
     if (data.message.substring(0,13) === "gallery-clear") {
@@ -499,7 +506,6 @@ Gallery = (function() {
     avatarShapeDrawer = new ShapeDrawer({}, miniCtx.onePixel);
     universe.turtleDrawer.turtleShapeDrawer.drawAvatar(miniCtx, color, shape, 20);
     message = document.getElementById(avatarCanvasId).toDataURL("image/jpeg", imageQuality); 
-    //console.log(message);
     socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
       hubnetMessageTag: "canvas-avatar", 
@@ -580,54 +586,38 @@ Gallery = (function() {
     universe.repaint();
   }
   
-  function importWorld(filename) {
-    var elem, listener, result;
-    listener = function(event) {
-      var reader;
-      reader = new FileReader();
-      reader.onload = function(e) {
-        console.log(JSON.parse(e.target.result));
-        
-        result = e.target.result;
-        Physics.setAll(result.gbcc-physics-get-all);
-        Maps.setAll(result.gbcc-maps-get-all);
-        Graph.setAll(result.gbcc-graph-get-all);
-      };
-      if (event.target.files.length > 0) {
-        reader.readAsText(event.target.files[0]);
-      }
-      return $("#importgbccworld").off();
-    };
-    $("#importgbccworld").one("change",listener);
-    $("#importgbccworld").click();
-    $("#importgbccworld").value = "";
+  function adoptCanvas(userId, canvasId) {
+    socket.emit('send canvas override', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "adopt-canvas",
+      hubnetMessage: {userId: userId, canvasId: canvasId}
+    });
   }
   
-  function exportWorld(filename) {
-    //console.log("export world");
-    //also save turtles and patches 
-    socket.emit('send reporter', {
-      hubnetMessageSource: "server",
-      hubnetMessageTag: "gbcc-physics-get-all",
-      hubnetMessage: Physics.getAll()
+  function getCanvasList() {
+    var canvasList = [];
+    $(".gbcc-gallery li").each(function() {
+      canvasList.push($(this).prop("id").replace("gallery-item-",""))
     });
-    socket.emit('send reporter', {
-      hubnetMessageSource: "server",
-      hubnetMessageTag: "gbcc-maps-get-all",
-      hubnetMessage: Maps.getAll()
+    return canvasList;
+  }
+  
+  function getVacantCanvasList() {
+    var canvasList = [];
+    $(".gbcc-gallery li").each(function() {
+      if ($(this).attr("claimed") == "false") {
+        canvasList.push($(this).prop("id").replace("gallery-item-",""))
+      }
     });
-    socket.emit('send reporter', {
-      hubnetMessageSource: "server",
-      hubnetMessageTag: "gbcc-graph-get-all",
-      hubnetMessage: Graph.getAll()
-    });
-    socket.emit('send reporter', {
-      hubnetMessageSource: "server",
-      hubnetMessageTag: "gbcc-world-export-state",
-      hubnetMessage: JSON.stringify(world.exportState())
-    });
-    $("#gbccworldfilename").val(filename);
-    $("#exportgbccworld").submit();
+    return canvasList;
+  }
+  
+  function getUserList() {
+    var userList = [];
+    for (var x in userData) {
+      userList.push(x);
+    }
+    return userList;
   }
   
   return {
@@ -641,8 +631,11 @@ Gallery = (function() {
     whoAmI: whoAmI,
     showPatches: showPatches,
     hidePatches: hidePatches,
-    importWorld: importWorld,
-    exportWorld: exportWorld
+    adoptCanvas: adoptCanvas,
+    getCanvasList: getCanvasList,
+    getVacantCanvasList: getVacantCanvasList,
+    getUserList: getUserList
+    
   };
 
 })();

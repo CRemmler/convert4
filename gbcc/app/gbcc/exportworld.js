@@ -75,6 +75,15 @@ function createJsonReport(data, settings) {
   return JSON.stringify(reportObj);
 }
 
+function createJsonUniverse(data, settings) {
+  var reportObj = {};
+  if (data != undefined) {
+    reportObj["userData"] = data.userData;
+    reportObj["canvasOrder"] = data.canvasOrder;
+    reportObj["userStreamData"] = data.userStreamData;
+  }
+  return JSON.stringify(reportObj);
+}
 
 function sendResponse(htmlReport,jsonReport, zip, res, filename) {
   zip.file("htmlReport.html", htmlReport);
@@ -121,7 +130,7 @@ function sendGbCCWorldResponse(worldReport, filename, zip, res) {
 }
 
 module.exports = {
-  exportData: function (data, settings, res) {
+  exportGbccReport: function (data, settings, res) {
     var zip = new JSZip();
     var d = new Date();
     settings.year = d.getFullYear();
@@ -147,8 +156,8 @@ module.exports = {
     sendGgbResponse(xml, filename, zip, res);
   },
   
-  exportGbccWorld: function (data, settings, filename, res) {
+  exportGbccUniverse: function (data, settings, filename, res) {
     var zip = new JSZip();
-    sendGbCCWorldResponse(createJsonReport(data, settings), filename, zip, res);
+    sendGbCCWorldResponse(createJsonUniverse(data, settings), filename, zip, res);
   }
 };

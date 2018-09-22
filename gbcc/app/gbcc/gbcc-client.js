@@ -27,13 +27,6 @@ jQuery(document).ready(function() {
   viewOverride.observer = {};
   viewOverride.drawingEvents = {};
   var viewState = undefined;
-  /*
-  viewState.turtles = {};
-  viewState.patches = {};
-  viewState.links = {};
-  viewState.observer = {};
-  viewState.drawingEvents = {};
-  */
   socket = io();
   var myForeverButtonVar = "";
   var myMirrorVar = "";
@@ -122,6 +115,7 @@ jQuery(document).ready(function() {
   });
   
   socket.on("gbcc user message", function(data) {
+    console.log("gbcc user message",data);
     if (procedures.gbccOnMessage) {
       var tag = data.hubnetMessageTag;
       var message = data.hubnetMessage;
@@ -199,9 +193,10 @@ jQuery(document).ready(function() {
 
   // students display reporters
   socket.on("display reporter", function(data) {
+    console.log("display reporter",data);
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab").hasClass("selected"))) {
       if (data.hubnetMessageTag.includes("canvas")) {
-        Gallery.displayCanvas({message:data.hubnetMessage,source:data.hubnetMessageSource,tag:data.hubnetMessageTag,userType:data.userType});
+        Gallery.displayCanvas({message:data.hubnetMessage,source:data.hubnetMessageSource,tag:data.hubnetMessageTag,userType:data.userType,claimed:data.claimed});
       } else {
         var matchingMonitors = session.widgetController.widgets().filter(function(x) { 
           return x.type === "monitor" && x.display === data.hubnetMessageTag; 
@@ -432,6 +427,48 @@ jQuery(document).ready(function() {
     }
   });
   
+  socket.on("accept canvas override", function(data) {
+    console.log("accept canvas override",data);
+    var hubnetMessageTag = data.hubnetMessageTag;
+    var hubnetMessage = data.hubnetMessage;
+    var adoptedUserId = hubnetMessage.adoptedUserId;
+    var originalUserId = hubnetMessage.originalUserId;
+    if (hubnetMessageTag === "adopt-canvas") {
+      if (myUserId === originalUserId) {
+        updateMyCanvas(myUserId, "false");
+        myUserId = adoptedUserId;
+        updateMyCanvas(myUserId, "true");
+      } else {
+        $("#gallery-item-"+originalUserId).attr("claimed","false"); 
+        $("#gallery-item-"+adoptedUserId).attr("claimed","true");      
+      }
+    } 
+    else if (hubnetMessageTag === "release-canvas") {
+      console.log("yep!!! rlse");
+      //if (myUserId === originalUserId) {
+      //  updateMyCanvas(myUserId, "false");
+      //  myUserId = originalUserId;
+      //  updateMyCanvas(myUserId, "true");
+      //} else {
+      if (adoptedUserId) {
+        $("#gallery-item-"+adoptedUserId).attr("claimed","false");
+      } else {
+        $("#gallery-item-"+originalUserId).attr("claimed","false");
+      }
+      //  if (adoptedUserId != originalUserId) {
+      //    $("#gallery-item-"+originalUserId).attr("claimed","true");    
+      //  }
+      //}
+    }
+  });
+  
+  function updateMyCanvas(uId, state) {
+    $("#gallery-item-"+myUserId).attr("myUser",state);  
+    $("#gallery-item-"+myUserId).attr("claimed",state);      
+    (state === "true") ?$("#gallery-item-"+myUserId+" .label").addClass("selected") : $("#gallery-item-"+myUserId+" .label").removeClass("selected");
+  }
+
+  
   socket.on("accept all user data", function(data) {
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
       userData = data.userData;
@@ -469,7 +506,16 @@ jQuery(document).ready(function() {
       }
     }
   }
-
+  
+  socket.on("trigger file import", function(data) {
+    if (data.fileType === "ggb") {
+      console.log("trigger file import", data);
+      Graph.importGgbDeleteFile(data.fileName);
+    } else if (data.fileType === "universe") {
+      GbccFileManager.importUniverse(data.fileName);
+    }
+  });
+    
   socket.on("execute command", function(data) {
     var commandObject = {};
     commandObject.messageSource = data.hubnetMessageSource;

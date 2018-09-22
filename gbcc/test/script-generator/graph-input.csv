@@ -60,3 +60,4 @@ get-command-string,(string),(name),(string)
 upload-ggb,,,
 get-ggb-list,,,(list)
 get-value-string,(string),(name),(string)
+import-ggb-from-popup,,,

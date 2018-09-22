@@ -19114,18 +19114,18 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var addToStream, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, exportWorld, get, getFromUser, getStream, getStreamFromUser, hidePatches, importWorld, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, whoAmI;
+      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, exportUniverse, get, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantCanvasList, hidePatches, importUniverse, importUniverseFromPopup, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, uploadFile, whoAmI;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
           hubnetMessageTag: messageTag,
           hubnetMessage: message
         });
-        myData[messageTag] = message;
+        userData[myUserId][messageTag] = message;
       };
       get = function(messageTag) {
-        if (myData[messageTag] != null) {
-          return myData[messageTag];
+        if (userData[myUserId][messageTag] != null) {
+          return userData[myUserId][messageTag];
         } else {
           return "undefined";
         }
@@ -19242,11 +19242,14 @@ function hasOwnProperty(obj, prop) {
       hidePatches = function() {
         return Gallery.hidePatches();
       };
-      importWorld = function(filename) {
-        return Gallery.importWorld(filename);
+      importUniverse = function(filename) {
+        return GbccFileManager.importUniverse(filename);
       };
-      exportWorld = function(filename) {
-        return Gallery.exportWorld(filename);
+      exportUniverse = function(filename) {
+        return GbccFileManager.exportUniverse(filename);
+      };
+      importUniverseFromPopup = function() {
+        return GbccFileManager.importUniverseFromPopup();
       };
       send = function(messageSource, messageTag, message) {
         socket.emit('send message reporter', {
@@ -19261,6 +19264,27 @@ function hasOwnProperty(obj, prop) {
           hubnetMessageTag: messageTag,
           hubnetMessage: message
         });
+      };
+      adoptCanvas = function(userId, canvasId) {
+        return Gallery.adoptCanvas(userId, canvasId);
+      };
+      getCanvasList = function() {
+        return Gallery.getCanvasList();
+      };
+      getUserList = function() {
+        return Gallery.getUserList();
+      };
+      getVacantCanvasList = function() {
+        return Gallery.getVacantCanvasList();
+      };
+      getUserList = function() {
+        return Gallery.getUserList();
+      };
+      uploadFile = function() {
+        return GbccFileManager.uploadFile();
+      };
+      getFileList = function() {
+        return GbccFileManager.getFileList();
       };
       return {
         name: "gbcc",
@@ -19288,10 +19312,17 @@ function hasOwnProperty(obj, prop) {
           "GET-STREAM-FROM-USER": getStreamFromUser,
           "SHOW-PATCHES": showPatches,
           "HIDE-PATCHES": hidePatches,
-          "IMPORT-WORLD": importWorld,
-          "EXPORT-WORLD": exportWorld,
+          "IMPORT-UNIVERSE": importUniverse,
+          "EXPORT-UNIVERSE": exportUniverse,
+          "IMPORT-UNIVERSE-FROM-POPUP": importUniverseFromPopup,
           "SEND": send,
-          "BROADCAST": broadcast
+          "BROADCAST": broadcast,
+          "GET-FILE-LIST": getFileList,
+          "UPLOAD-FILE": uploadFile,
+          "GET-CANVAS-LIST": getCanvasList,
+          "GET-VACANT-CANVAS-LIST": getVacantCanvasList,
+          "GET-USER-LIST": getUserList,
+          "ADOPT-CANVAS": adoptCanvas
         }
       };
     }
@@ -19304,7 +19335,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportFile, exportGgb, exportWorld, getAll, getCommandString, getData, getDraggable, getGgbList, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getValueString, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importFile, importGgb, importWorld, mouseOff, mouseOn, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph, uploadGgb;
+      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportFile, exportGgb, exportWorld, getAll, getCommandString, getData, getDraggable, getGgbList, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getValueString, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importFile, importGgb, importGgbFromPopup, importWorld, mouseOff, mouseOn, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph, uploadGgb;
       hideGraph = function() {
         return Graph.hideGraph();
       };
@@ -19488,6 +19519,9 @@ function hasOwnProperty(obj, prop) {
       getValueString = function(name) {
         return Graph.getValueString(name);
       };
+      importGgbFromPopup = function() {
+        return Graph.importGgbFromPopup();
+      };
       return {
         name: "graph",
         prims: {
@@ -19551,7 +19585,8 @@ function hasOwnProperty(obj, prop) {
           "GET-COMMAND-STRING": getCommandString,
           "UPLOAD-GGB": uploadGgb,
           "GET-GGB-LIST": getGgbList,
-          "GET-VALUE-STRING": getValueString
+          "GET-VALUE-STRING": getValueString,
+          "IMPORT-GGB-FROM-POPUP": importGgbFromPopup
         }
       };
     }
