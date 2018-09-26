@@ -283,7 +283,7 @@ app.post('/fileupload',function(req,res){
         	zip.file("app/gbcc/gbcc-client.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-files.js", "utf8").then(function(data) {
-          zip.file("app/gbcc/gbcc-client.js", data);
+          zip.file("app/gbcc/gbcc-files.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-events.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-events.js", data);

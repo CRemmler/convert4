@@ -124,7 +124,7 @@ Gallery = (function() {
       imageQuality = 0.75;
     }
     $("body").append("<canvas id=\"avatarCanvasView\" width=\"300\" height=\"300\" style=\"display:none\"></canvas>");
-    $(".netlogo-widget-container").append('<div style="position:absolute; top:-10px; left:210px" id="opacityWrapper"><input type="range" value="100" max="100" min="0" id="opacity" style="z-index: -1;"></div>')
+    $(".netlogo-widget-container").append('<div class="gbcc-widget" style="position:absolute; top:-10px; left:210px" id="opacityWrapper"><input type="range" value="100" max="100" min="0" id="opacity" style="z-index: -1;"></div>')
     $('.netlogo-widget-container').on("input","#opacity", function() { 
       $("#graphContainer").css("opacity", $(this).val() / 100);
       $("#mapContainer").css("opacity", $(this).val() / 100); 
@@ -320,7 +320,6 @@ Gallery = (function() {
     } else {
       newLiHtml += "<span></span>";      
     }
-    newLiHtml += (myUserId === data.userId) ? "<span class=\"label z20 selected\">"+label+"</span>" : "<span class=\"label z20\">"+label+"</span>";
     newLiHtml += "</li>";
     $(".gbcc-gallery ul").append(newLiHtml);
     $("#gallery-item-"+label+" .card-image").append(canvasImg);
@@ -604,9 +603,9 @@ Gallery = (function() {
   
   function getVacantCanvasList() {
     var canvasList = [];
-    $(".gbcc-gallery li").each(function() {
+    $(".gbcc-gallery li").each(function(index) {
       if ($(this).attr("claimed") == "false") {
-        canvasList.push($(this).prop("id").replace("gallery-item-",""))
+        canvasList.push(index);
       }
     });
     return canvasList;

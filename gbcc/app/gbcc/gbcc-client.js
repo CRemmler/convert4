@@ -115,7 +115,7 @@ jQuery(document).ready(function() {
   });
   
   socket.on("gbcc user message", function(data) {
-    console.log("gbcc user message",data);
+    //console.log("gbcc user message",data);
     if (procedures.gbccOnMessage) {
       var tag = data.hubnetMessageTag;
       var message = data.hubnetMessage;
@@ -193,7 +193,7 @@ jQuery(document).ready(function() {
 
   // students display reporters
   socket.on("display reporter", function(data) {
-    console.log("display reporter",data);
+    //console.log("display reporter",data);
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab").hasClass("selected"))) {
       if (data.hubnetMessageTag.includes("canvas")) {
         Gallery.displayCanvas({message:data.hubnetMessage,source:data.hubnetMessageSource,tag:data.hubnetMessageTag,userType:data.userType,claimed:data.claimed});
@@ -230,9 +230,13 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept user stream data", function(data) {
+  //  console.log("accept user stream data");
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {
       if (userStreamData[data.userId] === undefined) {
         userStreamData[data.userId] = {};
+      }
+      if (!userStreamData[data.userId][data.tag]) {
+        userStreamData[data.userId][data.tag] = [];
       }
       userStreamData[data.userId][data.tag].push(data.value);
       userData[data.userId][data.tag] = data.value;
@@ -428,7 +432,7 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept canvas override", function(data) {
-    console.log("accept canvas override",data);
+    //console.log("accept canvas override",data);
     var hubnetMessageTag = data.hubnetMessageTag;
     var hubnetMessage = data.hubnetMessage;
     var adoptedUserId = hubnetMessage.adoptedUserId;
@@ -444,21 +448,11 @@ jQuery(document).ready(function() {
       }
     } 
     else if (hubnetMessageTag === "release-canvas") {
-      console.log("yep!!! rlse");
-      //if (myUserId === originalUserId) {
-      //  updateMyCanvas(myUserId, "false");
-      //  myUserId = originalUserId;
-      //  updateMyCanvas(myUserId, "true");
-      //} else {
       if (adoptedUserId) {
         $("#gallery-item-"+adoptedUserId).attr("claimed","false");
       } else {
         $("#gallery-item-"+originalUserId).attr("claimed","false");
       }
-      //  if (adoptedUserId != originalUserId) {
-      //    $("#gallery-item-"+originalUserId).attr("claimed","true");    
-      //  }
-      //}
     }
   });
   
@@ -509,10 +503,10 @@ jQuery(document).ready(function() {
   
   socket.on("trigger file import", function(data) {
     if (data.fileType === "ggb") {
-      console.log("trigger file import", data);
-      Graph.importGgbDeleteFile(data.fileName);
+      //console.log("trigger file import", data);
+      Graph.importGgbDeleteFile(data.filename);
     } else if (data.fileType === "universe") {
-      GbccFileManager.importUniverse(data.fileName);
+      GbccFileManager.importUniverse(data.filepath, data.filename);
     }
   });
     

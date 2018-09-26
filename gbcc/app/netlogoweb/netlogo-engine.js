@@ -19121,7 +19121,7 @@ function hasOwnProperty(obj, prop) {
           hubnetMessageTag: messageTag,
           hubnetMessage: message
         });
-        userData[myUserId][messageTag] = message;
+        //userData[myUserId][messageTag] = message;
       };
       get = function(messageTag) {
         if (userData[myUserId][messageTag] != null) {

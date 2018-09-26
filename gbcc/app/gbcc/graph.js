@@ -17,7 +17,7 @@ Graph = (function() {
     if ($("#graphContainer").length === 0) {
       viewWidth = parseFloat($(".netlogo-canvas").css("width"));
       viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-      spanText =    "<div id='graphContainer'></div>";
+      spanText =    "<div class='gbcc-widget' id='graphContainer'></div>";
       $(".netlogo-widget-container").append(spanText);
       $("#graphContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 1 + "px");
       $("#graphContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 1 + "px");
@@ -156,18 +156,16 @@ Graph = (function() {
   ////// SHOW AND HIDE GRAPH //////
   
   function showGraph() {
-    //$(".netlogo-view-container").css("z-index","0");
     $("#graphContainer").css("display","inline-block");
-    if (!mirroringEnabled) {
-      $(".netlogo-view-container").css("pointer-events","none"); 
-      $(".netlogo-view-container").css("z-index","0");
-    }
+    $(".netlogo-view-container").css("z-index","0");
     $("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top") - 15) + "px");
     $("#opacityWrapper").css("left",$("#graphContainer").css("left"));
     $("#opacityWrapper").css("display", "inline-block");
     drawPatches = false;
     updateGraph();
     world.triggerUpdate();
+    Maps.mouseOn();
+    mouseOn();
   }
   
   function hideGraph() {
@@ -175,10 +173,9 @@ Graph = (function() {
     world.triggerUpdate();
     $("#graphContainer").css("display","none");
     $(".netlogo-view-container").css("z-index","0");
-    $(".netlogo-view-container").css("pointer-events","auto");
     $("#opacityWrapper").css("display", "none");
-    mouseOn();
     Maps.mouseOn();
+    mouseOn();
   }  
 
 
@@ -578,15 +575,13 @@ Graph = (function() {
   }
   
   function mouseOn() {
-    if (!mirroringEnabled) {
-      $(".netlogo-view-container").css("pointer-events","none");//show graph
-    }
-      //if ($("#graphContainer").hasClass("grayscale")) { $("#graphContainer").removeClass("grayscale"); }
+    $(".netlogo-view-container").css("pointer-events","auto");//show graph
+    $("#graphContainer").css("z-index","0");
   }
   
-  function mouseOff() {
-    $(".netlogo-view-container").css("pointer-events","auto"); // hide graph, grayscale?
-    //$("#graphContainer").addClass("grayscale");
+  function mouseOff() {      
+    $(".netlogo-view-container").css("pointer-events","none"); // hide graph, grayscale?
+    $("#graphContainer").css("z-index","-1");
   }
   
   

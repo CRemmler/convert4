@@ -17,6 +17,7 @@ Interface = (function() {
     $(".admin-body").css("display","inline");
     // hide all widgets
     $(".netlogo-widget").addClass("hidden");
+    $(".gbcc-widget").addClass("hidden");    
     $(".netlogo-model-title").removeClass("hidden");
     // show Welcome Students reporter
     var index = components.componentRange[0];
@@ -98,9 +99,9 @@ Interface = (function() {
   function displayTeacherInterface(room, components) {
     showItems(components.componentRange[0], components.componentRange[1]);
     $(".netlogo-export-wrapper").css("display","block");
-    //var sanitizedRoom = markdown.toHTML(room);
-    var sanitizedRoom = room;
-    $("#netlogo-title").html("<p>"+$("#netlogo-title").html()+" "+sanitizedRoom.substr(3,sanitizedRoom.length));
+    $(".netlogo-ugly-button").each(function() { if ($(this).html() === "HTML") { $(this).css("display","none"); } }) // hide it?
+    var sanitizedRoom = exports.toHTML(room);
+    $("#netlogo-title").html(sanitizedRoom.substring(3, sanitizedRoom.length));
     $(".netlogo-view-container").removeClass("hidden");
     $(".netlogo-tab-area").removeClass("hidden");
     $(".admin-body").css("display","none");
@@ -108,9 +109,10 @@ Interface = (function() {
 
   function displayStudentInterface(room, components, activityType) {
     showItems(components.componentRange[0], components.componentRange[1]);
-    //var sanitizedRoom = markdown.toHTML(room);
-    var sanitizedRoom = room;
-    $("#netlogo-title").html("<p>"+$("#netlogo-title").html()+" "+sanitizedRoom.substr(3,sanitizedRoom.length));
+    $(".netlogo-export-wrapper").css("display","block");
+    $(".netlogo-ugly-button").each(function() { if ($(this).html() === "HTML") { $(this).css("display","none"); } })  // hide it?
+    var sanitizedRoom = exports.toHTML(room);
+    $("#netlogo-title").html(sanitizedRoom.substring(3, sanitizedRoom.length));
     $(".netlogo-view-container").removeClass("hidden");
     $(".admin-body").css("display","none");
     $(".teacher-controls").css("display","none");
@@ -123,6 +125,7 @@ Interface = (function() {
       $(".netlogo-input-box:not(.hidden)").click(function(e){clickHandler(this, e, "inputBox");});
       $(".netlogo-view-container").click(function(e){clickHandler(this, e, "view");});
     } else {
+      $(".netlogo-view-container").css("pointer-events","auto");
       $(".netlogo-tab-area").removeClass("hidden");
     }
   }
@@ -131,11 +134,13 @@ Interface = (function() {
     $(".admin-body").css("display","inline");
     $(".admin-body").html("You have been disconnected. Please refresh the page to continue.");
     $(".netlogo-widget").addClass("hidden");
+    $(".gbcc-widget").addClass("hidden");
     $("#netlogo-model-container").css("display","none");
   }
 
   function displayAdminInterface(rooms) {
     $(".netlogo-widget").addClass("hidden");
+    $(".gbcc-widget").addClass("hidden");
     $("#netlogo-model-container").css("display","none");
     $(".admin-body").html(rooms);
   }
@@ -207,11 +212,11 @@ Interface = (function() {
     var viewHeight = parseFloat($(".netlogo-canvas").css("height"));
     var spanText;
     if (activityType === "hubnet") {
-      $(".netlogo-widget-container").append("<span class='teacher-controls hidden' style='float:right'><input id='enableMirroring' checked type='checkbox'>Enable: Mirroring</span>");
+      $(".netlogo-widget-container").append("<span class='gbcc-widget teacher-controls hidden' style='float:right'><input id='enableMirroring' checked type='checkbox'>Enable: Mirroring</span>");
       $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-view-container").css("height")) - 0 + "px");
       $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-view-container").css("width")) - 128 + "px");
     } else {
-      spanText = "<span class='teacher-controls hidden' style='float:right'>";
+      spanText = "<span class='gbcc-widget teacher-controls hidden' style='float:right'>";
       //spanText = "<span class='teacher-controls hidden' style='float:right'>Enable:";
       spanText += "<input id='enableView' checked type='checkbox'>View";
       spanText += "<input id='enableTabs' checked type='checkbox'>Tabs";

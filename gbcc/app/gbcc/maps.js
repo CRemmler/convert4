@@ -10,36 +10,30 @@ Maps = (function() {
   var viewHeight;
   var boundaries;
   var myLatlng = undefined;
-  //NOTES 
-  // show/hide using options.opacity 
-  // title using options.title
-  // make a path... ?
-  ////// SETUP MAP //////
   
   function setupInterface() {
-    viewWidth = parseFloat($(".netlogo-canvas").css("width"));
-    viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-    var spanText =    "<div id='mapContainer'></div>";
-    $(".netlogo-widget-container").append(spanText);
-    $("#mapContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 2 + "px");
-    $("#mapContainer").css("height", parseFloat($(".netlogo-canvas").css("height"))  - 2 + "px");
-    $("#mapContainer").css("left", parseFloat($(".netlogo-view-container").css("left")) + 0 + "px");
-    $("#mapContainer").css("top", parseFloat($(".netlogo-view-container").css("top")) + 0 + "px");
-    $("#mapContainer").css("display", "none");
-    //$("#mapContainer").css("display","inline-block");
-    if (L) {
-      map = L.map('mapContainer').setView([ 30.2672, -97.7431], 11);      
-      if (map) { 
-        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        updateMap();
+    if ($("#mapContainer").length === 0) {
+      viewWidth = parseFloat($(".netlogo-canvas").css("width"));
+      viewHeight = parseFloat($(".netlogo-canvas").css("height"));
+      var spanText =    "<div class='gbcc-widget' id='mapContainer'></div>";
+      $(".netlogo-widget-container").append(spanText);
+      $("#mapContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 2 + "px");
+      $("#mapContainer").css("height", parseFloat($(".netlogo-canvas").css("height"))  - 2 + "px");
+      $("#mapContainer").css("left", parseFloat($(".netlogo-view-container").css("left")) + 0 + "px");
+      $("#mapContainer").css("top", parseFloat($(".netlogo-view-container").css("top")) + 0 + "px");
+      $("#mapContainer").css("display", "none");
+      if (L) {
+        map = L.map('mapContainer').setView([ 30.2672, -97.7431], 11);      
+        if (map) { 
+          L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+          updateMap();
+        }
       }
+      setupEventListeners();
+      $("#mapContainer").css("display","none");
     }
-    setupEventListeners();
-    //hideMap();
-    //sendToBack();
-    $("#mapContainer").css("display","none");
   }
 
   function setupEventListeners() {
@@ -94,11 +88,6 @@ Maps = (function() {
     updateMap();
     if (map) { map.invalidateSize(); }
     $("#mapContainer").css("display","inline-block");
-    //$("#mapContainer").css("z-index","0");
-    if (!mirroringEnabled) {
-      $(".netlogo-view-container").css("pointer-events","none");
-      $(".netlogo-view-container").css("z-index","0");
-    }
     $(".netlogo-view-container").css("z-index","1");
     $("#opacityWrapper").css("top",parseInt($("#mapContainer").css("top") - 15) + "px");
     $("#opacityWrapper").css("left",$("#mapContainer").css("left"));
@@ -112,12 +101,12 @@ Maps = (function() {
   
   function hideMap() {
     $("#mapContainer").css("display","none");
-    //$("#mapContainer").css("z-index","1");
-    $(".netlogo-view-container").css("pointer-events","auto");
     $(".netlogo-view-container").css("z-index","0");
     $("#opacityWrapper").css("display", "none");
     drawPatches = true;
     world.triggerUpdate();
+    Graph.mouseOn();
+    mouseOn();
   }
 
   ////// MAP SETTINGS //////
@@ -499,15 +488,13 @@ Maps = (function() {
   }
   
   function mouseOn() {
-    if (!mirroringEnabled) {
-      $(".netlogo-view-container").css("pointer-events","none"); //show graph
-    }
-    //if ($("#mapContainer").hasClass("grayscale")) { $("#mapContainer").removeClass("grayscale"); }
+    $(".netlogo-view-container").css("pointer-events","auto"); //show graph
+    $("#mapContainer").css("z-index","0");
   }
   
   function mouseOff() {
-    $(".netlogo-view-container").css("pointer-events","auto"); // hide graph, grayscale?
-    //$("#mapContainer").addClass("grayscale");
+    $(".netlogo-view-container").css("pointer-events","none"); // hide graph, grayscale?
+    $("#mapContainer").css("z-index","-1");
   }
 
   

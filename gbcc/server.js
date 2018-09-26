@@ -105,11 +105,6 @@ io.on('connection', function(socket){
           allRooms[myRoom].settings.adoptCanvasDict[myUserId] = undefined;
       }
     
-      if (activityType != "hubnet") { 
-        socket.emit("gbcc user enters", {userId: myUserId, userType: myUserType});
-        socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
-        socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
-      }
       // join myRoom
       socket.join(school+"-"+myRoom+"-"+myUserType);
       // tell teacher or student to display their interface
@@ -161,6 +156,9 @@ io.on('connection', function(socket){
               }
             }
           }
+          socket.emit("gbcc user enters", {userId: myUserId, userType: myUserType});
+          socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
+          socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
         }
       }
     }
@@ -289,7 +287,7 @@ io.on('connection', function(socket){
           socket.emit("accept user data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
         } else {
           var dataObject = {
-            hubnetMessageSource: myUserId,
+            hubnetMessageSource: destination,
             hubnetMessageTag: data.hubnetMessageTag,
             hubnetMessage: data.hubnetMessage,
             userId: myUserId,
@@ -373,6 +371,7 @@ io.on('connection', function(socket){
   
   
   function getRecipient(socketId, adoptCanvasDict) {
+    
     var destination = socketDictionary[socketId];
     var adoptees = adoptCanvasDict;
     for (adoptee in adoptees) {
@@ -426,7 +425,8 @@ io.on('connection', function(socket){
             && allRooms[myRoom].userData[assignCanvasId].reserved
             && allRooms[myRoom].userData[assignCanvasId].reserved.claimed === false) {
             sendResponse = true;
-            allRooms[myRoom].settings.adoptCanvasDict[assignCanvasId] = assignUserId;
+            allRooms[myRoom].settings.adoptCanvasDict[assignUserId] = undefined;
+	    allRooms[myRoom].settings.adoptCanvasDict[assignCanvasId] = socketDictionary[socket.id];//assignUserId;
             
             allRooms[myRoom].userData[assignUserId].reserved.claimed = false; 
             allRooms[myRoom].userData[assignCanvasId].reserved.claimed = true;  
@@ -489,7 +489,8 @@ io.on('connection', function(socket){
           fs.rename(file.path, filename, function() {
             var dataObject = {
               fileType: "ggb",
-              fileName: filename
+              fileName: filename,
+              filePath: file.path
             };
             io.to(socketid).emit("trigger file import", dataObject); 
           });
@@ -505,9 +506,12 @@ io.on('connection', function(socket){
       .on('file', function(socketid, file) {
         filename = socketid + "-" + file.name;
           fs.rename(file.path, filename, function() {
+            console.log("importuniversefrompopup "+filename);
+            console.log(file.path);
             var dataObject = {
               fileType: "universe",
-              fileName: filename
+              filename: filename, //file.path //filename
+              filepath: file.path
             };
             io.to(socketid).emit("trigger file import", dataObject); 
           });
@@ -518,7 +522,9 @@ io.on('connection', function(socket){
   });
   
   socket.on("delete file", function(data) {
-    var fullPath= __dirname + '/'+data.filename+'.zip';
+    console.log(data);
+    var fullPath= data.filename;//__dirname + '/'+data.filename+'.zip';
+    console.log(fullPath +" deleted");
     fs.unlink(fullPath, function() {
       console.log(fullPath + " deleted");
     });
@@ -526,68 +532,89 @@ io.on('connection', function(socket){
   
   socket.on("unzip gbcc universe", function(data) {
     var myRoom = data.roomName;
-    var filePath = __dirname + "/"+data.filename;
-    var newUserData, newCanvasOrder, newUserStreamData;
-    var dataObject;
-    fs.readFile( filePath, function(err, data){
-      if (!err){
-        var zip = new JSZip();
-        JSZip.loadAsync(data).then(function(zip){
-          for (filename in zip.files) {
-            try {
-              zip.files[filename].async("string").then(function(contentString) {
-                try {
-                  content = JSON.parse(contentString);
-                  newUserData = content.userData ? content.userData : {};
-                  newCanvasOrder = content.canvasOrder ? content.canvasOrder : [];
-                  newUserStreamData = content.userStreamData ? content.userStreamData : {};
-                  if (allRooms[myRoom].userData != {}) {
-                    for (var user in newUserData) {
-                      if (newUserData[user].reserved && newUserData[user].reserved.claimed) {
-                        newUserData[user].reserved.claimed = false;
-                      }
-                      socket.emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
-                    }
-                    var canvases;
-                    for (var j=0; j < newCanvasOrder.length; j++) {
-                      canvases = newUserData[newCanvasOrder[j]]["canvas"];
-                      if (canvases != undefined) {
-                        for (var canvas in canvases) {
-                          dataObject = {
-                            hubnetMessageSource: newCanvasOrder[j],
-                            hubnetMessageTag: canvas,
-                            hubnetMessage: newUserData[newCanvasOrder[j]]["canvas"][canvas],
-                            userId: "",
-                            activityType: activityType,
-                            userType: newUserData[newCanvasOrder[j]]["userType"],
-                            claimed: newUserData[newCanvasOrder[j]].reserved.claimed
-                          };  
-                          socket.emit("display reporter", dataObject);
-                        }
-                      }
-                    }
-                    for(var user in newUserData) {
-                      allRooms[myRoom]["userData"][user] = newUserData[user];
-                    }
-                    for(var user in newUserStreamData) {
-                      allRooms[myRoom]["userStreamData"][user] = newUserStreamData[user];
-                    }
-                    for (var canvas in newCanvasOrder) {
-                      allRooms[myRoom].canvasOrder.push(newCanvasOrder[canvas]);
-                    }
-                  }
-                } catch (err) {
-                  console.log("caught error transforming contents of universe from string to object")
-                }
-              });
-            } catch (err) {
-              console.log("caught error unzipping file")
-            }
+    var filepathlocal = __dirname + "/"+data.filename;
+    var filepath = data.filepath;
+    var filename = data.filename;
+    fs.readFile( filename, function(err, data){
+      if (!err && filename) {
+        console.log("unzip "+filename);
+        setupUniverse(data, myRoom);
+      } else {
+        fs.readFile(filepathlocal, function(err, data2){
+          if (!err && filepathlocal) {
+            console.log("unzip "+filepathlocal);
+            setupUniverse(data2, myRoom);
+          } else {
+            fs.readFile( filepath, function(err, data3) {
+              if (!err && filepath) {
+                console.log("unzip "+filepath);
+                setupUniverse(data3, myRoom);
+              } 
+            });          
           }
         });
       }
     });
   });
+
+  function setupUniverse(data, myRoom) {
+    var newUserData, newCanvasOrder, newUserStreamData;
+    var dataObject;
+    var zip = new JSZip();
+    JSZip.loadAsync(data).then(function(zip){
+      for (filename in zip.files) {
+        try {
+          zip.files[filename].async("string").then(function(contentString) {
+            try {
+              content = JSON.parse(contentString);
+              newUserData = content.userData ? content.userData : {};
+              newCanvasOrder = content.canvasOrder ? content.canvasOrder : [];
+              newUserStreamData = content.userStreamData ? content.userStreamData : {};
+              if (allRooms[myRoom].userData != {}) {
+                for (var user in newUserData) {
+                  if (newUserData[user].reserved && newUserData[user].reserved.claimed) {
+                    newUserData[user].reserved.claimed = false;
+                  }
+                  socket.emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
+                }
+                var canvases;
+                for (var j=0; j < newCanvasOrder.length; j++) {
+                  canvases = newUserData[newCanvasOrder[j]]["canvas"];
+                  if (canvases != undefined) {
+                    for (var canvas in canvases) {
+                      dataObject = {
+                        hubnetMessageSource: newCanvasOrder[j],
+                        hubnetMessageTag: canvas,
+                        hubnetMessage: newUserData[newCanvasOrder[j]]["canvas"][canvas],
+                        userId: "",
+                        activityType: activityType,
+                        userType: newUserData[newCanvasOrder[j]]["userType"],
+                        claimed: newUserData[newCanvasOrder[j]].reserved.claimed
+                      };  
+                      socket.emit("display reporter", dataObject);
+                    }
+                  }
+                }
+                for(var user in newUserData) {
+                  allRooms[myRoom]["userData"][user] = newUserData[user];
+                }
+                for(var user in newUserStreamData) {
+                  allRooms[myRoom]["userStreamData"][user] = newUserStreamData[user];
+                }
+                for (var canvas in newCanvasOrder) {
+                  allRooms[myRoom].canvasOrder.push(newCanvasOrder[canvas]);
+                }
+              }
+            } catch (err) {
+              console.log("caught error transforming contents of universe from string to object")
+            }
+          });
+        } catch (err) {
+          console.log("caught error unzipping file")
+        }
+      }
+    });
+  }
   
   app.post('/exportgbccworld', function(req,res){
     var form = new formidable.IncomingForm();
