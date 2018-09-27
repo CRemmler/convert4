@@ -522,10 +522,14 @@ io.on('connection', function(socket){
   });
   
   socket.on("delete file", function(data) {
-    var fullPath= data.filename;//__dirname + '/'+data.filename+'.zip';
-    fs.unlink(fullPath, function() {
-      console.log(fullPath + " deleted");
-    });
+    /* var fullPath= data.filename;//__dirname + '/'+data.filename+'.zip';
+    try {
+      fs.unlink(fullPath, function() {
+        console.log(fullPath + " deleted");
+      });
+    } catch (e) {
+      
+    } */
   });
   
   socket.on("unzip gbcc universe", function(data) {

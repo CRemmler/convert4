@@ -51,8 +51,8 @@ Graph = (function() {
     console.log("APPLET ONLOAD VISIBLE");
     showGraph();
     updateGraph(); 
-    $("#graphContainer").css("display","inline-block");
-    $(".netlogo-view-container").css("z-index","1");
+    //$("#graphContainer").css("display","inline-block");
+    //$(".netlogo-view-container").css("z-index","1");
     ggbApplet.setErrorDialogsActive(false);  
   }
   
@@ -61,8 +61,8 @@ Graph = (function() {
     socket.emit('delete file', {'filename': filename});
     showGraph();
     updateGraph(); 
-    $("#graphContainer").css("display","inline-block");
-    $(".netlogo-view-container").css("z-index","1");
+    //$("#graphContainer").css("display","inline-block");
+    //$(".netlogo-view-container").css("z-index","1");
     ggbApplet.setErrorDialogsActive(false);   
   }
   
