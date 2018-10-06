@@ -119,8 +119,8 @@ function sendGgbResponse(xml, filename, zip, res) {
   }); }); });
 }
 
-function sendGbCCWorldResponse(worldReport, filename, zip, res) {
-  zip.file("gbccWorld.json", worldReport);
+function sendGbCCWorldResponse(worldReport, filename, zip, res, socketid) {
+  zip.file(socketid+"-gbccWorld.json", worldReport);
   zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
   .pipe(fs.createWriteStream(filename))
   .on('finish', function () {
@@ -156,8 +156,8 @@ module.exports = {
     sendGgbResponse(xml, filename, zip, res);
   },
   
-  exportGbccUniverse: function (data, settings, filename, res) {
+  exportGbccUniverse: function (data, settings, filename, res, socketid) {
     var zip = new JSZip();
-    sendGbCCWorldResponse(createJsonUniverse(data, settings), filename, zip, res);
+    sendGbCCWorldResponse(createJsonUniverse(data, settings), filename, zip, res, socketid);
   }
 };

@@ -88,6 +88,7 @@ jQuery(document).ready(function() {
   });
 
   socket.on("gbcc user enters", function(data) {
+    console.log("gbcc user enters",data);
     var uId = data.userId;
     var uType = data.userType;
     if (data.userData) {
@@ -109,6 +110,10 @@ jQuery(document).ready(function() {
   });
   
   socket.on("gbcc user exits", function(data) {
+    console.log(data);
+    if (userData[data.userId] && userData[data.userId].reserved) { 
+      userData[data.userId].reserved = data.userData.reserved;
+    }
     if (procedures.gbccOnExit) {
       session.runCode(userData[data.userId]["gbcc-exit-button-code-"+data.userId]); 
     }
@@ -122,8 +127,10 @@ jQuery(document).ready(function() {
       var uId = data.hubnetMessageSource;
       var uType = data.userType;
       var compileString;
+      console.log(message);
+      console.log("type of message"+typeof message);
       if (typeof message === "string") {
-        compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MESSAGE"]("'+uId+'","'+uType+'","'+tag+'","'+message+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'
+        compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MESSAGE"]("'+uId+'","'+uType+'","'+tag+'",'+JSON.stringify(message)+'); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'
       } else {
         if ((typeof message === "boolean") || (typeof message === "number")) { 
           compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MESSAGE"]("'+uId+'","'+uType+'","'+tag+'", '+message+' ); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'        
@@ -131,6 +138,7 @@ jQuery(document).ready(function() {
           compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MESSAGE"]("'+uId+'","'+uType+'","'+tag+'", '+JSON.stringify(message)+' ); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'                  
         }
       }
+      console.log(compileString);
       session.runCode(compileString); 
     }
   });
@@ -502,11 +510,13 @@ jQuery(document).ready(function() {
   }
   
   socket.on("trigger file import", function(data) {
-    if (data.fileType === "ggb") {
-      //console.log("trigger file import", data);
+    //console.log(data.filename);
+    if (data.filetype === "ggb") {
+      //console.log(data.filepath);
+      //console.log(data.filename);
       Graph.importGgbDeleteFile(data.filename);
-    } else if (data.fileType === "universe") {
-      GbccFileManager.importUniverse(data.filepath, data.filename);
+    } else if (data.filetype === "universe") {
+      GbccFileManager.importUniverseFile(data.filename);
     }
   });
     

@@ -54,6 +54,7 @@ Gallery = (function() {
       var galleryExpandSpan = "<span id='galleryExpandIcon' style='left:"+galleryTabWidth+"'><i class='fa fa-expand' aria-hidden='true'></i></span>";
       
       $(".netlogo-gallery-tab").append(galleryExpandSpan);
+      $("#canvasSize").val("large");
       $( window ).resize(function() {
         if ($(".netlogo-gallery-tab").hasClass("expand")) {
           var galleryExpandWidth = parseFloat($("body").css("width")) - parseFloat($(".netlogo-tab").css("width"));
@@ -133,15 +134,26 @@ Gallery = (function() {
     
     //$("body").append("<div class='hiddenfile'><input id='importggb' type='file' style='display:none'></div>");
     $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file' style='display:none'></div>");
+    //spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
+    //spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
+    //spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
+    //spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
+    //spanText += "<button type='submit'></button></form>";
+    
     spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
     spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
     spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
     spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
     spanText += "<button type='submit'></button></form>";
     
-    spanText += "<form action='importgbccuniverse' method='post' id='importggbcuniverse' enctype='multipart/form-data' name='wassup' style='display: none;'>";
-    spanText += "<input id='gbccuniverse' type='file' name='ggbccuniverse' value=''>";//" style='display: none;'>";
-    spanText += "<button type='submit' id='importgbccuniversebutton'></button></form>";
+    spanText += "<form action='importgbccform' method='post' id='importgbccform' enctype='multipart/form-data' style='display: none;'>";
+    spanText += "<input id='importgbccfile' type='file' name='importgbccfile' value=''>";//" style='display: none;'>";
+    spanText += "<input id='importgbcctype' type='text' name='importgbcctype' value=''>";//" style='display: none;'>";
+    spanText += "<button type='submit' id='importgbccbutton'></button></form>";
+    
+    //spanText += "<form action='importgbccuniverse' method='post' id='importggbcuniverse' enctype='multipart/form-data' name='wassup' style='display: none;'>";
+    //spanText += "<input id='gbccuniverse' type='file' name='ggbccuniverse' value=''>";//" style='display: none;'>";
+    //spanText += "<button type='submit' id='importgbccuniversebutton'></button></form>";
     $("body").append(spanText);
   }
 
@@ -306,15 +318,14 @@ Gallery = (function() {
     var label = $(".gbcc-gallery li").length;
     if ($(".gbcc-gallery").length === 0) { 
       $(".netlogo-gallery-tab-content").append("<div class='gbcc-gallery'><ul></ul></div>"); 
-      $(".canvasSize").val("small");
-      $(".gbcc-gallery").addClass("small");
+      $(".gbcc-gallery").addClass("large");
     }
     var newLiHtml = "<li id='gallery-item-"+data.userId+"' usertype='"+data.userType+"' userid='"+data.userId+"' ";
     newLiHtml += (claimed) ? "claimed=\"true\"" : "claimed=\"false\"";
     newLiHtml += (myUserId === data.userId) ? " myUser=\"true\">" : " myUser=\"false\">";
     newLiHtml += (myUserId === data.userId) ? "<span class=\"label z20 selected\">"+label+"</span>" : "<span class=\"label z20\">"+label+"</span>";
-    newLiHtml += "<span class=\"arrow arrow-left z20\" style=\"display:none\"></span>";//"<i class='fa fa-chevron-left' aria-hidden='true'></i></span>";
-    newLiHtml += "<span class=\"arrow arrow-right z20\" style=\"display:none\"></span>";//"<i class='fa fa-chevron-right' aria-hidden='true'></i></span>";
+    newLiHtml += "<span class=\"arrow arrow-left z20\" style=\"display:none\"><b>&lt;</b></span>";//"<i class='fa fa-chevron-left' aria-hidden='true'></i></span>";
+    newLiHtml += "<span class=\"arrow arrow-right z20\" style=\"display:none\"><b>&gt;</b></span>";//"<i class='fa fa-chevron-right' aria-hidden='true'></i></span>";
     if (allowCanvasForeverButtons) {
       newLiHtml += "<span class=\"forever-icon z20\"><i class='fa fa-refresh' aria-hidden='true'></i></span>";
     } else {
@@ -601,7 +612,7 @@ Gallery = (function() {
     return canvasList;
   }
   
-  function getVacantCanvasList() {
+  function getVacantIndices() {
     var canvasList = [];
     $(".gbcc-gallery li").each(function(index) {
       if ($(this).attr("claimed") == "false") {
@@ -619,6 +630,16 @@ Gallery = (function() {
     return userList;
   }
   
+  function getActiveUserList() {
+    var userList = [];
+    for (var x in userData) {
+      if (x && userData[x].reserved && userData[x].reserved.exists) { 
+        userList.push(x); 
+      }
+    }
+    return userList;
+  }
+  
   return {
     displayCanvas: displayCanvas,
     broadcastView: broadcastView,
@@ -632,9 +653,9 @@ Gallery = (function() {
     hidePatches: hidePatches,
     adoptCanvas: adoptCanvas,
     getCanvasList: getCanvasList,
-    getVacantCanvasList: getVacantCanvasList,
-    getUserList: getUserList
-    
+    getVacantIndices: getVacantIndices,
+    getUserList: getUserList,
+    getActiveUserList: getActiveUserList
   };
 
 })();

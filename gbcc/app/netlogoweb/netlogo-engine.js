@@ -19114,14 +19114,13 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, exportUniverse, get, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantCanvasList, hidePatches, importUniverse, importUniverseFromPopup, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, uploadFile, whoAmI;
+      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, compileObserverCode, compilePatchCode, compileTurtleCode, exportUniverse, exportWorld, get, getActiveUserList, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantIndices, hidePatches, importUniverse, importUniverseFile, importWorld, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, whoAmI;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
           hubnetMessageTag: messageTag,
           hubnetMessage: message
         });
-        //userData[myUserId][messageTag] = message;
       };
       get = function(messageTag) {
         if (userData[myUserId][messageTag] != null) {
@@ -19242,14 +19241,20 @@ function hasOwnProperty(obj, prop) {
       hidePatches = function() {
         return Gallery.hidePatches();
       };
-      importUniverse = function(filename) {
-        return GbccFileManager.importUniverse(filename);
+      importUniverseFile = function(filename) {
+        return GbccFileManager.importUniverseFile(filename);
       };
       exportUniverse = function(filename) {
         return GbccFileManager.exportUniverse(filename);
       };
-      importUniverseFromPopup = function() {
-        return GbccFileManager.importUniverseFromPopup();
+      importUniverse = function() {
+        return GbccFileManager.importUniverse();
+      };
+      exportWorld = function(filename) {
+        return GbccFileManager.exportWorld(filename);
+      };
+      importWorld = function() {
+        return GbccFileManager.importWorld();
       };
       send = function(messageSource, messageTag, message) {
         socket.emit('send message reporter', {
@@ -19274,14 +19279,14 @@ function hasOwnProperty(obj, prop) {
       getUserList = function() {
         return Gallery.getUserList();
       };
-      getVacantCanvasList = function() {
-        return Gallery.getVacantCanvasList();
+      getVacantIndices = function() {
+        return Gallery.getVacantIndices();
       };
       getUserList = function() {
         return Gallery.getUserList();
       };
-      uploadFile = function() {
-        return GbccFileManager.uploadFile();
+      getActiveUserList = function() {
+        return Gallery.getActiveUserList();
       };
       getFileList = function() {
         return GbccFileManager.getFileList();
@@ -19314,14 +19319,16 @@ function hasOwnProperty(obj, prop) {
           "HIDE-PATCHES": hidePatches,
           "IMPORT-UNIVERSE": importUniverse,
           "EXPORT-UNIVERSE": exportUniverse,
-          "IMPORT-UNIVERSE-FROM-POPUP": importUniverseFromPopup,
+          "IMPORT-UNIVERSE-FILE": importUniverseFile,
+          "IMPORT-WORLD": importWorld,
+          "EXPORT-WORLD": exportWorld,
           "SEND": send,
           "BROADCAST": broadcast,
           "GET-FILE-LIST": getFileList,
-          "UPLOAD-FILE": uploadFile,
           "GET-CANVAS-LIST": getCanvasList,
-          "GET-VACANT-CANVAS-LIST": getVacantCanvasList,
+          "GET-VACANT-INDICES": getVacantIndices,
           "GET-USER-LIST": getUserList,
+          "GET-ACTIVE-USER-LIST": getActiveUserList,
           "ADOPT-CANVAS": adoptCanvas
         }
       };
@@ -19335,7 +19342,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportFile, exportGgb, exportWorld, getAll, getCommandString, getData, getDraggable, getGgbList, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getValueString, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importFile, importGgb, importGgbFromPopup, importWorld, mouseOff, mouseOn, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph, uploadGgb;
+      var bringToFront, centerView, createObject, createObjects, createPoint, createPoints, deleteObject, deleteObjects, deletePoint, deletePoints, evalCommand, evalReporter, exportGgb, getAll, getCommandString, getData, getDraggable, getGgbList, getGraphOffset, getObject, getObjectType, getObjects, getOpacity, getPoint, getPoints, getPointsString, getValue, getValueString, getX, getXy, getY, graphToPatch, hideGraph, hideObject, hideObjectLabel, hideToolbar, importGgb, importGgbFile, mouseOff, mouseOn, objectExists, patchToGraph, renameObject, sendToBack, setAll, setData, setDraggable, setGraphOffset, setOpacity, setX, setXy, setY, showGraph, showObject, showObjectLabel, showToolbar, updateGraph;
       hideGraph = function() {
         return Graph.hideGraph();
       };
@@ -19345,17 +19352,11 @@ function hasOwnProperty(obj, prop) {
       setData = function(data) {
         return Graph.setData(data);
       };
-      importGgb = function(filename) {
-        return Graph.importGgb(filename);
+      importGgbFile = function(filename) {
+        return Graph.importGgbFile(filename);
       };
       getData = function() {
         return Graph.getData();
-      };
-      exportFile = function(filename) {
-        return Graph.exportFile(filename);
-      };
-      importFile = function(filename) {
-        return Graph.importFile(filename);
       };
       createPoint = function(name, center) {
         return Graph.createPoint(name, center);
@@ -19450,12 +19451,6 @@ function hasOwnProperty(obj, prop) {
       getPointsString = function() {
         return Graph.getPointsString();
       };
-      importWorld = function(filename) {
-        return Graph.importWorld(filename);
-      };
-      exportWorld = function(filename) {
-        return Graph.exportWorld(filename);
-      };
       updateGraph = function() {
         return Graph.updateGraph();
       };
@@ -19510,17 +19505,14 @@ function hasOwnProperty(obj, prop) {
       getCommandString = function(name) {
         return Graph.getCommandString(name);
       };
-      uploadGgb = function() {
-        return Graph.uploadGgb();
-      };
       getGgbList = function() {
         return Graph.getGgbList();
       };
       getValueString = function(name) {
         return Graph.getValueString(name);
       };
-      importGgbFromPopup = function() {
-        return Graph.importGgbFromPopup();
+      importGgb = function() {
+        return Graph.importGgb();
       };
       return {
         name: "graph",
@@ -19528,10 +19520,8 @@ function hasOwnProperty(obj, prop) {
           "HIDE-GRAPH": hideGraph,
           "SHOW-GRAPH": showGraph,
           "SET-DATA": setData,
-          "IMPORT-GGB": importGgb,
+          "IMPORT-GGB-FILE": importGgbFile,
           "GET-DATA": getData,
-          "EXPORT-FILE": exportFile,
-          "IMPORT-FILE": importFile,
           "CREATE-POINT": createPoint,
           "SET-OPACITY": setOpacity,
           "GET-OPACITY": getOpacity,
@@ -19563,8 +19553,6 @@ function hasOwnProperty(obj, prop) {
           "EVAL-COMMAND": evalCommand,
           "EVAL-REPORTER": evalReporter,
           "GET-POINTS-STRING": getPointsString,
-          "IMPORT-WORLD": importWorld,
-          "EXPORT-WORLD": exportWorld,
           "UPDATE-GRAPH": updateGraph,
           "SHOW-OBJECT-LABEL": showObjectLabel,
           "HIDE-OBJECT-LABEL": hideObjectLabel,
@@ -19583,10 +19571,9 @@ function hasOwnProperty(obj, prop) {
           "MOUSE-ON": mouseOn,
           "MOUSE-OFF": mouseOff,
           "GET-COMMAND-STRING": getCommandString,
-          "UPLOAD-GGB": uploadGgb,
           "GET-GGB-LIST": getGgbList,
           "GET-VALUE-STRING": getValueString,
-          "IMPORT-GGB-FROM-POPUP": importGgbFromPopup
+          "IMPORT-GGB": importGgb
         }
       };
     }

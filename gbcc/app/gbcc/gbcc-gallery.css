@@ -88,24 +88,29 @@
   top:45%;
   width: 20px;
   height: 20px;
+  font-size: 18px;
+
 }
 
 .gbcc-gallery.medium .arrow {
   top:45%;
   width: 25px;
   height: 25px;
+  font-size: 17px;
 }
 
 .gbcc-gallery.large .arrow {
   top:45%;
   width: 25px;
   height: 25px;
+  font-size: 18px;
 }
 
 .gbcc-gallery.extra-large .arrow {
   top:45%;
   width: 35px;
   height: 35px;
+  font-size: 20px;
 }
 
 .gbcc-gallery.small .arrow-right {
