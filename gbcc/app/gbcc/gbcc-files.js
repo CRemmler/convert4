@@ -24,14 +24,14 @@ GbccFileManager = (function() {
     console.log("import gbcc contenttype "+contenttype);
     $("#importgbccfile").one("change", function() {
       $("#importgbccfile").off();
-      $("#importgbcctype").val(contenttype);
+      //$("#importgbcctype").val(contenttype);
       var files = $(this).get(0).files;
       if (files.length > 0){
         var formData = new FormData();
         var file = files[0];
         formData.append(socket.id, file, file.name);
         $.ajax({
-           url: '/importfile?filetype='+contenttype,
+           url: '/importgbccform?filetype='+contenttype,
            type: 'POST',
            data: formData,
            processData: false,
@@ -48,8 +48,9 @@ GbccFileManager = (function() {
   }
 
   function exportUniverse(filename) {
-    $("#gbccworldfilename").val(filename);
-    $("#exportgbccworld").submit();
+    $("#exportgbccfilename").val(filename);
+    $("#exportgbcctype").val("universe");
+    $("#exportgbccform").submit();
   }
   
   return {

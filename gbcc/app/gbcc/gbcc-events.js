@@ -42,4 +42,9 @@ jQuery(document).ready(function() {
     Interface.importImageFile();
   });
   
+  // require confirmation before leaving site
+  window.onbeforeunload = function() {
+      return true;
+  };
+  document.title = "GbCC: "+$("#nlogo-code").attr("data-filename").replace(".nlogo","");
 });

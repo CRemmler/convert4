@@ -84,10 +84,11 @@ io.on('connection', function(socket){
       socketDictionary[socket.id] = myUserId;
       allRooms[myRoom].userData[myUserId] = {};
       allRooms[myRoom].userStreamData[myUserId] = {};
-      allRooms[myRoom].userData[myUserId].exists = true;
+      //allRooms[myRoom].userData[myUserId].exists = true;
       allRooms[myRoom].userData[myUserId]["userType"] = myUserType;
       allRooms[myRoom].userData[myUserId].reserved = {};
       allRooms[myRoom].userData[myUserId].reserved.claimed = true;
+      allRooms[myRoom].userData[myUserId].reserved.exists = true;
       allRooms[myRoom].userData[myUserId].reserved.overrides = {};
       // send settings to client
 
@@ -115,6 +116,7 @@ io.on('connection', function(socket){
         rooms = [];
         for (var key in allRooms) { rooms.push(key); }
         socket.to("login").emit("display interface", {userType: "login", rooms: rooms, components: config.interfaceJs.loginComponents, activityType: activityType});
+        socket.emit("gbcc user enters", {userId: myUserId, userData: allRooms[myRoom].userData[myUserId], userType: myUserType });
       } else {
         if (activityStyle === "flat") {
           socket.emit("display interface", {userType: "flat student", room: myRoom, components: config.interfaceJs.teacherComponents});
@@ -156,9 +158,9 @@ io.on('connection', function(socket){
               }
             }
           }
-          socket.emit("gbcc user enters", {userId: myUserId, userType: myUserType});
-          socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
-          socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: myUserId, userType: myUserType });
+          socket.emit("gbcc user enters", {userId: myUserId, userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
+          socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: myUserId, userData: allRooms[myRoom].userData[myUserId], userType: myUserType });
+          socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: myUserId, userData: allRooms[myRoom].userData[myUserId], userType: myUserType });
         }
       }
     }
@@ -245,6 +247,7 @@ io.on('connection', function(socket){
    });
 
    socket.on("send message reporter", function(data) {
+     //console.log(data);
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
@@ -273,6 +276,7 @@ io.on('connection', function(socket){
 
   // pass reporter from server to student
   socket.on("send reporter", function(data) {
+    //console.log(data);
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
@@ -459,6 +463,7 @@ io.on('connection', function(socket){
     });
   });
   
+  /*
   app.post('/exportggb', function(req,res){
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
@@ -466,51 +471,38 @@ io.on('connection', function(socket){
       var filename = fields.ggbfilename;
       exportworld.exportGgb(xml, filename, res);
     });
+  });*/
+  
+  app.post('/exportgbccform', function(req,res){
+    //console.log("export gbcc file");
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+      // console.log(fields);
+      var filetype = fields.exportgbcctype || "";
+      var xml = fields.ggbxml || "";
+      var myRoom = fields.gbccroomname || "";
+      var mySchool = fields.gbccschoolname || "";
+      var allRooms = schools[mySchool];
+      var settings = {schoolName: mySchool};
+      var filename = fields.exportgbccfilename || "";
+      if (filetype === "ggb") {
+        exportworld.exportGgb(xml, filename, res);  
+      } else if (filetype === "universe") {
+        exportworld.exportGbccUniverse(allRooms[myRoom], settings, filename, res, socket.id);
+      }
+    });
   });
   
-  app.post('/uploadggb', function(req,res){
-    var filename;
-    new formidable.IncomingForm().parse(req)
-      .on('file', function(name, file) {
-        filename = file.name;
-          fs.rename(file.path, file.name, function() {
-          });
-      })
-      .on('end', function() {
-        res.end('success '+filename);
-      });
-  });
-  
-  app.post('/importggbfrompopup', function(req,res){
+  app.post('/importgbccform', function(req,res){
+    //console.log("import file");
     var filename;
     new formidable.IncomingForm().parse(req)
       .on('file', function(socketid, file) {
         filename = socketid + "-" + file.name;
           fs.rename(file.path, filename, function() {
             var dataObject = {
-              fileType: "ggb",
-              fileName: filename,
-              filePath: file.path
-            };
-            io.to(socketid).emit("trigger file import", dataObject); 
-          });
-      })
-      .on('end', function() {
-        res.end('success '+filename);
-      });
-  });
-  
-  app.post('/importuniversefrompopup', function(req,res){
-    var filename;
-    new formidable.IncomingForm().parse(req)
-      .on('file', function(socketid, file) {
-        filename = socketid + "-" + file.name;
-          fs.rename(file.path, filename, function() {
-            //console.log("importuniversefrompopup "+filename);
-            //console.log(file.path);
-            var dataObject = {
-              fileType: "universe",
-              filename: filename, //file.path //filename
+              filetype: req.query.filetype,//filetype, // "universe", "world"
+              filename: filename,
               filepath: file.path
             };
             io.to(socketid).emit("trigger file import", dataObject); 
@@ -522,19 +514,13 @@ io.on('connection', function(socket){
   });
   
   socket.on("delete file", function(data) {
-    /* var fullPath= data.filename;//__dirname + '/'+data.filename+'.zip';
-    try {
-      fs.unlink(fullPath, function() {
-        console.log(fullPath + " deleted");
-      });
-    } catch (e) {
-      
-    } */
+    deleteFile(data.filename);
   });
   
   socket.on("unzip gbcc universe", function(data) {
+    //console.log("unzip gbcc universe");
     var myRoom = data.roomName;
-    var filepathlocal = __dirname + "/"+data.filename;
+    var filepathlocal = __dirname + data.filename;
     var filepath = data.filepath;
     var filename = data.filename;
     fs.readFile( filename, function(err, data){
@@ -544,12 +530,13 @@ io.on('connection', function(socket){
       } else {
         fs.readFile(filepathlocal, function(err, data2){
           if (!err && filepathlocal) {
-            console.log("unzip "+filepathlocal);
+            //console.log("unzip "+filepathlocal);
             setupUniverse(data2, myRoom);
           } else {
+            //console.log(filepath);
             fs.readFile( filepath, function(err, data3) {
               if (!err && filepath) {
-                console.log("unzip "+filepath);
+                //console.log("unzip "+filepath);
                 setupUniverse(data3, myRoom);
               } 
             });          
@@ -565,6 +552,7 @@ io.on('connection', function(socket){
     var zip = new JSZip();
     JSZip.loadAsync(data).then(function(zip){
       for (filename in zip.files) {
+        //console.log(filename);
         try {
           zip.files[filename].async("string").then(function(contentString) {
             try {
@@ -611,24 +599,13 @@ io.on('connection', function(socket){
               console.log("caught error transforming contents of universe from string to object")
             }
           });
+          deleteFile(filename);
         } catch (err) {
           console.log("caught error unzipping file")
         }
       }
     });
   }
-  
-  app.post('/exportgbccworld', function(req,res){
-    var form = new formidable.IncomingForm();
-    form.parse(req, function(err, fields, files) {
-      var myRoom = fields.gbccroomname;
-      var mySchool = fields.gbccschoolname;
-      var allRooms = schools[mySchool];
-      var settings = {schoolName: mySchool};
-      var filename = fields.gbccworldfilename;
-      exportworld.exportGbccUniverse(allRooms[myRoom], settings, filename, res);
-    });
-  });
 
   // select, deselect, forever-select, forever-deselect
   socket.on("request user action", function(data) {
@@ -713,6 +690,15 @@ io.on('connection', function(socket){
     }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;    
+    if (activityType != "hubnet") { 
+      if (allRooms[myRoom] != undefined) {
+        if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved) {
+          allRooms[myRoom].userData[myUserId].reserved.exists = false;
+        }
+        socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
+        socket.to(school+"-"+myRoom+"-student").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
+      }
+    }
     var recipient = myUserId;
     var adoptee = undefined;
     if (allRooms[myRoom] && allRooms[myRoom].settings && allRooms[myRoom].settings.adoptCanvasDict) {
@@ -742,13 +728,15 @@ io.on('connection', function(socket){
     delete socketDictionary[myUserId];
     if (allRooms[myRoom] != undefined) {
       delete allRooms[myRoom].settings.adoptCanvasDict[myUserId];
-      if (allRooms[myRoom].userData[myUserId] != undefined) {
-        allRooms[myRoom].userData[myUserId].exists = false;
-      }
+      //if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved) {
+      //  allRooms[myRoom].userData[myUserId].reserved.exists = false;
+      //}
     }
-    if (activityType != "hubnet") { 
-      socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user exits", {userId: myUserId, userType: myUserType});
-    }
+  //  if (activityType != "hubnet") { 
+  //    console.log("send to teacher and students");
+  //    socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
+  //    socket.to(school+"-"+myRoom+"-student").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
+  //  }
     if (myUserType === "teacher") {
       if (activityType === "hubnet") {
         clearRoom(myRoom, school);
@@ -775,6 +763,22 @@ http.listen(PORT, function(){
   console.log('listening on ' + PORT );
 });
 
+function deleteFile(filename) {
+  //console.log("delete file");
+  setTimeout(function(){ 
+    var fullPath= __dirname + '/'+filename;
+    //console.log("try it");
+    try {
+      //console.log(fullPath);
+      fs.unlink(fullPath, function() {
+        //console.log(fullPath + " deleted");
+      });
+    } catch (e) {
+      //console.log(e);
+    }
+  }, 3000);
+}
+
 function clearRoom(roomName, school) {
   var allRooms = schools[school];
   var myRoom = roomName;
@@ -799,7 +803,7 @@ function countUsers(roomName, school) {
   var users = 0;
   if (allRooms[roomName] != undefined) {
     for (var key in allRooms[roomName].userData) {
-      if (allRooms[roomName].userData[key].exists) { users++; }
+      if (allRooms[roomName].userData[key].reserved && allRooms[roomName].userData[key].reserved.exists) { users++; }
     }
   }
   return users;

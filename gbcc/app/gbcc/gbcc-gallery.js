@@ -131,29 +131,29 @@ Gallery = (function() {
       $("#mapContainer").css("opacity", $(this).val() / 100); 
     });
     $("#opacityWrapper").css("display", "none");
-    
-    //$("body").append("<div class='hiddenfile'><input id='importggb' type='file' style='display:none'></div>");
     $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file' style='display:none'></div>");
-    //spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
-    //spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
-    //spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
-    //spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
-    //spanText += "<button type='submit'></button></form>";
     
+    /*
     spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
     spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
     spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
     spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
-    spanText += "<button type='submit'></button></form>";
+    spanText += "<button type='submit'></button></form>";*/
+    
+    var spanText = "<form action='exportgbccform' method='post' id='exportgbccform' enctype='multipart/form-data' style='display: none;'>";
+    //spanText += "<input id='exportgbccfile' type='file' name='exportgbccfile' value=''>";//" style='display: none;'>";
+    spanText += "<input id='exportgbcctype' type='text' name='exportgbcctype' value=''>";//" style='display: none;'>";
+    spanText += "<textarea cols='50' id='ggbxml' type='text' wrap='hard' name='ggbxml' value=''></textarea>";
+    spanText += "<input id='exportgbccfilename' type='text' name='exportgbccfilename' value=''>";
+    spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
+    spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
+    spanText += "<button type='submit' id='exportgbccbutton'></button></form>";
     
     spanText += "<form action='importgbccform' method='post' id='importgbccform' enctype='multipart/form-data' style='display: none;'>";
     spanText += "<input id='importgbccfile' type='file' name='importgbccfile' value=''>";//" style='display: none;'>";
     spanText += "<input id='importgbcctype' type='text' name='importgbcctype' value=''>";//" style='display: none;'>";
     spanText += "<button type='submit' id='importgbccbutton'></button></form>";
     
-    //spanText += "<form action='importgbccuniverse' method='post' id='importggbcuniverse' enctype='multipart/form-data' name='wassup' style='display: none;'>";
-    //spanText += "<input id='gbccuniverse' type='file' name='ggbccuniverse' value=''>";//" style='display: none;'>";
-    //spanText += "<button type='submit' id='importgbccuniversebutton'></button></form>";
     $("body").append(spanText);
   }
 
@@ -376,6 +376,7 @@ Gallery = (function() {
   }
   
   function displayCanvas(data) {
+    data.tag = data.tag.replace(" ","-");
     if (galleryForeverButton === "off") { return; } 
     var canvasData = { 
             id : data.tag + "-" + data.source,
@@ -395,6 +396,8 @@ Gallery = (function() {
       if (data.message.substring(0,15) === "<p>gallery-text") {
         ($("#" + data.tag + "-" + data.source).length === 0) ? createTextCard(canvasData) : updateTextCard(canvasData); 
       } else {
+        console.log($("#" + data.tag + "-" + data.source).length);
+        console.log("#" + data.tag + "-" + data.source);
         ($("#" + data.tag + "-" + data.source).length === 0) ? createImageCard(canvasData) : updateImageCard(canvasData);
       }
     } else {
@@ -533,10 +536,12 @@ Gallery = (function() {
   
   function broadcastPlot(originalPlotName) {
     var miniCanvasId;
+    var width;
+    var height;
     var plotName = originalPlotName.replace(" ","-");
     if (is_safari) {
       if ($("#miniSafariCanvas"+plotName).length === 0) {
-        $("body").append("<canvas id=\"miniSafariCanvas"+plotName+"\" width=\"200\" height=\"200\" style=\"display:none\"></canvas>");
+        $("body").append("<canvas id=\"miniSafariCanvas"+plotName+"\" width=\"250\" height=\"250\" style=\"display:none\"></canvas>");
       }
       miniCanvasId = "miniSafariCanvas"+plotName;
     } else {
@@ -560,18 +565,20 @@ Gallery = (function() {
       plotsObject[plotName].setAttribute("width",dataObj.width);
       plotsObject[plotName].setAttribute("height",dataObj.height);
       plotsObject[plotName].onload = function () {
+        width = this.getAttribute("width");
+        height = this.getAttribute("height");
         var miniCanvas = document.getElementById(this.getAttribute("miniCanvasId"));
         var miniCtx = miniCanvas.getContext('2d');  
         miniCtx.fillStyle="#FFFFFF";
         miniCtx.fillRect(0,0,canvasWidth,canvasWidth);
         miniCtx.fillStyle="#000000";
-        miniCtx.fillRect(0,((canvasWidth - this.getAttribute("height")) / 2),this.getAttribute("width"),this.getAttribute("height") + 2);
+        miniCtx.fillRect(0,((canvasWidth - height) / 2),width,height + 2);
         miniCtx.drawImage(
           plotsObject[this.getAttribute("plotName")], 
           1, 
-          ((canvasWidth - this.getAttribute("height")) / 2) + 1, 
-          this.getAttribute("width") - 2, 
-          this.getAttribute("height")
+          (((canvasWidth - height) / 2) + 1), 
+          width - 2, 
+          height - 2
         );
         socket.emit("send canvas reporter", {
           hubnetMessageSource: "all-users", 

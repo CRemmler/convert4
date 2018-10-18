@@ -38,15 +38,20 @@
       <a href="#gbcc-broadcast-plot">gbcc:broadcast-plot</a>    
       <a href="#gbcc-broadcast-text">gbcc:broadcast-avatar</a>    
       <a href="#gbcc-broadcast-plot">gbcc:clear-broadcast</a>    
+      <!--
       <a href="#gbcc-observer-code">gbcc:compile-observer-code</a>
       <a href="#gbcc-observer-code">gbcc:run-observer-code</a>
       <a href="#gbcc-turtle-code">gbcc:compile-turtle-code</a>
       <a href="#gbcc-turtle-code">gbcc:run-turtle-code</a>
       <a href="#gbcc-patch-code">gbcc:compile-patch-code</a>
       <a href="#gbcc-patch-code">gbcc:run-patch-code</a>
+      -->
       <a href="#gbcc-who-am-i">gbcc:who-am-i</a>
       <a href="#gbcc-show-patches">gbcc:show-patches</a>
       <a href="#gbcc-hide-patches">gbcc:hide-patches</a>
+      <a href="#gbcc-send">gbcc:send</a>
+      <a href="#gbcc-broadcast">gbcc:broadcast</a>
+      <a href="#gbcc-adopt-canvas">gbcc:adopt-canvas</a>
     <h3>
       GbCC Reserved Procedures
     </h3>
@@ -56,6 +61,7 @@
       <a href="#gbcc-on-select">gbcc-on-select</a>  
       <a href="#gbcc-on-deselect">gbcc-on-deselect</a>
       <a href="#gbcc-on-go">gbcc-on-go</a>
+      <a href="#gbcc-on-message">gbcc-on-message</a>
     </div>
     
     <h2>
@@ -146,7 +152,6 @@ end
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:add-to-stream <i>key value</i></span></h4>
       <p>Creates a stream of data by appending values to a list, which is accessible by it's key. Empties list upon retrieval.
-        <span class="update">*** new ***</span>
       <pre>
 gbcc:add-to-stream "code" "fd 3"
       </pre>
@@ -162,7 +167,6 @@ gbcc:add-to-stream "code" "fd 3"
       <p>Returns a stream of data by getting a list of values, based on it's key. 
         Begins compiling list upon initialization of gbcc-on-go forever button.
         Empties list upon retrieval.
-        <span class="update">*** new ***</span>
       <pre>
 to gbcc-on-go [user-id]
   show gbcc:get-stream user-id "code"
@@ -178,7 +182,6 @@ end
       <h4><span class="prim_example">gbcc:get-stream-from-user <i>user-id key</i></span></h4>
       <p>Returns a stream of data by getting a list of values, based on it's user-id and key.
         Empties list upon retrieval.
-        <span class="update">*** new ***</span>
       <pre>
 to gbcc-on-go [user-id]
   show gbcc:get-stream-from-user user-id "code"
@@ -253,7 +256,7 @@ end
   gbcc:clear-broadcast
       </pre>
     </div>
-    
+<!--
     <div class="dict_entry" id="gbcc-observer-code">
       <h3><a>gbcc:compile-observer-code<br>gbcc:run-observer-code</a></h3>
       <img alt="Observer Command" src="images/observer.png">
@@ -289,14 +292,14 @@ gbcc:compile-patch-code pxcor pycor "code" "set pcolor orange"
 <br>gbcc:run-patch-code pxcor pycor "code"
       </pre>
     </div>
-    
+  -->
     <div class="dict_entry" id="gbcc-who-am-i">
       <h3><a>gbcc:who-am-i</a></h3>
       <img alt="Observer Command" src="images/observer.png">
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:who-am-i</span></h4>
-      <p>Returns a user's user-id. <span class="update">*** new ***</span>
+      <p>Returns a user's user-id. 
       <pre>
 show gbcc:who-am-i
       </pre>
@@ -307,12 +310,10 @@ show gbcc:who-am-i
       <img alt="Observer Command" src="images/observer.png">
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
-      
       <h4><span class="prim_example">gbcc:show-patches</span></h4>
       <p>Patches are visible.
-        <span class="update">*** new ***</span>
       <pre>
-show gbcc:who-am-i
+gbcc:show-patches
       </pre>
     </div>
     
@@ -323,10 +324,47 @@ show gbcc:who-am-i
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:hide-patches</span></h4>
       <p>Each patch becomes white. Useful when adjusting opacity when viewing a graph or map.
-        <span class="update">*** new ***</span>
-
       <pre>
-show gbcc:who-am-i
+gbcc:hide-patches
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-send">
+      <h3><a>gbcc:send</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:send <i> user-id message-tag message </i></span></h4>
+      <p>Send a user a message tag and a message.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:send user-id "animal" "cat"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-broadcast">
+      <h3><a>gbcc:broadcast</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:broadcast <i> message-tag message </i></span></h4>
+      <p>Send all users a message tag and a message.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:broadcast "animal" "cat"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-adopt-canvas">
+      <h3><a>gbcc:adopt-canvas</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:adopt-canvas <i>user-id canvas-id</i></span></h4>
+      <p>Allow a user to take over a canvas.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:adopt-canvas user-id 3
       </pre>
     </div>
     
@@ -408,7 +446,7 @@ end
     
     <div class="dict_entry" id="gbcc-on-go">
       <h3><a>gbcc-on-go</a></h3>
-      <h4><span class="prim_example">gbcc-on-go [ user-id ]</span>
+      <h4><span class="prim_example">gbcc-on-go [ user-id role ]</span>
         <img alt="Observer Command" src="images/observer.png">
       </h4>
       <p>
@@ -425,5 +463,27 @@ to gbcc-on-go [ user-id role ]
 end
       </pre>
     </div>
+    
+    <div class="dict_entry" id="gbcc-on-go">
+      <h3><a>gbcc-on-message</a></h3>
+      <h4><span class="prim_example">gbcc-on-message [ user-id role key value]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when a
+        user does gbcc:send or gbcc:broadcast. <span class="update">*** new ***</span>
+      <pre> 
+;; runs continuously
+to gbcc-on-message [ user-id role message-tag message ]
+  show "This is called when a user is sent something with gbcc:send or gbcc:broadcast."
+  show word user-id " is the unique identifier for this user."
+  if (role = "teacher") [ show "User is a teacher." ]
+  if (role = "student") [ show "User is a student." ]
+  show "The message is about " message-tag 
+  show "The message is " message
+end
+      </pre>
+    </div>
+    
   </body>
 </html>

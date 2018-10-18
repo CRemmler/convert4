@@ -94,6 +94,7 @@ Interface = (function() {
       ($("#tips").css("display") === "none") ? $("#tips").css("display","inline-block") : $("#tips").css("display","none"); 
     });
     $("#exportHtmlButton").css("display","none");
+    $(".netlogo-interface-unlocker-container").css("display","none");
   }
 
   function displayTeacherInterface(room, components) {
@@ -105,6 +106,7 @@ Interface = (function() {
     $(".netlogo-view-container").removeClass("hidden");
     $(".netlogo-tab-area").removeClass("hidden");
     $(".admin-body").css("display","none");
+    $(".netlogo-interface-unlocker-container").css("display","flex");
   }
 
   function displayStudentInterface(room, components, activityType) {
@@ -128,6 +130,7 @@ Interface = (function() {
       $(".netlogo-view-container").css("pointer-events","auto");
       $(".netlogo-tab-area").removeClass("hidden");
     }
+    $(".netlogo-interface-unlocker-container").css("display","flex");
   }
 
   function displayDisconnectedInterface() {

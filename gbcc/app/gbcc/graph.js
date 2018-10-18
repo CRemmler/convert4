@@ -27,10 +27,14 @@ Graph = (function() {
       applet1 = new GGBApplet({filename: "geogebra-default.ggb","showToolbar":true, "appletOnLoad": appletOnLoadHidden}, true);
       applet1.inject('graphContainer');
       setupEventListeners();
+      
+      
+      /*
       spanText = "<form action='exportggb' method='post' id='exportggb' enctype='multipart/form-data' style='display: none;'>";
       spanText += "<textarea cols='50' id='ggbxml' type='text' wrap='hard' name='ggbxml' value=''></textarea>";//" style='display: none;'>";
       spanText += "<input id='ggbfilename' type='text' name='ggbfilename' value=''>";
       spanText += "<button type='submit' id='exportggbbutton' ></button></form>";
+      */
       
       //spanText += "<form action='importggbzip' method='post' id='importggbzip' enctype='multipart/form-data' name='wassup' style='display: none;'>";
       //spanText += "<input id='ggbzip' type='file' name='ggbzip' value=''>";//" style='display: none;'>";
@@ -222,40 +226,16 @@ Graph = (function() {
   
   function importGgb() {
     console.log("import ggb");
-    /*
-    $("#ggbzip").one("change", function() {
-      $("#ggbzip").off();
-      var files = $(this).get(0).files;
-      if (files.length > 0){
-        var formData = new FormData();
-        var file = files[0];
-        formData.append(socket.id, file, file.name);
-        $.ajax({
-           url: '/importggbfrompopup',
-           type: 'POST',
-           data: formData,
-           processData: false,
-           contentType: false,
-           success: function(data){
-               console.log('upload successful!\n' + data);
-              $("#ggbzip").val("");
-           }
-         });
-       }
-    });
-    $("#ggbzip").click();
-    $("#ggbzip").value = "";
-    */
     $("#importgbccfile").one("change", function() {
       $("#importgbccfile").off();
-      $("#importgbcctype").val("ggb");
+      //$("#importgbcctype").val("ggb");
       var files = $(this).get(0).files;
       if (files.length > 0){
         var formData = new FormData();
         var file = files[0];
         formData.append(socket.id, file);
         $.ajax({
-           url: '/importfile?filetype=ggb',
+           url: '/importgbccform?filetype=ggb',
            type: 'POST',
            data: formData,
            processData: false,
@@ -269,14 +249,14 @@ Graph = (function() {
     });
     $("#importgbccfile").click();
     $("#importgbccfile").value = "";
-
-
   }
  
   function exportGgb(filename) {
-    $("#ggbfilename").val(filename);
+    console.log("export ggb "+filename);
+    $("#exportgbccfilename").val(filename);
     $("#ggbxml").val(ggbApplet.getXML());
-    $("#exportggb").submit();
+    $("#exportgbcctype").val("ggb");
+    $("#exportgbccform").submit();
   }
   
   function getGgbList() {
