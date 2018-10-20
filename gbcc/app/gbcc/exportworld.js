@@ -92,7 +92,7 @@ function createJsonMyUniverse(data, settings) {
   if (data != undefined) {
     if (settings.myUserId && data.userData) {
       reportObj["userData"][settings.myUserId] = data.userData[settings.myUserId];
-      reportObj["canvasOrder"] = data.canvasOrder;
+      reportObj["canvasOrder"] = [settings.myUserId];
       reportObj["userStreamData"][settings.myUserId] = data.userStreamData[settings.myUserId];
     }
   }
