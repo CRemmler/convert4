@@ -2,7 +2,7 @@
   var hasProp = {}.hasOwnProperty;
 
   window.controlEventTraffic = function(controller) {
-    var checkActionKeys, createWidget, dropOverlay, hailSatan, mousetrap, onCloseDialog, onCloseEditForm, onOpenDialog, onOpenEditForm, onQMark, onWidgetBottomChange, onWidgetRightChange, onWidgetValueChange, openDialogs, ractive, redrawView, refreshChooser, refreshDims, rejectDupe, renameGlobal, resizeView, setPatchSize, toggleInterfaceLock, trackFocus, unregisterWidget, updateTopology, viewController;
+    var checkActionKeys, createWidget, dropOverlay, hailSatan, mousetrap, onCloseDialog, onCloseEditForm, onOpenDialog, onOpenEditForm, onQMark, onWidgetBottomChange, onWidgetRightChange, onWidgetValueChange, openDialogs, ractive, redrawView, refreshChooser, refreshDims, rejectDupe, renameGlobal, resizeView, setPatchSize, toggleBooleanData, trackFocus, unregisterWidget, updateTopology, viewController;
     ractive = controller.ractive, viewController = controller.viewController;
     openDialogs = new Set([]);
     checkActionKeys = function(e) {
@@ -174,11 +174,11 @@
       world.setPatchSize(patchSize);
       refreshDims();
     };
-    toggleInterfaceLock = function() {
-      var isEditing;
-      if (!this.get('someDialogIsOpen')) {
-        isEditing = !ractive.get('isEditing');
-        ractive.set('isEditing', isEditing);
+    toggleBooleanData = function(dataName) {
+      var newData;
+      if (!ractive.get('someDialogIsOpen')) {
+        newData = !ractive.get(dataName);
+        ractive.set(dataName, newData);
       }
     };
     trackFocus = function(node) {
@@ -214,7 +214,12 @@
     ractive.observe('widgetObj.*.right', onWidgetRightChange);
     ractive.observe('widgetObj.*.bottom', onWidgetBottomChange);
     ractive.on('hail-satan', hailSatan);
-    ractive.on('toggle-interface-lock', toggleInterfaceLock);
+    ractive.on('toggle-interface-lock', function() {
+      return toggleBooleanData('isEditing');
+    });
+    ractive.on('toggle-orientation', function() {
+      return toggleBooleanData('isVertical');
+    });
     ractive.on('*.redraw-view', redrawView);
     ractive.on('*.resize-view', resizeView);
     ractive.on('*.unregister-widget', unregisterWidget);

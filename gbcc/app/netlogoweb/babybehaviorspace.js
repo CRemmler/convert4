@@ -14,6 +14,7 @@
 
   type BehaviorSpaceConfig =
     {
+      experimentName:      String
       parameterSet:        { type: "discreteCombos",   combos:    Array[Object[Any]]    }
                          | { type: "cartesianProduct", variables: Array[VariableConfig] }
       repetitionsPerCombo: Number
@@ -31,8 +32,8 @@
   var cartesianProduct, executeRun, genCartesianSet;
 
   window.runBabyBehaviorSpace = function(config, setGlobal, dump) {
-    var combination, finalParameterSet, flatten, go, iterationLimit, j, key, len, metrics, pSet, parameterSet, repetitionsPerCombo, results, results1, setup, stopCondition, value;
-    parameterSet = config.parameterSet, repetitionsPerCombo = config.repetitionsPerCombo, metrics = config.metrics, setup = config.setup, go = config.go, stopCondition = config.stopCondition, iterationLimit = config.iterationLimit;
+    var combination, experimentName, finalParameterSet, finalResults, flatten, go, iterationLimit, key, metrics, pSet, parameterSet, repetitionsPerCombo, results, setup, stopCondition, value;
+    experimentName = config.experimentName, parameterSet = config.parameterSet, repetitionsPerCombo = config.repetitionsPerCombo, metrics = config.metrics, setup = config.setup, go = config.go, stopCondition = config.stopCondition, iterationLimit = config.iterationLimit;
     parameterSet = (function() {
       switch (parameterSet.type) {
         case "discreteCombos":
@@ -63,20 +64,29 @@
       }
       return results1;
     })());
-    results1 = [];
-    for (j = 0, len = finalParameterSet.length; j < len; j++) {
-      pSet = finalParameterSet[j];
-      for (key in pSet) {
-        value = pSet[key];
-        setGlobal(key, value);
+    window.Meta.behaviorSpaceName = experimentName != null ? experimentName : "BabyBehaviorSpace";
+    window.Meta.behaviorSpaceRun = 0;
+    finalResults = (function() {
+      var j, len, results1;
+      results1 = [];
+      for (j = 0, len = finalParameterSet.length; j < len; j++) {
+        pSet = finalParameterSet[j];
+        for (key in pSet) {
+          value = pSet[key];
+          setGlobal(key, value);
+        }
+        results = executeRun(setup, go, stopCondition, iterationLimit, metrics, dump);
+        window.Meta.behaviorSpaceRun = window.Meta.behaviorSpaceRun + 1;
+        results1.push({
+          config: pSet,
+          results: results
+        });
       }
-      results = executeRun(setup, go, stopCondition, iterationLimit, metrics, dump);
-      results1.push({
-        config: pSet,
-        results: results
-      });
-    }
-    return results1;
+      return results1;
+    })();
+    window.Meta.behaviorSpaceName = "";
+    window.Meta.behaviorSpaceRun = 0;
+    return finalResults;
   };
 
   cartesianProduct = function(xs) {

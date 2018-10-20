@@ -7,7 +7,9 @@
       if (checkIsValid(clientX, clientY)) {
         invisiGIF = document.createElement('img');
         invisiGIF.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-        dataTransfer.setDragImage(invisiGIF, 0, 0);
+        if (typeof dataTransfer.setDragImage === "function") {
+          dataTransfer.setDragImage(invisiGIF, 0, 0);
+        }
         dataTransfer.setData('text/plain', '');
         this.view = view;
         this.lastUpdateMs = (new Date).getTime();
@@ -35,7 +37,7 @@
           callback(x, y);
         }
       }
-      return false;
+      return true;
     },
     dragend: function(callback) {
       var root;

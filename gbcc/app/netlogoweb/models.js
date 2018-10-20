@@ -1,5 +1,9 @@
 (function() {
-  exports.bindModelChooser = function(container, onComplete, selectionChanged, currentMode) {
+  var ref;
+
+  window.exports = (ref = window.exports) != null ? ref : {};
+
+  window.exports.bindModelChooser = function(container, onComplete, selectionChanged, currentMode) {
     var PUBLIC_PATH_SEGMENT_LENGTH, adjustModelPath, createModelSelection, modelDisplayName, populateModelChoices, setModelCompilationStatus;
     PUBLIC_PATH_SEGMENT_LENGTH = "public/".length;
     adjustModelPath = function(modelName) {
@@ -55,19 +59,19 @@
       });
       return select;
     };
-    return $.ajax('/model/list.json', {
+    return $.ajax('./model/list.json', {
       complete: function(req, status) {
         var allModelNames;
         allModelNames = JSON.parse(req.responseText);
         window.modelSelect = createModelSelection(container, allModelNames);
         if (container.classList.contains('tortoise-model-list')) {
-          $.ajax('/model/statuses.json', {
+          $.ajax('./model/statuses.json', {
             complete: function(req, status) {
-              var allModelStatuses, i, len, modelName, modelStatus, ref, ref1;
+              var allModelStatuses, i, len, modelName, modelStatus, ref1, ref2;
               allModelStatuses = JSON.parse(req.responseText);
               for (i = 0, len = allModelNames.length; i < len; i++) {
                 modelName = allModelNames[i];
-                modelStatus = (ref = (ref1 = allModelStatuses[modelName]) != null ? ref1.status : void 0) != null ? ref : 'unknown';
+                modelStatus = (ref1 = (ref2 = allModelStatuses[modelName]) != null ? ref2.status : void 0) != null ? ref1 : 'unknown';
                 setModelCompilationStatus(modelName, modelStatus);
               }
               return window.modelSelect.trigger('chosen:updated');
@@ -85,7 +89,7 @@
   };
 
   exports.selectModelByURL = function(modelURL) {
-    var choiceElem, choiceElems, choicesArray, extractNMatches, modelName, modelPath, prefix, ref, regexStr, truePath, truePrefix, urlIsInternal;
+    var choiceElem, choiceElems, choicesArray, extractNMatches, modelName, modelPath, prefix, ref1, regexStr, truePath, truePrefix, urlIsInternal;
     extractNMatches = function(regex) {
       return function(n) {
         return function(str) {
@@ -110,14 +114,14 @@
     };
     if (urlIsInternal(modelURL)) {
       regexStr = ".*/(modelslib/|test/|demomodels/)(.+).nlogo";
-      ref = extractNMatches(regexStr)(2)(modelURL), prefix = ref[0], modelName = ref[1];
+      ref1 = extractNMatches(regexStr)(2)(modelURL), prefix = ref1[0], modelName = ref1[1];
       truePrefix = prefix === "modelslib/" ? "" : prefix;
       modelPath = ("" + prefix + modelName).replace(/%20/g, " ");
       truePath = ("" + truePrefix + modelName).replace(/%20/g, " ");
       choiceElems = document.getElementsByName('models')[0].children;
       choicesArray = [].slice.call(choiceElems);
       choiceElem = choicesArray.reduce((function(acc, x) {
-        if (x.innerHTML === truePath) {
+        if (x.innerText === truePath) {
           return x;
         } else {
           return acc;

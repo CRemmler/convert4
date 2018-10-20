@@ -1,5 +1,6 @@
 (function() {
-  var buttonProps, chooserProps, defaultWidgetMixinFor, inputBoxProps, monitorProps, outputProps, plotProps, sliderProps, switchProps, textBoxProps, updateWidget, viewProps, widgetEqualsBy;
+  var buttonProps, chooserProps, defaultWidgetMixinFor, inputBoxProps, monitorProps, outputProps, plotProps, sliderProps, switchProps, textBoxProps, updateWidget, viewProps, widgetEqualsBy,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.WidgetController = (function() {
     function WidgetController(ractive, viewController, configs) {
@@ -7,6 +8,7 @@
       this.ractive = ractive;
       this.viewController = viewController;
       this.configs = configs;
+      this.setCode = bind(this.setCode, this);
       ref = this.configs.plotOps;
       for (display in ref) {
         chartOps = ref[display];
@@ -20,8 +22,8 @@
     WidgetController.prototype.createWidget = function(widgetType, x, y) {
       var adjustedX, adjustedY, base, id, mixin, rect, widget;
       rect = document.querySelector('.netlogo-widget-container').getBoundingClientRect();
-      adjustedX = Math.round(x - rect.x);
-      adjustedY = Math.round(y - rect.y);
+      adjustedX = Math.round(x - rect.left);
+      adjustedY = Math.round(y - rect.top);
       base = {
         left: adjustedX,
         top: adjustedY,
@@ -167,10 +169,13 @@
       return this.ractive.get('speed');
     };
 
-    WidgetController.prototype.setCode = function(code) {
+    WidgetController.prototype.setCode = function(code, successCallback) {
+      var ref;
       this.ractive.set('code', code);
-      this.ractive.findComponent('codePane').setCode(code);
-      this.ractive.fire('controller.recompile');
+      if ((ref = this.ractive.findComponent('codePane')) != null) {
+        ref.setCode(code);
+      }
+      this.ractive.fire('controller.recompile', successCallback);
     };
 
     WidgetController.prototype.redraw = function() {

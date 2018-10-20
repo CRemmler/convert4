@@ -94,8 +94,8 @@
         };
       })(this));
       this.widgetController.ractive.on('console.run', (function(_this) {
-        return function(_, code) {
-          return _this.run(code);
+        return function(_, code, errorLog) {
+          return _this.run(code, errorLog);
         };
       })(this));
       this.widgetController.ractive.set('lastCompileFailed', lastCompileFailed);
@@ -346,9 +346,8 @@
     };
 
     SessionLite.prototype.runBabyBehaviorSpace = function(arg) {
-      var _, compiledMetrics, convert, dumper, go, goCode, iterationLimit, j, last, map, massagedConfig, metricFs, metrics, miniDump, parameterSet, pipeline, ref1, ref2, ref3, repetitionsPerCombo, result, setGlobal, setup, setupCode, stopCondition, stopConditionCode, toObject, unwrapCompilation, zip;
-      parameterSet = arg.parameterSet, repetitionsPerCombo = arg.repetitionsPerCombo, metrics = arg.metrics, setupCode = arg.setupCode, goCode = arg.goCode, stopConditionCode = arg.stopConditionCode, iterationLimit = arg.iterationLimit;
-      dumper = tortoise_require('engine/dump');
+      var _, compiledMetrics, convert, experimentName, go, goCode, iterationLimit, j, last, map, massagedConfig, metricFs, metrics, miniDump, parameterSet, pipeline, ref1, ref2, ref3, repetitionsPerCombo, result, setGlobal, setup, setupCode, stopCondition, stopConditionCode, toObject, unwrapCompilation, zip;
+      experimentName = arg.experimentName, parameterSet = arg.parameterSet, repetitionsPerCombo = arg.repetitionsPerCombo, metrics = arg.metrics, setupCode = arg.setupCode, goCode = arg.goCode, stopConditionCode = arg.stopConditionCode, iterationLimit = arg.iterationLimit;
       ref1 = tortoise_require('brazier/array'), last = ref1.last, map = ref1.map, toObject = ref1.toObject, zip = ref1.zip;
       pipeline = tortoise_require('brazier/function').pipeline;
       result = (new BrowserCompiler()).fromModel({
@@ -383,6 +382,7 @@
       };
       compiledMetrics = pipeline(zip(metrics), map(convert), toObject)(metricFs);
       massagedConfig = {
+        experimentName: experimentName,
         parameterSet: parameterSet,
         repetitionsPerCombo: repetitionsPerCombo,
         metrics: compiledMetrics,
@@ -399,13 +399,19 @@
         } else if ((ref4 = typeof x) === "boolean" || ref4 === "number" || ref4 === "string") {
           return x;
         } else {
-          return dumper(x);
+          return workspace.dump(x);
         }
       };
       return window.runBabyBehaviorSpace(massagedConfig, setGlobal, miniDump);
     };
 
-    SessionLite.prototype.run = function(code) {
+    SessionLite.prototype.run = function(code, errorLog) {
+      var compileErrorLog;
+      compileErrorLog = (function(_this) {
+        return function(result) {
+          return _this.alertCompileError(result, errorLog);
+        };
+      })(this);
       Tortoise.startLoading();
       return codeCompile(this.widgetController.code(), [code], [], this.widgetController.widgets(), (function(_this) {
         return function(arg) {
@@ -415,7 +421,7 @@
             ref2 = commands[0], result = ref2.result, success = ref2.success;
             if (success) {
               try {
-                return window.handlingErrors(new Function(result))();
+                return window.handlingErrors(new Function(result))(errorLog);
               } catch (error) {
                 ex = error;
                 if (!(ex instanceof Exception.HaltInterrupt)) {
@@ -423,21 +429,26 @@
                 }
               }
             } else {
-              return _this.alertCompileError(result);
+              return compileErrorLog(result);
             }
           } else {
-            return _this.alertCompileError(modelResult);
+            return compileErrorLog(modelResult);
           }
         };
-      })(this), this.alertCompileError);
+      })(this), compileErrorLog);
     };
 
-    SessionLite.prototype.alertCompileError = function(result) {
-      var alertText;
-      alertText = result.map(function(err) {
+    SessionLite.prototype.alertCompileError = function(result, errorLog) {
+      if (errorLog == null) {
+        errorLog = this.alertErrors;
+      }
+      return errorLog(result.map(function(err) {
         return err.message;
-      }).join('\n');
-      return this.displayError(alertText);
+      }));
+    };
+
+    SessionLite.prototype.alertErrors = function(messages) {
+      return this.displayError(messages.join('\n'));
     };
 
     SessionLite.prototype.compileObserverCode = function(key, value) {

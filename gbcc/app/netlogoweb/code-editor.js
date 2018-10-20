@@ -106,6 +106,22 @@
       });
       return Object.keys(this.getProcedureNames()).concat(supportedKeywords);
     },
+    toggleLineComments: function(editor) {
+      var anchor, cursor, end, head, ref, ref1, start;
+      ref1 = editor.somethingSelected() ? ((ref = editor.listSelections()[0], head = ref.head, anchor = ref.anchor, ref), head.line > anchor.line || (head.line === anchor.line && head.ch > anchor.ch) ? {
+        start: anchor,
+        end: head
+      } : {
+        start: head,
+        end: anchor
+      }) : (cursor = editor.getCursor(), {
+        start: cursor,
+        end: cursor
+      }), start = ref1.start, end = ref1.end;
+      if (!editor.uncomment(start, end)) {
+        editor.lineComment(start, end);
+      }
+    },
     setupCodeUsagePopup: function() {
       var codeUsageMap, editor;
       editor = this.findComponent('codeEditor').getEditor();
@@ -122,6 +138,16 @@
             if (editor.somethingSelected()) {
               return _this.setCodeUsage();
             }
+          };
+        })(this),
+        'Ctrl-;': (function(_this) {
+          return function() {
+            _this.toggleLineComments(editor);
+          };
+        })(this),
+        'Cmd-;': (function(_this) {
+          return function() {
+            _this.toggleLineComments(editor);
           };
         })(this)
       };

@@ -119,6 +119,10 @@ kbd {
   padding-left: 0;
 }
 
+.topbar-hint-list > li {
+  margin:       10px 0px;
+}
+
 .topbar-hint-link {
   color:           #f3f3f3;
   text-decoration: none;
@@ -143,7 +147,7 @@ body.not_full_height {
 }
 
 .outer-content {
-  width: 83%;
+  width: fit-content;
   margin-left: auto;
   margin-right: auto;
 }

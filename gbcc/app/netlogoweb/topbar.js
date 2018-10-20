@@ -36,18 +36,19 @@
   });
 
   window.addEventListener('load', function() {
-    var authoringLink, differencesLink, docHintInfo, faqLink;
+    var authoringLink, differencesLink, docHintInfo, faqLink, relativizer;
+    relativizer = window.location.pathname.includes('/docs/') ? "" : "../";
     authoringLink = {
       text: "Authoring",
-      url: "/docs/authoring"
+      url: "./" + relativizer + "docs/authoring"
     };
     differencesLink = {
       text: "What's Different?",
-      url: "/docs/differences"
+      url: "./" + relativizer + "docs/differences"
     };
     faqLink = {
       text: "FAQ",
-      url: "/docs/faq"
+      url: "./" + relativizer + "docs/faq"
     };
     docHintInfo = {
       elemID: 'docs-label',

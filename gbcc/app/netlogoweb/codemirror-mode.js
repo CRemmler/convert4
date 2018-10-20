@@ -75,7 +75,8 @@
       }, constantRule, commentRule, openBracket, closeBracket, variable
     ],
     meta: {
-      electricChars: "dD])\n"
+      electricChars: "dD])\n",
+      lineComment: ";"
     }
   });
 

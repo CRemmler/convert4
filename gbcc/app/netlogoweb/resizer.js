@@ -75,10 +75,10 @@
           return true;
         }), (function(_this) {
           return function(x, y) {
-            var ref;
-            ref = _this.find('.widget-resizer').getBoundingClientRect(), x = ref.x, y = ref.y;
-            _this._xAdjustment = x - _this.get('left');
-            return _this._yAdjustment = y - _this.get('top');
+            var left, ref, top;
+            ref = _this.find('.widget-resizer').getBoundingClientRect(), left = ref.left, top = ref.top;
+            _this._xAdjustment = left - _this.get('left');
+            return _this._yAdjustment = top - _this.get('top');
           };
         })(this));
       },

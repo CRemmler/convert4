@@ -4,27 +4,27 @@ GbccFileManager = (function() {
     return []
   }
   
-  function importUniverseFile(filename) {
-    //console.log(filepath);
-    //console.log(filename);
-    //console.log("import gbcc universe file");
+  function importOurDataFile(filename) {
     var filepath = "";
     if (myUserType === "teacher") {
-      socket.emit('unzip gbcc universe', {'filepath': filepath, 'filename': filename, schoolName: $(".schoolNameInput").val(), roomName: $(".roomNameInput").val()});
+      socket.emit('unzip gbcc universe', {
+        'filepath': filepath, 
+        'filename': filename, 
+        'scope': "universe",
+        schoolName: $(".schoolNameInput").val(), 
+        roomName: $(".roomNameInput").val()});
     } else {
-      alert("You must have the role of teacher to import a gbcc universe.")
+      alert("You must have the role of teacher to gbcc:import-our-data.")
     }
   }
   
-  function importUniverse() {
+  function importOurData() {
     importGbcc("universe");
   }
   
   function importGbcc(contenttype) {
-    console.log("import gbcc contenttype "+contenttype);
     $("#importgbccfile").one("change", function() {
       $("#importgbccfile").off();
-      //$("#importgbcctype").val(contenttype);
       var files = $(this).get(0).files;
       if (files.length > 0){
         var formData = new FormData();
@@ -47,20 +47,41 @@ GbccFileManager = (function() {
     $("#importgbccfile").value = "";
   }
 
-  function exportUniverse(filename) {
+  function exportOurData(filename) {
     $("#exportgbccfilename").val(filename);
     $("#exportgbcctype").val("universe");
     $("#exportgbccform").submit();
   }
   
+  function importMyData() {
+    importGbcc("my-universe");
+  }
+  
+
+  function exportMyData(filename) {
+    $("#exportgbccfilename").val(filename);
+    $("#exportgbcctype").val("my-universe");
+    $("#exportgbccform").submit();
+  }
+  
+  function importMyDataFile(filename) {
+    var filepath = "";
+    socket.emit('unzip gbcc universe', {
+      'filepath': filepath, 
+      'filename': filename,
+      'scope': "my-universe",
+      schoolName: $(".schoolNameInput").val(), 
+      roomName: $(".roomNameInput").val()});
+  }
+  
   return {
-    //uploadFile: uploadFile,
     getFileList: getFileList,
-    importUniverse: importUniverse,
-    exportUniverse: exportUniverse,
-    importUniverseFile: importUniverseFile,
-    //importWorld: importWorld,
-    //exportWorld: exportWorld
+    importOurData: importOurData,
+    exportOurData: exportOurData,
+    importOurDataFile: importOurDataFile,
+    importMyData: importMyData,
+    exportMyData: exportMyData,
+    importMyDataFile: importMyDataFile,
   };
 
 })();

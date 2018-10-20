@@ -85,6 +85,20 @@ function createJsonUniverse(data, settings) {
   return JSON.stringify(reportObj);
 }
 
+function createJsonMyUniverse(data, settings) {
+  var reportObj = {};
+  reportObj["userData"] = {};
+  reportObj["userStreamData"] = {};
+  if (data != undefined) {
+    if (settings.myUserId && data.userData) {
+      reportObj["userData"][settings.myUserId] = data.userData[settings.myUserId];
+      reportObj["canvasOrder"] = data.canvasOrder;
+      reportObj["userStreamData"][settings.myUserId] = data.userStreamData[settings.myUserId];
+    }
+  }
+  return JSON.stringify(reportObj);
+}
+
 function sendResponse(htmlReport,jsonReport, zip, res, filename) {
   zip.file("htmlReport.html", htmlReport);
   zip.file("jsonReport.json", jsonReport);
@@ -147,7 +161,6 @@ module.exports = {
         }
       }
     }
-    //zip.file("world.json", JSON.stringify(data));
     sendResponse(createHtmlReport(data, settings), createJsonReport(data, settings), zip, res, filename);
   },
   
@@ -159,5 +172,11 @@ module.exports = {
   exportGbccUniverse: function (data, settings, filename, res, socketid) {
     var zip = new JSZip();
     sendGbCCWorldResponse(createJsonUniverse(data, settings), filename, zip, res, socketid);
+  },
+  
+  exportGbccMyUniverse: function (data, settings, filename, res, socketid) {
+    var zip = new JSZip();
+    sendGbCCWorldResponse(createJsonMyUniverse(data, settings), filename, zip, res, socketid);
   }
+
 };

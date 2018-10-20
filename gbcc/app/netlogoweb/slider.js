@@ -34,7 +34,7 @@
     },
     genProps: function(form) {
       var bottom, oldBottom, oldLeft, oldRight, oldTop, ref, right, value;
-      value = form.value.valueAsNumber;
+      value = Number.parseFloat(form.value.value);
       oldTop = this.get('top');
       oldRight = this.get('right');
       oldBottom = this.get('bottom');

@@ -6,6 +6,11 @@
     view: void 0,
     data: function() {
       return {
+        parentClass: 'netlogo-widget-container',
+        submitLabel: 'OK',
+        cancelLabel: 'Cancel',
+        horizontalOffset: void 0,
+        verticalOffset: void 0,
         amProvingMyself: false,
         idBasis: void 0,
         style: void 0,
@@ -37,7 +42,7 @@
         }
       },
       'show-yourself': function() {
-        var container, containerMidX, containerMidY, dialogHalfHeight, dialogHalfWidth, elem, findParentByClass;
+        var container, containerMidX, containerMidY, dialogHalfHeight, dialogHalfWidth, elem, findParentByClass, ref, ref1;
         findParentByClass = function(clss) {
           return function(arg) {
             var parent;
@@ -58,13 +63,13 @@
         elem.focus();
         this.fire('lock-selection', this.parent);
         this.fire('edit-form-opened', this);
-        container = findParentByClass('netlogo-widget-container')(elem);
+        container = findParentByClass(this.get('parentClass'))(elem);
         containerMidX = container.offsetWidth / 2;
         containerMidY = container.offsetHeight / 2;
         dialogHalfWidth = elem.offsetWidth / 2;
         dialogHalfHeight = elem.offsetHeight / 2;
-        this.set('xLoc', containerMidX - dialogHalfWidth);
-        this.set('yLoc', containerMidY - dialogHalfHeight);
+        this.set('xLoc', (ref = this.get('horizontalOffset')) != null ? ref : containerMidX - dialogHalfWidth);
+        this.set('yLoc', (ref1 = this.get('verticalOffset')) != null ? ref1 : containerMidY - dialogHalfHeight);
         this.resetPartial('widgetFields', this.partials.widgetFields);
         return false;
       },
@@ -129,7 +134,7 @@
     getElem: function() {
       return this.find("#" + (this.get('id')));
     },
-    template: "{{# visible }}\n<div class=\"widget-edit-form-overlay\">\n  <div id=\"{{id}}\"\n       class=\"widget-edit-popup widget-edit-text\"\n       style=\"top: {{yLoc}}px; left: {{xLoc}}px; {{style}}\"\n       on-keydown=\"handle-key\"\n       draggable=\"true\" on-drag=\"drag-edit-dialog\" on-dragstart=\"start-edit-drag\"\n       on-dragend=\"stop-edit-drag\"\n       tabindex=\"0\">\n    <div id=\"{{id}}-closer\" class=\"widget-edit-closer\" on-click=\"cancel-edit\">X</div>\n    <form class=\"widget-edit-form\" on-submit=\"submit\">\n      <div class=\"widget-edit-form-title\">{{>title}}</div>\n      {{>widgetFields}}\n      <div class=\"widget-edit-form-button-container\">\n        <input class=\"widget-edit-text\" type=\"submit\" value=\"OK\" />\n        <input class=\"widget-edit-text\" type=\"button\" on-click=\"cancel-edit\" value=\"Cancel\" />\n      </div>\n    </form>\n  </div>\n</div>\n{{/}}",
+    template: "{{# visible }}\n<div class=\"widget-edit-form-overlay\">\n  <div id=\"{{id}}\"\n       class=\"widget-edit-popup widget-edit-text\"\n       style=\"top: {{yLoc}}px; left: {{xLoc}}px; {{style}}\"\n       on-keydown=\"handle-key\"\n       draggable=\"true\" on-drag=\"drag-edit-dialog\" on-dragstart=\"start-edit-drag\"\n       on-dragend=\"stop-edit-drag\"\n       tabindex=\"0\">\n    <div id=\"{{id}}-closer\" class=\"widget-edit-closer\" on-click=\"cancel-edit\">X</div>\n    <form class=\"widget-edit-form\" on-submit=\"submit\">\n      <div class=\"widget-edit-form-title\">{{>title}}</div>\n      {{>widgetFields}}\n      <div class=\"widget-edit-form-button-container\">\n        <input class=\"widget-edit-text\" type=\"submit\" value=\"{{ submitLabel }}\" />\n        <input class=\"widget-edit-text\" type=\"button\" on-click=\"cancel-edit\" value=\"{{ cancelLabel }}\" />\n      </div>\n    </form>\n  </div>\n</div>\n{{/}}",
     partials: {
       widgetFields: void 0
     }

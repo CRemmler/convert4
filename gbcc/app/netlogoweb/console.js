@@ -22,7 +22,8 @@
           var index;
           index = this.get('agentTypes').indexOf(val);
           if (index >= 0) {
-            return this.set('agentTypeIndex', index);
+            this.set('agentTypeIndex', index);
+            return this.focusCommandCenterEditor();
           }
         }
       }
@@ -31,7 +32,7 @@
       printArea: RactivePrintArea
     },
     onrender: function() {
-      var changeAgentType, commandCenterEditor, moveInHistory, run;
+      var changeAgentType, commandCenterEditor, consoleErrorLog, moveInHistory, run;
       changeAgentType = (function(_this) {
         return function() {
           return _this.set('agentTypeIndex', (_this.get('agentTypeIndex') + 1) % _this.get('agentTypes').length);
@@ -61,6 +62,11 @@
           return _this.set('historyIndex', newIndex);
         };
       })(this);
+      consoleErrorLog = (function(_this) {
+        return function(messages) {
+          return _this.set('output', (_this.get('output')) + "ERROR: " + (messages.join('\n')) + "\n");
+        };
+      })(this);
       run = (function(_this) {
         return function() {
           var agentType, history, input, lastEntry;
@@ -86,7 +92,7 @@
             if (agentType !== 'observer') {
               input = "ask " + agentType + " [ " + input + " ]";
             }
-            _this.fire('run', input);
+            _this.fire('run', {}, input, consoleErrorLog);
             _this.set('input', '');
             return _this.set('workingEntry', {});
           }
@@ -119,6 +125,9 @@
           })(this)
         }
       });
+      this.focusCommandCenterEditor = function() {
+        return commandCenterEditor.focus();
+      };
       commandCenterEditor.on('beforeChange', function(_, change) {
         var oneLineText;
         oneLineText = change.text.join('').replace(/\n/g, '');
