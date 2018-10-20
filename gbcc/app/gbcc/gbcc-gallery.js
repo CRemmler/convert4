@@ -680,7 +680,11 @@ Gallery = (function() {
   }
   
   function cloneCanvas() {
-    
+    socket.emit('send canvas override', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "clone-canvas",
+      hubnetMessage: ""
+    });
   }
   
   function removeCanvas(userId) {
