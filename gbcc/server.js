@@ -95,9 +95,11 @@ io.on('connection', function(socket){
       socket.emit("save settings", {userType: myUserType, userId: myUserId, gallerySettings: config.galleryJs, myRoom: myRoom, school: school, teacherId: teacherId});
 
       if (activityType === "hubnet") {
-          if (allRooms[myRoom].settings.mirror && myUserType === "student") { 
-            socket.to(school+"-"+myRoom+"-teacher").emit("teacher accepts new entry request", {"userId": myUserId }); 
-          }
+          //if (allRooms[myRoom].settings.mirror && myUserType === "student") { 
+          //if (myUserType)
+          socket.to(school+"-"+myRoom+"-teacher").emit("teacher accepts new entry request", {"userId": myUserId }); 
+          //}
+          console.log("SEEND VIWE");
           socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {userId: myUserId, type: 'view', display: allRooms[myRoom].settings.view });
       } else if (activityType === "gbcc") {
           socket.emit("student accepts UI change", {userId: myUserId, type: 'tabs', display: allRooms[myRoom].settings.tabs });
@@ -153,7 +155,7 @@ io.on('connection', function(socket){
                     //claimed: (allRooms[myRoom].settings.adoptCanvasDict[myUserId] != undefined)
                     claimed: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved.claimed
                   };  
-                  socket.emit("display reporter", dataObject);
+                  socket.emit("display canvas reporter", dataObject);
                 }
               }
             }
@@ -186,7 +188,7 @@ io.on('connection', function(socket){
               activityType: activityType,
               userType: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["userType"]
             };  
-            socket.emit("display reporter", dataObject);
+            socket.emit("display canvas reporter", dataObject);
           }
         }
       }
@@ -247,7 +249,6 @@ io.on('connection', function(socket){
    });
 
    socket.on("send message reporter", function(data) {
-     //console.log(data);
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
@@ -276,7 +277,6 @@ io.on('connection', function(socket){
 
   // pass reporter from server to student
   socket.on("send reporter", function(data) {
-    //console.log(data);
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
@@ -320,14 +320,14 @@ io.on('connection', function(socket){
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
     var destination = data.hubnetMessageSource;
-    if (data.hubnetMessageTag === "canvas-text") {
-      data.hubnetMessage = markdown.toHTML(data.hubnetMessage);
-    }
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData[myUserId]) {
         if (allRooms[myRoom].userData[myUserId]["canvas"] === undefined) {
           allRooms[myRoom].canvasOrder.push(myUserId);
           allRooms[myRoom].userData[myUserId]["canvas"] = {};
+        }
+        if (data.hubnetMessageTag === "canvas-text") {
+          data.hubnetMessage = markdown.toHTML(data.hubnetMessage);
         }
         var dataObject = {
           hubnetMessageSource: myUserId,
@@ -338,16 +338,20 @@ io.on('connection', function(socket){
           userType: myUserType,
           claimed: allRooms[myRoom].userData[myUserId].reserved.claimed 
         };
-        if ( data.hubnetMessageTag.includes("canvas")) {
-          if (data.hubnetMessageTag === "canvas-clear") {
+          if (data.hubnetMessageTag === "canvas-clear-all") {
             allRooms[myRoom].userData[myUserId]["canvas"] = {};
+          } else if (data.hubnetMessageTag === "canvas-clear") {
+            if (allRooms[myRoom].userData[myUserId]["canvas"][data.hubnetMessage]) {
+              allRooms[myRoom].userData[myUserId]["canvas"][data.hubnetMessage] = {};
+            }
+          } else {  // plot, view or avatar
+            allRooms[myRoom].userData[myUserId]["canvas"][data.hubnetMessageTag] = data.hubnetMessage;
           }
-          allRooms[myRoom].userData[myUserId]["canvas"][data.hubnetMessageTag] = data.hubnetMessage;
-        }  
+
         dataObject.hubnetMessage = data.hubnetMessage;
-        socket.to(school+"-"+myRoom+"-teacher").emit("display reporter", dataObject);
-        socket.to(school+"-"+myRoom+"-student").emit("display reporter", dataObject);
-        socket.emit("display reporter", dataObject);
+        socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
+        socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
+        socket.emit("display canvas reporter", dataObject);
       }
     }
     schools[school] = allRooms;
@@ -474,27 +478,29 @@ io.on('connection', function(socket){
   });*/
   
   app.post('/exportgbccform', function(req,res){
-    //console.log("export gbcc file");
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
-      // console.log(fields);
       var filetype = fields.exportgbcctype || "";
       var xml = fields.ggbxml || "";
       var myRoom = fields.gbccroomname || "";
       var mySchool = fields.gbccschoolname || "";
       var allRooms = schools[mySchool];
-      var settings = {schoolName: mySchool};
+      var settings = {schoolName: mySchool, myUserId: getSocketId(fields.gbccmyuserid) || ""};
       var filename = fields.exportgbccfilename || "";
-      if (filetype === "ggb") {
-        exportworld.exportGgb(xml, filename, res);  
-      } else if (filetype === "universe") {
-        exportworld.exportGbccUniverse(allRooms[myRoom], settings, filename, res, socket.id);
+      try {
+        if (filetype === "ggb") {
+          exportworld.exportGgb(xml, filename, res);  
+        } else if (filetype === "universe") {
+          exportworld.exportGbccUniverse(allRooms[myRoom], settings, filename, res, socket.id);
+        } else if (filetype === "my-universe") {
+          exportworld.exportGbccMyUniverse(allRooms[myRoom], settings, filename, res, socket.id);
+        } 
+      } catch (ex) {
       }
     });
   });
   
   app.post('/importgbccform', function(req,res){
-    //console.log("import file");
     var filename;
     new formidable.IncomingForm().parse(req)
       .on('file', function(socketid, file) {
@@ -518,26 +524,26 @@ io.on('connection', function(socket){
   });
   
   socket.on("unzip gbcc universe", function(data) {
-    //console.log("unzip gbcc universe");
     var myRoom = data.roomName;
     var filepathlocal = __dirname + data.filename;
     var filepath = data.filepath;
     var filename = data.filename;
+    var scope = data.scope;
     fs.readFile( filename, function(err, data){
       if (!err && filename) {
-        //console.log("unzip "+filename);
-        setupUniverse(data, myRoom);
+        console.log("unzip "+filename);
+        setupUniverse(data, myRoom, filename, scope);
       } else {
         fs.readFile(filepathlocal, function(err, data2){
           if (!err && filepathlocal) {
-            //console.log("unzip "+filepathlocal);
-            setupUniverse(data2, myRoom);
+            console.log("unzip "+filepathlocal);
+            setupUniverse(data2, myRoom, filepathlocal, scope);
           } else {
-            //console.log(filepath);
+            console.log(filepath);
             fs.readFile( filepath, function(err, data3) {
               if (!err && filepath) {
-                //console.log("unzip "+filepath);
-                setupUniverse(data3, myRoom);
+                console.log("unzip "+filepath);
+                setupUniverse(data3, myRoom, filepath, scope);
               } 
             });          
           }
@@ -546,13 +552,13 @@ io.on('connection', function(socket){
     });
   });
 
-  function setupUniverse(data, myRoom) {
+  function setupUniverse(data, myRoom, zipFileName, scope) {
+    console.log("setup univ");
     var newUserData, newCanvasOrder, newUserStreamData;
     var dataObject;
     var zip = new JSZip();
     JSZip.loadAsync(data).then(function(zip){
       for (filename in zip.files) {
-        //console.log(filename);
         try {
           zip.files[filename].async("string").then(function(contentString) {
             try {
@@ -560,10 +566,15 @@ io.on('connection', function(socket){
               newUserData = content.userData ? content.userData : {};
               newCanvasOrder = content.canvasOrder ? content.canvasOrder : [];
               newUserStreamData = content.userStreamData ? content.userStreamData : {};
-              if (allRooms[myRoom].userData != {}) {
+              
+              var scopeAllowed = true;
+              if (scope === "my-universe" && Object.keys(newUserData).length > 1 ) { scopeAllowed = false; }
+              
+              if (allRooms[myRoom].userData != {} && scopeAllowed) {
                 for (var user in newUserData) {
-                  if (newUserData[user].reserved && newUserData[user].reserved.claimed) {
+                  if (newUserData[user].reserved) {
                     newUserData[user].reserved.claimed = false;
+                    newUserData[user].reserved.exists = true;
                   }
                   socket.emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
                 }
@@ -579,9 +590,9 @@ io.on('connection', function(socket){
                         userId: "",
                         activityType: activityType,
                         userType: newUserData[newCanvasOrder[j]]["userType"],
-                        claimed: newUserData[newCanvasOrder[j]].reserved.claimed
+                        claimed: false //newUserData[newCanvasOrder[j]].reserved.claimed
                       };  
-                      socket.emit("display reporter", dataObject);
+                      socket.emit("display canvas reporter", dataObject);
                     }
                   }
                 }
@@ -604,6 +615,7 @@ io.on('connection', function(socket){
           console.log("caught error unzipping file")
         }
       }
+      deleteFile(zipFileName);
     });
   }
 
@@ -664,15 +676,19 @@ io.on('connection', function(socket){
   });
   
   socket.on("teacher requests UI change", function(data) {
+    console.log("teaecher requset ui change");
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
-    allRooms[myRoom].settings[data.type] = data.display; 
-    socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {"display":data.display, "type":data.type, "state": data.state, "image": data.image});      
-    schools[school] = allRooms;
+    if (allRooms[myRoom].settings) {
+      allRooms[myRoom].settings[data.type] = data.display; 
+      socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {"display":data.display, "type":data.type, "state": data.state, "image": data.image});      
+      schools[school] = allRooms;
+    }
   });
   
   socket.on("teacher requests UI change new entry", function(data) {
+    console.log("teaechre  rqusets ui change nw eenetry");
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
@@ -728,15 +744,7 @@ io.on('connection', function(socket){
     delete socketDictionary[myUserId];
     if (allRooms[myRoom] != undefined) {
       delete allRooms[myRoom].settings.adoptCanvasDict[myUserId];
-      //if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved) {
-      //  allRooms[myRoom].userData[myUserId].reserved.exists = false;
-      //}
     }
-  //  if (activityType != "hubnet") { 
-  //    console.log("send to teacher and students");
-  //    socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
-  //    socket.to(school+"-"+myRoom+"-student").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
-  //  }
     if (myUserType === "teacher") {
       if (activityType === "hubnet") {
         clearRoom(myRoom, school);
@@ -764,17 +772,16 @@ http.listen(PORT, function(){
 });
 
 function deleteFile(filename) {
-  //console.log("delete file");
+  console.log("delete file");
   setTimeout(function(){ 
     var fullPath= __dirname + '/'+filename;
-    //console.log("try it");
     try {
-      //console.log(fullPath);
+      console.log(fullPath);
       fs.unlink(fullPath, function() {
-        //console.log(fullPath + " deleted");
+        console.log(fullPath + " deleted");
       });
     } catch (e) {
-      //console.log(e);
+      console.log(e);
     }
   }, 3000);
 }

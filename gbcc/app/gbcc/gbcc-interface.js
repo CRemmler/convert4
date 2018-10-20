@@ -19,6 +19,7 @@ Interface = (function() {
     $(".netlogo-widget").addClass("hidden");
     $(".gbcc-widget").addClass("hidden");    
     $(".netlogo-model-title").removeClass("hidden");
+    $("#netlogo-title").html("");
     // show Welcome Students reporter
     var index = components.componentRange[0];
     var widget = "<div id='netlogo-monitor-"+index+"' class='netlogo-widget netlogo-monitor netlogo-output login login-welcome-student'>"+
@@ -95,6 +96,7 @@ Interface = (function() {
     });
     $("#exportHtmlButton").css("display","none");
     $(".netlogo-interface-unlocker-container").css("display","none");
+    $($(".netlogo-toggle-text")[1]).css("display","none")
   }
 
   function displayTeacherInterface(room, components) {

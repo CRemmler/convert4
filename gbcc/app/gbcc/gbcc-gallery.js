@@ -132,29 +132,20 @@ Gallery = (function() {
     });
     $("#opacityWrapper").css("display", "none");
     $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file' style='display:none'></div>");
-    
-    /*
-    spanText = "<form action='exportgbccworld' method='post' id='exportgbccworld' enctype='multipart/form-data' style='display: none;'>";
-    spanText += "<input id='gbccworldfilename' type='text' name='gbccworldfilename' value='' style='display: none;'>";
-    spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
-    spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
-    spanText += "<button type='submit'></button></form>";*/
-    
     var spanText = "<form action='exportgbccform' method='post' id='exportgbccform' enctype='multipart/form-data' style='display: none;'>";
-    //spanText += "<input id='exportgbccfile' type='file' name='exportgbccfile' value=''>";//" style='display: none;'>";
     spanText += "<input id='exportgbcctype' type='text' name='exportgbcctype' value=''>";//" style='display: none;'>";
     spanText += "<textarea cols='50' id='ggbxml' type='text' wrap='hard' name='ggbxml' value=''></textarea>";
     spanText += "<input id='exportgbccfilename' type='text' name='exportgbccfilename' value=''>";
     spanText += "<input class='roomNameInput' type='text' name='gbccroomname' value='' style='display: none;'>";
     spanText += "<input class='schoolNameInput' type='text' name='gbccschoolname' value='' style='display: none;'>";
+    spanText += "<input class='myUserIdInput' type='text' name='gbccmyuserid' value='' style='display: none;'>";
     spanText += "<button type='submit' id='exportgbccbutton'></button></form>";
-    
     spanText += "<form action='importgbccform' method='post' id='importgbccform' enctype='multipart/form-data' style='display: none;'>";
     spanText += "<input id='importgbccfile' type='file' name='importgbccfile' value=''>";//" style='display: none;'>";
     spanText += "<input id='importgbcctype' type='text' name='importgbcctype' value=''>";//" style='display: none;'>";
     spanText += "<button type='submit' id='importgbccbutton'></button></form>";
-    
     $("body").append(spanText);
+    $(".myUserIdInput").val(myUserId); 
   }
 
   function selectAll() {
@@ -310,6 +301,18 @@ Gallery = (function() {
     }
   }
   
+  function resetCards(li) {
+    var cards = [];
+    $(li).children().each(function() {
+      if ($(this).hasClass("card")) { cards.push(this);}
+    });
+    var index = 0;
+    for (card in cards) {
+      $(cards[card]).css("z-index",index);		
+      index++;
+    }
+  }
+  
   function createCanvas(data) {
     var canvasImg = new Image();
     canvasImg.id = data.id;
@@ -371,12 +374,24 @@ Gallery = (function() {
       assignZIndex();
   }
   
+  function createEmptyTextCard(data) {
+    newSpan = "<span class=\"card card-text\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>"+data.src.replace("gallery-text","")+"</span></span>";
+    $("#gallery-item-"+data.userId).append(newSpan);
+    var zIndex = $("#gallery-item-"+data.userId+" span:not(.text-span)").length - 5;
+    $("#"+data.id).parent().css("z-index",zIndex);
+    ($("#"+data.id).parent()).click(function() { cardClickHandler(this); });
+      assignZIndex();
+  }
+  
   function updateTextCard(data) {
     $("#"+data.id).html("<br>"+data.src.replace("gallery-text",""));
   }
   
   function displayCanvas(data) {
     data.tag = data.tag.replace(" ","-");
+    var canvasType = data.tag; // canvas-text, canvas-avatar, canvas-clear, canvas-clear-all
+    if (data.tag.indexOf("canvas-plot-") === 0) { canvasType = "canvas-plot"; }
+    if (data.tag.indexOf("canvas-view-") === 0) { canvasType = "canvas-view"; }
     if (galleryForeverButton === "off") { return; } 
     var canvasData = { 
             id : data.tag + "-" + data.source,
@@ -386,25 +401,34 @@ Gallery = (function() {
             claimed: data.claimed
           }
     if ($("#gallery-item-"+data.source).length === 0 ) { createCanvas(canvasData); } 
-    if (data.message.substring(0,13) === "gallery-clear") {
+    if ($("#canvas-clear-all-" + data.source ).length > 0) {
+      $("#canvas-clear-all-" + data.source).parent().remove();
+    }
+    if (canvasType === "canvas-clear-all") {
       $("#gallery-item-" + data.source +" .card").remove(); 
       canvasData.src="";
-      createTextCard(canvasData);
+      createEmptyTextCard(canvasData);
       return;
+    } else if (canvasType === "canvas-clear") {
+      if ($("#canvas-view-" + data.message.replace(" ","-")+"-"+data.source).length > 0) {
+        $("#canvas-view-" + data.message.replace(" ","-")+"-"+data.source).parent().remove(); 
+        resetCards($("#gallery-item-"+data.source));
+      } else  if ($("#canvas-plot-" + data.message.replace(" ","-")+"-"+data.source).length > 0) {
+        $("#canvas-plot-" + data.message.replace(" ","-")+"-"+data.source).parent().remove();
+        resetCards($("#gallery-item-"+data.source));
+      }
     }
     if (allowMultipleLayers) {
-      if (data.message.substring(0,15) === "<p>gallery-text") {
+      if (canvasType === "canvas-text") {
         ($("#" + data.tag + "-" + data.source).length === 0) ? createTextCard(canvasData) : updateTextCard(canvasData); 
-      } else {
-        console.log($("#" + data.tag + "-" + data.source).length);
-        console.log("#" + data.tag + "-" + data.source);
+      } if ((canvasType === "canvas-plot") || (canvasType === "canvas-view") || (canvasType === "canvas-avatar") ){ //else {
         ($("#" + data.tag + "-" + data.source).length === 0) ? createImageCard(canvasData) : updateImageCard(canvasData);
       }
     } else {
       // remove existing cards
       $("#gallery-item-" + data.source +" .card").remove(); 
       // make another one
-      if (data.message.substring(0,15) === "<p>gallery-text") {
+      if (canvasType === "canvas-text") {
         createTextCard(canvasData);
       } else {
         createImageCard(canvasData);
@@ -412,17 +436,25 @@ Gallery = (function() {
     }
   }
   
-  function clearBroadcast() {
-    var message = "gallery-clear";
+  function clearBroadcasts() {
+    socket.emit("send canvas reporter", {
+      hubnetMessageSource: "all-users", 
+      hubnetMessageTag: "canvas-clear-all", 
+      hubnetMessage: ""
+    }); 
+  }
+  
+  function clearBroadcast(name) {
     socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
       hubnetMessageTag: "canvas-clear", 
-      hubnetMessage: message
+      hubnetMessage: name
     }); 
   }
   
   function broadcastText(text) {
-    var message = "gallery-text"+text;
+    //var message = "galry-text"+text;
+    var message = text;
     socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
       hubnetMessageTag: "canvas-text", 
@@ -647,6 +679,14 @@ Gallery = (function() {
     return userList;
   }
   
+  function cloneCanvas() {
+    
+  }
+  
+  function removeCanvas(userId) {
+    
+  }
+  
   return {
     displayCanvas: displayCanvas,
     broadcastView: broadcastView,
@@ -654,6 +694,7 @@ Gallery = (function() {
     broadcastText: broadcastText,
     broadcastAvatar: broadcastAvatar,
     clearBroadcast: clearBroadcast,
+    clearBroadcasts: clearBroadcasts,
     setupGallery: setupGallery,
     whoAmI: whoAmI,
     showPatches: showPatches,
@@ -662,7 +703,9 @@ Gallery = (function() {
     getCanvasList: getCanvasList,
     getVacantIndices: getVacantIndices,
     getUserList: getUserList,
-    getActiveUserList: getActiveUserList
+    getActiveUserList: getActiveUserList,
+    cloneCanvas: cloneCanvas,
+    removeCanvas: removeCanvas
   };
 
 })();

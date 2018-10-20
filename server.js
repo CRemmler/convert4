@@ -236,7 +236,7 @@ app.post('/fileupload',function(req,res){
          var array = data.toString().split("\n");
          for (i in array) { indexFile += array[i] + "\n"; }
          //indexFile += "\ndocument.title = '"+title+"';\n</script>";
-         //indexFile += "\n<script type='text/nlogo' id='nlogo-code' data-filename='"+title+"'>";
+         indexFile += "\n<script type='text/nlogo' id='nlogo-code' data-filename='"+title+"'>";
          indexFile += nlogoFile;
       }).then(function() {
       fs.readFileAsync("gbcc/index3.html", "utf8").then(function(data) {
@@ -630,6 +630,9 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/netlogoweb/chosen.jquery.js", "utf8").then(function(data) {
           zip.file("app/netlogoweb/chosen.jquery.js", data);
         }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/comment.js", "utf8").then(function(data) {
+          zip.file("app/netlogoweb/comment.js", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/app/netlogoweb/show-hint.js", "utf8").then(function(data) {
           zip.file("app/netlogoweb/show-hint.js", data);
         }).then(function() {
@@ -658,7 +661,7 @@ app.post('/fileupload',function(req,res){
           console.error(e.stack);
   
 
-        }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
+        }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
     
     
         

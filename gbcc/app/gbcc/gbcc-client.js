@@ -12,6 +12,7 @@ var activityType = undefined;
 var drawPatches = true;
 var mirroringEnabled;
 var myCanvas;
+var myUserId;
   
 jQuery(document).ready(function() {
 
@@ -150,6 +151,7 @@ jQuery(document).ready(function() {
 
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
+    console.log("studnt accpts ui change "+data.type+" "+data.display);
     if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
@@ -176,6 +178,7 @@ jQuery(document).ready(function() {
     }
     if (data.type === "mirror") {
       mirroringEnabled = data.display;
+      mirroringEnabled ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
       if (data.image && mirroringEnabled) {
         universe.model.drawingEvents.push({type: "import-drawing", sourcePath: data.image});
       }
@@ -201,31 +204,38 @@ jQuery(document).ready(function() {
 
   // students display reporters
   socket.on("display reporter", function(data) {
-    //console.log("display reporter",data);
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab").hasClass("selected"))) {
-      if (data.hubnetMessageTag.includes("canvas")) {
-        Gallery.displayCanvas({message:data.hubnetMessage,source:data.hubnetMessageSource,tag:data.hubnetMessageTag,userType:data.userType,claimed:data.claimed});
+      var matchingMonitors = session.widgetController.widgets().filter(function(x) { 
+        return x.type === "monitor" && x.display === data.hubnetMessageTag; 
+      });
+      if (matchingMonitors.length > 0) {
+        for (var i=0; i<matchingMonitors.length; i++) {
+          matchingMonitors[i].compiledSource = data.hubnetMessage;
+          matchingMonitors[i].reporter       = function() { return data.hubnetMessage; };
+        }        }
+      else if (activityType === "hubnet") {
+        world.observer.setGlobal(data.hubnetMessageTag.toLowerCase(),data.hubnetMessage);
       } else {
-        var matchingMonitors = session.widgetController.widgets().filter(function(x) { 
-          return x.type === "monitor" && x.display === data.hubnetMessageTag; 
-        });
-        if (matchingMonitors.length > 0) {
-          for (var i=0; i<matchingMonitors.length; i++) {
-            matchingMonitors[i].compiledSource = data.hubnetMessage;
-            matchingMonitors[i].reporter       = function() { return data.hubnetMessage; };
-          }        }
-        else if (activityType === "hubnet") {
-          world.observer.setGlobal(data.hubnetMessageTag.toLowerCase(),data.hubnetMessage);
-        } else {
-          // WARNING: gbcc:restore-globals overwrites globals, may not want this feature
-          if ((world.observer.getGlobal(data.hubnetMessageTag) != undefined) &&
-            (data.hubnetMessage != undefined)) {
-            world.observer.setGlobal(data.hubnetMessageTag, data.hubnetMessage);
-          }
+        // WARNING: gbcc:restore-globals overwrites globals, may not want this feature
+        if ((world.observer.getGlobal(data.hubnetMessageTag) != undefined) &&
+          (data.hubnetMessage != undefined)) {
+          world.observer.setGlobal(data.hubnetMessageTag, data.hubnetMessage);
         }
       }
     }
   });
+  
+  socket.on("display canvas reporter", function(data) {
+    console.log("display canvas reporter");
+    if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab").hasClass("selected"))) {
+      Gallery.displayCanvas({
+        message:data.hubnetMessage,
+        source:data.hubnetMessageSource,
+        tag:data.hubnetMessageTag,
+        userType:data.userType,
+        claimed:data.claimed});
+    }
+  });  
   
   socket.on("accept user data", function(data) {
     //console.log("accept user data", data);
@@ -449,6 +459,7 @@ jQuery(document).ready(function() {
       if (myUserId === originalUserId) {
         updateMyCanvas(myUserId, "false");
         myUserId = adoptedUserId;
+        $(".myUserIdInput").val(myUserId);
         updateMyCanvas(myUserId, "true");
       } else {
         $("#gallery-item-"+originalUserId).attr("claimed","false"); 
@@ -510,13 +521,13 @@ jQuery(document).ready(function() {
   }
   
   socket.on("trigger file import", function(data) {
-    //console.log(data.filename);
     if (data.filetype === "ggb") {
-      //console.log(data.filepath);
-      //console.log(data.filename);
       Graph.importGgbDeleteFile(data.filename);
     } else if (data.filetype === "universe") {
-      GbccFileManager.importUniverseFile(data.filename);
+      GbccFileManager.importOurDataFile(data.filename);
+    } else if (data.filetype === "my-universe") {
+      
+      GbccFileManager.importMyDataFile(data.filename);
     }
   });
     

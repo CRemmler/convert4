@@ -19270,7 +19270,7 @@ function hasOwnProperty(obj, prop) {
       clearBroadcasts = function() {
         return Gallery.clearBroadcasts();
       };
-      clearBroadcast = function() {
+      clearBroadcast = function(name) {
         return Gallery.clearBroadcast(name);
       };
       compileObserverCode = function(key, value) {
