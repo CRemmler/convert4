@@ -151,7 +151,6 @@ jQuery(document).ready(function() {
 
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
-    console.log("studnt accpts ui change "+data.type+" "+data.display);
     if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {

@@ -489,7 +489,7 @@ Gallery = (function() {
     var drawNetLogoCanvas = ((mapVisible && mapOff && true) || (graphVisible && graphOff && true) || (mapVisible === graphVisible)) ? true : false;
     if (drawMapLayer || drawGraphLayer) {
       var container = drawMapLayer ? "mapContainer" : "graphContainer";
-      html2canvas(document.getElementById(container), {
+      window.exports.html2canvas(document.getElementById(container), {
         useCORS: true
         }).then(function (canvas) {
           var miniCanvasId = "miniSafariCanvasView";
