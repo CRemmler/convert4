@@ -1,0 +1,14 @@
+prim-name,input-type,input-name,output-type
+send,(string; string; wildcard),(userId; key; value),
+broadcast,(string; wildcard),(key; value),
+adopt-canvas,(string; number),(userId, canvasId),
+clone-canvas,(string),(userId),
+get-canvas-list,,,(list)
+get-vacant-indices,,,(list)
+import-our-data,,,
+import-our-data-file,(string),(filename),
+export-our-data,(string),(filename),
+import-my-data,,,
+import-my-data-file,(string),(filename),
+export-my-data,(string),(filename),
+
