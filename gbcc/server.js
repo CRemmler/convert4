@@ -8,7 +8,6 @@ var formidable = require('formidable');
 var fs = require("node-fs");
 var markdown = require("markdown").markdown;
 const PORT = process.env.PORT || 3000;
-var myTimer;
 var schools = {};
 var socketDictionary = {};
 var JSZip = require("jszip");
@@ -45,10 +44,6 @@ io.on('connection', function(socket){
   for (var key in allRooms) { rooms.push(key); }
   socket.emit("display interface", {userType: "login", rooms: rooms, components: config.interfaceJs.loginComponents, activityType: activityType });
   socket.join("login");
-
-  function disableTimer() {
-    clearInterval(myTimer);
-  }
 
   // user enters room
   socket.on("enter room", function(data) {
@@ -758,69 +753,86 @@ io.on('connection', function(socket){
 	
   // user exits
   socket.on('disconnect', function () {
+    console.log("disconnect");
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
-    if (!(allRooms[myRoom] && allRooms[myRoom].settings && allRooms[myRoom].settings.adoptCanvasDict)) {
+
+    if (!(allRooms[myRoom] != undefined 
+      && allRooms[myRoom].settings != undefined 
+      && allRooms[myRoom].settings.adoptCanvasDict != undefined 
+      && allRooms[myRoom].userData != undefined)) {
       return;
     }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;    
     if (activityType != "hubnet") { 
-      if (allRooms[myRoom] != undefined) {
+      //console.log("it is gbcc");
+      if (allRooms[myRoom].userData[myUserId].reserved != undefined) {
+        //console.log(myUserId + " reserved?");
         if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved) {
+          //console.log("yep, make exists false");
           allRooms[myRoom].userData[myUserId].reserved.exists = false;
         }
+        //console.log("user exists "+myUserId);
         socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
         socket.to(school+"-"+myRoom+"-student").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
       }
     }
     var recipient = myUserId;
     var adoptee = undefined;
-    if (allRooms[myRoom] && allRooms[myRoom].settings && allRooms[myRoom].settings.adoptCanvasDict) {
-      for (a in allRooms[myRoom].settings.adoptCanvasDict) {
-        if (allRooms[myRoom].settings.adoptCanvasDict[a] === recipient) {
-          adoptee = a;
-        }
+    for (a in allRooms[myRoom].settings.adoptCanvasDict) {
+      if (allRooms[myRoom].settings.adoptCanvasDict[a] === recipient) {
+        adoptee = a;
       }
     }
-    if (allRooms[myRoom] && allRooms[myRoom].settings.adoptCanvasDict) {
-      sendResponse = true;
-      var dataObject = {
-        hubnetMessageTag: "release-canvas",
-        hubnetMessage: { adoptedUserId: adoptee,
-                        originalUserId: recipient }
-      }
-      socket.to(school+"-"+myRoom+"-teacher").emit("accept canvas override", dataObject);
-      socket.to(school+"-"+myRoom+"-student").emit("accept canvas override", dataObject);
-      if (allRooms[myRoom].userData[adoptee] 
-        && allRooms[myRoom].userData[adoptee].reserved) {
-        allRooms[myRoom].userData[adoptee].reserved.claimed = false;
-      } else if (allRooms[myRoom].userData[recipient] 
-        && allRooms[myRoom].userData[recipient].reserved) {
-        allRooms[myRoom].userData[recipient].reserved.claimed = false;
-      } 
+    sendResponse = true;
+    var dataObject = {
+      hubnetMessageTag: "release-canvas",
+      hubnetMessage: { adoptedUserId: adoptee,
+                      originalUserId: recipient }
     }
+    socket.to(school+"-"+myRoom+"-teacher").emit("accept canvas override", dataObject);
+    socket.to(school+"-"+myRoom+"-student").emit("accept canvas override", dataObject);
+    if (allRooms[myRoom].userData[adoptee] != undefined 
+      && allRooms[myRoom].userData[adoptee].reserved != undefined) {
+      allRooms[myRoom].userData[adoptee].reserved.claimed = false;
+    } else if (allRooms[myRoom].userData[recipient] != undefined 
+      && allRooms[myRoom].userData[recipient].reserved != undefined) {
+      allRooms[myRoom].userData[recipient].reserved.claimed = false;
+    } 
     delete socketDictionary[myUserId];
-    if (allRooms[myRoom] != undefined) {
+    //console.log("delete my canvas dict?");
+    if (allRooms[myRoom].settings.adoptCanvasDict != undefined
+      && allRooms[myRoom].settings.adoptCanvasDict[myUserId] != undefined) {
+      //console.log("yep");
       delete allRooms[myRoom].settings.adoptCanvasDict[myUserId];
     }
     if (myUserType === "teacher") {
+      //console.log("i'm a teacher");
       if (activityType === "hubnet") {
         clearRoom(myRoom, school);
-        disableTimer();
+        //console.log("yep i'm a teacher in a hubnet school");
       } else {
-        if (countUsers(myRoom, school) === 0) {	delete allRooms[myRoom]; }
+        //console.log("i'm a teacher in a gbcc school");
+        if (countUsers(myRoom, school) === 0) {	
+          //console.log("my school has zero users");
+          delete allRooms[myRoom]; 
+        }
       }
     } else {
+      //console.log("i'm a student");
       if (allRooms[myRoom] != undefined) {
+        //console.log("i have a room and i'm gonna exit");
         socket.to(school+"-"+myRoom+"-teacher").emit("execute command", {
           hubnetMessageSource: myUserId,
           hubnetMessageTag: "hubnet-exit-message",
           hubnetMessage: ""
         });
-        if (countUsers(myRoom, school) === 0) { delete allRooms[myRoom];}
-        if (Object.keys(allRooms).length === 0) { disableTimer();}
+        if (countUsers(myRoom, school) === 0) {
+          //console.log("delete my room"); 
+          delete allRooms[myRoom];
+        }
       }
     }
     schools[school] = allRooms;
@@ -855,7 +867,11 @@ function countUsers(roomName, school) {
   var users = 0;
   if (allRooms[roomName] != undefined) {
     for (var key in allRooms[roomName].userData) {
-      if (allRooms[roomName].userData[key].reserved && allRooms[roomName].userData[key].reserved.exists) { users++; }
+      if (allRooms[roomName].userData[key].reserved != undefined 
+        && allRooms[roomName].userData[key].reserved.exists) { 
+          users++; 
+        //console.log(allRooms[roomName].userData[key]+" exists");
+      }
     }
   }
   return users;
