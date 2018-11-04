@@ -27,18 +27,6 @@ Graph = (function() {
       applet1 = new GGBApplet({filename: "geogebra-default.ggb","showToolbar":true, "appletOnLoad": appletOnLoadHidden}, true);
       applet1.inject('graphContainer');
       setupEventListeners();
-      
-      
-      /*
-      spanText = "<form action='exportggb' method='post' id='exportggb' enctype='multipart/form-data' style='display: none;'>";
-      spanText += "<textarea cols='50' id='ggbxml' type='text' wrap='hard' name='ggbxml' value=''></textarea>";//" style='display: none;'>";
-      spanText += "<input id='ggbfilename' type='text' name='ggbfilename' value=''>";
-      spanText += "<button type='submit' id='exportggbbutton' ></button></form>";
-      */
-      
-      //spanText += "<form action='importggbzip' method='post' id='importggbzip' enctype='multipart/form-data' name='wassup' style='display: none;'>";
-      //spanText += "<input id='ggbzip' type='file' name='ggbzip' value=''>";//" style='display: none;'>";
-      //spanText += "<button type='submit' id='importggbzipbutton'></button></form>";
       $("body").append(spanText);
     }
   }
@@ -55,8 +43,6 @@ Graph = (function() {
     console.log("APPLET ONLOAD VISIBLE");
     showGraph();
     updateGraph(); 
-    //$("#graphContainer").css("display","inline-block");
-    //$(".netlogo-view-container").css("z-index","1");
     ggbApplet.setErrorDialogsActive(false);  
   }
   
@@ -64,12 +50,9 @@ Graph = (function() {
     console.log("applet onload delete file");
     showGraph();
     updateGraph(); 
-    //$("#graphContainer").css("display","inline-block");
-    //$(".netlogo-view-container").css("z-index","1");
     ggbApplet.setErrorDialogsActive(false);   
     console.log(filename);
     console.log("APPLET ONLOAD VISIBLE DELETE FILE");
-    console.log(ggbApplet);
     socket.emit('delete file', {'filename': filename});
   }
   
@@ -84,15 +67,11 @@ Graph = (function() {
       ggbApplet.setWidth(parseInt($("#graphContainer").css("width")) - 2);
       ggbApplet.setHeight(parseInt($("#graphContainer").css("height")) - 2);//+ viewHeight + Math.random(1)); 
       
-      //ggbApplet.setWidth(parseInt($("#graphContainer").css("width")) + Math.random(1));
-      //ggbApplet.setHeight(parseInt($("#graphContainer").css("height")) + Math.random(1));//+ viewHeight + Math.random(1)); 
       $("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top")) - 18 + "px");
       $("#opacityWrapper").css("left",$("#graphContainer").css("left"));
       var properties = JSON.parse(ggbApplet.getViewProperties());
       graphWidth = properties.width;
       graphHeight = properties.height;
-      //graphWidth = parseInt($("#graphContainer").css("width"));
-      //graphHeight = parseInt($("#graphContainer").css("height"));
       viewOffsetWidth = viewWidth - graphWidth;
       viewOffsetHeight = viewHeight - graphHeight;
       var xMin = properties.xMin;
@@ -103,11 +82,6 @@ Graph = (function() {
       var yMax = graphHeight * yScale + yMin;
       boundaries = {xmin: xMin, xmax: xMax, ymin: yMin, ymax: yMax};
       graphLoaded = true;
-      //var newWidth = viewWidth + Math.random(1);
-      //var newHeight = viewHeight + Math.random(1);
-      //ggbApplet.setWidth(newWidth);
-      //ggbApplet.setHeight(newHeight); 
-
     }
   }
   
@@ -218,14 +192,14 @@ Graph = (function() {
     applet1.inject('graphContainer');
   }
   
-  function importGgbDeleteFile(filename) {
-    console.log("import ggb delete file "+filename);
-    applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadDeleteFile(filename)}, true);
-    applet1.inject('graphContainer');
+  function importGgbDeleteFile(data) {
+    //console.log("import ggb delete file "+filename);
+    //applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadDeleteFile(filename)}, true);
+    //applet1.inject('graphContainer');
+    setAll(data);
   }
   
   function importGgb() {
-    console.log("import ggb");
     $("#importgbccfile").one("change", function() {
       $("#importgbccfile").off();
       //$("#importgbcctype").val("ggb");
@@ -252,7 +226,6 @@ Graph = (function() {
   }
  
   function exportGgb(filename) {
-    console.log("export ggb "+filename);
     $("#exportgbccfilename").val(filename);
     $("#ggbxml").val(ggbApplet.getXML());
     $("#exportgbcctype").val("ggb");
@@ -260,7 +233,6 @@ Graph = (function() {
   }
   
   function getGgbList() {
-    console.log("get ggb list");
     return ["some file names"];
   }
   

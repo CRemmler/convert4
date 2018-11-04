@@ -128,8 +128,6 @@ jQuery(document).ready(function() {
       var uId = data.hubnetMessageSource;
       var uType = data.userType;
       var compileString;
-      console.log(message);
-      console.log("type of message"+typeof message);
       if (typeof message === "string") {
         compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MESSAGE"]("'+uId+'","'+uType+'","'+tag+'",'+JSON.stringify(message)+'); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'
       } else {
@@ -139,7 +137,6 @@ jQuery(document).ready(function() {
           compileString = 'try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MESSAGE"]("'+uId+'","'+uType+'","'+tag+'", '+JSON.stringify(message)+' ); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }'                  
         }
       }
-      console.log(compileString);
       session.runCode(compileString); 
     }
   });
@@ -521,13 +518,8 @@ jQuery(document).ready(function() {
   
   socket.on("trigger file import", function(data) {
     if (data.filetype === "ggb") {
-      Graph.importGgbDeleteFile(data.filename);
-    } else if (data.filetype === "universe") {
-      GbccFileManager.importOurDataFile(data.filename);
-    } else if (data.filetype === "my-universe") {
-      
-      GbccFileManager.importMyDataFile(data.filename);
-    }
+      Graph.importGgbDeleteFile(data.xml);
+    } 
   });
     
   socket.on("execute command", function(data) {

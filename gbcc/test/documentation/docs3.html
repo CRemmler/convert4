@@ -24,20 +24,28 @@
       GbCC Primitives and Commands
     </h3>
     <p id="turtlegroup">
+      Manage Data
+      <br>
       <a href="#gbcc-set">gbcc:set</a> 
       <a href="#gbcc-get">gbcc:get</a> 
       <a href="#gbcc-get-from-user">gbcc:get-from-user</a> 
       <a href="#gbcc-store-globals">gbcc:store-globals</a> 
       <a href="#gbcc-restore-globals">gbcc:restore-globals</a> 
       <a href="#gbcc-restore-globals-from-user">gbcc:restore-globals-from-user</a> 
-      <a href="#gbcc-add-to-stream">gbcc:add-to-stream</a> 
+      
+      <!--<a href="#gbcc-add-to-stream">gbcc:add-to-stream</a> 
       <a href="#gbcc-get-stream">gbcc:get-stream</a> 
-      <a href="#gbcc-get-stream-from-user">gbcc:get-stream-from-user</a>       
+      <a href="#gbcc-get-stream-from-user">gbcc:get-stream-from-user</a>  -->   
+      <p>
+      Broadcast to Gallery
+      <br>
       <a href="#gbcc-broadcast-view">gbcc:broadcast-view</a>    
       <a href="#gbcc-broadcast-text">gbcc:broadcast-text</a>    
       <a href="#gbcc-broadcast-plot">gbcc:broadcast-plot</a>    
       <a href="#gbcc-broadcast-text">gbcc:broadcast-avatar</a>    
-      <a href="#gbcc-broadcast-plot">gbcc:clear-broadcast</a>    
+      <a href="#gbcc-clear-broadcast">gbcc:clear-broadcast</a>    
+      <a href="#gbcc-clear-broadcasts">gbcc:clear-broadcasts</a>    
+      
       <!--
       <a href="#gbcc-observer-code">gbcc:compile-observer-code</a>
       <a href="#gbcc-observer-code">gbcc:run-observer-code</a>
@@ -46,12 +54,44 @@
       <a href="#gbcc-patch-code">gbcc:compile-patch-code</a>
       <a href="#gbcc-patch-code">gbcc:run-patch-code</a>
       -->
-      <a href="#gbcc-who-am-i">gbcc:who-am-i</a>
-      <a href="#gbcc-show-patches">gbcc:show-patches</a>
-      <a href="#gbcc-hide-patches">gbcc:hide-patches</a>
+      
+      <p>
+      Messages
+      <br>
       <a href="#gbcc-send">gbcc:send</a>
       <a href="#gbcc-broadcast">gbcc:broadcast</a>
+      
+      <p>
+      Patches
+      <br>
+      <a href="#gbcc-show-patches">gbcc:show-patches</a>
+      <a href="#gbcc-hide-patches">gbcc:hide-patches</a>
+      
+      <p>
+      Canvases
+      <br>
       <a href="#gbcc-adopt-canvas">gbcc:adopt-canvas</a>
+      <a href="#gbcc-clone-canvas">gbcc:clone-canvas</a>
+      <a href="#gbcc-get-canvas-list">gbcc:get-canvas-list</a>
+      <a href="#gbcc-get-vacant-indices">gbcc:get-vacant-indices</a>
+
+      <p>
+      Users
+      <br>
+      <a href="#gbcc-who-am-i">gbcc:who-am-i</a>  
+      <a href="#gbcc-get-user-list">gbcc:get-user-list</a>
+      <a href="#gbcc-get-active-user-list">gbcc:get-active-user-list</a>
+          
+      <p>
+      File Storage 
+      <br>
+      <a href="#gbcc-import-our-data">gbcc:import-our-data</a> 
+      <a href="#gbcc-export-our-data">gbcc:export-our-data</a> 
+      <a href="#gbcc-import-our-data-file">gbcc:import-our-data-file</a> 
+      <a href="#gbcc-import-my-data">gbcc:import-my-data</a> 
+      <a href="#gbcc-export-my-data">gbcc:export-my-data</a> 
+      <a href="#gbcc-import-my-data-file">gbcc:import-my-data-file</a> 
+
     <h3>
       GbCC Reserved Procedures
     </h3>
@@ -144,7 +184,7 @@ end
       </pre>
     </div>
     
-    
+    <!--
     <div class="dict_entry" id="gbcc-add-to-stream">
       <h3><a>gbcc:add-to-stream</a></h3>
       <img alt="Observer Command" src="images/observer.png">
@@ -188,7 +228,7 @@ to gbcc-on-go [user-id]
 end
       </pre>
     </div>
-    
+  -->
     <div class="dict_entry" id="gbcc-broadcast-view">
       <h3><a>gbcc:broadcast-view</a></h3>
       <img alt="Observer Command" src="images/observer.png">
@@ -249,9 +289,22 @@ end
       <img alt="Observer Command" src="images/observer.png">
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
-      <h4><span class="prim_example">gbcc:clear-broadcast</span></h4>
+      <h4><span class="prim_example">gbcc:clear-broadcast <i>name</i></span></h4>
       <p>Remove data the user's canvas, in the gallery. Data is cleared
-        in everyone's gallery.
+        in everyone's gallery.<span class="update">*** new ***</span>
+      <pre>
+  gbcc:clear-broadcast
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="clear-broadcasts">
+      <h3><a>gbcc:clear-broadcast</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:clear-broadcasts</span></h4>
+      <p>Remove data the user's canvas, in the gallery. Data is cleared
+        in everyone's gallery.<span class="update">*** new ***</span>
       <pre>
   gbcc:clear-broadcast
       </pre>
@@ -302,6 +355,30 @@ gbcc:compile-patch-code pxcor pycor "code" "set pcolor orange"
       <p>Returns a user's user-id. 
       <pre>
 show gbcc:who-am-i
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-get-user-list">
+      <h3><a>gbcc:get-user-list</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get-user-list</span></h4>
+      <p>Returns a list of any users who have ever existed in the session.<span class="update">*** new ***</span>
+      <pre>
+show gbcc:get-user-list
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-get-active-user-list">
+      <h3><a>gbcc:get-active-user-list</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get-active-user-list</span></h4>
+      <p>Returns a list of any users who are currently in the session.<span class="update">*** new ***</span>
+      <pre>
+show gbcc:get-active-user-list
       </pre>
     </div>
     
@@ -361,12 +438,130 @@ gbcc:hide-patches
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:adopt-canvas <i>user-id canvas-id</i></span></h4>
-      <p>Allow a user to take over a canvas.
+      <p>Allow a user to take over a canvas.<span class="update">*** new ***</span>
         <span class="update">*** new ***</span>
       <pre>
     gbcc:adopt-canvas user-id 3
       </pre>
     </div>
+    
+    <div class="dict_entry" id="gbcc-clone-canvas">
+      <h3><a>gbcc:clone-canvas</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:clone-canvas <i>user-id</i></span></h4>
+      <p>Allow a user to clone a canvas.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:clone-canvas item 3 graph:get-canvas-list
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-get-canvas-list">
+      <h3><a>gbcc:get-canvas-list</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get-canvas-list</span></h4>
+      <p>Returns a list of user-ids, in canvas order.
+        <span class="update">*** new ***</span>
+      <pre>
+    show gbcc:get-canvas-list
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-get-vacant-indices">
+      <h3><a>gbcc:get-vacant-indices</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:get-vacant-indices</span></h4>
+      <p>Returns a list of unclaimed canvases, by canvas-ids.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:get-vacant-indices
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-import-our-data">
+      <h3><a>gbcc:import-our-data</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:import-our-data</span></h4>
+      <p>A user, with the role of teacher, can import previous data from multiple users.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:import-our-data
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-import-our-data-file">
+      <h3><a>gbcc:import-our-data-file</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:import-our-data-file<i> filename</i></span></h4>
+      <p>A user, with the role of teacher, can import previous data from multiple users, from a file saved on the server.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:import-our-data "our-class-data.txt"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-export-our-data">
+      <h3><a>gbcc:export-our-data</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:export-our-data<i> filename</i></span></h4>
+      <p>A user can export all data from all users in a session.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:export-our-data "our-class-data.txt"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-import-my-data">
+      <h3><a>gbcc:import-my-data</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:import-my-data</span></h4>
+      <p>A user can import previous data from a single user.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:import-my-data
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-import-my-data-file">
+      <h3><a>gbcc:import-my-data-file</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:import-my-data-file<i> filename</i></span></h4>
+      <p>A user can import previous data from a single user, from a file saved on the server.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:import-my-data "my-data.txt"
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-export-our-data">
+      <h3><a>gbcc:export-my-data</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:export-my-data<i> filename</i></span></h4>
+      <p>A user can export all data their own user.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:export-my-data "my-data.txt"
+      </pre>
+    </div>
+  
     
     <h2>
       <a>GbCC Reserved Procedures</a>

@@ -12,6 +12,7 @@ var myTimer;
 var schools = {};
 var socketDictionary = {};
 var JSZip = require("jszip");
+var FileReader = require("filereader");
 
  
 app.use(express.static(__dirname));
@@ -168,6 +169,9 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var canvases;
     if (allRooms[myRoom] != undefined) {
@@ -195,12 +199,16 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom; 
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     socket.to(school+"-"+myRoom+"-teacher").emit("execute command", {
       hubnetMessageSource: myUserId,
       hubnetMessageTag: data.hubnetMessageTag,
       hubnetMessage: data.hubnetMessage
     });
+    
   });
 
    // pass stream of data from server to student
@@ -209,6 +217,9 @@ io.on('connection', function(socket){
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
+     if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+       return;
+     }
      var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
      var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
      var destination = data.hubnetMessageSource;
@@ -230,6 +241,9 @@ io.on('connection', function(socket){
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
+     if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+       return;
+     }
      var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
      var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
      var destination = data.hubnetMessageSource;
@@ -247,6 +261,9 @@ io.on('connection', function(socket){
      var school = socket.school;
      var allRooms = schools[school];
      var myRoom = socket.myRoom;
+     if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+       return;
+     }
      var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
      var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
      var destination = data.hubnetMessageSource;
@@ -275,6 +292,9 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
     var destination = data.hubnetMessageSource;
@@ -312,6 +332,9 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
     var destination = data.hubnetMessageSource;
@@ -356,21 +379,21 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
-    if (allRooms[myRoom] != undefined) {
-      if (allRooms[myRoom].userData[myUserId]) {
-        var destination = data.hubnetMessageSource;
-        var dataObject = {
-          messageType: data.hubnetMessageType,
-          agents: data.hubnetAgentOrSet,
-          source: destination,
-          tag: data.hubnetMessageTag,
-          message: data.hubnetMessage
-        }
-        //console.log("sending to "+getDestination(destination, allRooms[myRoom].settings.adoptCanvasDict));
-        io.to(getDestination(destination, allRooms[myRoom].settings.adoptCanvasDict)).emit("accept user override", dataObject); 
+    if (allRooms[myRoom].userData[myUserId]) {
+      var destination = data.hubnetMessageSource;
+      var dataObject = {
+        messageType: data.hubnetMessageType,
+        agents: data.hubnetAgentOrSet,
+        source: destination,
+        tag: data.hubnetMessageTag,
+        message: data.hubnetMessage
       }
+      io.to(getDestination(destination, allRooms[myRoom].settings.adoptCanvasDict)).emit("accept user override", dataObject); 
     }
   });
   
@@ -413,6 +436,9 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;    
     var adoptedCanvas = undefined;
@@ -489,7 +515,7 @@ io.on('connection', function(socket){
       var mySchool = fields.schoolname;
       var allRooms = schools[mySchool];
       var settings = {schoolName: mySchool};
-      exportworld.exportGbccReport(allRooms, settings, res);
+      exportworld.exportGbccReport(allRooms[myRoom], settings, res);
     });
   });
   
@@ -527,27 +553,99 @@ io.on('connection', function(socket){
   });
   
   app.post('/importgbccform', function(req,res){
-    var filename;
+    var scope = req.query.filetype;
+    var myRoom = req.query.myroom;
     new formidable.IncomingForm().parse(req)
-      .on('file', function(socketid, file) {
-        filename = socketid + "-" + file.name;
-          fs.rename(file.path, filename, function() {
-            var dataObject = {
-              filetype: req.query.filetype,//filetype, // "universe", "world"
-              filename: filename,
-              filepath: file.path
-            };
-            io.to(socketid).emit("trigger file import", dataObject); 
-          });
-      })
-      .on('end', function() {
-        res.end('success '+filename);
-      });
+    .on('file', function(socketid, file) {
+      var reader = new FileReader();
+      reader.onerror = function(event) {
+        reader.abort();
+      };
+      if (scope == "universe" || scope === "my-universe") {
+        //reader.readAsArrayBuffer(file);
+        reader.readAsText(file);
+        reader.onload = function (evt) {
+          setupUniverse(evt.target.result, scope, myRoom);
+        };
+      } else if (scope === "ggb") {
+        reader.readAsBinaryString(file);
+        reader.onload = function (evt) {
+          JSZip.loadAsync(evt.target.result).then(function(zip){
+            for (filename in zip.files) {
+              if (filename  === "geogebra.xml") {
+                zip.files[filename].async("string").then(function(data) {
+                  var dataObject = {
+                    filetype: scope,
+                    xml: data
+                  };
+                  io.to(socketid).emit("trigger file import", dataObject); 
+                }, function (e) { console.log(e); });
+              }
+            } 
+          }, function (e) { console.log(e); });
+        }
+      }
+    })
+    .on('end', function() {
+      res.end('success');
+    });
   });
   
-  socket.on("delete file", function(data) {
-    deleteFile(data.filename);
-  });
+  function setupUniverse(contentString, scope, myRoom) {
+    try {
+      console.log("a");
+      content = JSON.parse(contentString);
+      newUserData = content.userData ? content.userData : {};
+      newCanvasOrder = content.canvasOrder ? content.canvasOrder : [];
+      newUserStreamData = content.userStreamData ? content.userStreamData : {};
+      var scopeAllowed = true;
+      if (scope === "my-universe" && Object.keys(newUserData).length > 1 ) { scopeAllowed = false; }
+      if (allRooms[myRoom].userData != {} && scopeAllowed) {
+        console.log("b");
+        for (var user in newUserData) {
+          if (newUserData[user].reserved) {
+            newUserData[user].reserved.claimed = false;
+            newUserData[user].reserved.exists = true;
+          }
+          socket.emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
+          socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
+          socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
+        }
+        console.log("c");
+        var canvases;
+        for (var j=0; j < newCanvasOrder.length; j++) {
+          canvases = newUserData[newCanvasOrder[j]]["canvas"];
+          if (canvases != undefined) {
+            for (var canvas in canvases) {
+              dataObject = {
+                hubnetMessageSource: newCanvasOrder[j],
+                hubnetMessageTag: canvas,
+                hubnetMessage: newUserData[newCanvasOrder[j]]["canvas"][canvas],
+                userId: "",
+                activityType: activityType,
+                userType: newUserData[newCanvasOrder[j]]["userType"],
+                claimed: false //newUserData[newCanvasOrder[j]].reserved.claimed
+              };  
+              socket.emit("display canvas reporter", dataObject);
+              socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
+              socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
+            }
+          }
+        }
+        for(var user in newUserData) {
+          allRooms[myRoom]["userData"][user] = newUserData[user];
+        }
+        for(var user in newUserStreamData) {
+          allRooms[myRoom]["userStreamData"][user] = newUserStreamData[user];
+        }
+        for (var canvas in newCanvasOrder) {
+          allRooms[myRoom].canvasOrder.push(newCanvasOrder[canvas]);
+        }
+      }
+    } catch (err) {
+      console.log("caught error transforming contents of universe from string to object")
+    }
+  }
   
   socket.on("unzip gbcc universe", function(data) {
     var myRoom = data.roomName;
@@ -556,98 +654,23 @@ io.on('connection', function(socket){
     var filename = data.filename;
     var scope = data.scope;
     fs.readFile( filename, function(err, data){
-      if (!err && filename) {
-        console.log("unzip "+filename);
-        setupUniverse(data, myRoom, filename, scope);
-      } else {
-        fs.readFile(filepathlocal, function(err, data2){
-          if (!err && filepathlocal) {
-            console.log("unzip "+filepathlocal);
-            setupUniverse(data2, myRoom, filepathlocal, scope);
-          } else {
-            console.log(filepath);
-            fs.readFile( filepath, function(err, data3) {
-              if (!err && filepath) {
-                console.log("unzip "+filepath);
-                setupUniverse(data3, myRoom, filepath, scope);
-              } 
-            });          
-          }
-        });
-      }
+      loadUniverse(data, myRoom, filename, scope);
     });
   });
 
-  function setupUniverse(data, myRoom, zipFileName, scope) {
-    console.log("setup univ");
+  function loadUniverse(data, myRoom, zipFileName, scope) {
     var newUserData, newCanvasOrder, newUserStreamData;
     var dataObject;
     var zip = new JSZip();
-    JSZip.loadAsync(data).then(function(zip){
+    JSZip.loadAsync(data).then( function(zip) {
       for (filename in zip.files) {
-        try {
-          zip.files[filename].async("string").then(function(contentString) {
-            try {
-              content = JSON.parse(contentString);
-              newUserData = content.userData ? content.userData : {};
-              newCanvasOrder = content.canvasOrder ? content.canvasOrder : [];
-              newUserStreamData = content.userStreamData ? content.userStreamData : {};
-              var scopeAllowed = true;
-              if (scope === "my-universe" && Object.keys(newUserData).length > 1 ) { scopeAllowed = false; }
-              
-              if (allRooms[myRoom].userData != {} && scopeAllowed) {
-                for (var user in newUserData) {
-                  if (newUserData[user].reserved) {
-                    newUserData[user].reserved.claimed = false;
-                    newUserData[user].reserved.exists = true;
-                  }
-                  socket.emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
-                  socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
-                  socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
-                }
-                var canvases;
-                for (var j=0; j < newCanvasOrder.length; j++) {
-                  canvases = newUserData[newCanvasOrder[j]]["canvas"];
-                  if (canvases != undefined) {
-                    for (var canvas in canvases) {
-                      dataObject = {
-                        hubnetMessageSource: newCanvasOrder[j],
-                        hubnetMessageTag: canvas,
-                        hubnetMessage: newUserData[newCanvasOrder[j]]["canvas"][canvas],
-                        userId: "",
-                        activityType: activityType,
-                        userType: newUserData[newCanvasOrder[j]]["userType"],
-                        claimed: false //newUserData[newCanvasOrder[j]].reserved.claimed
-                      };  
-                      socket.emit("display canvas reporter", dataObject);
-                      socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
-                      socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
-                    }
-                  }
-                }
-                for(var user in newUserData) {
-                  allRooms[myRoom]["userData"][user] = newUserData[user];
-                }
-                for(var user in newUserStreamData) {
-                  allRooms[myRoom]["userStreamData"][user] = newUserStreamData[user];
-                }
-                for (var canvas in newCanvasOrder) {
-                  allRooms[myRoom].canvasOrder.push(newCanvasOrder[canvas]);
-                }
-              }
-            } catch (err) {
-              console.log("caught error transforming contents of universe from string to object")
-            }
-          });
-          deleteFile(filename);
-        } catch (err) {
-          console.log("caught error unzipping file")
-        }
+        zip.files[filename].async("string").then(function(contentString) {
+          setupUniverse(contentString, scope, myRoom);
+        }, function (e) { console.log(e); });  
       }
-      deleteFile(zipFileName);
-    });
+    }, function (e) { console.log(e); });
   }
-
+  
   // select, deselect, forever-select, forever-deselect
   socket.on("request user action", function(data) {
     var allRooms = schools[socket.school];
@@ -665,6 +688,9 @@ io.on('connection', function(socket){
     //console.log("get reporter "+ data.hubnetMessageTag);
     var allRooms = schools[socket.school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;    
     if (allRooms[myRoom] != undefined) {
@@ -686,6 +712,9 @@ io.on('connection', function(socket){
   socket.on("get value", function(data) {
     var allRooms = schools[socket.school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     if (data.hubnetMessageSource === "") { data.hubnetMessageSource = myUserId; }
     if (allRooms[myRoom] != undefined) {
@@ -705,22 +734,24 @@ io.on('connection', function(socket){
   });
   
   socket.on("teacher requests UI change", function(data) {
-    console.log("teaecher requset ui change");
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
-    if (allRooms[myRoom].settings) {
-      allRooms[myRoom].settings[data.type] = data.display; 
-      socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {"display":data.display, "type":data.type, "state": data.state, "image": data.image});      
-      schools[school] = allRooms;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined)) {
+      return;
     }
+    allRooms[myRoom].settings[data.type] = data.display; 
+    socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {"display":data.display, "type":data.type, "state": data.state, "image": data.image});      
+    schools[school] = allRooms;
   });
   
   socket.on("teacher requests UI change new entry", function(data) {
-    console.log("teaechre  rqusets ui change nw eenetry");
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined)) {
+      return;
+    }
     allRooms[myRoom].settings[data.type] = data.display; 
     io.to(socketDictionary[data.userId]).emit("student accepts UI change", {"display": allRooms[myRoom].settings["mirror"], "type": "mirror", "state": data.state, "image": data.image});
   });
@@ -799,21 +830,6 @@ io.on('connection', function(socket){
 http.listen(PORT, function(){
   console.log('listening on ' + PORT );
 });
-
-function deleteFile(filename) {
-  console.log("delete file");
-  setTimeout(function(){ 
-    var fullPath= __dirname + '/'+filename;
-    try {
-      console.log(fullPath);
-      fs.unlink(fullPath, function() {
-        console.log(fullPath + " deleted");
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }, 3000);
-}
 
 function clearRoom(roomName, school) {
   var allRooms = schools[school];

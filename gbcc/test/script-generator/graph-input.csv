@@ -2,7 +2,7 @@ prim-name,input-type,input-name,output-type
 hide-graph,,,
 show-graph,,,
 set-data,(string),(data),
-import-ggb,(string),(filename),
+import-ggb-from-file,(string),(filename),
 get-data, , ,(string)
 export-file,(string),(filename),
 import-file,(string),(filename),
@@ -60,4 +60,4 @@ get-command-string,(string),(name),(string)
 upload-ggb,,,
 get-ggb-list,,,(list)
 get-value-string,(string),(name),(string)
-import-ggb-from-popup,,,
+import-ggb,,,

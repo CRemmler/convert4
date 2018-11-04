@@ -95,8 +95,7 @@ Interface = (function() {
       ($("#tips").css("display") === "none") ? $("#tips").css("display","inline-block") : $("#tips").css("display","none"); 
     });
     $("#exportHtmlButton").css("display","none");
-    $(".netlogo-interface-unlocker-container").css("display","none");
-    $($(".netlogo-toggle-text")[1]).css("display","none")
+    $(".netlogo-toggle-container").css("display","none")
   }
 
   function displayTeacherInterface(room, components) {
@@ -108,7 +107,7 @@ Interface = (function() {
     $(".netlogo-view-container").removeClass("hidden");
     $(".netlogo-tab-area").removeClass("hidden");
     $(".admin-body").css("display","none");
-    $(".netlogo-interface-unlocker-container").css("display","flex");
+    $($(".netlogo-toggle-container")[0]).css("display","flex");
   }
 
   function displayStudentInterface(room, components, activityType) {
@@ -122,17 +121,18 @@ Interface = (function() {
     $(".teacher-controls").css("display","none");
     if (activityType === "hubnet") {
       $(".netlogo-view-container").css("pointer-events","auto");
-      $(".netlogo-button:not(.hidden)").click(function(e){clickHandler(this, e, "button");});
-      $(".netlogo-slider:not(.hidden)").click(function(e){clickHandler(this, e, "slider");});
-      $(".netlogo-switcher:not(.hidden)").click(function(e){clickHandler(this, e, "switcher");});
-      $(".netlogo-chooser:not(.hidden)").click(function(e){clickHandler(this, e, "chooser");});
-      $(".netlogo-input-box:not(.hidden)").click(function(e){clickHandler(this, e, "inputBox");});
-      $(".netlogo-view-container").click(function(e){clickHandler(this, e, "view");});
+      $(".netlogo-button:not(.hidden)").click(function(e){clickHandlerButton(this, e, "button");});
+      $(".netlogo-button:not(.hidden) input").change(function(e){clickHandlerWidget(this, e, "button");});
+      $(".netlogo-slider:not(.hidden) input").change(function(e){clickHandlerWidget((this, e, "slider");});
+      $(".netlogo-switcher:not(.hidden) input").change(function(e){clickHandlerWidget((this, e, "switcher");});
+      $(".netlogo-chooser:not(.hidden) select").change(function(e){clickHandlerWidget((this, e, "chooser");});
+      $(".netlogo-input-box:not(.hidden) textarea").change(function(e){clickHandlerWidget((this, e, "inputBox");});
+      $(".netlogo-view-container").click(function(e){clickHandlerButton(this, e, "view");});
     } else {
       $(".netlogo-view-container").css("pointer-events","auto");
       $(".netlogo-tab-area").removeClass("hidden");
     }
-    $(".netlogo-interface-unlocker-container").css("display","flex");
+    $($(".netlogo-toggle-container")[0]).css("display","flex");
   }
 
   function displayDisconnectedInterface() {
@@ -154,7 +154,7 @@ Interface = (function() {
     socket.emit("admin clear room", {roomName: roomName, school: school});
   }
 
-  function clickHandler(thisElement, e, widget) {
+  function clickHandlerButton(thisElement, e, widget) {
     var value;
     var id = $(thisElement).attr("id");
     var label = $("#"+id+" .netlogo-label").text();
@@ -168,6 +168,15 @@ Interface = (function() {
       value = world.observer.getGlobal(label.toLowerCase());
       socket.emit("send reporter", {hubnetMessageSource: "server", hubnetMessageTag: label, hubnetMessage:value});
     }
+    socket.emit("send command", {hubnetMessageTag: label, hubnetMessage:value});
+  }
+  
+  function clickHandlerWidget((thisElement, e, widget) {
+    var value;
+    var id = $(thisElement).parent().attr("id");
+    var label = $("#"+id+" .netlogo-label").text();
+    value = world.observer.getGlobal(label.toLowerCase());
+    socket.emit("send reporter", {hubnetMessageSource: "server", hubnetMessageTag: label, hubnetMessage:value});
     socket.emit("send command", {hubnetMessageTag: label, hubnetMessage:value});
   }
 

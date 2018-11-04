@@ -159,10 +159,10 @@ GRAPH
 <pre>
 &#x2713; <span class='blue'>graph:set-all</span><span class='red'> "long-string-of-xml" </span> 
 &#x2713; <span class='blue'>show graph:get-all</span> <span class="gray">;; returns "long-string-of-xml"</span> 
-&#x2713; <span class='blue'>graph:import-ggb</span> <span class="red">"filename.txt"</span>
-&#x2713; <span class='blue'>graph:export-ggb</span> <span class="red">"filename.txt"</span> <span class="update">*** new ***</span>
-&#x2713; <span class='blue'>graph:upload-ggb</span> <span class="update">*** new ***</span>
-<span class='blue'>graph:get-ggb-list</span> <span class="gray">;; returns list of ggb filenames</span>
+&#x2713; <span class='blue'>graph:import-ggb-file</span> <span class="red">"filename.txt"</span><span class="update">*** new ***</span>
+&#x2713; <span class='blue'>graph:export-ggb</span> <span class="red">"filename.txt"</span> 
+&#x2713; <span class='blue'>graph:import-ggb</span><span class="update">*** new ***</span>
+<!--<span class='blue'>graph:get-ggb-list</span> <span class="gray">;; returns list of ggb filenames</span>-->
 </pre>
 <!--<span class='blue'>graph:set-data</span> <span class="red">&lt;a string of json&gt;</span>
 <span class='blue'>show graph:get-data</span> <span class="gray">;; &lt;a string of json&gt; </span>
@@ -206,10 +206,10 @@ POINTS
 OBJECTS (Including Points)
 </pre>
 <pre>
-&#x2713; <span class='blue'>graph:create-object</span> <span class='red'> [ "MyTriangle1" "Polygon(F, G, H)")"] </span>
-&#x2713; <span class='blue'>graph:create-objects</span> <span class='red'> [ [ "Point1" "(0, 0)"] [ "MyTriangle1" "Polygon(F, G, H)")"] ] </span>
-&#x2713; <span class='blue'>show graph:get-object</span> <span class='red'> "MyTriangle1" </span><span class="gray">;; returns a list with a name and a description</span> 
-&#x2713; <span class='blue'>show graph:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
+&#x2713; <span class='blue'>set </span><span class='black'> new-object</span><span class='blue'> graph:get-object</span> <span class='red'> "MyTriangle1" </span><span class="gray">;; returns a list with a name and a description</span> 
+&#x2713; <span class='blue'>set </span><span class='black'> new-objects</span><span class='blue'> graph:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
+&#x2713; <span class='blue'>graph:create-object</span> <span class='black'> new-object </span>
+&#x2713; <span class='blue'>graph:create-objects</span> <span class='black'> new-objects  </span>
 &#x2713; <span class='blue'>graph:delete-object</span>  <span class='red'>"Triangle1" </span>
 &#x2713; <span class='blue'>graph:delete-objects</span>
 </pre>
@@ -530,10 +530,10 @@ PATHS
 OBJECTS (Including Markers and Paths)
 </pre>
 <pre>
-&#x2713; <span class='blue'>maps:create-object</span> <span class='red'> [ "path-" "some-string"] </span> 
-&#x2713; <span class='blue'>maps:create-objects</span> <span class='red'> [ [ "path-1" "some-string"] [ "MyPath2" "some-string"] ] </span> 
-&#x2713; <span class='blue'>show maps:get-object</span> <span class='red'> "path-1" </span><span class="gray">;; returns a list with a name and definition</span> 
-&#x2713; <span class='blue'>show maps:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
+&#x2713; <span class='blue'>set </span><span class='black'> new-object</span><span class='blue'> maps:get-object</span> <span class='red'> "path-1" </span><span class="gray">;; returns a list with a name and definition</span> 
+&#x2713; <span class='blue'>maps:create-object</span> <span class='red'> new-object </span> 
+&#x2713; <span class='blue'>set </span><span class='black'> new-objects</span><span class='blue'>maps:get-objects</span> <span class="gray">;; returns list of names and definitions of objects, in order of creation </span> 
+&#x2713; <span class='blue'>maps:create-objects</span> <span class='red'> new-objects </span> 
 &#x2713; <span class='blue'>maps:delete-object</span>  <span class='red'>"path-1" </span> 
 &#x2713; <span class='blue'>maps:delete-objects</span> 
 </pre>
@@ -774,10 +774,10 @@ WORLD
 <span id="object-obj" class="obj"><img src="./images/physics-line-obj.png"> <img src="./images/physics-circle-obj.png"> <img src="./images/physics-polygon-obj.png"> <img src="./images/physics-target-obj.png"></span>
 <span class='object-obj-info'><span class='blue'>physics:set-body-id</span> <span class='red'>"shape-1" "body-2"</span> <span class="gray">;; connect line, circle, polygon or target to a different body</span> 
 &#x2713; <span class='blue'>show physics:get-body-id</span> <span class='red'>"shape-1"</span> <span class="gray">;; get which body the shape or target is connected to</span>
-&#x2713; <span class='blue'>physics:create-objects</span> <span class='red'> list-of-objects </span>
-&#x2713; <span class='blue'>show physics:get-objects</span> <span class="gray">;; returns list of objects</span>
-&#x2713; <span class='blue'>physics:create-object</span> <span class='red'> [ "shape-1" "{'name':'shape-1','bodyId':'body2'}" ]</span>
-&#x2713; <span class='blue'>show physics:get-object</span> <span class="red">"shape-1"</span><span class="gray">;; returns a list with a shape and a description</span>
+&#x2713; <span class='blue'>set</span><span class='black'> new-objects</span><span class='blue'> physics:get-objects</span> <span class="gray">;; returns list of objects</span>
+&#x2713; <span class='blue'>physics:create-objects</span> <span class='black'> new-objects </span>
+&#x2713; <span class='blue'>set </span><span class='black'> new-object</span><span class='blue'> physics:get-object</span> <span class="red">"shape-1"</span><span class="gray">;; returns a list with a shape and a description</span>
+&#x2713; <span class='blue'>physics:create-object</span> <span class='black'> new-object</span>
 &#x2713; <span class='blue'>show physics:get-object-type</span> <span class='red'> "my-triangle-1" </span> <span class="gray">;; returns "triangle"</span> 
 &#x2713; <span class='blue'>physics:delete-object</span> <span class='red'>"object-1"</span> 
 &#x2713; <span class='blue'>physics:delete-objects</span>
