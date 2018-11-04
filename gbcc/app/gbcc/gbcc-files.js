@@ -19,7 +19,11 @@ GbccFileManager = (function() {
   }
   
   function importOurData() {
-    importGbcc("universe");
+    if (myUserType === "teacher") {
+      importGbcc("universe");
+    } else {
+      alert("You must have the role of teacher to gbcc:import-our-data.")
+    }
   }
   
   function importGbcc(contenttype) {

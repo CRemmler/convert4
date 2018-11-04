@@ -123,10 +123,10 @@ Interface = (function() {
       $(".netlogo-view-container").css("pointer-events","auto");
       $(".netlogo-button:not(.hidden)").click(function(e){clickHandlerButton(this, e, "button");});
       $(".netlogo-button:not(.hidden) input").change(function(e){clickHandlerWidget(this, e, "button");});
-      $(".netlogo-slider:not(.hidden) input").change(function(e){clickHandlerWidget((this, e, "slider");});
-      $(".netlogo-switcher:not(.hidden) input").change(function(e){clickHandlerWidget((this, e, "switcher");});
-      $(".netlogo-chooser:not(.hidden) select").change(function(e){clickHandlerWidget((this, e, "chooser");});
-      $(".netlogo-input-box:not(.hidden) textarea").change(function(e){clickHandlerWidget((this, e, "inputBox");});
+      $(".netlogo-slider:not(.hidden) input").change(function(e){clickHandlerWidget(this, e, "slider");});
+      $(".netlogo-switcher:not(.hidden) input").change(function(e){clickHandlerWidget(this, e, "switcher");});
+      $(".netlogo-chooser:not(.hidden) select").change(function(e){clickHandlerWidget(this, e, "chooser");});
+      $(".netlogo-input-box:not(.hidden) textarea").change(function(e){clickHandlerWidget(this, e, "inputBox");});
       $(".netlogo-view-container").click(function(e){clickHandlerButton(this, e, "view");});
     } else {
       $(".netlogo-view-container").css("pointer-events","auto");
@@ -171,11 +171,14 @@ Interface = (function() {
     socket.emit("send command", {hubnetMessageTag: label, hubnetMessage:value});
   }
   
-  function clickHandlerWidget((thisElement, e, widget) {
+  function clickHandlerWidget(thisElement, e, widget) {
     var value;
     var id = $(thisElement).parent().attr("id");
     var label = $("#"+id+" .netlogo-label").text();
     value = world.observer.getGlobal(label.toLowerCase());
+    if (value == undefined) {
+      return;
+    }
     socket.emit("send reporter", {hubnetMessageSource: "server", hubnetMessageTag: label, hubnetMessage:value});
     socket.emit("send command", {hubnetMessageTag: label, hubnetMessage:value});
   }

@@ -124,7 +124,7 @@ Gallery = (function() {
       canvasHeight = 500; canvasWidth = 500;
       imageQuality = 0.75;
     }
-    $("body").append("<canvas id=\"avatarCanvasView\" width=\"250\" height=\"250\" style=\"display:none\"></canvas>");
+    $("body").append("<canvas id=\"avatarCanvasView\" width=\"300\" height=\"300\" style=\"display:none\"></canvas>");
     $(".netlogo-widget-container").append('<div class="gbcc-widget" style="position:absolute; top:-10px; left:210px" id="opacityWrapper"><input type="range" value="100" max="100" min="0" id="opacity" style="z-index: -1;"></div>')
     $('.netlogo-widget-container').on("input","#opacity", function() { 
       $("#graphContainer").css("opacity", $(this).val() / 100);
@@ -542,12 +542,10 @@ Gallery = (function() {
     //var shape = shape;
     //var color = data[1];
     var avatarCanvasId = "avatarCanvasView";
-    var width = 200;
-    var height = 200;
     var miniCanvas = document.getElementById(avatarCanvasId);
     var miniCtx = miniCanvas.getContext('2d');
     miniCtx.fillStyle="#000000";
-    miniCtx.fillRect(0,0,250, 250);
+    miniCtx.fillRect(0,0,300, 300);
     avatarShapeDrawer = new ShapeDrawer({}, miniCtx.onePixel);
     universe.turtleDrawer.turtleShapeDrawer.drawAvatar(miniCtx, color, shape, 20);
     message = document.getElementById(avatarCanvasId).toDataURL("image/jpeg", imageQuality); 

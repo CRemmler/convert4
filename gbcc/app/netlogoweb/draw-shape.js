@@ -35,7 +35,7 @@
       if (thickness == null) {
         thickness = 1;
       }
-      ctx.translate(.5, -.5);
+      //ctx.translate(.5, -.5);
       this.setTransparency(ctx, color);
       ctx.save();
       ctx.beginPath();
