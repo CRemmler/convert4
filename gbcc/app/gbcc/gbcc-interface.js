@@ -177,7 +177,10 @@ Interface = (function() {
     var label = $("#"+id+" .netlogo-label").text();
     value = world.observer.getGlobal(label.toLowerCase());
     if (value == undefined) {
-      return;
+      var id = $(thisElement).parent().parent().parent().attr("id");
+      var label = $("#"+id+" .netlogo-label").text();
+      value = world.observer.getGlobal(label.toLowerCase());
+      if (value == undefined) { return; }
     }
     socket.emit("send reporter", {hubnetMessageSource: "server", hubnetMessageTag: label, hubnetMessage:value});
     socket.emit("send command", {hubnetMessageTag: label, hubnetMessage:value});
@@ -275,6 +278,128 @@ Interface = (function() {
       $("#"+items[i]).removeClass("hidden");
     }
   }
+
+  function setupEnvironment(name) {
+    var container = name + "Container";
+    var spanText =  "<div class='gbcc-widget' id='"+container+"'></div>";
+    $(".netlogo-widget-container").append(spanText);
+    $("#"+container).css("width", parseFloat($(".netlogo-canvas").css("width")) - 1 + "px");
+    $("#"+container).css("height", parseFloat($(".netlogo-canvas").css("height")) - 1 + "px");
+    $("#"+container).css("left", $(".netlogo-view-container").css("left"));
+    $("#"+container).css("top", $(".netlogo-view-container").css("top"));
+    $("#"+container).css("display", "none");
+    $("body").append(spanText);
+    $(".netlogo-view-container").css("background-color","transparent"); 
+  }
+
+  function showEnvironment(name) {    
+    var container = name + "Container"; 
+    drawPatches = false;
+    
+    $("#graphContainer").css("display","none");
+    $("#mapContainer").css("display","none");
+    
+    $("#"+container).css("display","inline-block");
+    $(".netlogo-view-container").css("z-index","0");
+    $("#opacityWrapper").css("top",parseInt($("#"+container).css("top") - 15) + "px");
+    $("#opacityWrapper").css("left",$("#"+container).css("left"));
+    $("#opacityWrapper").css("display", "inline-block");
+    mouseOn("graph");
+    mouseOn("map");
+  }
+  
+  function hideEnvironment(name) {
+    var container = name + "Container";
+    drawPatches = true;
+    world.triggerUpdate();
+    $("#"+container).css("display","none");
+    $(".netlogo-view-container").css("z-index","0");
+    $(".netlogo-view-container").css("pointer-events","auto");
+    //$("#"+container).css("display", "none");
+    $("#opacityWrapper").css("display", "none");
+    mouseOff("graph");
+    mouseOff("map");
+  }
+
+  function bringToFront(name) {
+    var container = name + "Container";
+    $("#"+container).css("z-index","3");
+    $(".netlogo-view-container").css("z-index","0");
+  } 
+  
+  function sendToBack(name) {
+    var container = name + "Container";
+    $("#"+container).css("z-index","0");
+    $(".netlogo-view-container").css("z-index","1"); 
+  }
+  
+  function mouseOn(name) {
+    console.log("mouseOn"+name);
+    var container = name + "Container";
+    //$(".netlogo-view-container").css("pointer-events","auto");//show graph
+    //$("#"+container).css("z-index","0");
+    //if ($("#"+container).css("z-index") < $(".netlogo-view-container").css("z-index")) {
+    //  console.log("turtles in front");
+      $(".netlogo-view-container").css("pointer-events","none");
+      $("#"+container).css("pointer-events","auto");
+      //$(".netlogo-view-container").css("pointer-events","none");
+    //} else {
+    //  console.log("graph in front");
+    //  $(".netlogo-view-container").css("pointer-events","none");
+    //  $("#"+container).css("pointer-events","auto");
+      //$(".netlogo-view-container").css("pointer-events","auto");
+    //}
+  }
+  
+  function mouseOff(name) {
+    console.log("mouseOn"+name);
+    var container = name + "Container";
+    if ($("#"+container).css("z-index") < $(".netlogo-view-container").css("z-index")) {
+      console.log("turtles in front");
+      $(".netlogo-view-container").css("pointer-events","none");
+      $("#"+container).css("pointer-events","auto")
+    } else {
+      console.log("graph in front");
+      $(".netlogo-view-container").css("pointer-events","auto");
+      $("#"+container).css("pointer-events","none");
+    }
+    //$(".netlogo-view-container").css("pointer-events","none"); // hide graph, grayscale?
+    //$("#"+container).css("z-index","-1");
+  }
+
+  function setOpacity(name, value) {
+    var container = name + "Container";
+    $("#"+container).css("opacity", value);
+    $("#opacity").val(value * 100);
+  }
+  
+  function getOpacity(name) {
+    var container = name + "Container";
+    return parseFloat($("#"+container).css("opacity"));
+  }
+  
+  function setGraphOffset(name, offset)  {
+    var container = name + "Container";
+    var top = offset[1] + "px";
+    var left = offset[0] + "px";
+    $("#"+container).css("top", top);
+    $("#"+container).css("left", left);   
+    if (offset.length === 4) {
+      var height = offset[3] + "px";
+      var width = offset[2] + "px";
+      $("#"+container).css("height", height);
+      $("#"+container).css("width", width);   
+    }
+  }
+  
+  function getGraphOffset() {
+    var container = name + "Container";
+    var top = parseInt($("#"+container).css("top"));
+    var left = parseInt($("#"+container).css("left"));
+    var height = parseInt($("#"+container).css("height"));
+    var width = parseInt($("#"+container).css("width"));   
+    return [ left, top, width, height ]
+  };
   
   return {
     showLogin: displayLoginInterface,
@@ -282,7 +407,18 @@ Interface = (function() {
     showStudent: displayStudentInterface,
     showDisconnected: displayDisconnectedInterface,
     showAdmin: displayAdminInterface,
-    clearRoom: clearRoom
+    clearRoom: clearRoom,
+    bringToFront: bringToFront,
+    sendToBack: sendToBack,
+    setOpacity: setOpacity,
+    getOpacity: getOpacity,
+    setGraphOffset: setGraphOffset,
+    getGraphOffset: getGraphOffset,
+    mouseOn: mouseOn,
+    mouseOff: mouseOff,
+    setupEnvironment: setupEnvironment,
+    showEnvironment: showEnvironment,
+    hideEnvironment: hideEnvironment
   };
  
 })();

@@ -13,15 +13,7 @@ Maps = (function() {
   
   function setupInterface() {
     if ($("#mapContainer").length === 0) {
-      viewWidth = parseFloat($(".netlogo-canvas").css("width"));
-      viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-      var spanText =    "<div class='gbcc-widget' id='mapContainer'></div>";
-      $(".netlogo-widget-container").append(spanText);
-      $("#mapContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 2 + "px");
-      $("#mapContainer").css("height", parseFloat($(".netlogo-canvas").css("height"))  - 2 + "px");
-      $("#mapContainer").css("left", parseFloat($(".netlogo-view-container").css("left")) + 0 + "px");
-      $("#mapContainer").css("top", parseFloat($(".netlogo-view-container").css("top")) + 0 + "px");
-      $("#mapContainer").css("display", "none");
+      Interface.setupEnvironment("map");
       if (L) {
         map = L.map('mapContainer').setView([ 30.2672, -97.7431], 11);      
         if (map) { 
@@ -31,13 +23,10 @@ Maps = (function() {
           updateMap();
         }
       }
-      setupEventListeners();
-      $("#mapContainer").css("display","none");
     }
   }
 
   function setupEventListeners() {
-    $(".netlogo-view-container").css("background-color","transparent"); 
     //map.on('dragend', function onDragEnd(){
     //  updateMap();
     //});
@@ -84,29 +73,17 @@ Maps = (function() {
   ////// SHOW AND HIDE MAP //////
   
   function showMap() {
+    Interface.showEnvironment("map");
+
     map.setView(center, zoom);
     updateMap();
     if (map) { map.invalidateSize(); }
-    $("#mapContainer").css("display","inline-block");
-    $(".netlogo-view-container").css("z-index","1");
-    $("#opacityWrapper").css("top",parseInt($("#mapContainer").css("top") - 15) + "px");
-    $("#opacityWrapper").css("left",$("#mapContainer").css("left"));
-    $("#opacityWrapper").css("display", "inline-block");
-    drawPatches = false;
     map.invalidateSize()
     world.triggerUpdate();
-    Graph.mouseOn();
-    mouseOn();
   }
   
   function hideMap() {
-    $("#mapContainer").css("display","none");
-    $(".netlogo-view-container").css("z-index","0");
-    $("#opacityWrapper").css("display", "none");
-    drawPatches = true;
-    world.triggerUpdate();
-    Graph.mouseOn();
-    mouseOn();
+    Interface.hideEnvironment("map");
   }
 
   ////// MAP SETTINGS //////
@@ -424,41 +401,35 @@ Maps = (function() {
   ////////// MAP SETTINGS //////////
   
   function bringToFront() {
-    $("#mapContainer").css("z-index","3");
+    Interface.bringToFront("map"); 
   }
   
   function sendToBack() {
-    $("#mapContainer").css("z-index","0"); 
+    Interface.sendToBack("map");
   }
-
+  
   function setOpacity(value) {
-    $("#mapContainer").css("opacity", value);
-    $("#opacity").val(value * 100);
+    Interface.setOpacity("map", value);
   }
   
   function getOpacity() {
-    return parseFloat($("#mapContainer").css("opacity"));
+    return Interface.getOpacity("map");
   }
   
   function setMapOffset(offset) {
-    var top = offset[1] + "px";
-    var left = offset[0] + "px";
-    $("#mapContainer").css("top", top);
-    $("#mapContainer").css("left", left);   
-    if (offset.length === 4) {
-      var height = offset[3] + "px";
-      var width = offset[2] + "px";
-      $("#mapContainer").css("height", height);
-      $("#mapContainer").css("width", width);   
-    }
+    Interface.setGraphOffset("map", offset);
+    updateGraph();
+  }
+  function getMapOffset() {
+    return Interface.getGraphOffset();
   }
   
-  function getMapOffset() {
-    var top = parseInt($("#mapContainer").css("top"));
-    var left = parseInt($("#mapContainer").css("left"));
-    var height = parseInt($("#mapContainer").css("height"));
-    var width = parseInt($("#mapContainer").css("width"));   
-    return [ left, top, width, height ]
+  function mouseOn() {
+    Interface.mouseOn("map");
+  }
+  
+  function mouseOff() {   
+    Interface.mouseOff("map");   
   }
   
   //////// DATA //////////
@@ -487,17 +458,6 @@ Maps = (function() {
     setCenterLatlng(data.centerLatlng);
   }
   
-  function mouseOn() {
-    $(".netlogo-view-container").css("pointer-events","auto"); //show graph
-    $("#mapContainer").css("z-index","0");
-  }
-  
-  function mouseOff() {
-    $(".netlogo-view-container").css("pointer-events","none"); // hide graph, grayscale?
-    $("#mapContainer").css("z-index","-1");
-  }
-
-  
   return {
     setupInterface: setupInterface,
     showMap: showMap,
@@ -522,10 +482,6 @@ Maps = (function() {
     getLatlng: getLatlng,
     setDraggable: setDraggable,
     getDraggable: getDraggable,
-    //importFile: importFile,
-    //exportFile: exportFile,
-    //setData: setData,
-    //getData: getData,
     latlngToPatch: latlngToPatch,
     patchToLatlng: patchToLatlng,
     updateMap: updateMap,

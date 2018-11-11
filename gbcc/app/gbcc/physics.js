@@ -87,7 +87,7 @@ Physics = (function() {
       //console.log("delete it");
       Physicsb2.deleteSelected();
     });
-    $(".netlogo-view-container").css("background-color","transparent"); 
+    //$(".netlogo-view-container").css("background-color","transparent"); 
     assignDrawButtonMode("drag"); 
     assignDrawButtonMode("line"); 
     assignDrawButtonMode("circle"); 

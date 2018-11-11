@@ -34,7 +34,6 @@ jQuery(document).ready(function() {
 
   // save student settings
   socket.on("save settings", function(data) {
-    
     userId = data.userId;
     myUserType = data.userType;
     teacherId = data.teacherId;
@@ -47,12 +46,12 @@ jQuery(document).ready(function() {
     allowGalleryForeverButton = data.gallerySettings.allowGalleryControls;
     $(".roomNameInput").val(data.myRoom);
     $(".schoolNameInput").val(data.school);
-    var secondView = data.gallerySettings.secondViewString;
-    if (myUserType === "student" && typeof secondView === "object" && secondView.length === 4) {
+    var secondView = data.gallerySettings.secondView;
+    if (myUserType === "student" && typeof secondView === "object" && secondView.length > 3) {
       $(".netlogo-view-container").css("left", secondView[0]);
       $(".netlogo-view-container").css("top", secondView[1]);
-      $(".netlogo-view-container").css("width", secondView[2] - secondView[0]);
-      $(".netlogo-view-container").css("height", secondView[3] - secondView[1]);    
+      $(".netlogo-canvas").css("left", secondView[0]);
+      $(".netlogo-canvas").css("top", secondView[1]);
     }
   });
 
@@ -89,7 +88,6 @@ jQuery(document).ready(function() {
   });
 
   socket.on("gbcc user enters", function(data) {
-    console.log("gbcc user enters",data);
     var uId = data.userId;
     var uType = data.userType;
     if (data.userData) {
@@ -111,7 +109,6 @@ jQuery(document).ready(function() {
   });
   
   socket.on("gbcc user exits", function(data) {
-    console.log(data);
     if (userData[data.userId] && userData[data.userId].reserved) { 
       userData[data.userId].reserved = data.userData.reserved;
     }
@@ -446,20 +443,22 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept canvas override", function(data) {
-    //console.log("accept canvas override",data);
     var hubnetMessageTag = data.hubnetMessageTag;
     var hubnetMessage = data.hubnetMessage;
     var adoptedUserId = hubnetMessage.adoptedUserId;
     var originalUserId = hubnetMessage.originalUserId;
     if (hubnetMessageTag === "adopt-canvas") {
+      userData[originalUserId].reserved.exists = false;
+      userData[originalUserId].reserved.claimed = false;
+      $("#gallery-item-"+originalUserId).attr("claimed","false");
+      userData[adoptedUserId].reserved.exists = true;
+      userData[adoptedUserId].reserved.claimed = true;
+      $("#gallery-item-"+adoptedUserId).attr("claimed","true");
       if (myUserId === originalUserId) {
-        updateMyCanvas(myUserId, "false");
+        $("#gallery-item-"+originalUserId+" .label").removeClass("selected") 
+        $("#gallery-item-"+adoptedUserId+" .label").addClass("selected") 
         myUserId = adoptedUserId;
         $(".myUserIdInput").val(myUserId);
-        updateMyCanvas(myUserId, "true");
-      } else {
-        $("#gallery-item-"+originalUserId).attr("claimed","false"); 
-        $("#gallery-item-"+adoptedUserId).attr("claimed","true");      
       }
     } 
     else if (hubnetMessageTag === "release-canvas") {
@@ -470,13 +469,6 @@ jQuery(document).ready(function() {
       }
     }
   });
-  
-  function updateMyCanvas(uId, state) {
-    $("#gallery-item-"+myUserId).attr("myUser",state);  
-    $("#gallery-item-"+myUserId).attr("claimed",state);      
-    (state === "true") ?$("#gallery-item-"+myUserId+" .label").addClass("selected") : $("#gallery-item-"+myUserId+" .label").removeClass("selected");
-  }
-
   
   socket.on("accept all user data", function(data) {
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab-content").hasClass("selected"))) {

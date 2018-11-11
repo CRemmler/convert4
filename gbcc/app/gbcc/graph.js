@@ -17,17 +17,9 @@ Graph = (function() {
     if ($("#graphContainer").length === 0) {
       viewWidth = parseFloat($(".netlogo-canvas").css("width"));
       viewHeight = parseFloat($(".netlogo-canvas").css("height"));
-      spanText =    "<div class='gbcc-widget' id='graphContainer'></div>";
-      $(".netlogo-widget-container").append(spanText);
-      $("#graphContainer").css("width", parseFloat($(".netlogo-canvas").css("width")) - 1 + "px");
-      $("#graphContainer").css("height", parseFloat($(".netlogo-canvas").css("height")) - 1 + "px");
-      $("#graphContainer").css("left", $(".netlogo-view-container").css("left"));
-      $("#graphContainer").css("top", $(".netlogo-view-container").css("top"));
-      $("#graphContainer").css("display", "none");
+      Interface.setupEnvironment("graph");
       applet1 = new GGBApplet({filename: "geogebra-default.ggb","showToolbar":true, "appletOnLoad": appletOnLoadHidden}, true);
       applet1.inject('graphContainer');
-      setupEventListeners();
-      $("body").append(spanText);
     }
   }
   
@@ -54,10 +46,6 @@ Graph = (function() {
     console.log(filename);
     console.log("APPLET ONLOAD VISIBLE DELETE FILE");
     socket.emit('delete file', {'filename': filename});
-  }
-  
-  function setupEventListeners() {
-    $(".netlogo-view-container").css("background-color","transparent");  
   }
   
   ////// DISPLAY GRAPH //////
@@ -137,26 +125,13 @@ Graph = (function() {
   ////// SHOW AND HIDE GRAPH //////
   
   function showGraph() {
-    $("#graphContainer").css("display","inline-block");
-    $(".netlogo-view-container").css("z-index","0");
-    $("#opacityWrapper").css("top",parseInt($("#graphContainer").css("top") - 15) + "px");
-    $("#opacityWrapper").css("left",$("#graphContainer").css("left"));
-    $("#opacityWrapper").css("display", "inline-block");
-    drawPatches = false;
+    Interface.showEnvironment("graph");
     updateGraph();
     world.triggerUpdate();
-    Maps.mouseOn();
-    mouseOn();
   }
   
   function hideGraph() {
-    drawPatches = true;
-    world.triggerUpdate();
-    $("#graphContainer").css("display","none");
-    $(".netlogo-view-container").css("z-index","0");
-    $("#opacityWrapper").css("display", "none");
-    Maps.mouseOn();
-    mouseOn();
+    Interface.hideEnvironment("graph");
   }  
 
 
@@ -512,43 +487,31 @@ Graph = (function() {
   }
   
   function bringToFront() {
-    $("#graphContainer").css("z-index","3");
+    Interface.bringToFront("graph"); 
   }
   
   function sendToBack() {
-    $("#graphContainer").css("z-index","0"); 
+    Interface.sendToBack("graph");
   }
   
   function setOpacity(value) {
-    $("#graphContainer").css("opacity", value);
-    $("#opacity").val(value * 100);
+    Interface.setOpacity("graph", value);
   }
   
   function getOpacity() {
-    return parseFloat($("#graphContainer").css("opacity"));
+    return Interface.getOpacity("graph");
   }
   
   function setGraphOffset(offset) {
-    var top = offset[1] + "px";
-    var left = offset[0] + "px";
-    $("#graphContainer").css("top", top);
-    $("#graphContainer").css("left", left);   
+    Interface.setGraphOffset("graph", offset);
     if (offset.length === 4) {
       ggbApplet.setWidth(width - 2);
       ggbApplet.setHeight(height - 2);
-      var height = offset[3] + "px";
-      var width = offset[2] + "px";
-      $("#graphContainer").css("height", height);
-      $("#graphContainer").css("width", width);   
     }
     updateGraph();
   }
   function getGraphOffset() {
-    var top = parseInt($("#graphContainer").css("top"));
-    var left = parseInt($("#graphContainer").css("left"));
-    var height = parseInt($("#graphContainer").css("height"));
-    var width = parseInt($("#graphContainer").css("width"));   
-    return [ left, top, width, height ]
+    return Interface.getGraphOffset();
   }
   
   function centerView(center) {
@@ -558,13 +521,11 @@ Graph = (function() {
   }
   
   function mouseOn() {
-    $(".netlogo-view-container").css("pointer-events","auto");//show graph
-    $("#graphContainer").css("z-index","0");
+    Interface.mouseOn("graph");
   }
   
-  function mouseOff() {      
-    $(".netlogo-view-container").css("pointer-events","none"); // hide graph, grayscale?
-    $("#graphContainer").css("z-index","-1");
+  function mouseOff() {   
+    Interface.mouseOff("graph");   
   }
   
   

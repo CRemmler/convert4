@@ -41,12 +41,11 @@ app.post('/fileupload',function(req,res){
        case "gbccHierarchical":
          if (files.teacherfiletoupload) {
            title = files.teacherfiletoupload.name;
-           console.log(files.teacherfiletoupload.name);
+           //console.log(files.teacherfiletoupload.name);
            nlogoFilename1 = files.teacherfiletoupload.path || "error";
          }
          if (files.studentfiletoupload) {
-           
-           console.log(files.studentfiletoupload.name);
+           //console.log(files.studentfiletoupload.name);
            nlogoFilename2 = files.studentfiletoupload.path || "error"; 
          }
          break;
@@ -58,7 +57,7 @@ app.post('/fileupload',function(req,res){
      var nlogoFile;
      var indexFile;
      var loginWidgerRange, studentWidgetRange, teacherWidgetRange;
-     var secondViewString = "";
+     var secondView = [];
      var numTeacherWidgets = 0;
      var numStudentWidgets = 0;
      var arrayIndex, array;
@@ -71,7 +70,7 @@ app.post('/fileupload',function(req,res){
        zip = new JSZip();
        zip.file(title, data);
         if (activityType === "legacyHubnet") {
-          var sanitizedFileContents = removeUnimplementedPrimCalls(data.toString());
+          var sanitizedFileContents = data.toString();//removeUnimplementedPrimCalls(data.toString());
           array = sanitizedFileContents.split("\n");
           nlogoFile = "";
           arrayIndex = 0;
@@ -101,6 +100,15 @@ app.post('/fileupload',function(req,res){
                     var widgetLines = widget.split("\n");
                     widgetLines[7]  = widgetLines[7].replace(/\\"/g, "\"");
                     widget          = widgetLines.join("\n");
+                    break;
+                  case "VIEW":
+                    var widgetParts =  widget.split("\n");
+                    secondView.push(parseInt(widgetParts[1]));
+                    secondView.push(parseInt(widgetParts[2]));
+                    secondView.push(parseInt(widgetParts[3]));
+                    secondView.push(parseInt(widgetParts[4]));
+                    widget = "";
+                    break;
                 }
                 if ((widget != "") && (viewWidgets.indexOf(lastWidgetType) === -1)) {
                   widgetList.push(widget);
@@ -109,7 +117,7 @@ app.post('/fileupload',function(req,res){
                 lastWidgetType = array[i];
                 label = array[(parseInt(i) + 5).toString()];
               }
-              if (lastWidgetType != "VIEW") { widget += array[i] + "\n"; }
+              widget += array[i] + "\n"; 
             }
             if (array[i] === "@#$#@#$#@") { arrayIndex++; }
           }
@@ -153,7 +161,7 @@ app.post('/fileupload',function(req,res){
           }
         }
      }).then(function() {
-        if (nlogoFilename2 === undefined) { nlogoFilename2 = nlogoFilename1; secondViewString = 'false'; }
+        if (nlogoFilename2 === undefined) { nlogoFilename2 = nlogoFilename1; }; //secondView = 'false'; }
         fs.readFileAsync(nlogoFilename2, "utf8").then(function(data) {
           if (activityType === "gbccHierarchical") {
             zip.file(title+"-student", data);
@@ -166,15 +174,15 @@ app.post('/fileupload',function(req,res){
               if ((arrayIndex === 0) && (array[i] != "@#$#@#$#@")) {
                 nlogoCode += array[i] + "\n";              
               }
-              if (arrayIndex === 1) { 
+              if (arrayIndex === 1) {    
                 if (widgets.indexOf(array[i]) > -1) { numStudentWidgets++; } 
                 if (graphicsWindowPosition > 0 && graphicsWindowPosition < 6) {
-                  if (graphicsWindowPosition > 1) { secondViewString+= ", "; }
-                  secondViewString+= array[i];
+                  if (graphicsWindowPosition > 1) { secondView+= ", "; }
+                  secondView+= array[i];
                   graphicsWindowPosition++;
                 }
                 if (graphicsWindowPosition === 5) {
-                  secondViewString+= "]";
+                  secondView+= "";
                   graphicsWindowPosition = 6;
                 }      
                 if (graphicsWindowPosition === 6 && array[i].length === 0) {
@@ -182,7 +190,7 @@ app.post('/fileupload',function(req,res){
                 }          
                 if (array[i] === "GRAPHICS-WINDOW") {
                   graphicsWindowPosition = 1;
-                  secondViewString ="[";
+                  secondView ="";
                 }
                 if ((array[i] != "@#$#@#$#@") && (graphicsWindowPosition === 0)) {
                   widgetCode += array[i] + "\n";
@@ -208,9 +216,6 @@ app.post('/fileupload',function(req,res){
           }
       }).then(function() {
       fs.readFileAsync("gbcc/config.json", "utf8").then(function(data) {
-        //console.log(nlogoFile);
-        //console.log(teacherWidgetRange);
-        //console.log(studentWidgetRange);
          var array = data.toString().split("\n");
          var configData = data;
          configFile = "";
@@ -227,7 +232,7 @@ app.post('/fileupload',function(req,res){
              configFile += (fields["allowGalleryControls"]) ?      '    "allowGalleryControls": true, \n' :      '    "allowGalleryControls": false, \n';
              configFile += (fields["allowTeacherControls"]) ?      '    "allowTeacherControls": true, \n' :      '    "allowTeacherControls": false, \n';
              configFile += (fields["legacyHubnet"]) ?              '    "legacyHubnet": true, \n' :              '    "legacyHubnet": false, \n';
-             configFile +=                                         '    "secondViewString": ' +secondViewString +   '\n';
+             configFile +=                                         '    "secondView": [' +secondView +   ']\n';
            } 
          }
       }).then(function() {
@@ -243,7 +248,7 @@ app.post('/fileupload',function(req,res){
          var array = data.toString().split("\n");
          for (i in array) { indexFile += array[i] + "\n"; }
       }).then(function() {
-        //var zip = new JSZip();
+        //console.log(configFile);
         zip.file("config.json", configFile);
         zip.file("index.html", indexFile);
         fs.readFileAsync("gbcc/app/gbcc/exportworld.js", "utf8").then(function(data) {
@@ -659,14 +664,9 @@ app.post('/fileupload',function(req,res){
         }).catch(function(e) {
           res.sendfile('index.html');
           console.error(e.stack);
-  
 
         }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
     
-    
-        
-        
-     
      });
    });
 });

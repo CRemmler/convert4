@@ -12,7 +12,6 @@ var schools = {};
 var socketDictionary = {};
 var JSZip = require("jszip");
 var FileReader = require("filereader");
-
  
 app.use(express.static(__dirname));
 
@@ -57,6 +56,12 @@ io.on('connection', function(socket){
       // declare myRoom
       socket.myRoom = data.room;
       var myRoom = socket.myRoom;
+      // declare myUserType, first user in is a teacher, rest are students
+      socket.myUserType = (countUsers(myRoom, school) === 0) ? "teacher" : "student";
+      myUserType = socket.myUserType;
+      // declare myUserId
+      myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+      socketDictionary[socket.id] = myUserId;
       if (!allRooms[myRoom]) {
         allRooms[myRoom] = {};
         allRooms[myRoom].userData = {};
@@ -70,19 +75,14 @@ io.on('connection', function(socket){
         allRooms[myRoom].settings.teacherId = "";
         allRooms[myRoom].settings.adoptCanvasDict = {};
       }
-      // declare myUserType, first user in is a teacher, rest are students
-      socket.myUserType = (countUsers(myRoom, school) === 0) ? "teacher" : "student";
-      myUserType = socket.myUserType;
-      // declare myUserId
-      myUserId = socket.id.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
       if (myUserType === "teacher") { allRooms[myRoom].settings.teacherId = myUserId; }
       teacherId = allRooms[myRoom].settings.teacherId;
-      socketDictionary[socket.id] = myUserId;
+      //socketDictionary[socket.id] = myUserId;
       allRooms[myRoom].userData[myUserId] = {};
       allRooms[myRoom].userStreamData[myUserId] = {};
       //allRooms[myRoom].userData[myUserId].exists = true;
-      allRooms[myRoom].userData[myUserId]["userType"] = myUserType;
       allRooms[myRoom].userData[myUserId].reserved = {};
+      allRooms[myRoom].userData[myUserId].reserved.userType = myUserType;
       allRooms[myRoom].userData[myUserId].reserved.claimed = true;
       allRooms[myRoom].userData[myUserId].reserved.exists = true;
       allRooms[myRoom].userData[myUserId].reserved.overrides = {};
@@ -128,7 +128,7 @@ io.on('connection', function(socket){
           if (allRooms[myRoom].userData != {}) {
             for (var user in allRooms[myRoom].userData) {
               if (user != myUserId) {
-                socket.emit("gbcc user enters", {userId: user, userData: allRooms[myRoom].userData[user], userType: allRooms[myRoom].userData[user]["userType"] });
+                socket.emit("gbcc user enters", {userId: user, userData: allRooms[myRoom].userData[user], userType: allRooms[myRoom].userData[user].reserved.userType });
               }
             }
             var canvases;
@@ -136,17 +136,19 @@ io.on('connection', function(socket){
               canvases = allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["canvas"];
               if (canvases != undefined) {
                 for (var canvas in canvases) {
-                  dataObject = {
-                    hubnetMessageSource: allRooms[myRoom].canvasOrder[j],
-                    hubnetMessageTag: canvas,
-                    hubnetMessage: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["canvas"][canvas],
-                    userId: myUserId,
-                    activityType: activityType,
-                    userType: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["userType"],
-                    //claimed: (allRooms[myRoom].settings.adoptCanvasDict[myUserId] != undefined)
-                    claimed: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved.claimed
-                  };  
-                  socket.emit("display canvas reporter", dataObject);
+                  if (allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved != undefined) {
+                    dataObject = {
+                      hubnetMessageSource: allRooms[myRoom].canvasOrder[j],
+                      hubnetMessageTag: canvas,
+                      hubnetMessage: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["canvas"][canvas],
+                      userId: myUserId,
+                      activityType: activityType,
+                      userType: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved.userType,
+                      //claimed: (allRooms[myRoom].settings.adoptCanvasDict[myUserId] != undefined)
+                      claimed: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved.claimed
+                    };
+                    socket.emit("display canvas reporter", dataObject);
+                  }
                 }
               }
             }
@@ -158,6 +160,7 @@ io.on('connection', function(socket){
       }
     }
     schools[school] = allRooms;
+    //countUsers(myRoom, school);
 	});
   
   socket.on("request user broadcast data", function() {
@@ -174,15 +177,17 @@ io.on('connection', function(socket){
         canvases = allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["canvas"];
         if (canvases != undefined) {
           for (var canvas in canvases) {
-            dataObject = {
-              hubnetMessageSource: allRooms[myRoom].canvasOrder[j],
-              hubnetMessageTag: canvas,
-              hubnetMessage: canvases[canvas],
-              userId: myUserId,
-              activityType: activityType,
-              userType: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["userType"]
-            };  
-            socket.emit("display canvas reporter", dataObject);
+            if (allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved != undefined)  {
+              dataObject = {
+                hubnetMessageSource: allRooms[myRoom].canvasOrder[j],
+                hubnetMessageTag: canvas,
+                hubnetMessage: canvases[canvas],
+                userId: myUserId,
+                activityType: activityType,
+                userType: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved.userType
+              };  
+              socket.emit("display canvas reporter", dataObject);
+            }
           }
         }
       }
@@ -296,10 +301,12 @@ io.on('connection', function(socket){
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData[myUserId]) {
         if (destination === "server") {
-          allRooms[myRoom].userData[myUserId][data.hubnetMessageTag] = data.hubnetMessage;
-          socket.to(school+"-"+myRoom+"-teacher").emit("accept user data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
-          socket.to(school+"-"+myRoom+"-student").emit("accept user data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
-          socket.emit("accept user data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+          if (data.hubnetMessageTag != "reserved") {
+            allRooms[myRoom].userData[myUserId][data.hubnetMessageTag] = data.hubnetMessage;
+            socket.to(school+"-"+myRoom+"-teacher").emit("accept user data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+            socket.to(school+"-"+myRoom+"-student").emit("accept user data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+            socket.emit("accept user data", {userId: myUserId, tag: data.hubnetMessageTag, value: data.hubnetMessage});
+          }
         } else {
           var dataObject = {
             hubnetMessageSource: destination,
@@ -334,7 +341,7 @@ io.on('connection', function(socket){
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
     var destination = data.hubnetMessageSource;
     if (allRooms[myRoom] != undefined) {
-      if (allRooms[myRoom].userData[myUserId]) {
+      if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved != undefined) {
         if (allRooms[myRoom].userData[myUserId]["canvas"] === undefined) {
           allRooms[myRoom].canvasOrder.push(myUserId);
           allRooms[myRoom].userData[myUserId]["canvas"] = {};
@@ -392,7 +399,6 @@ io.on('connection', function(socket){
     }
   });
   
-  
   function getRecipient(destination, adoptCanvasDict) {
     var destination = socketDictionary[destination];
     var adoptees = adoptCanvasDict;
@@ -441,7 +447,7 @@ io.on('connection', function(socket){
     var hubnetMessage = undefined;
     var sendResponse = false;
     if (allRooms[myRoom] != undefined) {
-      if (allRooms[myRoom].userData[myUserId]) {
+      if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved != undefined) {
         if (hubnetMessageTag === "adopt-canvas") {
           var assignUserId = data.hubnetMessage.userId;
           var assignCanvasNumber = data.hubnetMessage.canvasId;
@@ -454,7 +460,9 @@ io.on('connection', function(socket){
             allRooms[myRoom].settings.adoptCanvasDict[assignUserId] = undefined;
             allRooms[myRoom].settings.adoptCanvasDict[assignCanvasId] = socketDictionary[socket.id];//assignUserId;
             allRooms[myRoom].userData[assignUserId].reserved.claimed = false; 
-            allRooms[myRoom].userData[assignCanvasId].reserved.claimed = true;  
+            allRooms[myRoom].userData[assignUserId].reserved.exists = false;
+            allRooms[myRoom].userData[assignCanvasId].reserved.claimed = true; 
+            allRooms[myRoom].userData[assignCanvasId].reserved.exists = true;   
             hubnetMessage = { adoptedUserId: assignCanvasId,
                               originalUserId: assignUserId }
           }
@@ -513,16 +521,6 @@ io.on('connection', function(socket){
       exportworld.exportGbccReport(allRooms[myRoom], settings, res);
     });
   });
-  
-  /*
-  app.post('/exportggb', function(req,res){
-    var form = new formidable.IncomingForm();
-    form.parse(req, function(err, fields, files) {
-      var xml = fields.ggbxml;
-      var filename = fields.ggbfilename;
-      exportworld.exportGgb(xml, filename, res);
-    });
-  });*/
   
   app.post('/exportgbccform', function(req,res){
     var form = new formidable.IncomingForm();
@@ -588,7 +586,6 @@ io.on('connection', function(socket){
   
   function setupUniverse(contentString, scope, myRoom) {
     try {
-      console.log("a");
       content = JSON.parse(contentString);
       newUserData = content.userData ? content.userData : {};
       newCanvasOrder = content.canvasOrder ? content.canvasOrder : [];
@@ -596,34 +593,34 @@ io.on('connection', function(socket){
       var scopeAllowed = true;
       if (scope === "my-universe" && Object.keys(newUserData).length > 1 ) { scopeAllowed = false; }
       if (allRooms[myRoom].userData != {} && scopeAllowed) {
-        console.log("b");
         for (var user in newUserData) {
           if (newUserData[user].reserved) {
             newUserData[user].reserved.claimed = false;
-            newUserData[user].reserved.exists = true;
+            newUserData[user].reserved.exists = false;
+            socket.emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user].reserved.userType });
+            socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user].reserved.userType });
+            socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user].reserved.userType });
           }
-          socket.emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
-          socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
-          socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user]["userType"] });
         }
-        console.log("c");
         var canvases;
         for (var j=0; j < newCanvasOrder.length; j++) {
           canvases = newUserData[newCanvasOrder[j]]["canvas"];
           if (canvases != undefined) {
             for (var canvas in canvases) {
-              dataObject = {
-                hubnetMessageSource: newCanvasOrder[j],
-                hubnetMessageTag: canvas,
-                hubnetMessage: newUserData[newCanvasOrder[j]]["canvas"][canvas],
-                userId: "",
-                activityType: activityType,
-                userType: newUserData[newCanvasOrder[j]]["userType"],
-                claimed: false //newUserData[newCanvasOrder[j]].reserved.claimed
-              };  
-              socket.emit("display canvas reporter", dataObject);
-              socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
-              socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
+              if (newUserData[newCanvasOrder[j]].reserved != undefined) {
+                dataObject = {
+                  hubnetMessageSource: newCanvasOrder[j],
+                  hubnetMessageTag: canvas,
+                  hubnetMessage: newUserData[newCanvasOrder[j]]["canvas"][canvas],
+                  userId: "",
+                  activityType: activityType,
+                  userType: newUserData[newCanvasOrder[j]].reserved.userType,
+                  claimed: false //newUserData[newCanvasOrder[j]].reserved.claimed
+                };  
+                socket.emit("display canvas reporter", dataObject);
+                socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
+                socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
+              }
             }
           }
         }
@@ -767,14 +764,10 @@ io.on('connection', function(socket){
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;    
     if (activityType != "hubnet") { 
-      //console.log("it is gbcc");
       if (allRooms[myRoom].userData[myUserId].reserved != undefined) {
-        //console.log(myUserId + " reserved?");
         if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved) {
-          //console.log("yep, make exists false");
           allRooms[myRoom].userData[myUserId].reserved.exists = false;
         }
-        //console.log("user exists "+myUserId);
         socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
         socket.to(school+"-"+myRoom+"-student").emit("gbcc user exits", {userId: myUserId,  userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
       }
@@ -802,35 +795,26 @@ io.on('connection', function(socket){
       allRooms[myRoom].userData[recipient].reserved.claimed = false;
     } 
     delete socketDictionary[myUserId];
-    //console.log("delete my canvas dict?");
     if (allRooms[myRoom].settings.adoptCanvasDict != undefined
       && allRooms[myRoom].settings.adoptCanvasDict[myUserId] != undefined) {
-      //console.log("yep");
       delete allRooms[myRoom].settings.adoptCanvasDict[myUserId];
     }
     if (myUserType === "teacher") {
-      //console.log("i'm a teacher");
       if (activityType === "hubnet") {
         clearRoom(myRoom, school);
-        //console.log("yep i'm a teacher in a hubnet school");
       } else {
-        //console.log("i'm a teacher in a gbcc school");
         if (countUsers(myRoom, school) === 0) {	
-          //console.log("my school has zero users");
           delete allRooms[myRoom]; 
         }
       }
     } else {
-      //console.log("i'm a student");
       if (allRooms[myRoom] != undefined) {
-        //console.log("i have a room and i'm gonna exit");
         socket.to(school+"-"+myRoom+"-teacher").emit("execute command", {
           hubnetMessageSource: myUserId,
           hubnetMessageTag: "hubnet-exit-message",
           hubnetMessage: ""
         });
         if (countUsers(myRoom, school) === 0) {
-          //console.log("delete my room"); 
           delete allRooms[myRoom];
         }
       }
@@ -868,12 +852,15 @@ function countUsers(roomName, school) {
   if (allRooms[roomName] != undefined) {
     for (var key in allRooms[roomName].userData) {
       if (allRooms[roomName].userData[key].reserved != undefined 
-        && allRooms[roomName].userData[key].reserved.exists) { 
-          users++; 
-        //console.log(allRooms[roomName].userData[key]+" exists");
+        && allRooms[roomName].userData[key].reserved.exists == false) { 
+          // user does not exist
+      } else { 
+        // user does exist, or reserved is undefined
+        users++; 
       }
     }
   }
+  //console.log("number of users "+users);
   return users;
 }
 
