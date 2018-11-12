@@ -338,6 +338,7 @@ io.on('connection', function(socket){
       return;
     }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
+    if (!(allRooms[myRoom].userData[myUserId] != undefined)) { return; }
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
     var destination = data.hubnetMessageSource;
     if (allRooms[myRoom] != undefined) {
@@ -441,6 +442,7 @@ io.on('connection', function(socket){
       return;
     }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
+    if (!(allRooms[myRoom].userData[myUserId] != undefined)) { return; }  
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;    
     var adoptedCanvas = undefined;
     var hubnetMessageTag = data.hubnetMessageTag;
@@ -467,15 +469,18 @@ io.on('connection', function(socket){
                               originalUserId: assignUserId }
           }
         } else if (hubnetMessageTag === "clone-canvas") {
+          /*
           if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId]) {
             var newUserId = createUid();
+            countUsers(myRoom,socket.school);
             allRooms[myRoom].userData[newUserId] = allRooms[myRoom].userData[myUserId];
-            allRooms[myRoom].userStreamData[newUserId] = allRooms[myRoom].userStreamData[myUserId];
+            allRooms[myRoom].userStreamData[newUserId] = ßallRooms[myRoom].userStreamData[myUserId];
             allRooms[myRoom].canvasOrder.push(newUserId);
             if (allRooms[myRoom].userData[newUserId].reserved) {
               allRooms[myRoom].userData[newUserId].reserved.claimed = false;
               allRooms[myRoom].userData[newUserId].reserved.exists = false;  
             }
+            countUsers(myRoom,socket.school);
             socket.emit("gbcc user enters", {userId: newUserId, userData: allRooms[myRoom].userData[newUserId], userType: myUserType});
             socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: newUserId, userData: allRooms[myRoom].userData[newUserId], userType: myUserType});
             socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: newUserId, userData: allRooms[myRoom].userData[newUserId], userType: myUserType});
@@ -497,6 +502,7 @@ io.on('connection', function(socket){
               }
             }
           }
+          */
         }
         if (sendResponse) {
           var dataObject = {
@@ -750,7 +756,7 @@ io.on('connection', function(socket){
 	
   // user exits
   socket.on('disconnect', function () {
-    console.log("disconnect");
+    //console.log("disconnect");
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
@@ -762,6 +768,7 @@ io.on('connection', function(socket){
       return;
     }
     var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
+    if (!(allRooms[myRoom].userData[myUserId] != undefined)) { return; }
     var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;    
     if (activityType != "hubnet") { 
       if (allRooms[myRoom].userData[myUserId].reserved != undefined) {

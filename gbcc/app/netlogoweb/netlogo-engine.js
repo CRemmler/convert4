@@ -19730,9 +19730,9 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var clearImage, importFromUser, importImage, importPcolors, resetZoom, zoom;
-      importImage = function(filename) {
-        Images.importImage(filename);
+      var clearImage, importFile, importFromUser, importPcolors, resetZoom, zoom;
+      importFile = function(filename) {
+        Images.importFile(filename);
       };
       zoom = function(scale) {
         world.zoom(scale);
@@ -19752,7 +19752,7 @@ function hasOwnProperty(obj, prop) {
       return {
         name: "image",
         prims: {
-          "IMPORT": importImage,
+          "IMPORT-FILE": importFile,
           "ZOOM": zoom,
           "RESET-ZOOM": resetZoom,
           "IMPORT-PCOLORS": importPcolors,

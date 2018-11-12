@@ -1,15 +1,10 @@
 
 Images = (function() {
   
-  function importImage(filename) {
-    //clearImage();
-    var image = new Image();
-    image.onload = function() {
-      $("#imageLayer").prop("src",filename);
-      world.triggerUpdate();
-    };
-    image.src = filename;
+  function importFile(filename) {
+    world.importDrawing(filename);
   }
+
   function importPcolors() {
     
   }
@@ -35,7 +30,7 @@ Images = (function() {
   }
 
   return {
-    importImage: importImage,
+    importFile: importFile,
     importPcolors: importPcolors,
     clearImage: clearImage,
     importFromUser: importFromUser
