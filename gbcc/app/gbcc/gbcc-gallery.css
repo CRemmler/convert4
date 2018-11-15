@@ -64,8 +64,6 @@
 }
     
 .gbcc-gallery .card-image {
-  height: 99%;
-  width: 99%;
   border: 1px solid black;
 }
 
@@ -75,6 +73,46 @@
   padding:0px 5px 0px 5px;
   font-size: 18px;
   border:1px solid black;
+}
+
+.gbcc-gallery.small .card-text {
+  width: 85%;
+  height: 98%;
+}
+
+.gbcc-gallery.medium .card-text {
+  width: 90%;
+  height: 98%;
+}
+
+.gbcc-gallery.large .card-text {
+  width: 92%;
+  height: 99%;
+}
+
+.gbcc-gallery.extra-large .card-text {
+  width: 95%;
+  height: 99%;
+}
+
+.gbcc-gallery.small .card-image {
+  width: 98%;
+  height: 98%;
+}
+
+.gbcc-gallery.medium .card-image  {
+  width: 98%;
+  height: 98%;
+}
+
+.gbcc-gallery.large .card-image  {
+  width: 99%;
+  height: 99%;
+}
+
+.gbcc-gallery.extra-large .card-image  {
+  width: 99%;
+  height: 99%;
 }
 
 .gbcc-gallery .arrow {

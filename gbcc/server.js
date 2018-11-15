@@ -132,26 +132,7 @@ io.on('connection', function(socket){
               }
             }
             var canvases;
-            for (var j=0; j < allRooms[myRoom].canvasOrder.length; j++) {
-              canvases = allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["canvas"];
-              if (canvases != undefined) {
-                for (var canvas in canvases) {
-                  if (allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved != undefined) {
-                    dataObject = {
-                      hubnetMessageSource: allRooms[myRoom].canvasOrder[j],
-                      hubnetMessageTag: canvas,
-                      hubnetMessage: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]]["canvas"][canvas],
-                      userId: myUserId,
-                      activityType: activityType,
-                      userType: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved.userType,
-                      //claimed: (allRooms[myRoom].settings.adoptCanvasDict[myUserId] != undefined)
-                      claimed: allRooms[myRoom].userData[allRooms[myRoom].canvasOrder[j]].reserved.claimed
-                    };
-                    socket.emit("display canvas reporter", dataObject);
-                  }
-                }
-              }
-            }
+            loadCanvases(school, myRoom, allRooms[myRoom].canvasOrder, allRooms[myRoom].userData, true);
           }
           socket.emit("gbcc user enters", {userId: myUserId, userData: allRooms[myRoom].userData[myUserId], userType: myUserType});
           socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: myUserId, userData: allRooms[myRoom].userData[myUserId], userType: myUserType });
@@ -583,7 +564,7 @@ io.on('connection', function(socket){
             } 
           }, function (e) { console.log(e); });
         }
-      }
+      } 
     })
     .on('end', function() {
       res.end('success');
@@ -608,28 +589,7 @@ io.on('connection', function(socket){
             socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: user, userData: newUserData[user], userType: newUserData[user].reserved.userType });
           }
         }
-        var canvases;
-        for (var j=0; j < newCanvasOrder.length; j++) {
-          canvases = newUserData[newCanvasOrder[j]]["canvas"];
-          if (canvases != undefined) {
-            for (var canvas in canvases) {
-              if (newUserData[newCanvasOrder[j]].reserved != undefined) {
-                dataObject = {
-                  hubnetMessageSource: newCanvasOrder[j],
-                  hubnetMessageTag: canvas,
-                  hubnetMessage: newUserData[newCanvasOrder[j]]["canvas"][canvas],
-                  userId: "",
-                  activityType: activityType,
-                  userType: newUserData[newCanvasOrder[j]].reserved.userType,
-                  claimed: false //newUserData[newCanvasOrder[j]].reserved.claimed
-                };  
-                socket.emit("display canvas reporter", dataObject);
-                socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
-                socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
-              }
-            }
-          }
-        }
+        loadCanvases(school, myRoom, newCanvasOrder, newUserData, false);
         for(var user in newUserData) {
           allRooms[myRoom]["userData"][user] = newUserData[user];
         }
@@ -642,6 +602,43 @@ io.on('connection', function(socket){
       }
     } catch (err) {
       console.log("caught error transforming contents of universe from string to object")
+    }
+  }
+  
+  function loadCanvases(school, myRoom, canvasOrder, userData, preserveClaimStatus) {
+    var canvases, claimed;
+    for (var j=0; j < canvasOrder.length; j++) {
+      canvases = userData[canvasOrder[j]]["canvas"];
+      claimed = preserveClaimStatus ? userData[canvasOrder[j]].reserved.claimed : false;
+      if (canvases != undefined  && typeof canvases === "object") {
+        if (Object.keys(canvases).length === 0 ) {
+          var dataObject = {
+            hubnetMessageSource: canvasOrder[j],
+            hubnetMessageTag: "canvas-clear-all",
+            hubnetMessage: "canvas-clear-all",
+            userType: userData[canvasOrder[j]].reserved.userType,
+            claimed: claimed
+          };
+          socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
+          socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
+          socket.emit("display canvas reporter", dataObject);
+        } else {
+          for (var canvas in canvases) {
+            if (userData[canvasOrder[j]].reserved != undefined) {
+              dataObject = {
+                hubnetMessageSource: canvasOrder[j],
+                hubnetMessageTag: canvas,
+                hubnetMessage: userData[canvasOrder[j]]["canvas"][canvas],
+                userType: userData[canvasOrder[j]].reserved.userType,
+                claimed: claimed
+              };  
+              socket.emit("display canvas reporter", dataObject);
+              socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
+              socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
+            }
+          }
+        }
+      }
     }
   }
   
