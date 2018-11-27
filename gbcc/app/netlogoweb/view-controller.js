@@ -135,14 +135,13 @@
       for (k = 0, len = updates.length; k < len; k++) {
         u = updates[k];
         // <!-- GBCC -->
-        if (socket && activityType === "hubnet" && myUserType === "teacher") {
+        if (socket && myUserType === "teacher" && mirroringEnabled) {
           socket.emit('send mirror reporter', {
             hubnetMessageSource: "server",
             hubnetMessageTag: "",
             hubnetMessage: modelUpdate[k]
           });
         }
-        //universe = this;
         // <!-- END GBCC -->
 
         this.applyUpdate(u);

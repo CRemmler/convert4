@@ -236,13 +236,17 @@ Interface = (function() {
       $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-view-container").css("height")) - 0 + "px");
       $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-view-container").css("width")) - 128 + "px");
     } else {
-      spanText = "<span class='gbcc-widget teacher-controls hidden' style='float:right'>";
-      //spanText = "<span class='teacher-controls hidden' style='float:right'>Enable:";
+      spanText = "<span class='gbcc-widget teacher-controls mirror-controls hidden' style='float:right'>";
+      spanText += "<input id='enableMirroring' type='checkbox'>Mirror";
+      spanText += "<span>";
+      $(".netlogo-widget-container").append(spanText);
+      spanText = "<span class='gbcc-widget teacher-controls hidden' style='float:right'>";    
       spanText += "<input id='enableView' checked type='checkbox'>View";
       spanText += "<input id='enableTabs' checked type='checkbox'>Tabs";
       spanText += "<input id='enableGallery' checked type='checkbox'>Gallery</span>";
       $(".netlogo-widget-container").append(spanText);
       $(".teacher-controls").css("left", parseFloat($(".netlogo-view-container").css("left")) + parseFloat($(".netlogo-canvas").css("width")) - 160 + "px");
+      $(".mirror-controls").css("left",parseFloat($(".netlogo-view-container").css("left")));
     }
     $(".teacher-controls").css("position","absolute");
     $(".teacher-controls").css("top", parseFloat($(".netlogo-view-container").css("top")) + parseFloat($(".netlogo-canvas").css("height")) + "px");
@@ -261,12 +265,13 @@ Interface = (function() {
       if (mirroringEnabled) {
         var state = world.exportCSV();
         var blob = myCanvas.toDataURL("image/png", 0.5); 
-
         socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'state': state, 'type': 'mirror', 'image': blob});
       } else {
         socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'state': "", 'type': 'mirror' });        
       }
-      socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'type': 'view'});
+      if (activityType === "hubnet") {
+        socket.emit('teacher requests UI change', {'display': mirroringEnabled, 'type': 'view'});
+      }
     });
   }
 

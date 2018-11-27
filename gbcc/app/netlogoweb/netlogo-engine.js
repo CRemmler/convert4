@@ -19194,7 +19194,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, clearBroadcasts, cloneCanvas, compileObserverCode, compilePatchCode, compileTurtleCode, exportMyData, exportOurData, get, getActiveUserList, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantIndices, hidePatches, importMyData, importMyDataFile, importOurData, importOurDataFile, removeCanvas, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, whoAmI;
+      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, clearBroadcasts, compileObserverCode, compilePatchCode, compileTurtleCode, exportMyData, exportOurData, get, getActiveUserList, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantIndices, hidePatches, importMyData, importMyDataFile, importOurData, importOurDataFile, muteCanvas, myRole, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, unmuteCanvas, whoAmI;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
@@ -19261,8 +19261,8 @@ function hasOwnProperty(obj, prop) {
       broadcastPlot = function(name) {
         return Gallery.broadcastPlot(name);
       };
-      broadcastText = function(text) {
-        return Gallery.broadcastText(text);
+      broadcastText = function(tag, message) {
+        return Gallery.broadcastText(tag, message);
       };
       broadcastAvatar = function(shape, color, text) {
         return Gallery.broadcastAvatar(shape, color, text);
@@ -19377,11 +19377,14 @@ function hasOwnProperty(obj, prop) {
       getFileList = function() {
         return GbccFileManager.getFileList();
       };
-      cloneCanvas = function() {
-        return Gallery.cloneCanvas();
+      muteCanvas = function(canvasId) {
+        return Gallery.muteCanvas(canvasId);
       };
-      removeCanvas = function(userId) {
-        return Gallery.cloneCanvas(userId);
+      unmuteCanvas = function(canvasId) {
+        return Gallery.unmuteCanvas(canvasId);
+      };
+      myRole = function() {
+        return Gallery.myRole();
       };
       return {
         name: "gbcc",
@@ -19424,8 +19427,9 @@ function hasOwnProperty(obj, prop) {
           "GET-USER-LIST": getUserList,
           "GET-ACTIVE-USER-LIST": getActiveUserList,
           "ADOPT-CANVAS": adoptCanvas,
-          "CLONE-CANVAS": cloneCanvas,
-          "REMOVE-CANVAS": removeCanvas
+          "MUTE-CANVAS": muteCanvas,
+          "UNMUTE-CANVAS": unmuteCanvas,
+          "MY-ROLE": myRole
         }
       };
     }

@@ -10,6 +10,7 @@ var foreverButtonCode = new Object();
 var myUserType;
 var activityType = undefined;
 var drawPatches = true;
+var drawDrawing = true;
 var mirroringEnabled;
 var myCanvas;
 var myUserId;
@@ -42,6 +43,7 @@ jQuery(document).ready(function() {
     Physics.setupInterface();
     Maps.setupInterface();
     Graph.setupInterface();
+    //Images.setupInterface();
     allowMultipleButtonsSelected = data.gallerySettings.allowMultipleSelections; 
     allowGalleryForeverButton = data.gallerySettings.allowGalleryControls;
     $(".roomNameInput").val(data.myRoom);
@@ -145,6 +147,7 @@ jQuery(document).ready(function() {
 
   // show or hide student view or gallery
   socket.on("student accepts UI change", function(data) {
+    //console.log("STUDENT accepts UI change "+data.type);
     if (data.type === "view") {
       (data.display) ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
     } else if (data.type === "tabs") {
@@ -171,20 +174,24 @@ jQuery(document).ready(function() {
     }
     if (data.type === "mirror") {
       mirroringEnabled = data.display;
-      mirroringEnabled ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
+      if (activityType === "hubnet") {
+        mirroringEnabled ? $(".netlogo-view-container").css("display","block") : $(".netlogo-view-container").css("display","none");
+      }
       if (data.image && mirroringEnabled) {
         universe.model.drawingEvents.push({type: "import-drawing", sourcePath: data.image});
       }
-      if (data.state) {
-        if (mirroringEnabled) {
-          myWorld = data.state;
+      if (mirroringEnabled) {
+        myWorld = world.exportState();
+        if (data.state) {
           ImportExportPrims.importWorldRaw(data.state);
-        } else {
-          if (myWorld) { 
-            world.importState(myWorld);
-          }
         }
-      } 
+      } else {
+        if (myWorld) {
+          world.clearAll(); 
+          world.importState(myWorld);
+        }
+      }
+      //} 
     }
   });
   
@@ -219,7 +226,6 @@ jQuery(document).ready(function() {
   });
   
   socket.on("display canvas reporter", function(data) {
-    console.log("display canvas reporter");
     if (!allowGalleryForeverButton || (allowGalleryForeverButton && !$(".netlogo-gallery-tab").hasClass("selected"))) {
       Gallery.displayCanvas({
         message:data.hubnetMessage,
@@ -443,31 +449,7 @@ jQuery(document).ready(function() {
   });
   
   socket.on("accept canvas override", function(data) {
-    var hubnetMessageTag = data.hubnetMessageTag;
-    var hubnetMessage = data.hubnetMessage;
-    var adoptedUserId = hubnetMessage.adoptedUserId;
-    var originalUserId = hubnetMessage.originalUserId;
-    if (hubnetMessageTag === "adopt-canvas") {
-      userData[originalUserId].reserved.exists = false;
-      userData[originalUserId].reserved.claimed = false;
-      $("#gallery-item-"+originalUserId).attr("claimed","false");
-      userData[adoptedUserId].reserved.exists = true;
-      userData[adoptedUserId].reserved.claimed = true;
-      $("#gallery-item-"+adoptedUserId).attr("claimed","true");
-      if (myUserId === originalUserId) {
-        $("#gallery-item-"+originalUserId+" .label").removeClass("selected") 
-        $("#gallery-item-"+adoptedUserId+" .label").addClass("selected") 
-        myUserId = adoptedUserId;
-        $(".myUserIdInput").val(myUserId);
-      }
-    } 
-    else if (hubnetMessageTag === "release-canvas") {
-      if (adoptedUserId) {
-        $("#gallery-item-"+adoptedUserId).attr("claimed","false");
-      } else {
-        $("#gallery-item-"+originalUserId).attr("claimed","false");
-      }
-    }
+    Gallery.acceptCanvasOverride(data);
   });
   
   socket.on("accept all user data", function(data) {

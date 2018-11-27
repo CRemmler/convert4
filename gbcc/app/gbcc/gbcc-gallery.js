@@ -16,6 +16,7 @@ Gallery = (function() {
   var allowCanvasForeverButtons; 
   var allowGalleryControls; 
   var allowTeacherControls;
+  var allowMirrorControl;
   var galleryForeverButton = "on";
   
   var plotsObject = {};
@@ -30,6 +31,7 @@ Gallery = (function() {
     allowCanvasForeverButtons = settings.allowCanvasForeverButtons || false;
     allowGalleryControls = settings.allowGalleryControls || false;
     allowTeacherControls = settings.allowTeacherControls || false;
+    allowMirrorControl = settings.allowMirrorControl || false;
     if (allowTabs) { // student, hubnet
       $(".netlogo-tab-area").removeClass("hidden");
     } else {
@@ -113,6 +115,7 @@ Gallery = (function() {
     }
     if (!allowGalleryControls) { $(".gallery-controls").css("display","none"); }
     if (!allowTeacherControls) { $(".teacher-controls").css("display","none"); }
+    if (!allowMirrorControl) { $(".mirror-controls").css("display","none"); }
     if (is_safari) {
       //$("body").append("<canvas id=\"miniSafariCanvasView\" width=\"200\" height=\"200\" style=\"display:none\"></canvas>");
       $("body").append("<canvas id=\"miniSafariCanvasView\" width=\"250\" height=\"250\" style=\"display:none\"></canvas>");
@@ -129,6 +132,7 @@ Gallery = (function() {
     $('.netlogo-widget-container').on("input","#opacity", function() { 
       $("#graphContainer").css("opacity", $(this).val() / 100);
       $("#mapContainer").css("opacity", $(this).val() / 100); 
+      $("#imageContainer").css("opacity", $(this).val() / 100); 
     });
     $("#opacityWrapper").css("display", "none");
     $("body").append("<div class='hiddenfile'><input id='importgbccworld' type='file' style='display:none'></div>");
@@ -364,10 +368,12 @@ Gallery = (function() {
     $("#"+data.id).attr("src", data.src);
   }
 
-
   function createTextCard(data) {
-    newSpan = "<span class=\"card card-text\"><span id=\""+data.id+"\" class=\"text-span\"><br>"+data.src.replace("gallery-text","")+"</span></span>";
+    var text = data.src.replace("canvas-text","").replace(/(?:\r\n|\n)/g, '<br>').replace(/ /g, "&nbsp;").replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    var newSpan = "<span class=\"card card-text\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>";
+    newSpan += "</span></span>";
     $("#gallery-item-"+data.userId).append(newSpan);
+    $("#"+data.id).html("<br>"+text);
     var zIndex = $("#gallery-item-"+data.userId+" span:not(.text-span)").length - 5;
     $("#"+data.id).parent().css("z-index",zIndex);
     ($("#"+data.id).parent()).click(function() { cardClickHandler(this); });
@@ -375,7 +381,7 @@ Gallery = (function() {
   }
   
   function createEmptyTextCard(data) {
-    newSpan = "<span class=\"card card-text\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>"+data.src.replace("gallery-text","")+"</span></span>";
+    newSpan = "<span class=\"card card-text\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>";
     $("#gallery-item-"+data.userId).append(newSpan);
     var zIndex = $("#gallery-item-"+data.userId+" span:not(.text-span)").length - 5;
     $("#"+data.id).parent().css("z-index",zIndex);
@@ -384,7 +390,8 @@ Gallery = (function() {
   }
   
   function updateTextCard(data) {
-    $("#"+data.id).html("<br>"+data.src.replace("gallery-text",""));
+    var text = data.src.replace("canvas-text","").replace(/(?:\r\n|\n)/g, '<br>').replace(/ /g, "&nbsp;").replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    $("#"+data.id).html("<br>"+text);
   }
   
   function displayCanvas(data) {
@@ -392,6 +399,7 @@ Gallery = (function() {
     var canvasType = data.tag; // canvas-text, canvas-avatar, canvas-clear, canvas-clear-all
     if (data.tag.indexOf("canvas-plot-") === 0) { canvasType = "canvas-plot"; }
     if (data.tag.indexOf("canvas-view-") === 0) { canvasType = "canvas-view"; }
+    if (data.tag.indexOf("canvas-text-") === 0) { canvasType = "canvas-text"; }
     if (galleryForeverButton === "off") { return; } 
     var canvasData = { 
             id : data.tag + "-" + data.source,
@@ -415,6 +423,9 @@ Gallery = (function() {
         resetCards($("#gallery-item-"+data.source));
       } else  if ($("#canvas-plot-" + data.message.replace(" ","-")+"-"+data.source).length > 0) {
         $("#canvas-plot-" + data.message.replace(" ","-")+"-"+data.source).parent().remove();
+        resetCards($("#gallery-item-"+data.source));
+      } else  if ($("#canvas-text-" + data.message.replace(" ","-")+"-"+data.source).length > 0) {
+        $("#canvas-text-" + data.message.replace(" ","-")+"-"+data.source).parent().remove();
         resetCards($("#gallery-item-"+data.source));
       }
     }
@@ -452,12 +463,10 @@ Gallery = (function() {
     }); 
   }
   
-  function broadcastText(text) {
-    //var message = "galry-text"+text;
-    var message = text;
+  function broadcastText(tag, message) {
     socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
-      hubnetMessageTag: "canvas-text", 
+      hubnetMessageTag: "canvas-text-"+tag, 
       hubnetMessage: message
     }); 
   }
@@ -623,6 +632,10 @@ Gallery = (function() {
     return myUserId;
   }
   
+  function myRole() {
+    return myUserType;
+  }
+  
   function showPatches() {
     drawPatches = true;
     universe.repaint();
@@ -677,17 +690,43 @@ Gallery = (function() {
     return userList;
   }
   
-  function cloneCanvas() {
-    socket.emit('send canvas override', {
-      hubnetMessageSource: "server",
-      hubnetMessageTag: "clone-canvas",
-      hubnetMessage: ""
-    });
+  function acceptCanvasOverride(data) {
+    var hubnetMessageTag = data.hubnetMessageTag;
+    var hubnetMessage = data.hubnetMessage;
+    var adoptedUserId = hubnetMessage.adoptedUserId;
+    var originalUserId = hubnetMessage.originalUserId;
+    var originalCanvasUserData = hubnetMessage.originalCanvasUserData;
+    if (hubnetMessageTag === "adopt-canvas") {
+      userData[originalUserId].reserved.exists = false;
+      userData[originalUserId].reserved.claimed = false;
+      $("#gallery-item-"+originalUserId).attr("claimed","false");
+      userData[adoptedUserId].reserved.exists = true;
+      userData[adoptedUserId].reserved.claimed = true;
+      $("#gallery-item-"+adoptedUserId).attr("claimed","true");
+      if (myUserId === originalUserId) {
+        $("#gallery-item-"+originalUserId+" .label").removeClass("selected") 
+        $("#gallery-item-"+adoptedUserId+" .label").addClass("selected") 
+        myUserId = adoptedUserId;
+        $(".myUserIdInput").val(myUserId);
+      }
+    } else if (hubnetMessageTag === "mute-canvas") {
+      userData[adoptedUserId].reserved.muted = true;
+      $("#gallery-item-" + data.source +" .card").remove(); 
+      canvasData.src="";
+      createEmptyTextCard(canvasData);
+    } else if (hubnetMessageTag === "unmute-canvas") {
+      userData[adoptedUserId].reserved.muted = false;
+      userData[adoptedUserId].canvas = originalCanvasUserData;
+    } else if (hubnetMessageTag === "release-canvas") {
+      if (adoptedUserId) {
+        $("#gallery-item-"+adoptedUserId).attr("claimed","false");
+      } else {
+        $("#gallery-item-"+originalUserId).attr("claimed","false");
+      }
+    }
   }
   
-  function removeCanvas(userId) {
-    
-  }
+  
   
   return {
     displayCanvas: displayCanvas,
@@ -706,8 +745,8 @@ Gallery = (function() {
     getVacantIndices: getVacantIndices,
     getUserList: getUserList,
     getActiveUserList: getActiveUserList,
-    cloneCanvas: cloneCanvas,
-    removeCanvas: removeCanvas
+    acceptCanvasOverride: acceptCanvasOverride,
+    myRole: myRole
   };
 
 })();

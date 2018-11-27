@@ -85,12 +85,12 @@ io.on('connection', function(socket){
       allRooms[myRoom].userData[myUserId].reserved.userType = myUserType;
       allRooms[myRoom].userData[myUserId].reserved.claimed = true;
       allRooms[myRoom].userData[myUserId].reserved.exists = true;
+      allRooms[myRoom].userData[myUserId].reserved.muted = false;
       allRooms[myRoom].userData[myUserId].reserved.overrides = {};
 
       socket.emit("save settings", {userType: myUserType, userId: myUserId, gallerySettings: config.galleryJs, myRoom: myRoom, school: school, teacherId: teacherId});
-
+      socket.to(school+"-"+myRoom+"-teacher").emit("teacher accepts new entry request", {"userId": myUserId }); 
       if (activityType === "hubnet") {
-          socket.to(school+"-"+myRoom+"-teacher").emit("teacher accepts new entry request", {"userId": myUserId }); 
           socket.to(school+"-"+myRoom+"-student").emit("student accepts UI change", {userId: myUserId, type: 'view', display: allRooms[myRoom].settings.view });
       } else if (activityType === "gbcc") {
           socket.emit("student accepts UI change", {userId: myUserId, type: 'tabs', display: allRooms[myRoom].settings.tabs });
@@ -449,42 +449,29 @@ io.on('connection', function(socket){
             hubnetMessage = { adoptedUserId: assignCanvasId,
                               originalUserId: assignUserId }
           }
-        } else if (hubnetMessageTag === "clone-canvas") {
-          /*
-          if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId]) {
-            var newUserId = createUid();
-            countUsers(myRoom,socket.school);
-            allRooms[myRoom].userData[newUserId] = allRooms[myRoom].userData[myUserId];
-            allRooms[myRoom].userStreamData[newUserId] = ßallRooms[myRoom].userStreamData[myUserId];
-            allRooms[myRoom].canvasOrder.push(newUserId);
-            if (allRooms[myRoom].userData[newUserId].reserved) {
-              allRooms[myRoom].userData[newUserId].reserved.claimed = false;
-              allRooms[myRoom].userData[newUserId].reserved.exists = false;  
-            }
-            countUsers(myRoom,socket.school);
-            socket.emit("gbcc user enters", {userId: newUserId, userData: allRooms[myRoom].userData[newUserId], userType: myUserType});
-            socket.to(school+"-"+myRoom+"-teacher").emit("gbcc user enters", {userId: newUserId, userData: allRooms[myRoom].userData[newUserId], userType: myUserType});
-            socket.to(school+"-"+myRoom+"-student").emit("gbcc user enters", {userId: newUserId, userData: allRooms[myRoom].userData[newUserId], userType: myUserType});
-            canvases = allRooms[myRoom].userData[newUserId]["canvas"];
-            if (canvases != undefined) {
-              for (var canvas in canvases) {
-                dataObject = {
-                  hubnetMessageSource: newUserId,
-                  hubnetMessageTag: canvas,
-                  hubnetMessage: allRooms[myRoom].userData[newUserId]["canvas"][canvas],
-                  userId: "",
-                  activityType: activityType,
-                  userType: myUserType,
-                  claimed: false //newUserData[newCanvasOrder[j]].reserved.claimed
-                };  
-                socket.emit("display canvas reporter", dataObject);
-                socket.to(school+"-"+myRoom+"-teacher").emit("display canvas reporter", dataObject);
-                socket.to(school+"-"+myRoom+"-student").emit("display canvas reporter", dataObject);
-              }
-            }
+          
+        } else if (hubnetMessageTag === "mute-canvas") {
+          var assignUserId = data.hubnetMessage.userId;
+          var assignCanvasNumber = data.hubnetMessage.canvasId;
+          if (allRooms[myRoom].userData[assignUserId] && allRooms[myRoom].userData[assignCanvasId]
+            && allRooms[myRoom].userData[assignCanvasId].reserved) {
+            sendResponse = true;
+            allRooms[myRoom].userData[assignUserId].reserved.muted = true; 
+            hubnetMessage = { 
+                              originalUserId: assignUserId }
           }
-          */
-        }
+        } else if (hubnetMessageTag === "unmute-canvas") {
+          var assignUserId = data.hubnetMessage.userId;
+          var assignCanvasNumber = data.hubnetMessage.canvasId;
+          if (allRooms[myRoom].userData[assignUserId] && allRooms[myRoom].userData[assignCanvasId]
+            && allRooms[myRoom].userData[assignCanvasId].reserved) {
+            sendResponse = true;
+            allRooms[myRoom].userData[assignUserId].reserved.muted = false; 
+            hubnetMessage = { 
+                              originalUserId: assignUserId, 
+                              originalUserCanvasData: allRooms[myRoom].userData[assignUserId].canvas}        
+          }
+        }  
         if (sendResponse) {
           var dataObject = {
             hubnetMessageTag: hubnetMessageTag,
@@ -748,7 +735,8 @@ io.on('connection', function(socket){
       return;
     }
     allRooms[myRoom].settings[data.type] = data.display; 
-    io.to(socketDictionary[data.userId]).emit("student accepts UI change", {"display": allRooms[myRoom].settings["mirror"], "type": "mirror", "state": data.state, "image": data.image});
+    var myUserId = getRecipient(data.userId, allRooms[myRoom].settings.adoptCanvasDict);
+    io.to(myUserId).emit("student accepts UI change", {"display": allRooms[myRoom].settings["mirror"], "type": "mirror", "state": data.state, "image": data.image});
   });
 	
   // user exits

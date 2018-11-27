@@ -30,6 +30,7 @@ app.post('/fileupload',function(req,res){
            fields["allowCanvasForeverButtons"] = undefined;
            fields["allowGalleryControls"] = undefined;
            fields["allowTeacherControls"] = true;
+           fields["allowMirrorControl"] = true;
          }
          break;
        case "gbccFlat": 
@@ -231,6 +232,7 @@ app.post('/fileupload',function(req,res){
              configFile += (fields["allowCanvasForeverButtons"]) ? '    "allowCanvasForeverButtons": true, \n' : '    "allowCanvasForeverButtons": false, \n';
              configFile += (fields["allowGalleryControls"]) ?      '    "allowGalleryControls": true, \n' :      '    "allowGalleryControls": false, \n';
              configFile += (fields["allowTeacherControls"]) ?      '    "allowTeacherControls": true, \n' :      '    "allowTeacherControls": false, \n';
+             configFile += (fields["allowMirrorControl"]) ?        '    "allowMirrorControl": true, \n' :        '    "allowMirrorControl": false, \n';
              configFile += (fields["legacyHubnet"]) ?              '    "legacyHubnet": true, \n' :              '    "legacyHubnet": false, \n';
              configFile +=                                         '    "secondView": [' +secondView +   ']\n';
            } 
