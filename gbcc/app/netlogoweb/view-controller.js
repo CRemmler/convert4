@@ -117,8 +117,10 @@
       if (drawPatches) {
         this.patchDrawer.repaint(this.model);
       }
+      if (drawDrawing) {
+        this.drawingLayer.repaint(this.model);
+      }
       // <!-- END GBCC -->
-      this.drawingLayer.repaint(this.model);
       this.turtleDrawer.repaint(this.model);
       this.spotlightDrawer.repaint(this.model);
       return this.view.repaint(this.model);

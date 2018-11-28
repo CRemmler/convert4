@@ -431,11 +431,11 @@ io.on('connection', function(socket){
     var sendResponse = false;
     if (allRooms[myRoom] != undefined) {
       if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved != undefined) {
+        var assignUserId = data.hubnetMessage.userId;
+        var assignCanvasNumber = data.hubnetMessage.canvasId;
+        var assignCanvasId = allRooms[myRoom].canvasOrder[assignCanvasNumber] ? allRooms[myRoom].canvasOrder[assignCanvasNumber] : -1;
+        var adoptedCanvas = allRooms[myRoom].settings.adoptCanvasDict[assignCanvasId];
         if (hubnetMessageTag === "adopt-canvas") {
-          var assignUserId = data.hubnetMessage.userId;
-          var assignCanvasNumber = data.hubnetMessage.canvasId;
-          var assignCanvasId = allRooms[myRoom].canvasOrder[assignCanvasNumber] ? allRooms[myRoom].canvasOrder[assignCanvasNumber] : -1;
-          var adoptedCanvas = allRooms[myRoom].settings.adoptCanvasDict[assignCanvasId];
           if (allRooms[myRoom].userData[assignUserId] && allRooms[myRoom].userData[assignCanvasId]
             && allRooms[myRoom].userData[assignCanvasId].reserved
             && allRooms[myRoom].userData[assignCanvasId].reserved.claimed === false) {
@@ -449,27 +449,23 @@ io.on('connection', function(socket){
             hubnetMessage = { adoptedUserId: assignCanvasId,
                               originalUserId: assignUserId }
           }
-          
         } else if (hubnetMessageTag === "mute-canvas") {
-          var assignUserId = data.hubnetMessage.userId;
-          var assignCanvasNumber = data.hubnetMessage.canvasId;
-          if (allRooms[myRoom].userData[assignUserId] && allRooms[myRoom].userData[assignCanvasId]
+          if (allRooms[myRoom].userData[assignCanvasId]
             && allRooms[myRoom].userData[assignCanvasId].reserved) {
             sendResponse = true;
-            allRooms[myRoom].userData[assignUserId].reserved.muted = true; 
+            allRooms[myRoom].userData[assignCanvasId].reserved.muted = true; 
             hubnetMessage = { 
-                              originalUserId: assignUserId }
+               adoptedUserId: assignCanvasId,
+               canvasId: data.hubnetMessage.canvasId }
           }
         } else if (hubnetMessageTag === "unmute-canvas") {
-          var assignUserId = data.hubnetMessage.userId;
-          var assignCanvasNumber = data.hubnetMessage.canvasId;
-          if (allRooms[myRoom].userData[assignUserId] && allRooms[myRoom].userData[assignCanvasId]
+          if (allRooms[myRoom].userData[assignCanvasId]
             && allRooms[myRoom].userData[assignCanvasId].reserved) {
             sendResponse = true;
-            allRooms[myRoom].userData[assignUserId].reserved.muted = false; 
+            allRooms[myRoom].userData[assignCanvasId].reserved.muted = false; 
             hubnetMessage = { 
-                              originalUserId: assignUserId, 
-                              originalUserCanvasData: allRooms[myRoom].userData[assignUserId].canvas}        
+               adoptedUserId: assignCanvasId,
+               canvasId: data.hubnetMessage.canvasId }
           }
         }  
         if (sendResponse) {
@@ -735,7 +731,7 @@ io.on('connection', function(socket){
       return;
     }
     allRooms[myRoom].settings[data.type] = data.display; 
-    var myUserId = getRecipient(data.userId, allRooms[myRoom].settings.adoptCanvasDict);
+    var myUserId = getSocketId(data.userId);
     io.to(myUserId).emit("student accepts UI change", {"display": allRooms[myRoom].settings["mirror"], "type": "mirror", "state": data.state, "image": data.image});
   });
 	

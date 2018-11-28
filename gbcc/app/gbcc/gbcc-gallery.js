@@ -117,9 +117,7 @@ Gallery = (function() {
     if (!allowTeacherControls) { $(".teacher-controls").css("display","none"); }
     if (!allowMirrorControl) { $(".mirror-controls").css("display","none"); }
     if (is_safari) {
-      //$("body").append("<canvas id=\"miniSafariCanvasView\" width=\"200\" height=\"200\" style=\"display:none\"></canvas>");
       $("body").append("<canvas id=\"miniSafariCanvasView\" width=\"250\" height=\"250\" style=\"display:none\"></canvas>");
-
       canvasHeight = 250; canvasWidth = 250;
       imageQuality = 0.5;
     } else {
@@ -186,7 +184,6 @@ Gallery = (function() {
       var index = 0;
       $(this).children().each( function() {
         if ($(this).hasClass("card")) {
-          //console.log("give it index",index);
           $(this).css("z-index",index);
           index++;
         }
@@ -222,7 +219,6 @@ Gallery = (function() {
     var userId = $(thisElt).parent().attr("userid");
     if (!userId) { return; }
     var userType = $(thisElt).parent().attr("usertype");
-    //console.log(userType);
     if (procedures.gbccOnGo != undefined) {
       if ($(thisElt).parent().hasClass("selected")) {
         $("#gallery-item-"+userId+" .forever-icon").css("display","none").removeClass("selected");
@@ -348,7 +344,6 @@ Gallery = (function() {
   }
   
   function createImageCard(data) {
-    //console.log("create image card");
     var canvasImg = new Image();
     canvasImg.id = data.id;
     data.id = data.id.replace(" ","-");
@@ -444,6 +439,13 @@ Gallery = (function() {
       } else {
         createImageCard(canvasData);
       } 
+    }
+    if (userData[data.source] && userData[data.source].reserved.mute) {
+      $("#gallery-item-"+data.source).children().each(function() {
+        if ($($(this)[0]).hasClass("label") === false) {
+          $($(this)[0]).css("visibility","hidden");
+        }
+      });
     }
   }
   
@@ -654,6 +656,24 @@ Gallery = (function() {
     });
   }
   
+  function muteCanvas(canvasId) {
+    console.log("mute canvas",canvasId);
+    socket.emit('send canvas override', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "mute-canvas",
+      hubnetMessage: {canvasId: canvasId}
+    });
+  }
+  
+  function unmuteCanvas(canvasId) {
+    console.log("unmute canvas",canvasId);
+    socket.emit('send canvas override', {
+      hubnetMessageSource: "server",
+      hubnetMessageTag: "unmute-canvas",
+      hubnetMessage: {canvasId: canvasId}
+    });
+  }
+  
   function getCanvasList() {
     var canvasList = [];
     $(".gbcc-gallery li").each(function() {
@@ -691,6 +711,7 @@ Gallery = (function() {
   }
   
   function acceptCanvasOverride(data) {
+    console.log(data);
     var hubnetMessageTag = data.hubnetMessageTag;
     var hubnetMessage = data.hubnetMessage;
     var adoptedUserId = hubnetMessage.adoptedUserId;
@@ -711,12 +732,16 @@ Gallery = (function() {
       }
     } else if (hubnetMessageTag === "mute-canvas") {
       userData[adoptedUserId].reserved.muted = true;
-      $("#gallery-item-" + data.source +" .card").remove(); 
-      canvasData.src="";
-      createEmptyTextCard(canvasData);
+      $("#gallery-item-"+adoptedUserId).children().each(function() {
+        if ($($(this)[0]).hasClass("label") === false) {
+          $($(this)[0]).css("visibility","hidden");
+        }
+      });
     } else if (hubnetMessageTag === "unmute-canvas") {
       userData[adoptedUserId].reserved.muted = false;
-      userData[adoptedUserId].canvas = originalCanvasUserData;
+      $("#gallery-item-"+adoptedUserId).children().each(function() {
+        $($(this)[0]).css("visibility","visible");
+      });
     } else if (hubnetMessageTag === "release-canvas") {
       if (adoptedUserId) {
         $("#gallery-item-"+adoptedUserId).attr("claimed","false");
@@ -725,8 +750,6 @@ Gallery = (function() {
       }
     }
   }
-  
-  
   
   return {
     displayCanvas: displayCanvas,
@@ -746,7 +769,9 @@ Gallery = (function() {
     getUserList: getUserList,
     getActiveUserList: getActiveUserList,
     acceptCanvasOverride: acceptCanvasOverride,
-    myRole: myRole
+    myRole: myRole,
+    muteCanvas: muteCanvas,
+    unmuteCanvas: unmuteCanvas
   };
 
 })();
