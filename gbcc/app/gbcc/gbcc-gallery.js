@@ -440,7 +440,7 @@ Gallery = (function() {
         createImageCard(canvasData);
       } 
     }
-    if (userData[data.source] && userData[data.source].reserved.mute) {
+    if (userData[data.source] && userData[data.source].reserved && userData[data.source].reserved.muted) {
       $("#gallery-item-"+data.source).children().each(function() {
         if ($($(this)[0]).hasClass("label") === false) {
           $($(this)[0]).css("visibility","hidden");
@@ -657,21 +657,27 @@ Gallery = (function() {
   }
   
   function muteCanvas(canvasId) {
-    console.log("mute canvas",canvasId);
-    socket.emit('send canvas override', {
-      hubnetMessageSource: "server",
-      hubnetMessageTag: "mute-canvas",
-      hubnetMessage: {canvasId: canvasId}
-    });
+    if (myUserType === "teacher") {
+      socket.emit('send canvas override', {
+        hubnetMessageSource: "server",
+        hubnetMessageTag: "mute-canvas",
+        hubnetMessage: {canvasId: canvasId}
+      });
+    } else {
+      alert("You must have the role of teacher to gbcc:mute-canvas.")
+    }
   }
   
   function unmuteCanvas(canvasId) {
-    console.log("unmute canvas",canvasId);
-    socket.emit('send canvas override', {
-      hubnetMessageSource: "server",
-      hubnetMessageTag: "unmute-canvas",
-      hubnetMessage: {canvasId: canvasId}
-    });
+    if (myUserType === "teacher") {
+      socket.emit('send canvas override', {
+        hubnetMessageSource: "server",
+        hubnetMessageTag: "unmute-canvas",
+        hubnetMessage: {canvasId: canvasId}
+      });
+    } else {
+      alert("You must have the role of teacher to gbcc:unmute-canvas.")
+    }
   }
   
   function getCanvasList() {
