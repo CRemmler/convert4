@@ -638,6 +638,10 @@ Gallery = (function() {
     return myUserType;
   }
   
+  function mirroring() {
+    return mirroringEnabled; 
+  }
+  
   function showPatches() {
     drawPatches = true;
     universe.repaint();
@@ -777,7 +781,8 @@ Gallery = (function() {
     acceptCanvasOverride: acceptCanvasOverride,
     myRole: myRole,
     muteCanvas: muteCanvas,
-    unmuteCanvas: unmuteCanvas
+    unmuteCanvas: unmuteCanvas,
+    mirroring: mirroring
   };
 
 })();
