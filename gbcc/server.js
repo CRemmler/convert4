@@ -71,7 +71,7 @@ io.on('connection', function(socket){
         allRooms[myRoom].settings.view = true;
         allRooms[myRoom].settings.gallery = true;
         allRooms[myRoom].settings.tabs = true;
-        allRooms[myRoom].settings.mirror = true;
+        allRooms[myRoom].settings.mirror = (activityType == "hubnet") ? true : false;
         allRooms[myRoom].settings.teacherId = "";
         allRooms[myRoom].settings.adoptCanvasDict = {};
       }
