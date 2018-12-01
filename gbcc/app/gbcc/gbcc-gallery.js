@@ -115,7 +115,9 @@ Gallery = (function() {
     }
     if (!allowGalleryControls) { $(".gallery-controls").css("display","none"); }
     if (!allowTeacherControls) { $(".teacher-controls").css("display","none"); }
-    if (!allowMirrorControl) { $(".mirror-controls").css("display","none"); }
+    if (!allowMirrorControl) { $(".mirror-controls").css("display","none"); } else {
+      $(".mirror-controls").css("display","inline-block");
+    }
     if (is_safari) {
       $("body").append("<canvas id=\"miniSafariCanvasView\" width=\"250\" height=\"250\" style=\"display:none\"></canvas>");
       canvasHeight = 250; canvasWidth = 250;
