@@ -14,6 +14,7 @@ var drawDrawing = true;
 var mirroringEnabled;
 var myCanvas;
 var myUserId;
+var netlogoGlobals = {};
   
 jQuery(document).ready(function() {
 
@@ -185,7 +186,18 @@ jQuery(document).ready(function() {
         if (data.state) {
           ImportExportPrims.importWorldRaw(data.state);
         }
+        // teacher turns mirroing on
+        // restore globals
+        for (var g in netlogoGlobals) {
+          world.observer.setGlobal(g, netlogoGlobals[g]);
+        }
       } else {
+        // teacher turns mirroring off 
+        // store globals 
+        var globalVars = world.observer.varNames();
+        for (var g in globalVars) {
+          netlogoGlobals[globalVars[g]] =  world.observer.getGlobal(globalVars[g]);
+        }
         if (myWorld) {
           world.clearAll(); 
           world.importState(myWorld);
