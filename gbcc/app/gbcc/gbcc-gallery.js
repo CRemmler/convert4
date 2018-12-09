@@ -560,7 +560,7 @@ Gallery = (function() {
     miniCtx.fillStyle="#000000";
     miniCtx.fillRect(0,0,300, 300);
     avatarShapeDrawer = new ShapeDrawer({}, miniCtx.onePixel);
-    universe.turtleDrawer.turtleShapeDrawer.drawAvatar(miniCtx, color, shape, 20);
+    universe.turtleDrawer.turtleShapeDrawer.drawAvatar(miniCtx, color, shape, 1/8);
     message = document.getElementById(avatarCanvasId).toDataURL("image/jpeg", imageQuality); 
     socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
