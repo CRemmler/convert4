@@ -792,7 +792,7 @@ io.on('connection', function(socket){
         clearRoom(myRoom, school);
       } else {
         if (countUsers(myRoom, school) === 0) {	
-          io.to("login").emit("display interface", {userType: "remove login", room: roomName});
+          io.to("login").emit("display interface", {userType: "remove login", room: myRoom});
           delete allRooms[myRoom]; 
         }
       }
