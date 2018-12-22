@@ -152,22 +152,22 @@ Interface = (function() {
   }
   
   function setupGbccMouseEvents() {
-    if (procedures.gbccOnMousedown) {
-      $(".netlogo-view-container").on("mousedown", function(e){
+    $(".netlogo-view-container").on("mousedown", function(e){
+      if (procedures.gbccOnMousedown) {
         offset = $(this).offset();
         pxcor = universe.view.xPixToPcor(e.clientX - offset.left + window.pageXOffset);
         pycor = universe.view.yPixToPcor(e.clientY - offset.top + window.pageYOffset);
         session.runCode('try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MOUSEDOWN"]("'+pxcor+'","'+pycor+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }');
-      });
-    }
-    if (procedures.gbccOnMouseup) {
-      $(".netlogo-view-container").on("mouseup", function(e){
+      }
+    });
+    $(".netlogo-view-container").on("mouseup", function(e){
+      if (procedures.gbccOnMouseup) {
         offset = $(this).offset();
         pxcor = universe.view.xPixToPcor(e.clientX - offset.left + window.pageXOffset);
         pycor = universe.view.yPixToPcor(e.clientY - offset.top + window.pageYOffset);
         session.runCode('try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MOUSEUP"]("'+pxcor+'","'+pycor+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }');
-      });
-    }
+      }
+    });
   }
 
   function displayDisconnectedInterface() {
