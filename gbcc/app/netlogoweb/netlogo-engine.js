@@ -19194,7 +19194,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, clearBroadcasts, compileObserverCode, compilePatchCode, compileTurtleCode, exportMyData, exportOurData, get, getActiveUserList, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantIndices, hidePatches, importMyData, importMyDataFile, importOurData, importOurDataFile, mirroring, muteCanvas, myRole, restoreGlobals, restoreGlobalsFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, unmuteCanvas, whoAmI;
+      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, clearBroadcasts, compileObserverCode, compilePatchCode, compileTurtleCode, exportMyData, exportOurData, get, getActiveUserList, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantIndices, hidePatches, importMyData, importMyDataFile, importOurData, importOurDataFile, mirroring, muteCanvas, myRole, restoreGlobals, restoreGlobalsFromUser, restoreState, restoreStateFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, storeState, unmuteCanvas, whoAmI;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
@@ -19389,6 +19389,15 @@ function hasOwnProperty(obj, prop) {
       mirroring = function() {
         return Gallery.mirroring();
       };
+      storeState = function() {
+        return Gallery.storeState();
+      };
+      restoreState = function() {
+        return Gallery.restoreState();
+      };
+      restoreStateFromUser = function(messageSource) {
+        return Gallery.restoreStateFromUser(messageSource);
+      };
       return {
         name: "gbcc",
         prims: {
@@ -19433,7 +19442,10 @@ function hasOwnProperty(obj, prop) {
           "MUTE-CANVAS": muteCanvas,
           "UNMUTE-CANVAS": unmuteCanvas,
           "MY-ROLE": myRole,
-          "MIRRORING": mirroring
+          "MIRRORING": mirroring,
+          "STORE-STATE": storeState,
+          "RESTORE-STATE": restoreState,
+          "RESTORE-STATE-FROM-USER": restoreStateFromUser
         }
       };
     }

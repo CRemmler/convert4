@@ -84,6 +84,9 @@ jQuery(document).ready(function() {
         activityType = data.activityType;
         Interface.showLogin(data.rooms, data.components);
         break;
+      case "remove login":
+        Interface.removeLogin(data.room);
+        break;
       case "disconnected":
         Interface.showDisconnected();
         break;
@@ -490,6 +493,16 @@ jQuery(document).ready(function() {
         userStreamData[data.userId] = {};
         if ($.isEmptyObject(foreverButtonCode)) { myForeverButtonVar = setInterval(runForeverButtonCode, 200); }
         foreverButtonCode[data.userId] = "gbcc-forever-button-code-"+data.userId;
+        break;
+      case "mousedown":
+        if (procedures.gbccOnMousedown) {
+          session.runCode('try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MOUSEDOWN"]("'+data.mouse.pxcor+'","'+data.mouse.pycor+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }');
+        }
+        break;
+      case "mouseup":
+        if (procedures.gbccOnMouseup) {
+          session.runCode('try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MOUSEUP"]("'+data.mouse.pxcor+'","'+data.mouse.pycor+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }');
+        }
         break;
     }
   });

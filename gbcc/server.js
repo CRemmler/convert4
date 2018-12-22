@@ -792,6 +792,7 @@ io.on('connection', function(socket){
         clearRoom(myRoom, school);
       } else {
         if (countUsers(myRoom, school) === 0) {	
+          io.to("login").emit("display interface", {userType: "remove login", room: roomName});
           delete allRooms[myRoom]; 
         }
       }
@@ -825,6 +826,7 @@ function clearRoom(roomName, school) {
     }
     for (var i=0; i<clientList.length; i++) {
       if (io.sockets.sockets[clientList[i]]) {
+        //socket.to("login").emit("display interface", {userType: "login", rooms: rooms, components: config.interfaceJs.loginComponents, activityType: null));
         io.to(clientList[i]).emit("display interface", {userType: "disconnected"});
         io.sockets.sockets[clientList[i]].disconnect();
       }

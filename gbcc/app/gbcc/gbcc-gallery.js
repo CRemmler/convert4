@@ -723,7 +723,6 @@ Gallery = (function() {
   }
   
   function acceptCanvasOverride(data) {
-    console.log(data);
     var hubnetMessageTag = data.hubnetMessageTag;
     var hubnetMessage = data.hubnetMessage;
     var adoptedUserId = hubnetMessage.adoptedUserId;
@@ -763,6 +762,45 @@ Gallery = (function() {
     }
   }
   
+  function storeState() {
+    if (userData[myUserId] && userData[myUserId].reserved) {
+      var state = {};
+      state.myUserData = userData[myUserId];
+      state.myWorld = world.exportCSV();
+      state.blob = myCanvas.toDataURL("image/png", 0.5);
+      state.graph = Graph.getAll();
+      state.maps = Maps.getAll();
+      //state.physics = Physics.getAll();
+      userData[myUserId].reserved.state = state;
+    }
+  }
+  
+  function restoreState() {
+    if (userData[myUserId] && userData[myUserId].reserved && userData[myUserId].reserved.state) {
+      var state = userData[myUserId].reserved.state;
+      if (state.userData) {
+        for (data in state.userData) {
+          if (data != "reserved") {
+            userData[myUserId][data] = state.userData[data];
+          }
+        }
+      }
+      if (state.myWorld) {
+        ImportExportPrims.importWorldRaw(state.myWorld);
+      }
+      if (state.blob) {
+        universe.model.drawingEvents.push({type: "import-drawing", sourcePath: state.blob});
+      }
+      if (state.graph) { Graph.setAll(state.graph); }
+      if (state.maps) { Maps.setAll(state.maps); }
+      // if (state.physics) { Physics.setAll(state.physics); }
+    }
+  }
+  
+  function restoreStateFromUser(userId) {
+    console.log("restore state from user");
+  }
+  
   return {
     displayCanvas: displayCanvas,
     broadcastView: broadcastView,
@@ -784,7 +822,10 @@ Gallery = (function() {
     myRole: myRole,
     muteCanvas: muteCanvas,
     unmuteCanvas: unmuteCanvas,
-    mirroring: mirroring
+    mirroring: mirroring,
+    storeState: storeState,
+    restoreState: restoreState,
+    restoreStateFromUser: restoreStateFromUser
   };
 
 })();

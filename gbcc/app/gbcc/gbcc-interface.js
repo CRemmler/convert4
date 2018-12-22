@@ -6,6 +6,13 @@ Interface = (function() {
   var roomNames = {};
 
   function displayLoginInterface(rooms, components) {
+    if ($(".login-room-button-container button").length > 0) {
+      var roomName = rooms[rooms.length - 1];
+      widget = "<button id='netlogo-button-"+index+"'class='netlogo-widget netlogo-command login login-room-button' type='button'>";
+      widget += "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+roomName+"</span> </button>";
+      $(".login-room-button-container").append(widget);
+      return;
+    } 
     var roomButtonHtml, roomButtonId;
     setupItems();
     addTeacherControls();
@@ -63,10 +70,9 @@ Interface = (function() {
       }
       roomNames["netlogo-button-"+index] = rooms[i];
       passCodes["netlogo-button-"+index] = passCode;
-      widget = "<button id='netlogo-button-"+index+"'class='netlogo-widget netlogo-command login login-room-button'"+
-      " type='button'>"+
+      widget = "<button id='netlogo-button-"+index+"'class='netlogo-widget netlogo-command login login-room-button' type='button'>";
 //      "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+markdown.toHTML(roomName)+"</span> </button>";
-    "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+roomName+"</span> </button>";
+      widget += "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+roomName+"</span> </button>";
 
       $(".login-room-button-container").append(widget);
       $(".login-room-button-container").on("click", "#netlogo-button-"+index, function() {
@@ -95,7 +101,15 @@ Interface = (function() {
       ($("#tips").css("display") === "none") ? $("#tips").css("display","inline-block") : $("#tips").css("display","none"); 
     });
     $("#exportHtmlButton").css("display","none");
-    $(".netlogo-toggle-container").css("display","none")
+    $(".netlogo-toggle-container").css("display","none");
+  }
+  
+  function removeLoginButton(roomName) {
+    $(".login-room-button-container button .netlogo-label").each(function() { 
+      if ($(this).html() === roomName) {
+        $(this).parent().remove();
+      }
+    });
   }
 
   function displayTeacherInterface(room, components) {
@@ -108,6 +122,7 @@ Interface = (function() {
     $(".netlogo-tab-area").removeClass("hidden");
     $(".admin-body").css("display","none");
     $($(".netlogo-toggle-container")[0]).css("display","flex");
+    if (activityType === "gbcc") { setupGbccMouseEvents(); }
   }
 
   function displayStudentInterface(room, components, activityType) {
@@ -133,6 +148,26 @@ Interface = (function() {
       $(".netlogo-tab-area").removeClass("hidden");
     }
     $($(".netlogo-toggle-container")[0]).css("display","flex");
+    if (activityType === "gbcc") { setupGbccMouseEvents(); }
+  }
+  
+  function setupGbccMouseEvents() {
+    if (procedures.gbccOnMousedown) {
+      $(".netlogo-view-container").on("mousedown", function(e){
+        offset = $(this).offset();
+        pxcor = universe.view.xPixToPcor(e.clientX - offset.left + window.pageXOffset);
+        pycor = universe.view.yPixToPcor(e.clientY - offset.top + window.pageYOffset);
+        session.runCode('try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MOUSEDOWN"]("'+pxcor+'","'+pycor+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }');
+      });
+    }
+    if (procedures.gbccOnMouseup) {
+      $(".netlogo-view-container").on("mouseup", function(e){
+        offset = $(this).offset();
+        pxcor = universe.view.xPixToPcor(e.clientX - offset.left + window.pageXOffset);
+        pycor = universe.view.yPixToPcor(e.clientY - offset.top + window.pageYOffset);
+        session.runCode('try { var reporterContext = false; var letVars = { }; procedures["GBCC-ON-MOUSEUP"]("'+pxcor+'","'+pycor+'"); } catch (e) { if (e instanceof Exception.StopInterrupt) { return e; } else { throw e; } }');
+      });
+    }
   }
 
   function displayDisconnectedInterface() {
@@ -161,7 +196,7 @@ Interface = (function() {
     if (widget === "view") {
       label = "View";
       offset = $(thisElement).offset();
-      value = [ universe.view.xPixToPcor(e.clientX - offset.left), universe.view.yPixToPcor(e.clientY - offset.top) ];
+      value = [ universe.view.xPixToPcor(e.clientX - offset.left + window.pageXOffset), universe.view.yPixToPcor(e.clientY - offset.top + window.pageYOffset) ];
     } else if (widget === "button" ) {
       value = "";
     } else {
@@ -339,16 +374,13 @@ Interface = (function() {
   }
   
   function mouseOn(name) {
-    console.log("mouseOn"+name);
     var container = name + "Container";
     $(".netlogo-view-container").css("pointer-events","none");
     $("#"+container).css("pointer-events","auto");
   }
   
   function mouseOff(name) {
-    console.log("mouseOn"+name);
     var container = name + "Container";
-    //if ($("#"+container).css("z-index") < $(".netlogo-view-container").css("z-index")) {
     $(".netlogo-view-container").css("pointer-events","auto");
     $("#"+container).css("pointer-events","none");
   }
@@ -389,6 +421,7 @@ Interface = (function() {
   
   return {
     showLogin: displayLoginInterface,
+    removeLogin: removeLoginButton,
     showTeacher: displayTeacherInterface,
     showStudent: displayStudentInterface,
     showDisconnected: displayDisconnectedInterface,
