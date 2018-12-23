@@ -734,6 +734,30 @@ io.on('connection', function(socket){
     var myUserId = getSocketId(data.userId);
     io.to(myUserId).emit("student accepts UI change", {"display": allRooms[myRoom].settings["mirror"], "type": "mirror", "state": data.state, "image": data.image});
   });
+  
+  socket.on("student triggers state request", function(data) {
+    var school = socket.school;
+    var allRooms = schools[school];
+    var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined)) {
+      return;
+    }
+    allRooms[myRoom].settings[data.type] = data.display; 
+    var userId = getSocketId(data.targetUserId);
+    io.to(userId).emit("student accepts state request", {userId: data.requestUserId});
+  });
+  
+  socket.on("student replies state request", function(data) {
+    var school = socket.school;
+    var allRooms = schools[school];
+    var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined)) {
+      return;
+    }
+    allRooms[myRoom].settings[data.type] = data.display; 
+    var myUserId = getSocketId(data.userId);
+    io.to(myUserId).emit("student accepts state change", {state: data.state});
+  });
 	
   // user exits
   socket.on('disconnect', function () {

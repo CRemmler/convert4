@@ -216,6 +216,26 @@ jQuery(document).ready(function() {
     var blob = myCanvas.toDataURL("image/png", 0.5);
     socket.emit('teacher requests UI change new entry', {'userId':  data.userId, 'state': state, 'image': blob});
   });
+  
+  //"student accepts request to share state"
+  socket.on("student accepts state request", function(data) {
+    var state = {};
+    state.myUserData = userData[myUserId];
+    state.myWorld = world.exportCSV();
+    state.blob = myCanvas.toDataURL("image/png", 0.5);
+    state.graph = Graph.getAll();
+    state.maps = Maps.getAll();
+    socket.emit('student replies state request', {userId:  data.userId, state: state});
+  });
+  
+  //"students accepts and loads new state"
+  socket.on("student accepts state change", function(data) {
+    Gallery.storeState();
+    var state = data.state;
+    if (userData[myUserId] && userData[myUserId].reserved && userData[myUserId].reserved.state) {
+      Gallery.restoreStateData(state);
+    }
+  });
 
   // students display reporters
   socket.on("display reporter", function(data) {

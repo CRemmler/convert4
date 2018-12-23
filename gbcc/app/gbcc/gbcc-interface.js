@@ -6,11 +6,10 @@ Interface = (function() {
   var roomNames = {};
 
   function displayLoginInterface(rooms, components) {
-    if ($(".login-room-button-container button").length > 0) {
+    if ($(".login-room-button-container").length > 0) {
+      var widgetIndex = $(".netlogo-widget").length - 1;
       var roomName = rooms[rooms.length - 1];
-      widget = "<button id='netlogo-button-"+index+"'class='netlogo-widget netlogo-command login login-room-button' type='button'>";
-      widget += "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+roomName+"</span> </button>";
-      $(".login-room-button-container").append(widget);
+      createButton(roomName, widgetIndex);
       return;
     } 
     var roomButtonHtml, roomButtonId;
@@ -61,33 +60,7 @@ Interface = (function() {
     for (var i=0; i<rooms.length; i++) {
       // a room button
       index++;
-      roomName = rooms[i];
-      passCode = "";
-      
-      if (roomName.indexOf(":") > 0) { 
-        passCode = roomName.substr(roomName.indexOf(":")+1, roomName.length).toUpperCase().trim();
-        roomName = roomName.substr(0,roomName.indexOf(":")); 
-      }
-      roomNames["netlogo-button-"+index] = rooms[i];
-      passCodes["netlogo-button-"+index] = passCode;
-      widget = "<button id='netlogo-button-"+index+"'class='netlogo-widget netlogo-command login login-room-button' type='button'>";
-//      "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+markdown.toHTML(roomName)+"</span> </button>";
-      widget += "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+roomName+"</span> </button>";
-
-      $(".login-room-button-container").append(widget);
-      $(".login-room-button-container").on("click", "#netlogo-button-"+index, function() {
-        var myRoom = roomNames[$(this).attr("id")];
-        if (passCodes[$(this).attr("id")] === "") {
-          socket.emit("enter room", {room: myRoom});  
-        } else {
-          var response = window.prompt("What is the Entry Code?","").toUpperCase().trim();
-          if (response === passCodes[$(this).attr("id")]) {
-            socket.emit("enter room", {room: myRoom});
-          } else {
-            alert("Incorrect Password");
-          }
-        }
-      });
+      createButton(rooms[i], index);
     }
     widget  = "<div class='netlogo-widget login login-tips'>";
     widget += "  <span id='tips' style='display:none'>";
@@ -102,6 +75,32 @@ Interface = (function() {
     });
     $("#exportHtmlButton").css("display","none");
     $(".netlogo-toggle-container").css("display","none");
+  }
+  
+  function createButton(roomName, index) {
+    passCode = "";
+    if (roomName.indexOf(":") > 0) { 
+      passCode = roomName.substr(roomName.indexOf(":")+1, roomName.length).toUpperCase().trim();
+      roomName = roomName.substr(0,roomName.indexOf(":")); 
+    }
+    roomNames["netlogo-button-"+index] = roomName;
+    passCodes["netlogo-button-"+index] = passCode;
+    widget = "<button id='netlogo-button-"+index+"'class='netlogo-widget netlogo-command login login-room-button' type='button'>";
+    widget += "<div class='netlogo-button-agent-context'></div> <span class='netlogo-label'>"+roomName+"</span> </button>";
+    $(".login-room-button-container").append(widget);
+    $(".login-room-button-container").on("click", "#netlogo-button-"+index, function() {
+      var myRoom = roomNames[$(this).attr("id")];
+      if (passCodes[$(this).attr("id")] === "") {
+        socket.emit("enter room", {room: myRoom});  
+      } else {
+        var response = window.prompt("What is the Entry Code?","").toUpperCase().trim();
+        if (response === passCodes[$(this).attr("id")]) {
+          socket.emit("enter room", {room: myRoom});
+        } else {
+          alert("Incorrect Password");
+        }
+      }
+    });
   }
   
   function removeLoginButton(roomName) {

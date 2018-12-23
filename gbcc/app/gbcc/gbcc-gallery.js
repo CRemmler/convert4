@@ -777,28 +777,35 @@ Gallery = (function() {
   
   function restoreState() {
     if (userData[myUserId] && userData[myUserId].reserved && userData[myUserId].reserved.state) {
-      var state = userData[myUserId].reserved.state;
-      if (state.userData) {
-        for (data in state.userData) {
-          if (data != "reserved") {
-            userData[myUserId][data] = state.userData[data];
-          }
-        }
-      }
-      if (state.myWorld) {
-        ImportExportPrims.importWorldRaw(state.myWorld);
-      }
-      if (state.blob) {
-        universe.model.drawingEvents.push({type: "import-drawing", sourcePath: state.blob});
-      }
-      if (state.graph) { Graph.setAll(state.graph); }
-      if (state.maps) { Maps.setAll(state.maps); }
-      // if (state.physics) { Physics.setAll(state.physics); }
+      restoreStateData(userData[myUserId].reserved.state);
     }
   }
   
+  function restoreStateData(state) {
+    if (state.userData) {
+      for (data in state.userData) {
+        if (data != "reserved") {
+          userData[myUserId][data] = state.userData[data];
+        }
+      }
+    }
+    if (state.myWorld) {
+      ImportExportPrims.importWorldRaw(state.myWorld);
+    }
+    if (state.blob) {
+      universe.model.drawingEvents.push({type: "import-drawing", sourcePath: state.blob});
+    }
+    if (state.graph) { Graph.setAll(state.graph); }
+    if (state.maps) { Maps.setAll(state.maps); }
+    // if (state.physics) { Physics.setAll(state.physics); }
+  }
+  
   function restoreStateFromUser(userId) {
-    console.log("restore state from user");
+    if (userId === myUserId) {
+      restoreState();
+    } else {
+      socket.emit('student triggers state request', {targetUserId: userId, requestUserId: myUserId });
+    }
   }
   
   return {
@@ -825,7 +832,8 @@ Gallery = (function() {
     mirroring: mirroring,
     storeState: storeState,
     restoreState: restoreState,
-    restoreStateFromUser: restoreStateFromUser
+    restoreStateFromUser: restoreStateFromUser,
+    restoreStateData: restoreStateData
   };
 
 })();
