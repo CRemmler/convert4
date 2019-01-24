@@ -359,6 +359,30 @@ io.on('connection', function(socket){
     schools[school] = allRooms;
   });
   
+  
+  socket.on("send state reporter", function(data) {
+    var school = socket.school;
+    var allRooms = schools[school];
+    var myRoom = socket.myRoom;
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined && allRooms[myRoom].settings.adoptCanvasDict != undefined)) {
+      return;
+    }
+    var myUserId = getRecipient(socket.id, allRooms[myRoom].settings.adoptCanvasDict);
+    if (!(allRooms[myRoom].userData[myUserId] != undefined)) { return; }
+    var myUserType = (myUserId === allRooms[myRoom].settings.teacherId) ? "teacher" : "student"; //socket.myUserType;
+    var destination = data.hubnetMessageSource;
+    if (allRooms[myRoom] != undefined) {
+      if (allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId] && allRooms[myRoom].userData[myUserId].reserved != undefined) {
+        allRooms[myRoom].userData[myUserId].reserved.myWorld = data.myWorld,
+        allRooms[myRoom].userData[myUserId].reserved.blob = data.blob,
+        allRooms[myRoom].userData[myUserId].reserved.graph = data.graph,
+        allRooms[myRoom].userData[myUserId].reserved.maps = data.maps
+      }
+    }
+    schools[school] = allRooms;
+  });
+  
+
   socket.on("send override", function(data) {
     var school = socket.school;
     var allRooms = schools[school];
@@ -739,24 +763,15 @@ io.on('connection', function(socket){
     var school = socket.school;
     var allRooms = schools[school];
     var myRoom = socket.myRoom;
-    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined)) {
+    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined 
+      && allRooms[myRoom].userData != undefined
+      && allRooms[myRoom].userData[data.targetUserId] != undefined )) {
       return;
     }
-    allRooms[myRoom].settings[data.type] = data.display; 
-    var userId = getSocketId(data.targetUserId);
-    io.to(userId).emit("student accepts state request", {userId: data.requestUserId});
-  });
-  
-  socket.on("student replies state request", function(data) {
-    var school = socket.school;
-    var allRooms = schools[school];
-    var myRoom = socket.myRoom;
-    if (!(allRooms[myRoom] != undefined && allRooms[myRoom].settings != undefined)) {
-      return;
-    }
-    allRooms[myRoom].settings[data.type] = data.display; 
-    var myUserId = getSocketId(data.userId);
-    io.to(myUserId).emit("student accepts state change", {state: data.state});
+    var myUserId = getSocketId(data.requestUserId);
+    io.to(myUserId).emit("student accepts state request", {
+      state: allRooms[myRoom].userData[data.targetUserId]
+    });
   });
 	
   // user exits

@@ -219,21 +219,19 @@ jQuery(document).ready(function() {
   
   //"student accepts request to share state"
   socket.on("student accepts state request", function(data) {
-    var state = {};
-    state.myUserData = userData[myUserId];
-    state.myWorld = world.exportCSV();
-    state.blob = myCanvas.toDataURL("image/png", 0.5);
-    state.graph = Graph.getAll();
-    state.maps = Maps.getAll();
-    socket.emit('student replies state request', {userId:  data.userId, state: state});
-  });
-  
-  //"students accepts and loads new state"
-  socket.on("student accepts state change", function(data) {
-    Gallery.storeState();
-    var state = data.state;
-    if (userData[myUserId] && userData[myUserId].reserved && userData[myUserId].reserved.state) {
-      Gallery.restoreStateData(state);
+    if (data == undefined) { return; }
+    for (var field in data.state) {
+      if (field != "reserved") {
+        userData[myUserId][field] = data.state[field];
+      }
+    }
+    if (data.state && data.state.reserved) {
+      Gallery.restoreStateData({
+        myWorld: data.state.reserved.myWorld,
+        blob: data.state.reserved.blob,
+        graph: data.state.reserved.graph,
+        maps: data.state.reserved.maps
+      });
     }
   });
 

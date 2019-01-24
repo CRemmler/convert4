@@ -764,31 +764,38 @@ Gallery = (function() {
   
   function storeState() {
     if (userData[myUserId] && userData[myUserId].reserved) {
-      var state = {};
-      state.myUserData = userData[myUserId];
-      state.myWorld = world.exportCSV();
-      state.blob = myCanvas.toDataURL("image/png", 0.5);
-      state.graph = Graph.getAll();
-      state.maps = Maps.getAll();
+      var myWorld = world.exportCSV();
+      var blob = myCanvas.toDataURL("image/png", 0.5);
+      var graph = Graph.getAll();
+      var maps = Maps.getAll();
       //state.physics = Physics.getAll();
-      userData[myUserId].reserved.state = state;
+      userData[myUserId].reserved.myWorld = myWorld;
+      userData[myUserId].reserved.blob = blob;
+      userData[myUserId].reserved.graph = graph;
+      userData[myUserId].reserved.maps = maps;
+      socket.emit('send state reporter', {
+        myWorld: myWorld,
+        blob: blob,
+        graph: graph,
+        maps: maps
+        // physics: state.physics 
+      });
     }
   }
   
   function restoreState() {
-    if (userData[myUserId] && userData[myUserId].reserved && userData[myUserId].reserved.state) {
-      restoreStateData(userData[myUserId].reserved.state);
+    if (userData[myUserId] && userData[myUserId].reserved) {
+      restoreStateData({
+        myWorld: userData[myUserId].reserved.myWorld,
+        blob: userData[myUserId].reserved.blob,
+        graph: userData[myUserId].reserved.graph,
+        maps: userData[myUserId].reserved.maps
+        // physics: userData[myUserId].reserved.physics
+      });
     }
   }
   
   function restoreStateData(state) {
-    if (state.userData) {
-      for (data in state.userData) {
-        if (data != "reserved") {
-          userData[myUserId][data] = state.userData[data];
-        }
-      }
-    }
     if (state.myWorld) {
       ImportExportPrims.importWorldRaw(state.myWorld);
     }
@@ -804,6 +811,7 @@ Gallery = (function() {
     if (userId === myUserId) {
       restoreState();
     } else {
+      storeState();
       socket.emit('student triggers state request', {targetUserId: userId, requestUserId: myUserId });
     }
   }
