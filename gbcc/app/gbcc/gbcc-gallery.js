@@ -149,7 +149,8 @@ Gallery = (function() {
     spanText += "<input id='importgbcctype' type='text' name='importgbcctype' value=''>";//" style='display: none;'>";
     spanText += "<button type='submit' id='importgbccbutton'></button></form>";
     $("body").append(spanText);
-    $(".myUserIdInput").val(myUserId); 
+    $(".myUserIdInput").val(myUserId);
+    $(".netlogo-toggle-container").first().append('<span id="graphLoadingIcon" style="color:red">&nbsp;&#10059;</span>'); 
   }
 
   function selectAll() {

@@ -28,6 +28,7 @@ Graph = (function() {
     showGraph();
     updateGraph();
     hideGraph();
+    $("#graphLoadingIcon").css("display","none");
     ggbApplet.setErrorDialogsActive(false);  
   }
   
