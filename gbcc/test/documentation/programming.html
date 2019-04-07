@@ -56,9 +56,11 @@
       <div class="code"> to gbcc-on-exit [ user-id role ] <br>&nbsp; ;; user-id identifies who exited<br>&nbsp; ;; role is either teacher or student"<br>end</div>
     </div>
     
-    <h3><input id="whoAmI" type="checkbox"> Who Am I</h3>
+    <h3><input id="whoAmI" type="checkbox"> Who Am I and My Role</h3>
     <div id="whoAmIContainer" class="initHidden">
-      <div class="code">show gbcc:who-am-i <br>;; returns your user's user-id</div>
+      <div class="code">show gbcc:who-am-i <br>;; returns your user's user-id
+        <br>show gbcc:my-role <br>;; returns your user's role (student or teacher)
+      </div>
     </div>
     
     <h2>Share to Gallery</h2>
@@ -77,7 +79,7 @@
     <h3><input id="broadcastText" type="checkbox"> Broadcast Text to Gallery</h3>
     <div id="broadcastTextContainer" class="initHidden">
       <div><img src="./images/share-text.png"></div>
-      <div class="code">gbcc:broadcast-text ":)"</div>
+      <div class="code">gbcc:broadcast-text "animal" "cat"</div>
     </div>
             
     <h3><input id="broadcastAvatar" type="checkbox"> Broadcast Avatar to Gallery</h3>

@@ -32,7 +32,9 @@
       <a href="#gbcc-store-globals">gbcc:store-globals</a> 
       <a href="#gbcc-restore-globals">gbcc:restore-globals</a> 
       <a href="#gbcc-restore-globals-from-user">gbcc:restore-globals-from-user</a> 
-      
+      <a href="#gbcc-store-state">gbcc:store-state</a> 
+      <a href="#gbcc-restore-state">gbcc:restore-state</a> 
+      <a href="#gbcc-restore-state-from-user">gbcc:restore-state-from-user</a> 
       <!--<a href="#gbcc-add-to-stream">gbcc:add-to-stream</a> 
       <a href="#gbcc-get-stream">gbcc:get-stream</a> 
       <a href="#gbcc-get-stream-from-user">gbcc:get-stream-from-user</a>  -->   
@@ -42,7 +44,7 @@
       <a href="#gbcc-broadcast-view">gbcc:broadcast-view</a>    
       <a href="#gbcc-broadcast-text">gbcc:broadcast-text</a>    
       <a href="#gbcc-broadcast-plot">gbcc:broadcast-plot</a>    
-      <a href="#gbcc-broadcast-text">gbcc:broadcast-avatar</a>    
+      <a href="#gbcc-broadcast-avatar">gbcc:broadcast-avatar</a>    
       <a href="#gbcc-clear-broadcast">gbcc:clear-broadcast</a>    
       <a href="#gbcc-clear-broadcasts">gbcc:clear-broadcasts</a>    
       
@@ -71,7 +73,8 @@
       Canvases
       <br>
       <a href="#gbcc-adopt-canvas">gbcc:adopt-canvas</a>
-      <a href="#gbcc-clone-canvas">gbcc:clone-canvas</a>
+      <a href="#gbcc-mute-canvas">gbcc:mute-canvas</a>
+      <a href="#gbcc-unmute-canvas">gbcc:unmute-canvas</a>
       <a href="#gbcc-get-canvas-list">gbcc:get-canvas-list</a>
       <a href="#gbcc-get-vacant-indices">gbcc:get-vacant-indices</a>
 
@@ -79,6 +82,7 @@
       Users
       <br>
       <a href="#gbcc-who-am-i">gbcc:who-am-i</a>  
+      <a href="#gbcc-who-am-i">gbcc:my-role</a>  
       <a href="#gbcc-get-user-list">gbcc:get-user-list</a>
       <a href="#gbcc-get-active-user-list">gbcc:get-active-user-list</a>
           
@@ -102,6 +106,8 @@
       <a href="#gbcc-on-deselect">gbcc-on-deselect</a>
       <a href="#gbcc-on-go">gbcc-on-go</a>
       <a href="#gbcc-on-message">gbcc-on-message</a>
+      <a href="#gbcc-on-mousedown">gbcc-on-mousedown</a>
+      <a href="#gbcc-on-mouseup">gbcc-on-mouseup</a>
     </div>
     
     <h2>
@@ -149,8 +155,6 @@ end
     <div class="dict_entry" id="gbcc-store-globals">
       <h3><a>gbcc:store-globals</a></h3>
       <img alt="Observer Command" src="images/observer.png">
-      <img alt="Observer Command" src="images/turtle.png">
-      <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:store-globals</span></h4>
       <p>Stores all global values.
       <pre>
@@ -161,8 +165,6 @@ gbcc:store-globals
     <div class="dict_entry" id="gbcc-restore-globals">
       <h3><a>gbcc:restore-globals</a></h3>
       <img alt="Observer Command" src="images/observer.png">
-      <img alt="Observer Command" src="images/turtle.png">
-      <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:restore-globals</span></h4>
       <p>Gets stored values and assigns them to their corresponding global variables.
       <pre>
@@ -173,13 +175,43 @@ gbcc:restore-globals
     <div class="dict_entry" id="gbcc-restore-globals-from-user">
       <h3><a>gbcc:restore-globals-from-user</a></h3>
       <img alt="Observer Command" src="images/observer.png">
-      <img alt="Observer Command" src="images/turtle.png">
-      <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:restore-globals-from-user <i>user-id</i></span></h4>
-      <p>Gets stored values, based on user-id, and assigns them to their corresponding global variables.
+      <p>Gets stored values, based on user-id, and assigns them to their corresponding global variables.<span class="update">*** new ***</span>
       <pre>
 to gbcc-on-select [user-id]
   gbcc:restore-globals-from-user user-id
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-store-state">
+      <h3><a>gbcc:store-state"/a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <h4><span class="prim_example">gbcc:store-state</span></h4>
+      <p>Stores users own state, (including state of NetLogo model and GbCC extensions).<span class="update">*** new ***</span>
+      <pre>
+gbcc:store-state
+      </pre>
+    </div>
+      
+    <div class="dict_entry" id="gbcc-restore-state">
+      <h3><a>gbcc:restore-state"/a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <h4><span class="prim_example">gbcc:restore-state</span></h4>
+      <p>Restores users own previously stored state (including state of NetLogo model and GbCC extensions).<span class="update">*** new ***</span>
+      <pre>
+gbcc:restore-state
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-restore-state-from-user">
+      <h3><a>gbcc:restore-state-from-user</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <h4><span class="prim_example">gbcc:restore-state-from-user <i>user-id</i></span></h4>
+      <p>Gets stored state, based on user-id, and load state.
+      <pre>
+to gbcc-on-select [user-id]
+  gbcc:restore-state-from-user user-id
 end
       </pre>
     </div>
@@ -247,12 +279,12 @@ end
       <img alt="Observer Command" src="images/observer.png">
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
-      <h4><span class="prim_example">gbcc:broadcast-text <i>name</i></span></h4>
+      <h4><span class="prim_example">gbcc:broadcast-text <i>tag message</i></span></h4>
       <p>Sends data to the user's canvas, in the gallery. This data is displayed
         in everyone's gallery.
         User can send text. 
       <pre>
-  gbcc:broadcast-text "my-text"
+  gbcc:broadcast-text "some-tag" "my-message"
       </pre>
     </div>
 
@@ -358,6 +390,18 @@ show gbcc:who-am-i
       </pre>
     </div>
     
+    <div class="dict_entry" id="gbcc-my-role">
+      <h3><a>gbcc:my-role</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:my-role</span></h4>
+      <p>Returns a user's role, either teacher or student. 
+      <pre>
+show gbcc:my-role
+      </pre>
+    </div>
+    
     <div class="dict_entry" id="gbcc-get-user-list">
       <h3><a>gbcc:get-user-list</a></h3>
       <img alt="Observer Command" src="images/observer.png">
@@ -439,24 +483,37 @@ gbcc:hide-patches
       <img alt="Observer Command" src="images/patch.png">
       <h4><span class="prim_example">gbcc:adopt-canvas <i>user-id canvas-id</i></span></h4>
       <p>Allow a user to take over a canvas.<span class="update">*** new ***</span>
-        <span class="update">*** new ***</span>
       <pre>
     gbcc:adopt-canvas user-id 3
       </pre>
     </div>
     
-    <div class="dict_entry" id="gbcc-clone-canvas">
-      <h3><a>gbcc:clone-canvas</a></h3>
+    <div class="dict_entry" id="gbcc-mute-canvas">
+      <h3><a>gbcc:mute-canvas</a></h3>
       <img alt="Observer Command" src="images/observer.png">
       <img alt="Observer Command" src="images/turtle.png">
       <img alt="Observer Command" src="images/patch.png">
-      <h4><span class="prim_example">gbcc:clone-canvas <i>user-id</i></span></h4>
-      <p>Allow a user to clone a canvas.
+      <h4><span class="prim_example">gbcc:mute-canvas <i>canvas-id</i></span></h4>
+      <p>Allow a teacher to mute a canvas.
         <span class="update">*** new ***</span>
       <pre>
-    gbcc:clone-canvas item 3 graph:get-canvas-list
+    gbcc:mute-canvas 3
       </pre>
     </div>
+    
+    <div class="dict_entry" id="gbcc-mute-canvas">
+      <h3><a>gbcc:unmute-canvas</a></h3>
+      <img alt="Observer Command" src="images/observer.png">
+      <img alt="Observer Command" src="images/turtle.png">
+      <img alt="Observer Command" src="images/patch.png">
+      <h4><span class="prim_example">gbcc:unmute-canvas <i>canvas-id</i></span></h4>
+      <p>Allow a teacher to unmute a canvas.
+        <span class="update">*** new ***</span>
+      <pre>
+    gbcc:unmute-canvas 3
+      </pre>
+    </div>
+    
     
     <div class="dict_entry" id="gbcc-get-canvas-list">
       <h3><a>gbcc:get-canvas-list</a></h3>
@@ -668,7 +725,6 @@ end
         User-defined procedure which, if it exists, will be called when a
         user does gbcc:send or gbcc:broadcast. <span class="update">*** new ***</span>
       <pre> 
-;; runs continuously
 to gbcc-on-message [ user-id role message-tag message ]
   show "This is called when a user is sent something with gbcc:send or gbcc:broadcast."
   show word user-id " is the unique identifier for this user."
@@ -676,6 +732,38 @@ to gbcc-on-message [ user-id role message-tag message ]
   if (role = "student") [ show "User is a student." ]
   show "The message is about " message-tag 
   show "The message is " message
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-on-go">
+      <h3><a>gbcc-on-mousedown</a></h3>
+      <h4><span class="prim_example">gbcc-on-mousedown [ patch-x patch-y]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when a
+        user does mousedown on View. <span class="update">*** new ***</span>
+      <pre> 
+to gbcc-on-mousedown [ patch-x patch-y ]
+  show "This is called when a user does mousedown on the View."
+  show word ("mouse is at (" patch-x ", " patch-y ")"
+end
+      </pre>
+    </div>
+    
+    <div class="dict_entry" id="gbcc-on-go">
+      <h3><a>gbcc-on-mouseup</a></h3>
+      <h4><span class="prim_example">gbcc-on-mouseup [ patch-x patch-y]</span>
+        <img alt="Observer Command" src="images/observer.png">
+      </h4>
+      <p>
+        User-defined procedure which, if it exists, will be called when a
+        user does mouseup on View. <span class="update">*** new ***</span>
+      <pre> 
+to gbcc-on-mouseup [ patch-x patch-y ]
+  show "This is called when a user does mouseup on the View."
+  show word ("mouse is at (" patch-x ", " patch-y ")"
 end
       </pre>
     </div>

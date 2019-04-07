@@ -63,9 +63,10 @@
 			<img src="./images/gray-turtle.png" class="turtle" id="gray1">
 			<img src="./images/brown-turtle.png" class="turtle" id="brown1">
 			<img src="./images/teal-turtle.png" class="turtle" id="teal1">
-			
+		<!--
 			<img src="./images/yellow-star.png" class="turtle" id="yellowstar1">
 			<img src="./images/pink-star.png" class="turtle" id="pinkstar1">
+		-->
 		</div>
 		<div class="container yellow1">
 			<h2>Hello World</h2>
@@ -83,7 +84,7 @@ end
 			<h2>NetLogo Code</h2>
 <pre>
 to share
-  gbcc:broadcast-plot "my-plot" "populations"
+  gbcc:broadcast-plot "populations"
   gbcc:store-globals
 end
 
@@ -269,6 +270,49 @@ end
 </pre>
 		</div>
 		<div class="container orange1">
+			<h2>Import Data, Adopt Canvases</h2>
+			<img src="./images/code-orange-2.png" style="height:150px">
+			<h2>NetLogo Code</h2>
+<pre>
+;; To export data, press the "Data" button in the top right corner.
+;; You will download a zip file that includes our-data.txt 
+
+;; To import data, you can use the following code which will prompt you to pick a file.
+;; Choose an exported file like our-data.txt 
+to import 
+  gbcc:import-our-data
+	auto-assign-vacant-canvases
+end 
+
+;; auto assign any existing students to vacant canvases
+to auto-assign-vacant-canvases
+  foreach gbcc:get-active-user-list [ 
+    x -> 
+    if (member? x gbcc:get-canvas-list = false) [
+      if (length  gbcc:get-vacant-indices > 0) [
+        let random-id random length gbcc:get-vacant-indices
+        gbcc:adopt-canvas x item random-id gbcc:get-vacant-indices
+      ]
+    ]
+  ]
+end
+
+;; when a new user enters, assign a vacant canvas, if it exists
+to gbcc-on-enter [ user-id role ]
+  if (user-id  = gbcc:who-am-i and length gbcc:get-vacant-indices > 0) [
+    ;; choose a random vacant canvas
+    let random-id random length gbcc:get-vacant-indices
+    ;; assign new user to that vacant canvas
+    gbcc:adopt-canvas user-id item random-id gbcc:get-vacant-indices
+  ]
+end
+</pre>
+<h2>Model with Sample Code</h2>
+<a href="https://gbcc-strings-demo.herokuapp.com/">Import Data and Adopt Canvas Demo</a>
+		</div>		
+		
+		<!--
+		<div class="container orange1">
 			<h2>Turtles Explore Small Part of Big World</h2>
 			<img src="./images/code-orange-2.png" style="height:150px">
 			<h2>NetLogo Code</h2>
@@ -353,90 +397,54 @@ to gbcc-on-go [ user-id role ]
 end
 </pre>
 		</div>
+	
+		
+	<div class="container gray1">
+		<h2>Images</h2>
+		<h2>NetLogo Code</h2>
+<pre>
+clear-drawing
+
+image:import-file "ocean.png"
+</pre>
+	</div>	
+		
+-->
+
 		<div class="container gray1">
-			<h2>Streaming Worms</h2>
-			<img src="./images/code-gray-2.png" style="height:150px">
+			<h2>Share Geogebra Worlds</h2>
+			<img src="./images/code-gray-3.png" style="height:150px">
 			<h2>NetLogo Code</h2>
 <pre>
-;;;; STUDENT ACTIONS ;;;;
-to go-up
-  gbcc:add-to-stream "move" "up"
+	
+extensions [ gbcc graph ]
+
+to show-graph 
+  graph:show-graph
 end
 
-;;;; TEACHER LISTENS ;;;;
-to setup-listen-to-student [ user-id ] 
-  ask turtles with [ id = user-id ] [
-    show-turtle
-    let coords gbcc:get-from-user user-id (word "turtle-data-" id)
-    setxy item 1 coords item 2 coords
-    set color gbcc:get-from-user user-id "color"
-  ]
+to share 
+  gbcc:broadcast-text "my-name" my-name 
+  gbcc:broadcast-view "my-view"
+  gbcc:store-state
+end 
+
+to gbcc-on-select [ user-id role ]
+  gbcc:restore-state-from-user user-id
 end
 
-to listen-to-student [ user-id ]
-  let move-messages gbcc:get-stream-from-user user-id "move"
-  foreach move-messages [ message -> 
-    move-turtle user-id message
-  ]
-end
-
-to move-turtle [ user-id message ]
-  ask turtles with [ id = user-id ] [
-    ifelse (message = "up")
-    [ set ycor ycor + 1 ]
-    [ ifelse (message = "down")
-      [ set ycor ycor - 1 ]  
-      [ ifelse (message = "left") 
-        [ set xcor xcor - 1 ]
-        [ set xcor xcor + 1 ]
-      ]
-    ]
-    gbcc:set (word "turtle-data-" user-id) (list xcor ycor) 
-    let my-color color    
-    let turtle-data (list user-id xcor ycor)
-    ask turtles [ gbcc:add-to-stream (word id "-turtle-data") turtle-data ] 
-    let patch-data (list xcor ycor color) 
-    let turtle-data-for-patches (list color xcor ycor)
-    ask patches in-radius 3 
-    [
-       set pcolor item 0 turtle-data-for-patches + distancexy item 1 turtle-data-for-patches item 2 turtle-data-for-patches
-       set patch-data (list pxcor pycor pcolor)
-       gbcc:set (word "patch-data-" pxcor "-" pycor) patch-data
-       ask turtles [ gbcc:add-to-stream (word id "-patch-data") patch-data ]
-    ]
-  ]
-end
-
-;;;; STUDENT LISTENS ;;;;
-to setup-listen-to-teacher [ user-id ] 
-  let coords (list )
-  ask turtles [
-    set coords gbcc:get-from-user user-id (word "turtle-data-" id)
-    setxy item 1 coords item 2 coords
-  ]
-  ask patches [
-    set pcolor gbcc:get-from-user user-id (word "patch-data-" pxcor "-" pycor)
-  ]
-end
-
-to listen-to-teacher [ user-id ]
-   let turtle-messages gbcc:get-stream-from-user user-id (word my-user-id "-turtle-data")
-   foreach turtle-messages [ message ->
-     ;; message is of form [ user-id xcor ycor ]
-     ask turtles with [ id = item 0 message ] [ setxy item 1 message item 2 message ]
-   ]
-   let patch-messages gbcc:get-stream-from-user user-id (word my-user-id "-patch-data")
-   foreach patch-messages [ message ->
-     ;; message is of form [ pxcor pycor pcolor ]
-     ask patch item 0 message item 1 message [ set pcolor item 2 message ]
-   ]
+to gbcc-on-deselect [ user-id role  ]
+  gbcc:restore-state 
 end
 </pre>
+
+<!--
+
 <h2>Model with Sample Code</h2>
 <a href="https://gbcc-streaming-worms.herokuapp.com/">Streaming Worms</a>
 <br><a href="./streamingworms.zip">streamingworms.zip</a>
 	</div>
-		
+-->
 	<div class="container brown1">
 		<h2>Update Turtles to match Map</h2>
 		<img src="./images/code-brown-2.png" style="height:150px">
