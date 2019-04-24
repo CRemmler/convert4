@@ -39,13 +39,6 @@ Graph = (function() {
     ggbApplet.setErrorDialogsActive(false);  
   }
   
-  function appletOnLoadDeleteFile(filename) {
-    console.log("APPLET ONLOAD VISIBLE DELETE FILE");
-    showGraph();
-    updateGraph(); 
-    ggbApplet.setErrorDialogsActive(false);  
-  }
-  
   ////// DISPLAY GRAPH //////
   
   function updateGraph() {
@@ -161,16 +154,14 @@ Graph = (function() {
 
   function importGgbFile(filename) {
     console.log("import ggb filename "+filename);
-    var showToolbar = (filename == "geogebra-default.ggb") ? true : false;
-    applet1 = new GGBApplet({filename: filename, "showToolbar":showToolbar, "appletOnLoad": appletOnLoadVisible}, true);
+    applet1 = new GGBApplet({filename: filename, "showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
     applet1.inject('graphContainer');
   }
   
-  function importGgbDeleteFile(data) {
-    console.log("import ggb delete file ",data);
-    applet1 = new GGBApplet({"ggbBase64": data, "appletOnLoad": appletOnLoadDeleteFile}, true);
+  function importGgbBase64(data) {
+    console.log("import ggb delete file ");
+    applet1 = new GGBApplet({"ggbBase64": data, "showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
     applet1.inject('graphContainer');
-    //setAll(data);
   }
   
   function importGgb() {
@@ -467,11 +458,14 @@ Graph = (function() {
   }
   
   function getAll() {
-    return ggbApplet.getXML();
+    //return ggbApplet.getXML();
+    return ggbApplet.getBase64();
   }
   
   function setAll(xmlString) {
-    ggbApplet.setXML(xmlString);
+    applet1 = new GGBApplet({"ggbBase64": xmlString, "appletOnLoad": appletOnLoadVisible}, true);
+    applet1.inject('graphContainer');
+    //ggbApplet.setXML(xmlString);
   }
   
   /////// GRAPH APPEARANCE ///////
@@ -579,7 +573,7 @@ Graph = (function() {
     uploadGgb: uploadGgb,
     importGgbFile: importGgbFile,
     getGgbList: getGgbList,
-    importGgbDeleteFile: importGgbDeleteFile,
+    importGgbBase64: importGgbBase64,
     
     deletePoints: deletePoints,
     deletePoint: deletePoint,
