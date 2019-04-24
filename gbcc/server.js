@@ -555,21 +555,13 @@ io.on('connection', function(socket){
           setupUniverse(evt.target.result, scope, myRoom);
         };
       } else if (scope === "ggb") {
-        reader.readAsBinaryString(file);
+        reader.readAsDataURL(file);
         reader.onload = function (evt) {
-          JSZip.loadAsync(evt.target.result).then(function(zip){
-            for (filename in zip.files) {
-              if (filename  === "geogebra.xml") {
-                zip.files[filename].async("string").then(function(data) {
-                  var dataObject = {
-                    filetype: scope,
-                    xml: data
-                  };
-                  io.to(socketid).emit("trigger file import", dataObject); 
-                }, function (e) { console.log(e); });
-              }
-            } 
-          }, function (e) { console.log(e); });
+          var dataObject = {
+            filetype: scope,
+            b64: reader.result.split(',')[1]
+          };
+          io.to(socketid).emit("trigger file import", dataObject); 
         }
       } 
     })

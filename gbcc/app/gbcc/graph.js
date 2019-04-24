@@ -40,13 +40,10 @@ Graph = (function() {
   }
   
   function appletOnLoadDeleteFile(filename) {
-    console.log("applet onload delete file");
+    console.log("APPLET ONLOAD VISIBLE DELETE FILE");
     showGraph();
     updateGraph(); 
-    ggbApplet.setErrorDialogsActive(false);   
-    console.log(filename);
-    console.log("APPLET ONLOAD VISIBLE DELETE FILE");
-    socket.emit('delete file', {'filename': filename});
+    ggbApplet.setErrorDialogsActive(false);  
   }
   
   ////// DISPLAY GRAPH //////
@@ -164,15 +161,16 @@ Graph = (function() {
 
   function importGgbFile(filename) {
     console.log("import ggb filename "+filename);
-    applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
+    var showToolbar = (filename == "geogebra-default.ggb") ? true : false;
+    applet1 = new GGBApplet({filename: filename, "showToolbar":showToolbar, "appletOnLoad": appletOnLoadVisible}, true);
     applet1.inject('graphContainer');
   }
   
   function importGgbDeleteFile(data) {
-    //console.log("import ggb delete file "+filename);
-    //applet1 = new GGBApplet({filename: filename,"showToolbar":true, "appletOnLoad": appletOnLoadDeleteFile(filename)}, true);
-    //applet1.inject('graphContainer');
-    setAll(data);
+    console.log("import ggb delete file ",data);
+    applet1 = new GGBApplet({"ggbBase64": data, "appletOnLoad": appletOnLoadDeleteFile}, true);
+    applet1.inject('graphContainer');
+    //setAll(data);
   }
   
   function importGgb() {

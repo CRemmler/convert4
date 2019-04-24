@@ -535,7 +535,7 @@ jQuery(document).ready(function() {
   
   socket.on("trigger file import", function(data) {
     if (data.filetype === "ggb") {
-      Graph.importGgbDeleteFile(data.xml);
+      Graph.importGgbDeleteFile(data.b64);
     } 
   });
     

@@ -59,7 +59,7 @@ Gallery = (function() {
       $("#canvasSize").val("large");
       $( window ).resize(function() {
         if ($(".netlogo-gallery-tab").hasClass("expand")) {
-          var galleryExpandWidth = parseFloat($("body").css("width")) - parseFloat($(".netlogo-tab").css("width"));
+          var galleryExpandWidth = parseFloat($("body").css("width")) - parseFloat($(".netlogo-tab").css("width")) - 25;
           $(".netlogo-gallery-tab").css("width", galleryExpandWidth - 80 + "px");
           $(".netlogo-gallery-tab-content").css("width", galleryExpandWidth - 62 + "px");
           var galleryTabWidth =  galleryExpandWidth - 98 + "px";
@@ -77,7 +77,7 @@ Gallery = (function() {
         } else {
           $(".netlogo-gallery-tab").addClass("expand");
           $(".netlogo-gallery-tab-content").addClass("expand");
-          var galleryExpandWidth = parseFloat($("body").css("width")) - parseFloat($(".netlogo-tab").css("width"));
+          var galleryExpandWidth = parseFloat($("body").css("width")) - parseFloat($(".netlogo-tab").css("width")) - 25;
           $(".netlogo-gallery-tab").css("width", galleryExpandWidth - 80 + "px");
           $(".netlogo-gallery-tab-content").css("width", galleryExpandWidth - 62 + "px");
           var galleryTabWidth =  galleryExpandWidth - 98 + "px";
@@ -304,6 +304,32 @@ Gallery = (function() {
     }
   }
   
+  function rotateCardsUntil(cards, name)
+  {
+    var max = cards.length;
+    index = 0;
+    var topCardName = 0;
+    for (var i=0; i<max; i++) {
+      for (card in cards) {
+        if ($(cards[card]).css("z-index") == 0) {
+          topCardName = $(cards[card]).attr("name");
+          
+        }
+      }
+      for (card in cards) {
+        zIndex = $(cards[card]).css("z-index");
+        if (zIndex === "0") {
+          $(cards[card]).css("z-index",max - 1);
+        } else {
+          $(cards[card]).css("z-index",zIndex - 1);					
+        }
+      }
+      if (topCardName == name) {
+        return;
+      }
+    }
+  }
+  
   function resetCards(li) {
     var cards = [];
     $(li).children().each(function() {
@@ -352,7 +378,7 @@ Gallery = (function() {
     data.id = data.id.replace(" ","-");
     canvasImg.src = data.src;
     canvasImg.userId = data.userId;
-    newSpan = "<span class=\"card card-image\"><img id='"+data.id+"' src='"+data.src+"'></span>";
+    newSpan = "<span class=\"card card-image\" name=\"" + data.name + "\"><img id='"+data.id+"' src='"+data.src+"'></span>";
     $("#gallery-item-"+data.userId).append(newSpan);
     var zIndex = $("#gallery-item-"+data.userId+" span:not(.text-span)").length - 5;
     $("#"+data.id).parent().css("z-index",zIndex);
@@ -368,7 +394,7 @@ Gallery = (function() {
 
   function createTextCard(data) {
     var text = data.src.replace("canvas-text","").replace(/(?:\r\n|\n)/g, '<br>').replace(/ /g, "&nbsp;").replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-    var newSpan = "<span class=\"card card-text\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>";
+    var newSpan = "<span class=\"card card-text\" name=\"" + data.name + "\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>";
     newSpan += "</span></span>";
     $("#gallery-item-"+data.userId).append(newSpan);
     $("#"+data.id).html("<br>"+text);
@@ -379,7 +405,7 @@ Gallery = (function() {
   }
   
   function createEmptyTextCard(data) {
-    newSpan = "<span class=\"card card-text\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>";
+    newSpan = "<span class=\"card card-text\" name=\"" + data.id + "\"><span id=\""+data.id+"\" class=\"text-span empty\"><br>";
     $("#gallery-item-"+data.userId).append(newSpan);
     var zIndex = $("#gallery-item-"+data.userId+" span:not(.text-span)").length - 5;
     $("#"+data.id).parent().css("z-index",zIndex);
@@ -404,7 +430,9 @@ Gallery = (function() {
             src : data.message,
             userId : data.source,
             userType: data.userType,
-            claimed: data.claimed
+            claimed: data.claimed,
+            name: data.tag.replace("canvas-text-","").replace("canvas-plot-","").replace("canvas-view-","").replace("canvas-avatar","")
+            
           }
     if ($("#gallery-item-"+data.source).length === 0 ) { createCanvas(canvasData); } 
     if ($("#canvas-clear-all-" + data.source ).length > 0) {
@@ -474,6 +502,18 @@ Gallery = (function() {
       hubnetMessageTag: "canvas-text-"+tag, 
       hubnetMessage: message
     }); 
+  }
+  
+  function flipCanvasesTo(name) {
+    var cards = [];
+    name = name.replace(" ","-");
+    $(".gbcc-gallery li").each(function() {
+       cards = [];
+       $(this).children().each(function() {
+          if ($(this).hasClass("card")) { cards.push(this);}
+       });
+       rotateCardsUntil(cards, name);
+    });
   }
   
   function drawHoverText(text) {
@@ -842,7 +882,8 @@ Gallery = (function() {
     storeState: storeState,
     restoreState: restoreState,
     restoreStateFromUser: restoreStateFromUser,
-    restoreStateData: restoreStateData
+    restoreStateData: restoreStateData,
+    flipCanvasesTo: flipCanvasesTo
   };
 
 })();

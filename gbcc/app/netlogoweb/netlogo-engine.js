@@ -19194,7 +19194,7 @@ function hasOwnProperty(obj, prop) {
   module.exports = {
     dumper: void 0,
     init: function(workspace) {
-      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, clearBroadcasts, compileObserverCode, compilePatchCode, compileTurtleCode, exportMyData, exportOurData, get, getActiveUserList, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantIndices, hidePatches, importMyData, importMyDataFile, importOurData, importOurDataFile, mirroring, muteCanvas, myRole, restoreGlobals, restoreGlobalsFromUser, restoreState, restoreStateFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, storeState, unmuteCanvas, whoAmI;
+      var addToStream, adoptCanvas, broadcast, broadcastAvatar, broadcastPlot, broadcastText, broadcastView, clearBroadcast, clearBroadcasts, compileObserverCode, compilePatchCode, compileTurtleCode, exportMyData, exportOurData, flipCanvasesTo, get, getActiveUserList, getCanvasList, getFileList, getFromUser, getStream, getStreamFromUser, getUserList, getVacantIndices, hidePatches, importMyData, importMyDataFile, importOurData, importOurDataFile, mirroring, muteCanvas, myRole, restoreGlobals, restoreGlobalsFromUser, restoreState, restoreStateFromUser, runObserverCode, runPatchCode, runTurtleCode, send, set, showPatches, storeGlobals, storeState, unmuteCanvas, whoAmI;
       set = function(messageTag, message) {
         socket.emit('send reporter', {
           hubnetMessageSource: "server",
@@ -19398,6 +19398,9 @@ function hasOwnProperty(obj, prop) {
       restoreStateFromUser = function(messageSource) {
         return Gallery.restoreStateFromUser(messageSource);
       };
+      flipCanvasesTo = function(name) {
+        return Gallery.flipCanvasesTo(name);
+      };
       return {
         name: "gbcc",
         prims: {
@@ -19445,7 +19448,8 @@ function hasOwnProperty(obj, prop) {
           "MIRRORING": mirroring,
           "STORE-STATE": storeState,
           "RESTORE-STATE": restoreState,
-          "RESTORE-STATE-FROM-USER": restoreStateFromUser
+          "RESTORE-STATE-FROM-USER": restoreStateFromUser,
+          "FLIP-CANVASES-TO": flipCanvasesTo
         }
       };
     }
