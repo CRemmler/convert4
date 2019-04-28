@@ -424,6 +424,7 @@ Gallery = (function() {
     if (data.tag.indexOf("canvas-plot-") === 0) { canvasType = "canvas-plot"; }
     if (data.tag.indexOf("canvas-view-") === 0) { canvasType = "canvas-view"; }
     if (data.tag.indexOf("canvas-text-") === 0) { canvasType = "canvas-text"; }
+    if (data.tag.indexOf("canvas-avatar-") === 0) { canvasType = "canvas-avatar"; }
     if (galleryForeverButton === "off") { return; } 
     var canvasData = { 
             id : data.tag + "-" + data.source,
@@ -431,7 +432,7 @@ Gallery = (function() {
             userId : data.source,
             userType: data.userType,
             claimed: data.claimed,
-            name: data.tag.replace("canvas-text-","").replace("canvas-plot-","").replace("canvas-view-","").replace("canvas-avatar","")
+            name: data.tag.replace("canvas-text-","").replace("canvas-plot-","").replace("canvas-view-","").replace("canvas-avatar-","")
             
           }
     if ($("#gallery-item-"+data.source).length === 0 ) { createCanvas(canvasData); } 
@@ -452,6 +453,9 @@ Gallery = (function() {
         resetCards($("#gallery-item-"+data.source));
       } else  if ($("#canvas-text-" + data.message.replace(" ","-")+"-"+data.source).length > 0) {
         $("#canvas-text-" + data.message.replace(" ","-")+"-"+data.source).parent().remove();
+        resetCards($("#gallery-item-"+data.source));
+      } else  if ($("#canvas-avatar-" + data.message.replace(" ","-")+"-"+data.source).length > 0) {
+        $("#canvas-avatar-" + data.message.replace(" ","-")+"-"+data.source).parent().remove();
         resetCards($("#gallery-item-"+data.source));
       }
     }
@@ -605,7 +609,7 @@ Gallery = (function() {
     message = document.getElementById(avatarCanvasId).toDataURL("image/jpeg", imageQuality); 
     socket.emit("send canvas reporter", {
       hubnetMessageSource: "all-users", 
-      hubnetMessageTag: "canvas-avatar", 
+      hubnetMessageTag: "canvas-avatar-"+text, 
       hubnetMessage: message
     }); 
   }

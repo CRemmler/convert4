@@ -462,8 +462,8 @@ Graph = (function() {
     return ggbApplet.getBase64();
   }
   
-  function setAll(xmlString) {
-    applet1 = new GGBApplet({"ggbBase64": xmlString, "appletOnLoad": appletOnLoadVisible}, true);
+  function setAll(base64String) {
+    applet1 = new GGBApplet({"ggbBase64": base64String, "showToolbar": true, "appletOnLoad": appletOnLoadVisible}, true);
     applet1.inject('graphContainer');
     //ggbApplet.setXML(xmlString);
   }
