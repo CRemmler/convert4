@@ -160,8 +160,11 @@ Graph = (function() {
   
   function importGgbBase64(data) {
     console.log("import ggb delete file ");
-    applet1 = new GGBApplet({"ggbBase64": data, "showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
-    applet1.inject('graphContainer');
+    if (data) 
+    {
+      applet1 = new GGBApplet({"ggbBase64": data, "showToolbar":true, "appletOnLoad": appletOnLoadVisible}, true);
+      applet1.inject('graphContainer');
+    }
   }
   
   function importGgb() {
@@ -459,12 +462,18 @@ Graph = (function() {
   
   function getAll() {
     //return ggbApplet.getXML();
-    return ggbApplet.getBase64();
+    if (ggbApplet) {
+      return ggbApplet.getBase64();
+    }
+    return  null;
   }
   
   function setAll(base64String) {
-    applet1 = new GGBApplet({"ggbBase64": base64String, "showToolbar": true, "appletOnLoad": appletOnLoadVisible}, true);
-    applet1.inject('graphContainer');
+    if (base64String)
+    {
+      applet1 = new GGBApplet({"ggbBase64": base64String, "showToolbar": true, "appletOnLoad": appletOnLoadVisible}, true);
+      applet1.inject('graphContainer');
+    }
     //ggbApplet.setXML(xmlString);
   }
   
