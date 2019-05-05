@@ -6,22 +6,187 @@
 		<script type="text/javascript" src="jquery.min.js"></script>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<style>
-
+			img:not(.info) {
+				border: 2px solid black;
+			}
+			#myModal {    
+				display: none;  
+		    position: fixed; 
+		    z-index: 1;
+		    padding-top: 100px; 
+		    left: 0;
+		    top: 0;
+		    width: 100%; 
+		    height: 100%; 
+		    overflow: auto; 
+		    background-color: rgb(0,0,0); 
+		    background-color: rgba(0,0,0,0.4); 
+			}
+			.modal-content {
+				background-color: #fefefe;
+				margin: auto;
+				padding: 20px;
+				border: 1px solid #888;
+				width: 70%;
+				border-radius: 5px;
+				border: 2px solid black;
+			}
+			.close {
+				color: #aaaaaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+			}
+			.close:hover,
+			.close:focus {
+			  color: #000;
+			  text-decoration: none;
+			  cursor: pointer;
+			}
+			.infoWrapper {
+				width: 100%;
+			}
+			.info {
+				text-align: right;
+				margin-top: -3px;
+			}
+			.modal-content td {
+				vertical-align: top;
+			}
+			.modelName {
+				font-weight: bold;
+			}
 		</style>
 		<script>
 			jQuery(document).ready(function() {
 				$("#addModel").on("click",function() {
 					alert("Email your model to c_remmler@yahoo.com, and I can post it. Thanks! - C");
 				});
-				$("#settings-container").hide();
-				$("#settings-icon").on("click", function() {
-					$("#settings-container").toggle();
+				var modal = document.getElementById('myModal');
+				var span = document.getElementsByClassName("close")[0];
+				span.onclick = function() {
+				  modal.style.display = "none";
+				}
+				window.onclick = function(event) {
+				  if (event.target == modal) {
+				    modal.style.display = "none";
+				  }
+				}
+				$.getJSON('./model.json', function(data) {
+					/*
+					data = {
+					  "models":
+					  [
+					    { 
+					      "modelName": "Disease",
+					      "modelLink": "https://disease-hubnet.herokuapp.com/", 
+					      "imageLink": "./images/disease.png",
+					      "modelDescription": "This model simulates the spread of a disease through a population. This "
+								+"population can consist of either students, which are turtles controlled by individual students "
+								+"via the HubNet Client, or turtles that are generated and controlled by NetLogo, called androids, "
+								+"or both androids and students."
+					    },
+					    { 
+					      "modelName": "Gridlock",
+					      "modelLink": "https://gridlock-hubnet.herokuapp.com/", 
+					      "imageLink": "./images/gridlock.png",
+					      "modelDescription": "Students control traffic lights in a real-time traffic simulation. The teacher "
+								+"controls overall variables, such as the speed limit and the number of cars. This allows students "
+								+"to explore traffic dynamics, which can lead into many areas of study, from calculus to social studies."
+					    },
+					    { 
+					      "modelName": "IntroButtons",
+					      "modelLink": "https://buttons-gbcc.herokuapp.com/", 
+					      "imageLink": "./images/pixels.png",
+					      "modelDescription": "Code with Introbuttons."
+					    },
+					    { 
+					      "modelName": "Segregation",
+					      "modelLink": "https://segregation-gbcc.herokuapp.com/", 
+					      "imageLink": "./images/segregation.png",
+					      "modelDescription": "This project models the behavior of two types of agents in a neighborhood. "
+								+"The red agents and green agents get along with one another. But each agent wants to make sure "
+								+"that it lives near some of its own. That is, each red agent wants to live near at least some "
+								+"red agents, and each green agent wants to live near at least some green agents. The simulation "
+								+"shows how these individual preferences ripple through the neighborhood, leading to large-scale "
+								+"patterns."
+					    },
+					    { 
+					      "modelName": "Wolf and Sheep",
+					      "modelLink": "https://wolf-sheep-gbcc.herokuapp.com/", 
+					      "imageLink": "./images/wolfsheep.png",
+					      "modelDescription": "This model explores the stability of predator-prey ecosystems. Such a system "
+								+"is called unstable if it tends to result in extinction for one or more species involved. In contrast, "
+								+"a system is stable if it tends to maintain itself over time, despite fluctuations in population sizes."
+					    },
+					    { 
+					      "modelName": "Catch a Planet",
+					      "modelLink": "https://catch-a-planet-4.herokuapp.com/", 
+					      "imageLink": "./images/catch-a-planet.png",
+					      "modelDescription": "Go catch a planet!"
+					    },
+					    { 
+					      "modelName": "Triangle",
+					      "modelLink": "https://gbcc-triangle.herokuapp.com/", 
+					      "imageLink": "./images/triangle.png",
+					      "modelDescription": "Triangles."
+					    },
+					    { 
+					      "modelName": "Geogebra Share",
+					      "modelLink": "https://geogebra-share.herokuapp.com/", 
+					      "imageLink": "./images/geogebrashare.png",
+					      "modelDescription": "Any Geogebra models!"
+					    }
+					  ]
+					};*/
+					data.models.forEach(function(d, index) { 
+						$(".item").append('<li><a '
+						+'href="'+d.modelLink+'">'
+						+'<img src="'+d.imageLink+'"></a>'
+						+'<br><table class="infoWrapper"><tr><td style="width:110px">'
+						+ '<a href="'+d.modelLink+'">'+d.modelName+'</a><a href="#"></td><td><img class="info" id="info'+index+'"'
+						+' src="./images/info-gray.png"></a></td></tr></table></li>');
+						$("#info"+index).mouseenter(function() {
+							$(this).attr("src","./images/info.png");
+						});
+						$("#info"+index).mouseleave(function() {
+							$(this).attr("src","./images/info-gray.png");
+						});
+						$("#info"+index).click(function() {
+							modal.style.display = "block";
+							$(".modelName").html(d.modelName);
+							$("#imageLink").attr("src",d.imageLink);
+							$("#modelDescription").html(d.modelDescription);
+						});
+						
+					})
 				});
-				$(".demo1").css("display","block");
 			});
 		</script>
 	</head>
 	<body>
+		<!-- Trigger/Open The Modal -->
+		<div id="myModal" class="modal">
+	  <div class="modal-content">
+			<p><span class="modelName"></span>
+	    <span class="close">×</span></p>
+			<table>
+				<tr>
+					<td>
+						<div>
+					    
+							<p><img id="imageLink"></p>
+						</div>
+					</td>
+					<td>
+						<div>
+							<p><span id="modelDescription"></span></p>
+						</div>
+					</td>
+				</tr>
+			</table>
+	  </div>
+	</div>
 		<h1>NetLogo GbCC 3.0</h1>
     <h2>Documentation</h2>
     <a href="docs.html">NetLogo GbCC Dictionary</a>
@@ -31,6 +196,7 @@
     <h2>GbCC Models Library</h2>
 		<div class="container">
 			<ul class="item">	
+				<!--
 					<li><a href="#" id="addModel"><img src="./images/plus.png"><br>Add a Model</a></li>
 					<li><a href="https://disease-hubnet.herokuapp.com/" id="addModel"><img src="./images/disease.png"><br>Disease</a></li>
 					<li><a href="https://gridlock-hubnet.herokuapp.com/" id="addModel"><img src="./images/gridlock.png"><br>Gridlock</a></li>
@@ -39,6 +205,7 @@
 					<li><a href="https://wolf-sheep-gbcc.herokuapp.com/" id="addModel"><img src="./images/wolfsheep.png"><br>Wolf and Sheep</a></li>
 					<li><a href="https://catch-a-planet-4.herokuapp.com/" id="addModel"><img src="./images/catch-a-planet.png"><br>Catch a Planet</a></li>
 					<li><a href="https://gbcc-triangle.herokuapp.com/" id="addModel"><img src="./images/triangle.png"><br>Triangle</a></li>
+				-->
 			</ul>
 		</div>
 		<h2>Create a GbCC Model</h2>
