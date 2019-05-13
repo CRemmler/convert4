@@ -471,10 +471,14 @@ Graph = (function() {
   function setAll(base64String) {
     if (base64String)
     {
-      applet1 = new GGBApplet({"ggbBase64": base64String, "showToolbar": true, "appletOnLoad": appletOnLoadVisible}, true);
+      if  ($("#graphContainer").css("display") == "block")
+      {
+        applet1 = new GGBApplet({"ggbBase64": base64String, "showToolbar": true, "appletOnLoad": appletOnLoadVisible}, true);
+      } else {
+        applet1 = new GGBApplet({"ggbBase64": base64String, "showToolbar": true, "appletOnLoad": appletOnLoadHidden}, true);
+      }
       applet1.inject('graphContainer');
     }
-    //ggbApplet.setXML(xmlString);
   }
   
   /////// GRAPH APPEARANCE ///////
