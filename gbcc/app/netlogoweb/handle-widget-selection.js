@@ -1,4 +1,5 @@
 (function() {
+  // (Ractive) => Unit
   window.handleWidgetSelection = function(ractive) {
     var deleteSelected, deselectThoseWidgets, hideResizer, justSelectIt, lockSelection, nudgeWidget, resizer, selectThatWidget, unlockSelection;
     resizer = function() {
@@ -13,12 +14,14 @@
     deleteSelected = function() {
       var hasNoEditWindowUp, selected, widget;
       selected = resizer().get('target');
-      widget = selected.get('widget');
-      hasNoEditWindowUp = document.querySelector('.widget-edit-popup') == null;
-      if (ractive.get('isEditing') && (selected != null) && (widget != null) && (widget.type !== "view") && hasNoEditWindowUp) {
-        unlockSelection();
-        deselectThoseWidgets();
-        ractive.fire('unregister-widget', widget.id);
+      if (ractive.get('isEditing') && (selected != null)) {
+        widget = selected.get('widget');
+        hasNoEditWindowUp = document.querySelector('.widget-edit-popup') == null;
+        if ((widget != null) && (widget.type !== "view") && hasNoEditWindowUp) {
+          unlockSelection();
+          deselectThoseWidgets();
+          ractive.fire('unregister-widget', widget.id);
+        }
       }
     };
     justSelectIt = function(event) {

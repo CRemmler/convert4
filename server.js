@@ -253,23 +253,12 @@ app.post('/fileupload',function(req,res){
         //console.log(configFile);
         zip.file("config.json", configFile);
         zip.file("index.html", indexFile);
+        
         fs.readFileAsync("gbcc/app/gbcc/exportworld.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/exportworld.js", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/geogebra_defaults2d.xml", "utf8").then(function(data) {
-          zip.file("app/gbcc/geogebra_defaults2d.xml", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/geogebra_defaults3d.xml", "utf8").then(function(data) {
-          zip.file("app/gbcc/geogebra_defaults3d.xml", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/geogebra_javascript.js", "utf8").then(function(data) {
-          zip.file("app/gbcc/geogebra_javascript.js", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/geogebra_thumbnail.png", "utf8").then(function(data) {
-          zip.file("app/gbcc/geogebra_thumbnail.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/font-awesome.min.css").then(function(data) {
-          zip.file("app/gbcc/font-awesome.min.css", data);
+        fs.readFileAsync("gbcc/app/gbcc/font-awesome.min.css", "utf8").then(function(data) {
+        	zip.file("app/gbcc/font-awesome.min.css", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
         	zip.file("app/gbcc/fontawesome-webfont.eot", data);
@@ -289,14 +278,14 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/gbcc-client.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-client.js", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/gbcc-files.js", "utf8").then(function(data) {
-          zip.file("app/gbcc/gbcc-files.js", data);
-        }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-events.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-events.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-export.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-export.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/gbcc-files.js", "utf8").then(function(data) {
+        	zip.file("app/gbcc/gbcc-files.js", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-gallery.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-gallery.js", data);
@@ -315,9 +304,6 @@ app.post('/fileupload',function(req,res){
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/gbcc-image.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/gbcc-image.js", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/fontawesome-webfont.eot").then(function(data) {
-        	zip.file("app/gbcc/fontawesome-webfont.eot", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/jquery.min.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/jquery.min.js", data);
@@ -352,14 +338,14 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a7.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a7.png", data);
         }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a8.png").then(function(data) {
+        	zip.file("app/gbcc/physics-ui/a8.png", data);
+        }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a22.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a22.png", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/physics-ui/a23.png").then(function(data) {
         	zip.file("app/gbcc/physics-ui/a23.png", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/gbcc/physics-ui/a8.png").then(function(data) {
-        	zip.file("app/gbcc/physics-ui/a8.png", data);
         }).then(function() {
         fs.readFileAsync("gbcc/app/gbcc/physics.js", "utf8").then(function(data) {
         	zip.file("app/gbcc/physics.js", data);
@@ -634,23 +620,41 @@ app.post('/fileupload',function(req,res){
         fs.readFileAsync("gbcc/readme.md", "utf8").then(function(data) {
         	zip.file("readme.md", data);
         }).then(function() {
-        fs.readFileAsync("gbcc/app/netlogoweb/chosen.jquery.js", "utf8").then(function(data) {
-          zip.file("app/netlogoweb/chosen.jquery.js", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/netlogoweb/comment.js", "utf8").then(function(data) {
-          zip.file("app/netlogoweb/comment.js", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/netlogoweb/show-hint.js", "utf8").then(function(data) {
-          zip.file("app/netlogoweb/show-hint.js", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/netlogoweb/show-hint.css", "utf8").then(function(data) {
-          zip.file("app/netlogoweb/show-hint.css", data);
-        }).then(function() {
-        fs.readFileAsync("gbcc/app/netlogoweb/chosen.css", "utf8").then(function(data) {
-          zip.file("app/netlogoweb/chosen.css", data);
-        }).then(function() {
         fs.readFileAsync("gbcc/server.js", "utf8").then(function(data) {
         	zip.file("server.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/async-user-dialog.js").then(function(data) {
+        	zip.file("app/netlogoweb/async-user-dialog.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/jscolor.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/jscolor.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/synchrodecoder.min.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/synchrodecoder.min.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/localforage.min.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/localforage.min.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_defaults2d.xml", "utf8").then(function(data) {
+        	zip.file("app/gbcc/geogebra_defaults2d.xml", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_defaults3d.xml", "utf8").then(function(data) {
+        	zip.file("app/gbcc/geogebra_defaults3d.xml", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_javascript.js", "utf8").then(function(data) {
+        	zip.file("app/gbcc/geogebra_javascript.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/gbcc/geogebra_thumbnail.png").then(function(data) {
+        	zip.file("app/gbcc/geogebra_thumbnail.png ", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/comment.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/comment.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/show-hint.js", "utf8").then(function(data) {
+        	zip.file("app/netlogoweb/show-hint.js", data);
+        }).then(function() {
+        fs.readFileAsync("gbcc/app/netlogoweb/show-hint.css").then(function(data) {
+        	zip.file("app/netlogoweb/show-hint.css", data);
         }).then(function() {
           zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
           .pipe(fs.createWriteStream(filename+'.zip'))
@@ -666,9 +670,8 @@ app.post('/fileupload',function(req,res){
         }).catch(function(e) {
           res.sendfile('index.html');
           console.error(e.stack);
+        }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); 
 
-        }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); }); });
-    
      });
    });
 });

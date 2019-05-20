@@ -1,10 +1,12 @@
 (function() {
+  // (WidgetController) => Unit
   var hasProp = {}.hasOwnProperty;
 
   window.controlEventTraffic = function(controller) {
     var checkActionKeys, createWidget, dropOverlay, hailSatan, mousetrap, onCloseDialog, onCloseEditForm, onOpenDialog, onOpenEditForm, onQMark, onWidgetBottomChange, onWidgetRightChange, onWidgetValueChange, openDialogs, ractive, redrawView, refreshChooser, refreshDims, rejectDupe, renameGlobal, resizeView, setPatchSize, toggleBooleanData, trackFocus, unregisterWidget, updateTopology, viewController;
-    ractive = controller.ractive, viewController = controller.viewController;
+    ({ractive, viewController} = controller);
     openDialogs = new Set([]);
+    // (Event) => Unit
     checkActionKeys = function(e) {
       var _, char, ref, w;
       if (ractive.get('hasFocus')) {
@@ -24,6 +26,7 @@
         }
       }
     };
+    // (String, Number, Number) => Unit
     createWidget = function(widgetType, pageX, pageY) {
       controller.createWidget(widgetType, pageX, pageY);
     };
@@ -31,16 +34,23 @@
       ractive.set('isHelpVisible', false);
       ractive.set('isOverlayUp', false);
     };
-    hailSatan = function(arg) {
-      var clientX, clientY, ref;
-      ref = arg.event, clientX = ref.clientX, clientY = ref.clientY;
+    // Thanks, Firefox.  Maybe just put the proper values in the `drag` event, in the
+    // future, instead of sending us `0` for them every time? --JAB (11/23/17)
+
+    // (RactiveEvent) => Unit
+    hailSatan = function({
+        event: {clientX, clientY}
+      }) {
       ractive.set("lastDragX", clientX);
       ractive.set("lastDragY", clientY);
     };
     onCloseDialog = function(dialog) {
-      openDialogs["delete"](dialog);
+      var temp;
+      openDialogs.delete(dialog);
       ractive.set('someDialogIsOpen', openDialogs.size > 0);
+      temp = document.scrollTop;
       document.querySelector('.netlogo-model').focus();
+      document.scrollTop = temp;
     };
     onCloseEditForm = function(editForm) {
       ractive.set('someEditFormIsOpen', false);
@@ -49,9 +59,8 @@
     onQMark = (function() {
       var focusedElement;
       focusedElement = void 0;
-      return function(arg) {
-        var elem, helpIsNowVisible, isProbablyEditingText, ref, target;
-        target = arg.target;
+      return function({target}) {
+        var elem, helpIsNowVisible, isProbablyEditingText, ref;
         isProbablyEditingText = (((ref = target.tagName.toLowerCase()) === "input" || ref === "textarea") && !target.readOnly) || target.contentEditable === "true";
         if (!isProbablyEditingText) {
           helpIsNowVisible = !ractive.get('isHelpVisible');
@@ -69,6 +78,7 @@
       ractive.set('someEditFormIsOpen', true);
       onOpenDialog(editForm);
     };
+    // () => Unit
     onWidgetBottomChange = function() {
       var i, w;
       ractive.set('height', Math.max.apply(Math, (function() {
@@ -85,6 +95,7 @@
         return results;
       })()));
     };
+    // () => Unit
     onWidgetRightChange = function() {
       var i, w;
       ractive.set('width', Math.max.apply(Math, (function() {
@@ -101,6 +112,7 @@
         return results;
       })()));
     };
+    // (Any, Any, String, Number) => Unit
     onWidgetValueChange = function(newVal, oldVal, keyPath, widgetNum) {
       var widget, widgetHasValidValue;
       widgetHasValidValue = function(widget, value) {
@@ -120,25 +132,30 @@
         world.observer.setGlobal(widget.variable, newVal);
       }
     };
+    // () => Unit
     redrawView = function() {
       controller.redraw();
       viewController.repaint();
     };
+    // (Widget.Chooser) => Boolean
     refreshChooser = function(chooser) {
       var eq;
-      eq = tortoise_require('brazier/equals').eq;
+      ({eq} = tortoise_require('brazier/equals'));
       chooser.currentChoice = Math.max(0, chooser.choices.findIndex(eq(chooser.currentValue)));
       chooser.currentValue = chooser.choices[chooser.currentChoice];
       world.observer.setGlobal(chooser.variable, chooser.currentValue);
       return false;
     };
+    // () => Unit
     refreshDims = function() {
       onWidgetRightChange();
       onWidgetBottomChange();
     };
+    // (String) => Unit
     rejectDupe = function(varName) {
-      showErrors(["There is already a widget of a different type with a variable named '" + varName + "'"]);
+      showErrors([`There is already a widget of a different type with a variable named '${varName}'`]);
     };
+    // (String, String, Any) => Boolean
     renameGlobal = function(oldName, newName, value) {
       var existsInObj;
       existsInObj = function(f) {
@@ -153,9 +170,7 @@
           return false;
         };
       };
-      if (!existsInObj(function(arg) {
-        var variable;
-        variable = arg.variable;
+      if (!existsInObj(function({variable}) {
         return variable === oldName;
       })(ractive.get('widgetObj'))) {
         world.observer.setGlobal(oldName, void 0);
@@ -163,17 +178,20 @@
       world.observer.setGlobal(newName, value);
       return false;
     };
+    // () => Unit
     resizeView = function() {
-      var maxpxcor, maxpycor, minpxcor, minpycor, patchsize, ref;
-      ref = viewController.model.world, minpxcor = ref.minpxcor, maxpxcor = ref.maxpxcor, minpycor = ref.minpycor, maxpycor = ref.maxpycor, patchsize = ref.patchsize;
+      var maxpxcor, maxpycor, minpxcor, minpycor, patchsize;
+      ({minpxcor, maxpxcor, minpycor, maxpycor, patchsize} = viewController.model.world);
       setPatchSize(patchsize);
       world.resize(minpxcor, maxpxcor, minpycor, maxpycor);
       refreshDims();
     };
+    // (Number) => Unit
     setPatchSize = function(patchSize) {
       world.setPatchSize(patchSize);
       refreshDims();
     };
+    // (String) => Unit
     toggleBooleanData = function(dataName) {
       var newData;
       if (!ractive.get('someDialogIsOpen')) {
@@ -181,16 +199,22 @@
         ractive.set(dataName, newData);
       }
     };
+    // (Node) => Unit
     trackFocus = function(node) {
       ractive.set('hasFocus', document.activeElement === node);
     };
+    // (_, Number, Boolean) => Unit
     unregisterWidget = function(_, id, wasNew) {
       controller.removeWidgetById(id, wasNew);
       refreshDims();
     };
+    // () => Unit
     updateTopology = function() {
-      var ref, wrapX, wrapY;
-      ref = viewController.model.world, wrapX = ref.wrappingallowedinx, wrapY = ref.wrappingallowediny;
+      var wrapX, wrapY;
+      ({
+        wrappingallowedinx: wrapX,
+        wrappingallowediny: wrapY
+      } = viewController.model.world);
       world.changeTopology(wrapX, wrapY);
     };
     mousetrap = Mousetrap(ractive.find('.netlogo-model'));

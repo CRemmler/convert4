@@ -1,10 +1,14 @@
 (function() {
+  // All callers of this should have the properties `view: Element` and `lastUpdateMs: Number`,
+  // and these functions should be called with `call(<Ractive>, <args...>)` --JAB (11/23/17)
   window.CommonDrag = {
-    dragstart: function(arg, checkIsValid, callback) {
-      var clientX, clientY, dataTransfer, invisiGIF, original, view;
-      original = arg.original;
-      clientX = original.clientX, clientY = original.clientY, dataTransfer = original.dataTransfer, view = original.view;
+    dragstart: function({original}, checkIsValid, callback) {
+      var clientX, clientY, dataTransfer, invisiGIF, view;
+      ({clientX, clientY, dataTransfer, view} = original);
       if (checkIsValid(clientX, clientY)) {
+        // The invisible GIF is used to hide the ugly "ghost" images that appear by default when dragging
+        // The `setData` thing is done because, without it, Firefox feels that the drag hasn't really begun
+        // So we give them some bogus drag data and get on with our lives. --JAB (11/22/17)
         invisiGIF = document.createElement('img');
         invisiGIF.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         if (typeof dataTransfer.setDragImage === "function") {
@@ -19,10 +23,12 @@
         false;
       }
     },
-    drag: function(arg, callback) {
-      var clientX, clientY, ref, ref1, ref2, root, view, x, y;
-      ref = arg.original, clientX = ref.clientX, clientY = ref.clientY, view = ref.view;
+    drag: function({
+        original: {clientX, clientY, view}
+      }, callback) {
+      var ref, ref1, root, x, y;
       if (this.view != null) {
+        // Thanks, Firefox! --JAB (11/23/17)
         root = (function(r) {
           if (r.parent != null) {
             return arguments.callee(r.parent);
@@ -30,8 +36,13 @@
             return r;
           }
         })(this);
-        x = clientX !== 0 ? clientX : (ref1 = root.get('lastDragX')) != null ? ref1 : -1;
-        y = clientY !== 0 ? clientY : (ref2 = root.get('lastDragY')) != null ? ref2 : -1;
+        x = clientX !== 0 ? clientX : (ref = root.get('lastDragX')) != null ? ref : -1;
+        y = clientY !== 0 ? clientY : (ref1 = root.get('lastDragY')) != null ? ref1 : -1;
+        // When dragging stops, `client(X|Y)` tend to be very negative nonsense values
+        // We only take non-negative values here, to avoid the widget disappearing --JAB (3/22/16, 10/29/17)
+
+        // Only update drag coords 60 times per second.  If we don't throttle,
+        // all of this `set`ing murders the CPU --JAB (10/29/17)
         if (this.view === view && x > 0 && y > 0 && ((new Date).getTime() - this.lastUpdateMs) >= (1000 / 60)) {
           this.lastUpdateMs = (new Date).getTime();
           callback(x, y);
@@ -58,93 +69,94 @@
     }
   };
 
+  // Ugh.  Single inheritance is a pox.  --JAB (10/29/17)
   window.RactiveDraggableAndContextable = RactiveContextable.extend({
-    lastUpdateMs: void 0,
-    startLeft: void 0,
-    startRight: void 0,
-    startTop: void 0,
-    startBottom: void 0,
-    view: void 0,
+    lastUpdateMs: void 0, // Number
+    startLeft: void 0, // Number
+    startRight: void 0, // Number
+    startTop: void 0, // Number
+    startBottom: void 0, // Number
+    view: void 0, // Element
     data: function() {
       return {
-        left: void 0,
-        right: void 0,
-        top: void 0,
-        bottom: void 0
+        left: void 0, // Number
+        right: void 0, // Number
+        top: void 0, // Number
+        bottom: void 0 // Number
       };
     },
     nudge: function(direction) {
       switch (direction) {
         case "up":
-          this.set('top', this.get('top') - 1);
-          return this.set('bottom', this.get('bottom') - 1);
+          if (this.get('top') > 0) {
+            this.set('top', this.get('top') - 1);
+            return this.set('bottom', this.get('bottom') - 1);
+          }
+          break;
         case "down":
           this.set('top', this.get('top') + 1);
           return this.set('bottom', this.get('bottom') + 1);
         case "left":
-          this.set('left', this.get('left') - 1);
-          return this.set('right', this.get('right') - 1);
+          if (this.get('left') > 0) {
+            this.set('left', this.get('left') - 1);
+            return this.set('right', this.get('right') - 1);
+          }
+          break;
         case "right":
           this.set('left', this.get('left') + 1);
           return this.set('right', this.get('right') + 1);
         default:
-          return console.log("'" + direction + "' is an impossible direction for nudging...");
+          return console.log(`'${direction}' is an impossible direction for nudging...`);
       }
     },
     on: {
       'start-widget-drag': function(event) {
         return CommonDrag.dragstart.call(this, event, (function() {
           return true;
-        }), (function(_this) {
-          return function(x, y) {
-            _this.fire('select-component', event.component);
-            _this.startLeft = _this.get('left') - x;
-            _this.startRight = _this.get('right') - x;
-            _this.startTop = _this.get('top') - y;
-            return _this.startBottom = _this.get('bottom') - y;
-          };
-        })(this));
+        }), (x, y) => {
+          this.fire('select-component', event.component);
+          this.startLeft = this.get('left') - x;
+          this.startRight = this.get('right') - x;
+          this.startTop = this.get('top') - y;
+          return this.startBottom = this.get('bottom') - y;
+        });
       },
       'drag-widget': function(event) {
         var isMac, isSnapping;
         isMac = window.navigator.platform.startsWith('Mac');
         isSnapping = (!isMac && !event.original.ctrlKey) || (isMac && !event.original.metaKey);
-        return CommonDrag.drag.call(this, event, (function(_this) {
-          return function(x, y) {
-            var findAdjustment, newLeft, newTop, xAdjust, yAdjust;
-            findAdjustment = function(n) {
-              return n - (Math.round(n / 5) * 5);
-            };
-            xAdjust = isSnapping ? findAdjustment(_this.startLeft + x) : 0;
-            yAdjust = isSnapping ? findAdjustment(_this.startTop + y) : 0;
-            newLeft = _this.startLeft + x - xAdjust;
-            newTop = _this.startTop + y - yAdjust;
-            if (newLeft < 0) {
-              _this.set('left', 0);
-              _this.set('right', _this.startRight - _this.startLeft);
-            } else {
-              _this.set('left', newLeft);
-              _this.set('right', _this.startRight + x - xAdjust);
-            }
-            if (newTop < 0) {
-              _this.set('top', 0);
-              return _this.set('bottom', _this.startBottom - _this.startTop);
-            } else {
-              _this.set('top', newTop);
-              return _this.set('bottom', _this.startBottom + y - yAdjust);
-            }
+        return CommonDrag.drag.call(this, event, (x, y) => {
+          var findAdjustment, newLeft, newTop, xAdjust, yAdjust;
+          findAdjustment = function(n) {
+            return n - (Math.round(n / 5) * 5);
           };
-        })(this));
+          xAdjust = isSnapping ? findAdjustment(this.startLeft + x) : 0;
+          yAdjust = isSnapping ? findAdjustment(this.startTop + y) : 0;
+          newLeft = this.startLeft + x - xAdjust;
+          newTop = this.startTop + y - yAdjust;
+          if (newLeft < 0) {
+            this.set('left', 0);
+            this.set('right', this.startRight - this.startLeft);
+          } else {
+            this.set('left', newLeft);
+            this.set('right', this.startRight + x - xAdjust);
+          }
+          if (newTop < 0) {
+            this.set('top', 0);
+            return this.set('bottom', this.startBottom - this.startTop);
+          } else {
+            this.set('top', newTop);
+            return this.set('bottom', this.startBottom + y - yAdjust);
+          }
+        });
       },
       'stop-widget-drag': function() {
-        return CommonDrag.dragend.call(this, (function(_this) {
-          return function() {
-            _this.startLeft = void 0;
-            _this.startRight = void 0;
-            _this.startTop = void 0;
-            return _this.startBottom = void 0;
-          };
-        })(this));
+        return CommonDrag.dragend.call(this, () => {
+          this.startLeft = void 0;
+          this.startRight = void 0;
+          this.startTop = void 0;
+          return this.startBottom = void 0;
+        });
       }
     }
   });

@@ -1,35 +1,39 @@
 (function() {
   window.EditForm = Ractive.extend({
-    lastUpdateMs: void 0,
-    startX: void 0,
-    startY: void 0,
-    view: void 0,
+    lastUpdateMs: void 0, // Number
+    startX: void 0, // Number
+    startY: void 0, // Number
+    view: void 0, // Element
     data: function() {
       return {
-        parentClass: 'netlogo-widget-container',
-        submitLabel: 'OK',
-        cancelLabel: 'Cancel',
-        horizontalOffset: void 0,
-        verticalOffset: void 0,
-        amProvingMyself: false,
-        idBasis: void 0,
-        style: void 0,
-        visible: void 0,
-        xLoc: void 0,
-        yLoc: void 0
+        parentClass: 'netlogo-widget-container', // String
+        submitLabel: 'OK', // String
+        cancelLabel: 'Cancel', // String
+        horizontalOffset: void 0, // Number
+        verticalOffset: void 0, // Number
+        amProvingMyself: false, // Boolean
+        idBasis: void 0, // String
+        style: void 0, // String
+        visible: void 0, // Boolean
+        xLoc: void 0, // Number
+        yLoc: void 0, // Number
+        draggable: true // Boolean
       };
     },
     computed: {
       id: (function() {
-        return (this.get('idBasis')) + "-edit-window";
+        return `${this.get('idBasis')
+    // () => String
+}-edit-window`;
       })
     },
     twoway: false,
+    // We make the bound values lazy and then call `resetPartials` when showing, so as to
+    // prevent the perpetuation of values after a change-and-cancel. --JAB (4/1/16)
     lazy: true,
     on: {
-      submit: function(arg) {
-        var newProps, node;
-        node = arg.node;
+      submit: function({node}) {
+        var newProps;
         try {
           newProps = this.genProps(node);
           if (newProps != null) {
@@ -42,11 +46,11 @@
         }
       },
       'show-yourself': function() {
-        var container, containerMidX, containerMidY, dialogHalfHeight, dialogHalfWidth, elem, findParentByClass, ref, ref1;
+        var container, containerMidX, containerMidY, dialogHalfHeight, dialogHalfWidth, elem, findParentByClass, ref, ref1, whatADrag;
         findParentByClass = function(clss) {
-          return function(arg) {
-            var parent;
-            parent = arg.parentElement;
+          return function({
+              parentElement: parent
+            }) {
             if (parent != null) {
               if (parent.classList.contains(clss)) {
                 return parent;
@@ -58,6 +62,7 @@
             }
           };
         };
+        // Must unhide before measuring --JAB (3/21/16)
         this.set('visible', true);
         elem = this.getElem();
         elem.focus();
@@ -71,6 +76,19 @@
         this.set('xLoc', (ref = this.get('horizontalOffset')) != null ? ref : containerMidX - dialogHalfWidth);
         this.set('yLoc', (ref1 = this.get('verticalOffset')) != null ? ref1 : containerMidY - dialogHalfHeight);
         this.resetPartial('widgetFields', this.partials.widgetFields);
+        // This is awful, but it's the least invasive way I have come up with to workaround a 3 year old Firefox bug.
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1189486
+        // -JMB 10/18.
+        whatADrag = (el) => {
+          el.addEventListener('focus', (_) => {
+            this.set('draggable', false);
+          });
+          return el.addEventListener('blur', (_) => {
+            this.set('draggable', true);
+          });
+        };
+        this.findAll('textarea').forEach(whatADrag);
+        this.findAll('input').forEach(whatADrag);
         return false;
       },
       'activate-cloaking-device': function() {
@@ -101,20 +119,16 @@
               return true;
           }
         };
-        return CommonDrag.dragstart.call(this, event, checkIsValid, (function(_this) {
-          return function(x, y) {
-            _this.startX = _this.get('xLoc') - x;
-            return _this.startY = _this.get('yLoc') - y;
-          };
-        })(this));
+        return CommonDrag.dragstart.call(this, event, checkIsValid, (x, y) => {
+          this.startX = this.get('xLoc') - x;
+          return this.startY = this.get('yLoc') - y;
+        });
       },
       'drag-edit-dialog': function(event) {
-        return CommonDrag.drag.call(this, event, (function(_this) {
-          return function(x, y) {
-            _this.set('xLoc', _this.startX + x);
-            return _this.set('yLoc', _this.startY + y);
-          };
-        })(this));
+        return CommonDrag.drag.call(this, event, (x, y) => {
+          this.set('xLoc', this.startX + x);
+          return this.set('yLoc', this.startY + y);
+        });
       },
       'stop-edit-drag': function() {
         return CommonDrag.dragend.call(this, (function() {}));
@@ -122,9 +136,9 @@
       'cancel-edit': function() {
         this.fire('activate-cloaking-device');
       },
-      'handle-key': function(arg) {
-        var keyCode;
-        keyCode = arg.original.keyCode;
+      'handle-key': function({
+          original: {keyCode}
+        }) {
         if (keyCode === 27) {
           this.fire('cancel-edit');
           false;
@@ -132,9 +146,9 @@
       }
     },
     getElem: function() {
-      return this.find("#" + (this.get('id')));
+      return this.find(`#${this.get('id')}`);
     },
-    template: "{{# visible }}\n<div class=\"widget-edit-form-overlay\">\n  <div id=\"{{id}}\"\n       class=\"widget-edit-popup widget-edit-text\"\n       style=\"top: {{yLoc}}px; left: {{xLoc}}px; {{style}}\"\n       on-keydown=\"handle-key\"\n       draggable=\"true\" on-drag=\"drag-edit-dialog\" on-dragstart=\"start-edit-drag\"\n       on-dragend=\"stop-edit-drag\"\n       tabindex=\"0\">\n    <div id=\"{{id}}-closer\" class=\"widget-edit-closer\" on-click=\"cancel-edit\">X</div>\n    <form class=\"widget-edit-form\" on-submit=\"submit\">\n      <div class=\"widget-edit-form-title\">{{>title}}</div>\n      {{>widgetFields}}\n      <div class=\"widget-edit-form-button-container\">\n        <input class=\"widget-edit-text\" type=\"submit\" value=\"{{ submitLabel }}\" />\n        <input class=\"widget-edit-text\" type=\"button\" on-click=\"cancel-edit\" value=\"{{ cancelLabel }}\" />\n      </div>\n    </form>\n  </div>\n</div>\n{{/}}",
+    template: "{{# visible }}\n<div class=\"widget-edit-form-overlay\">\n  <div id=\"{{id}}\"\n       class=\"widget-edit-popup widget-edit-text\"\n       style=\"top: {{yLoc}}px; left: {{xLoc}}px; {{style}}\"\n       on-keydown=\"handle-key\"\n       draggable=\"{{draggable}}\" on-drag=\"drag-edit-dialog\" on-dragstart=\"start-edit-drag\"\n       on-dragend=\"stop-edit-drag\"\n       tabindex=\"0\">\n    <div id=\"{{id}}-closer\" class=\"widget-edit-closer\" on-click=\"cancel-edit\">X</div>\n    <form class=\"widget-edit-form\" on-submit=\"submit\">\n      <div class=\"widget-edit-form-title\">{{>title}}</div>\n      {{>widgetFields}}\n      <div class=\"widget-edit-form-button-container\">\n        <input class=\"widget-edit-text\" type=\"submit\" value=\"{{ submitLabel }}\" />\n        <input class=\"widget-edit-text\" type=\"button\" on-click=\"cancel-edit\" value=\"{{ cancelLabel }}\" />\n      </div>\n    </form>\n  </div>\n</div>\n{{/}}",
     partials: {
       widgetFields: void 0
     }

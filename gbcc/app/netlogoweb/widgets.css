@@ -186,6 +186,10 @@
   border-color: rgb(238, 238, 238);
 }
 
+.netlogo-ugly-button:disabled {
+  color: rgb(150, 150, 150);
+}
+
 .netlogo-recompilation-button {
   width: 30%;
   margin: 12px auto;
@@ -351,6 +355,10 @@
     justify-content: space-around;
     align-items: center;
     padding: 0px;
+}
+
+.netlogo-button:disabled {
+  color: rgb(150, 150, 150);
 }
 
 .netlogo-disabled, .interface-unlocked {
@@ -612,4 +620,45 @@
   right:            0;
   top:              0;
   z-index:          99;
+}
+
+.async-popup {
+  background-color: white;
+  border:           1px solid black;
+  border-radius:    5px;
+  box-shadow:       0 0 10px rgba(0,0,0,0.5);
+  min-width:        120px;
+  padding:          10px 10px 0 14px;
+  position:         absolute;
+  outline:          none;
+  z-index:          90;
+}
+
+.async-dialog-message {
+  font-size:  16px;
+  margin-top: 20px;
+  word-break: break-word;
+}
+
+.async-dialog-button-row {
+  align-items:     center;
+  display:         flex;
+  flex-direction:  row;
+  justify-content: flex-end;
+  margin:          10px 0;
+}
+
+.async-dialog-controls {
+  margin: 8px 4px 0 0;
+}
+
+.async-dialog-text-input {
+  width: 100%;
+}
+
+.h-center-flexbox {
+  align-items:     center;
+  display:         flex;
+  flex-direction:  row;
+  justify-content: center;
 }
