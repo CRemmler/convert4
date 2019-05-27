@@ -1,0 +1,266 @@
+<html>
+	<head>
+		<title>GbCC 3.0</title>
+		<link rel="stylesheet" href="css/netlogo.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="css/style3.css" />
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<style>
+			img:not(.info) {
+				border: 2px solid black;
+			}
+			#myModal {    
+				display: none;  
+		    position: fixed; 
+		    z-index: 1;
+		    padding-top: 100px; 
+		    left: 0;
+		    top: 0;
+		    width: 100%; 
+		    height: 100%; 
+		    overflow: auto; 
+		    background-color: rgb(0,0,0); 
+		    background-color: rgba(0,0,0,0.4); 
+			}
+			.modal-content {
+				background-color: #fefefe;
+				margin: auto;
+				padding: 20px;
+				border: 1px solid #888;
+				width: 70%;
+				border-radius: 5px;
+				border: 2px solid black;
+			}
+			.close {
+				color: #aaaaaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+			}
+			.close:hover,
+			.close:focus {
+			  color: #000;
+			  text-decoration: none;
+			  cursor: pointer;
+			}
+			.infoWrapper {
+				width: 100%;
+			}
+			.info {
+				text-align: right;
+				margin-top: -3px;
+			}
+			.modal-content td {
+				vertical-align: top;
+			}
+			.modelName {
+				font-weight: bold;
+			}
+			#videoWrapper {
+				margin-left: 19px;
+				margin-top: -15px;
+			}
+			#videoContainer {
+				display: inline-block;
+				position: relative;
+				top: 12px;
+			}
+			#videoIcon {
+				max-width: 100%;
+				border-radius: 0px;
+				border: none;
+				width: 30px;
+			}
+			#videoLinkContainer {
+				display: inline-block;
+			}
+			#configImage {
+				max-width: 100%; 
+				border-radius: 0px; 
+				border: none; 
+			}
+			.hide {
+				display: none;
+			}
+		</style>
+		<script>
+			jQuery(document).ready(function() {
+				$("#addModel").on("click",function() {
+					alert("Email your model to c_remmler@yahoo.com, and I can post it. Thanks! - C");
+				});
+				var modal = document.getElementById('myModal');
+				var span = document.getElementsByClassName("close")[0];
+				span.onclick = function() {
+				  modal.style.display = "none";
+				}
+				window.onclick = function(event) {
+				  if (event.target == modal) {
+				    modal.style.display = "none";
+				  }
+				}
+				$.getJSON('./model.json', function(data) {
+					/*
+					data = {
+					  "models":
+					  [
+							{ 
+					      "modelName": "IntroButtons",
+					      "modelLink": "https://buttons-gbcc.herokuapp.com/", 
+					      "imageLink": "./images/pixels.png",
+					      "modelDescription": "This is a model called Introbuttons. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+					      "modalImageLink": "./images/introbuttons-2.png",
+					      "videoLink":  "https://www.youtube.com/watch?v=_VFAjM4PhDo",
+					      "modelSource": "./nlogo/introbuttons.nlogo",
+					      "modelConfig": "./config/introbuttons-config.png"
+					    },
+							{ 
+								"modelName": "Gridlock",
+								"modelLink": "https://gridlock-hubnet.herokuapp.com/", 
+								"imageLink": "./images/gridlock.png",
+								"modelDescription": "Students control traffic lights in a real-time traffic simulation. The teacher controls overall variables, such as the speed limit and the number of cars. This allows students to explore traffic dynamics, which can lead into many areas of study, from calculus to social studies.",
+								"modalImageLink": "./images/gridlock.png",
+								"videoLink":  "",
+								"modelSource": "",
+								"modelConfig": ""
+							}
+						]
+					};
+					*/
+					data.models.forEach(function(d, index) { 
+						$(".item").append('<li><a '
+						+'href="'+d.modelLink+'">'
+						+'<img src="'+d.imageLink+'" width="144" height="144"></a>'
+						+'<br><table class="infoWrapper"><tr><td style="width:110px">'
+						+ '<a href="'+d.modelLink+'">'+d.modelName+'</a><a href="#"></td><td><img class="info" id="info'+index+'"'
+						+' src="./images/info-gray.png"></a></td></tr></table></li>');
+						$("#info"+index).mouseenter(function() {
+							$(this).attr("src","./images/info.png");
+						});
+						$("#info"+index).mouseleave(function() {
+							$(this).attr("src","./images/info-gray.png");
+						});
+						$("#info"+index).click(function() {
+							var instance = data.models[index];
+							modal.style.display = "block";
+							$(".modelName").html(instance.modelName);
+							$("#imageLink").attr("src",instance.thumbnailImage);
+							$("#modalImageLink").attr("src",instance.modalImageLink);
+							$("#modelDescription").html(instance.modelDescription);
+							if (instance.videoLink) {
+								$("#videoLink").html(instance.modelName + " Video");
+								$("#videoWrapper a").attr("href", instance.videoLink);
+								$("#videoWrapper").removeClass("hide");
+							} else {
+								$("#videoWrapper").addClass("hide");
+							}
+							if (instance.modelSource) {
+								$("#modelLink").attr("href", instance.modelSource);
+								$("#modelLink").html(instance.modelSource);
+								$("#modelLinkWrapper").removeClass("hide");
+							} else {
+								$("#modelLinkWrapper").addClass("hide");
+							}
+							if (instance.modelConfig) {
+								$("#configImage").attr("src", instance.modelConfig);	
+								$("#configImage").css("width", "600px");
+								$("#configImageWrapper").removeClass("hide");
+							} else {
+								$("#configImageWrapper").addClass("hide");
+							}
+						});
+					}); 
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<!-- Trigger/Open The Modal -->
+		<div id="myModal" class="modal">
+	  <div class="modal-content">
+			<p><span class="modelName" style="font-size: 18px"></span>
+	    <span class="close">×</span></p>
+			<table>
+				<tr>
+					<td>
+						<div>
+							<p><img id="modalImageLink" width="270" height="270"></p>
+						</div>
+					</td>
+					<td>
+						<div>
+							<p><b>Model Description:</b></p>
+							<p><span id="modelDescription"></span></p>
+							<p>
+								<div id="videoWrapper">
+									<div id="videoContainer">
+										<a href=""><img id="videoIcon" src="./images/video-play-black.png"></a>
+									</div>
+									<div id="videoLinkContainer">
+										<a id="videoLink" href""></a>
+									</div>
+								</div>
+							</p>
+							<p>
+							<div id="modelLinkWrapper">
+								<p><b>Download the model:</b> <a id="modelLink" href=""></a></p>
+							</div>
+							<div id="configImageWrapper">
+								<p><span><b>Convert the model with these settings:</b></span></p>
+								<p><span><img id="configImage" src=""></span></p>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+	  </div>
+	</div>
+		<h1>NetLogo GbCC 3.0</h1>
+    <h2>Documentation</h2>
+    <a href="docs.html">NetLogo GbCC Dictionary</a>
+    <br><br><a href="programming.html">NetLogo GbCC Programming Guide</a>
+    <br><br><a href="extensions.html">NetLogo GbCC Extensions Guide</a>
+    <br><br><a href="code.html">Hello World and other Code Snippets</a>
+    <h2>GbCC Models Library</h2>
+		<div class="container">
+			<ul class="item">	
+				<!--
+					<li><a href="#" id="addModel"><img src="./images/plus.png"><br>Add a Model</a></li>
+					<li><a href="https://disease-hubnet.herokuapp.com/" id="addModel"><img src="./images/disease.png"><br>Disease</a></li>
+					<li><a href="https://gridlock-hubnet.herokuapp.com/" id="addModel"><img src="./images/gridlock.png"><br>Gridlock</a></li>
+					<li><a href="https://buttons-gbcc.herokuapp.com/" id="addModel"><img src="./images/pixels.png"><br>IntroButtons</a></li>
+					<li><a href="https://segregation-gbcc.herokuapp.com/" id="addModel"><img src="./images/segregation.png"><br>Segregation</a></li>
+					<li><a href="https://wolf-sheep-gbcc.herokuapp.com/" id="addModel"><img src="./images/wolfsheep.png"><br>Wolf and Sheep</a></li>
+					<li><a href="https://catch-a-planet-4.herokuapp.com/" id="addModel"><img src="./images/catch-a-planet.png"><br>Catch a Planet</a></li>
+					<li><a href="https://gbcc-triangle.herokuapp.com/" id="addModel"><img src="./images/triangle.png"><br>Triangle</a></li>
+				-->
+			</ul>
+		</div>
+		<h2>Create a GbCC Model</h2>
+		
+			<table>
+				<tr>
+					<td><img class="create-icon" src="./images/icon-netlogo2.png"></a>
+					</td>
+					<td> <b>Step 1:</b> Create a model using <a href="https://ccl.northwestern.edu/netlogo/">NetLogo</a>. Download the <a href="https://drive.google.com/drive/folders/1vT-0boWC2eIkoixjVXNvZeaQqGtYbDv-
+"> GbCC extension</a> and follow this <a href="https://ccl.northwestern.edu/netlogo/docs/extensions.html">documentation</a>. Save your model as a .nlogo file.
+					</td>
+				</tr>
+				<tr>
+					<td><img class="create-icon" src="./images/icon-upload2.png"></a>
+					</td>
+					<td><b>Step 2:</b> Upload your .nlogo file and follow directions, using <a href="https://gbcc-convert-3.herokuapp.com/">Converter Tool 3.0</a>.
+					</td>
+				</tr>
+				<tr>
+					<td><img class="create-icon" id="url-icon" src="./images/icon-arrow2.png">
+					</td>
+					<td><b>Step 3:</b> Go to the url for your model.</b>
+					</td>
+				</tr>
+			</table>
+
+    <h2>Other</h2>
+    <a href="./dev.html">In Development</a>
+    <br><br>c_remmler@yahoo.com
+	</body>
+</html>

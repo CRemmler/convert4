@@ -5,49 +5,82 @@
       "modelName": "Disease",
       "modelLink": "https://disease-hubnet.herokuapp.com/", 
       "imageLink": "./images/disease.png",
-      "modelDescription": "This model simulates the spread of a disease through a population. This population can consist of either students, which are turtles controlled by individual students via the HubNet Client, or turtles that are generated and controlled by NetLogo, called androids, or both androids and students."
+      "modelDescription": "This model simulates the spread of a disease through a population. This population can consist of either students, which are turtles controlled by individual students via the HubNet Client, or turtles that are generated and controlled by NetLogo, called androids, or both androids and students.",
+      "modalImageLink": "./images/disease.png",
+      "videoLink":  "",
+      "modelSource": "",
+      "modelConfig": ""
     },
     { 
       "modelName": "Gridlock",
       "modelLink": "https://gridlock-hubnet.herokuapp.com/", 
       "imageLink": "./images/gridlock.png",
-      "modelDescription": "Students control traffic lights in a real-time traffic simulation. The teacher controls overall variables, such as the speed limit and the number of cars. This allows students to explore traffic dynamics, which can lead into many areas of study, from calculus to social studies."
+      "modelDescription": "Students control traffic lights in a real-time traffic simulation. The teacher controls overall variables, such as the speed limit and the number of cars. This allows students to explore traffic dynamics, which can lead into many areas of study, from calculus to social studies.",
+      "modalImageLink": "./images/gridlock.png",
+      "videoLink":  "",
+      "modelSource": "",
+      "modelConfig": ""
     },
     { 
       "modelName": "IntroButtons",
       "modelLink": "https://buttons-gbcc.herokuapp.com/", 
       "imageLink": "./images/pixels.png",
-      "modelDescription": "Code with Introbuttons."
+      "modelDescription": "This is a model called Introbuttons.",
+      "modalImageLink": "./images/introbuttons-2.png",
+      "videoLink":  "https://www.youtube.com/watch?v=_VFAjM4PhDo",
+      "modelSource": "./nlogo/introbuttons.nlogo",
+      "modelConfig": "./images/introbuttons-config.png"
     },
     { 
       "modelName": "Segregation",
       "modelLink": "https://segregation-gbcc.herokuapp.com/", 
       "imageLink": "./images/segregation.png",
-      "modelDescription": "This project models the behavior of two types of agents in a neighborhood. The red agents and green agents get along with one another. But each agent wants to make sure that it lives near some of its own. That is, each red agent wants to live near at least some red agents, and each green agent wants to live near at least some green agents. The simulation shows how these individual preferences ripple through the neighborhood, leading to large-scale patterns."
+      "modelDescription": "This project models the behavior of two types of agents in a neighborhood. The red agents and green agents get along with one another. But each agent wants to make sure that it lives near some of its own. That is, each red agent wants to live near at least some red agents, and each green agent wants to live near at least some green agents. The simulation shows how these individual preferences ripple through the neighborhood, leading to large-scale patterns.",
+      "modalImageLink": "./images/segregation.png",
+      "modalImage": "./images/segregation.png",
+      "videoLink":  "",
+      "modelSource": "",
+      "modelConfig": ""
     },
     { 
       "modelName": "Wolf and Sheep",
       "modelLink": "https://wolf-sheep-gbcc.herokuapp.com/", 
       "imageLink": "./images/wolfsheep.png",
-      "modelDescription": "This model explores the stability of predator-prey ecosystems. Such a system is called unstable if it tends to result in extinction for one or more species involved. In contrast, a system is stable if it tends to maintain itself over time, despite fluctuations in population sizes."
+      "modelDescription": "This model explores the stability of predator-prey ecosystems. Such a system is called unstable if it tends to result in extinction for one or more species involved. In contrast, a system is stable if it tends to maintain itself over time, despite fluctuations in population sizes.",
+      "modalImageLink": "./images/wolfsheep.png", 
+      "videoLink":  "",
+      "modelSource": "",
+      "modelConfig": ""
     },
     { 
       "modelName": "Catch a Planet",
       "modelLink": "https://catch-a-planet-4.herokuapp.com/", 
       "imageLink": "./images/catch-a-planet.png",
-      "modelDescription": "Go catch a planet!"
+      "modelDescription": "Go catch a planet!",
+      "modalImageLink":  "./images/catch-a-planet.png",
+      "videoLink":  "",
+      "modelSource": "",
+      "modelConfig": ""
     },
     { 
       "modelName": "Triangle",
       "modelLink": "https://gbcc-triangle.herokuapp.com/", 
       "imageLink": "./images/triangle.png",
-      "modelDescription": "Triangles."
+      "modelDescription": "Triangles.",
+      "modalImageLink": "./images/triangle.png",
+      "videoLink":  "",
+      "modelSource": "",
+      "modelConfig": ""
     },
     { 
       "modelName": "Geogebra Share",
       "modelLink": "https://geogebra-share.herokuapp.com/", 
       "imageLink": "./images/geogebrashare.png",
-      "modelDescription": "Any Geogebra models!"
+      "modelDescription": "Any Geogebra models!",
+      "modalImageLink": "./images/geogebrashare.png",
+      "videoLink":  "",
+      "modelSource": "",
+      "modelConfig": ""
     }
   ]
 }
